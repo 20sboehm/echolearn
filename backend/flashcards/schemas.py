@@ -6,6 +6,6 @@ class DeckSchema(Schema):
 
 class CardSchema(Schema):
     card_id: int
-    deck: int
+    deck_id: int
     question: str
     answer: str
