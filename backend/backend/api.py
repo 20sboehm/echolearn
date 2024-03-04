@@ -4,5 +4,5 @@ from flashcards.routers.cards import cards_router
 
 api = NinjaAPI()
 
-api.add_router('/decks/', decks_router)
-api.add_router('/cards/', cards_router)
+api.add_router("/decks", decks_router)
+api.add_router("/cards", cards_router)
