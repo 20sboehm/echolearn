@@ -1,0 +1,45 @@
+# Ignore virtual environment
+venv/
+
+# Ignore node modules
+node_modules/
+
+# Ignore compiled Python files
+*.pyc
+__pycache__/
+
+# Ignore database files
+db.sqlite3
+
+# Ignore Django migration files
+**/migrations/
+
+# Ignore local settings (e.g., settings/local.py)
+**/local.py
+
+# Ignore the build folder for React
+/build/
+
+# Ignore environment files
+.env
+
+# Ignore logs and other generated files
+logs/
+*.log
+*.log.*
+*.pid
+
+# Ignore VSCode specific files
+.vscode/
+
+# Ignore PyCharm specific files
+.idea/
+
+# Ignore npm debug log
+npm-debug.log*
+
+# Ignore yarn errors log
+yarn-error.log*
+
+# Ignore .DS_Store files on macOS
+.DS_Store
