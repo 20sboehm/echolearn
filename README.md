@@ -42,10 +42,10 @@ Install django ninja:
 
 Reset the database:
 ```
-python3 manage.py makemigrations
+python manage.py makemigrations
 rm db.sqlite3
-python3 manage.py migrate
-python3 makedata.py
+python manage.py migrate
+python makedata.py
 ```
 
 Reset the database (use as a backup if the above does not work):
