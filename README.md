@@ -34,5 +34,25 @@ Apply the migrations to create the tables in the database:
 Run the backend server:
 `python manage.py runserver`
 
-Instal cors headers:
+Install cors headers:
 `python -m pip install django-cors-headers`
+
+Install django ninja:
+`pip install django-ninja`
+
+Reset the database:
+```
+python3 manage.py makemigrations
+rm db.sqlite3
+python3 manage.py migrate
+python3 makedata.py
+```
+
+Reset the database (use as a backup if the above does not work):
+```
+python manage.py makemigrations
+python manage.py migrate
+rm db.sqlite3
+python manage.py migrate --run-syncdb
+python makedata.py
+```
