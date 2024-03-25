@@ -66,3 +66,67 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+header {
+  position: fixed;
+  top: 0;
+  width: 100vw;
+  background-color: #0D79A1;
+  place-items: top;
+}
+
+
+.Navigation {
+  width: 100vw;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.Navigation_Logo {
+  display: flex;
+  margin-right: auto;
+  margin-left: 50px;
+}
+
+.Navigation_Logo a {
+  color: white;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo img {
+  height: 40px;
+  margin-right: 10px;
+}
+
+.Navigation_Control {
+  display: flex;
+  margin-left: auto;
+  align-items: center;
+}
+
+.Navigation_Control a {
+  padding: 10px;
+  position: relative;
+  color: white;
+  transition: background-color 0.3s;
+}
+
+.Navigation_Control a::before {
+  content: '';
+  position: absolute;
+  top: -10%; /* Adjustment for the box to appear */
+  left: 15%;
+  width: 70%;
+  height: 10%;
+  background-color: transparent;
+  transition: background-color 0.3s;
+}
+
+.Navigation_Control a:hover::before {
+  background-color: #999;
+}

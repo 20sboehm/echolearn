@@ -1,0 +1,21 @@
+.sidebar {
+    width: 200px;
+    background-color: #f0f0f0;
+    padding: 20px;
+    position: fixed;
+    top: 57px;
+    left: -200px;
+    bottom: 0;
+    transition: transform 0.5s ease-in-out;
+    transform: translateX(-200px);
+}
+  
+.sidebarButton {
+    position: fixed;
+    top: 50%;
+}
+
+.sidebar.open {
+    transform: translateX(200px);
+}
+  
