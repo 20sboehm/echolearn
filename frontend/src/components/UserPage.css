@@ -1,8 +1,19 @@
-h1 {
+.TODO {
     position: absolute;
     left: 20vw;
     top: 40vh;
     font-weight: bold;
     transform: rotate(270deg);
     text-decoration: underline;
+}
+
+.tableContainer {
+    position: absolute;
+    top: 20vh;
+    left: 35vw;
+}
+
+.taskTable td, .taskTable th {
+    padding: 20px;
+    text-align: left;
 }

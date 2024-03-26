@@ -26,6 +26,7 @@ function App() {
         <Routes>
           {/* /user and /guest should be one page? Depend on if the user login or not to change */}
           <Route path="/user" element={<User />} />
+          <Route path="/review" element={<h1>This is the review page</h1>} />
           <Route path="/guest" element={<h1>This is the guest main page</h1>} />
           <Route path="/create" element={<CardCreate />} />
           <Route path="/cards/:cardId" element={<CardPage />} />
