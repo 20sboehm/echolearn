@@ -4,6 +4,7 @@ import { BrowserRouter, Navigate, Routes, Route, useParams } from "react-router-
 import './App.css'
 import CardPage from "./components/CardPage";
 import CardCreate from "./components/CardCreate";
+import User from "./components/UserPage";
 
 const queryClient = new QueryClient();
 
@@ -24,7 +25,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           {/* /user and /guest should be one page? Depend on if the user login or not to change */}
-          <Route path="/user" element={<h1>This is the user main page</h1>} />
+          <Route path="/user" element={<User />} />
           <Route path="/guest" element={<h1>This is the guest main page</h1>} />
           <Route path="/create" element={<CardCreate />} />
           <Route path="/cards/:cardId" element={<CardPage />} />
