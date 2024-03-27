@@ -1,0 +1,28 @@
+.card-create-page {
+    width: 100vw;
+    height: 100vh;
+}
+
+.selection {
+    position: absolute;
+    top: 10vh;
+    left: 260px;
+    display: flex;
+    flex-direction: row;
+}
+
+.selection select {
+    margin-bottom: 10px;
+    width: 150px;
+}
+
+h2 {
+    margin-top: 200px;
+}
+
+.dropDown {
+    padding: 10px 0px;
+    border: 1px solid #ccc; 
+    border-radius: 5px;
+    font-size: 16px;
+}
