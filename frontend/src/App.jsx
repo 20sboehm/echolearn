@@ -28,6 +28,7 @@ function App() {
           <Route path="/user" element={<User />} />
           <Route path="/review" element={<h1>This is the review page</h1>} />
           <Route path="/guest" element={<h1>This is the guest main page</h1>} />
+          <Route path="/help" element={<h1>This is the helpr page</h1>} />
           <Route path="/create" element={<CardCreate />} />
           <Route path="/cards/:cardId" element={<CardPage />} />
           <Route path="*" element={<Navigate to="/error/404/Page%20Not%20Found" />} />

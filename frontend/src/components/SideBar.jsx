@@ -9,6 +9,7 @@ function SidebarContent({ isOpen, sidebarRef}) {
     setFolderCreated(true)
   };
 
+  // This will need be modify it with how the json (data) will be look like
   return (
     <div className={`sidebar ${isOpen ? "open" : ""}`} ref={sidebarRef}>
         {!folderCreated ? (
