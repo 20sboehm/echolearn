@@ -22,14 +22,14 @@ function cardCreate() {
             <SideBar/>
             <div className="selection">
                 {/* Folder Dropdown, later will change to folder that the user has */}
-                <select value={folders} onChange={folderChange}>
+                <select className="dropDown" value={folders} onChange={folderChange}>
                     <option value="">Folders</option>
                     <option value="option1">5530</option>
                     <option value="option2">Computer System</option>
                 </select>
 
                 {/* Deck Dropdown, later will need change to depend on which folder choiced */}
-                <select value={decks} onChange={deckChange}>
+                <select className="dropDown" value={decks} onChange={deckChange}>
                     <option value="">Decks</option>
                     <option value="option1">Option 1</option>
                     <option value="option2">Option 2</option>

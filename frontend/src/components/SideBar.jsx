@@ -3,11 +3,36 @@ import { Link, useParams } from "react-router-dom";
 import "./SideBar.css";
 
 function SidebarContent({ isOpen, sidebarRef}) {
-    return (
-        <div className={`sidebar ${isOpen ? "open" : ""}`} ref={sidebarRef}>
-            <button>Create</button>
-        </div>
-    );
+  const [folderCreated, setFolderCreated] = useState(false);
+  
+  const createDefaultFolder = () => {
+    setFolderCreated(true)
+  };
+
+  return (
+    <div className={`sidebar ${isOpen ? "open" : ""}`} ref={sidebarRef}>
+        {!folderCreated ? (
+            <button onClick={createDefaultFolder}>Create</button>
+        ) : (
+          <div className="Folders">
+            <ul>
+              <li>Library</li>
+              <ul>
+                  <li>Database</li>
+                    <ul>
+                      <li>Locks</li>
+                    </ul>
+                  <li>Computer System</li>
+                    <ul>
+                      <li>Bit Shift</li>
+                      <li>Assembly x86</li>
+                    </ul>
+              </ul>
+            </ul>
+          </div>
+        )}
+    </div>
+  );
 }
 
 function SidebarButton( { isOpen, toggleSidebar, sidebarRef }) {

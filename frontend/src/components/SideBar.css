@@ -18,4 +18,19 @@
 .sidebar.open {
     transform: translateX(200px);
 }
+
+
+.Folders li {
+    color: black;
+    text-align: left;
+}
+
+.Folders ul {
+    padding-left: 20px;
+}
+
+.Folders ul ul {
+    /* Adding space between each buttet*/
+    padding-left: 20px;
+}
   
