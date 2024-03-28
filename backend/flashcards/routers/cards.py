@@ -2,7 +2,9 @@ from ninja import Router
 from flashcards.models import Card, Deck
 from flashcards.schemas import CardSchema
 from typing import List
-
+from django.middleware.csrf import get_token
+from django.http import JsonResponse
+import json
 cards_router = Router()
 
 @cards_router.get("", response=List[CardSchema])
@@ -25,3 +27,15 @@ def create_card(request, payload: CardSchema):
         question=payload.question,
         answer=payload.answer
     )
+    
+    
+def get_csrf(request):
+    return JsonResponse({'csrfToken': get_token(request)})
+    
+@cards_router.post("")
+def get_post(request):
+    data = json.loads(request.body)
+    name = data.get('input')
+    print(name)
+   
+    return JsonResponse({'status': 'success', 'name': name})
