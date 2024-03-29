@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 
 function Card() {
   const { cardId } = useParams();
-  const [csrfToken, setCsrfToken] = useState('');
+  const [ csrfToken, setCsrfToken ] = useState('');
 
    // Fetch the card data
    const { data: card, isLoading, error } = useQuery({
@@ -15,17 +15,17 @@ function Card() {
       ),
   });
 
-  useEffect(() => {
-    fetch('http://localhost:8000/api/csrf/', { credentials: 'include' })
-      .then(response => response.json())
-      .then(data => setCsrfToken(data.csrfToken))
-      .catch(error => console.error('Error fetching CSRF token', error));
-  }, []);
+  // useEffect(() => {
+  //   fetch('http://localhost:8000/api/csrf/', { credentials: 'include' })
+  //     .then(response => response.json())
+  //     .then(data => setCsrfToken(data.csrfToken))
+      
+  // }, []);
 
   const [input, setInput] = useState('');
 
   const formSubmissionMutation = useMutation(async (formData) => {
-    const response = await fetch('http://localhost:8000/api/item/', {
+    const response = await fetch('http://localhost:8000/api/cards', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

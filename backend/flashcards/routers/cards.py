@@ -5,6 +5,7 @@ from typing import List
 from django.middleware.csrf import get_token
 from django.http import JsonResponse
 import json
+from django.views.decorators.csrf import ensure_csrf_cookie
 cards_router = Router()
 
 @cards_router.get("", response=List[CardSchema])
@@ -17,22 +18,19 @@ def get_card(request, card_id: int):
     card = Card.objects.get(card_id=card_id)
     return card
 
-@cards_router.post("")
-def create_card(request, payload: CardSchema):
-    deck_ref = Deck.objects.get(pk=payload.deck_id)
+# @cards_router.post("")
+# def create_card(request, payload: CardSchema):
+#     deck_ref = Deck.objects.get(pk=payload.deck_id)
 
-    Card.objects.create(
-        card_id=payload.card_id,
-        deck=deck_ref,
-        question=payload.question,
-        answer=payload.answer
-    )
-    
-    
-def get_csrf(request):
-    return JsonResponse({'csrfToken': get_token(request)})
-    
+#     Card.objects.create(
+#         card_id=payload.card_id,
+#         deck=deck_ref,
+#         question=payload.question,
+#         answer=payload.answer
+#     )
+
 @cards_router.post("")
+@ensure_csrf_cookie
 def get_post(request):
     data = json.loads(request.body)
     name = data.get('input')
