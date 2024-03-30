@@ -1,30 +1,25 @@
 from django.contrib.auth.models import User
 from django.db import models
-import datetime
-from django.utils.timezone import now
-
-# Maybe cover by Django itself, come back later
-# class User(models.Model):
-#     user_id = models.AutoField(primary_key=True)
-#     name = models.CharField(max_length=255)
-#     email = models.CharField(max_length=255)
 
 class Folder(models.Model):
     folder_id = models.AutoField(primary_key=True)
-    last_edited = models.DateTimeField(default=now())
-    created_at= models.DateTimeField(default=now())
-    name = models.CharField(max_length=255, null=False)
-    # user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=False, blank=False) 
+    name = models.CharField(max_length=255)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE) 
+    created_at= models.DateTimeField(auto_now_add=True)
+    last_edited = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
 
 class Deck(models.Model):
-    deck_id = models.AutoField(primary_key=True, null=False)
-    name = models.CharField(max_length=255, null=False)
-    folder = models.ForeignKey(Folder, on_delete=models.CASCADE, null=False, blank=False)
-    last_edited = models.DateTimeField(default=now())
-    created_at = models.DateTimeField(default=now())
+    deck_id = models.AutoField(primary_key=True)
+    folder = models.ForeignKey(Folder, on_delete=models.PROTECT) # Cannot delete folder with decks in it
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    description = models.TextField(null=True, blank=True)
     statistics = models.IntegerField(null=True, blank=True)
-    description = models.TextField(blank=True, null=True)
-    # owner = models.ForeignKey(User, on_delete=models.CASCADE, null=False, blank=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_edited = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
         return self.name
@@ -32,21 +27,24 @@ class Deck(models.Model):
 class Card(models.Model):
     card_id = models.AutoField(primary_key=True)
     deck = models.ForeignKey(Deck, on_delete=models.CASCADE)
-    question = models.TextField(max_length=255, null=False, blank=False)
-    answer = models.TextField(max_length=255, null=False, blank=False)
-    last_edited = models.DateTimeField(default=now())
-    created_at = models.DateTimeField(default=now())
-    last_reviewed = models.DateTimeField(default=now())
-    next_review = models.DateTimeField(default=now())
-    bucket = models.IntegerField(null=False, blank=False)
+    question = models.TextField(max_length=255)
+    answer = models.TextField(max_length=255)
+    bucket = models.IntegerField(default=0)
+    last_reviewed = models.DateTimeField(auto_now_add=True)
+    next_review = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_edited = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.question
 
-class shardDeck(models.Model):
+class SharedDeck(models.Model):
     share_id = models.AutoField(primary_key=True)
-    deck_id = models.ForeignKey(Deck, on_delete=models.CASCADE, null=False)
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
+    deck_id = models.ForeignKey(Deck, on_delete=models.CASCADE)
+    shared_with = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = ("deck_id", "user_id")
+        unique_together = ("deck_id", "shared_with")
+
+    def __str__(self):
+        return self.question

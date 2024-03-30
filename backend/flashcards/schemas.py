@@ -1,61 +1,61 @@
 from ninja import Schema
-from typing import Optional
-from datetime import date, datetime
+from datetime import datetime
 
-# class UserSchema(Schema):
-#     user_id: int
-#     name: str
-#     email: str 
+"""
+Schemas are used to define the structure of the data that your API endpoints can recieve (request) or return (response).
+"""
 
-class FolderSchema(Schema):
-    folder_id: int
+# -----------------------------------------------
+# -------------------- Cards --------------------
+# -----------------------------------------------
 
-class DeckSchema(Schema):
+class GetCard(Schema):
+    card_id: int
     deck_id: int
-    name: str
+    question: str
+    answer: str
+    bucket: int
+    last_reviewed: datetime
+    next_review: datetime
+    created_at: datetime
+    last_edited: datetime
 
-class CardSchema(Schema):
+class CreateCard(Schema):
+    deck_id: int
     question: str
     answer: str
 
-class ShareDeck(Schema):
+# -----------------------------------------------
+# -------------------- Decks --------------------
+# -----------------------------------------------
+
+class GetDeck(Schema):
     deck_id: int
-    user_id: int
+    folder_id: int
+    owner_id: int
+    name: str
+    description: str
+    statistics: str
+    created_at: datetime
+    last_edited: datetime
 
-# class UserSchema(Schema):
-#     user_id: int
-#     name: str
-#     email: str 
+class CreateDeck(Schema):
+    folder_id: int
+    owner_id: int
+    name: str
+    description: str
 
-# class FolderSchema(Schema):
-#     folder_id: int  
-#     last_edited: datetime  
-#     created_at: datetime  
-#     name: str  
-#     user_id: int 
+# -------------------------------------------------
+# -------------------- Folders --------------------
+# -------------------------------------------------
 
-# class DeckSchema(Schema):
-#     deck_id: int
-#     name: str
-#     folder_id: int
-#     last_edited: datetime
-#     created_at: datetime
-#     statistics: str
-#     description: Optional[str]
-#     owned_by: int
-#     shared_with: Optional[int]
+class GetFolder(Schema):
+    folder_id: int
+    owner_id: int
+    name: str
+    last_edited: datetime
+    created_at: datetime
 
-# class CardSchema(Schema):
-#     card_id: int
-#     deck_id: int 
-#     question: str
-#     answer: str
-#     last_edited: date
-#     created_at: date
-#     last_reviewed: Optional[datetime] 
-#     next_review: Optional[datetime] 
-#     bucket: str
-
-# class ShareDeck(Schema):
-#     deck_id: int
-#     user_id: int
+class CreateFolder(Schema):
+    name: str
+    owner_id: int
