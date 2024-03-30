@@ -16,8 +16,8 @@ class Deck(models.Model):
     folder = models.ForeignKey(Folder, on_delete=models.PROTECT) # Cannot delete folder with decks in it
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
-    description = models.TextField(null=True, blank=True)
-    statistics = models.IntegerField(null=True, blank=True)
+    description = models.TextField(blank=True) # blank=True allows this to be an empty string
+    statistics = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     last_edited = models.DateTimeField(auto_now_add=True)
     
