@@ -19,7 +19,7 @@ const dummyCards = [
   },
 ]
 
-function ReviewCard({ card, showAnswer, setShowAnswer }) {
+function ReviewCard({ card, showAnswer, setShowAnswer, handleNextCard }) {
 
   const changeShowAnswer = () => {
     setShowAnswer(true);
@@ -27,13 +27,19 @@ function ReviewCard({ card, showAnswer, setShowAnswer }) {
 
   return (
     <div className="card">
-      <h3>{card.question}</h3>
-      {/* Right now the button and answer test is tie together */}
-      {/* TODO: split them up */}
-      {!showAnswer && (
-        <button onClick={changeShowAnswer}>Reveal Answer</button>
+      <div className={`reviewCard ${showAnswer ? "show" : "hide"}`}>
+          <p className="question">{card.question}</p>
+          <p className="answer">{card.answer}</p>
+      </div>
+      {!showAnswer && <button onClick={changeShowAnswer}>Reveal Answer</button>}
+      {showAnswer && (
+        <div className="answerChoice">
+          <button onClick={handleNextCard}>Again</button>
+          <button onClick={handleNextCard}>Hard</button>
+          <button onClick={handleNextCard}>Good</button>
+          <button onClick={handleNextCard}>Easy</button>
+        </div>
       )}
-      {showAnswer && <p>{card.answer}</p>}
     </div>
   );
 }
@@ -52,10 +58,8 @@ function Review() {
       <Header />
       <Sidebar />
       <div className="reviewContainer">
-        <ReviewCard card={dummyCards[cardIndex]} showAnswer={showAnswer} setShowAnswer={setShowAnswer} />
-        {cardIndex < dummyCards.length - 1 && (
-          <button onClick={handleNextCard}>Next</button>
-        )}
+        <h2 className="deckName">Database</h2>
+        <ReviewCard card={dummyCards[cardIndex]} showAnswer={showAnswer} setShowAnswer={setShowAnswer} handleNextCard={handleNextCard} />
       </div>
     </div>
   );
