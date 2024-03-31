@@ -23,6 +23,16 @@ Install react-query:
 Install react-router-dom:
 `npm install react-router-dom`
 
+### --- Tailwind CSS ---
+
+VSCode Extensions:
+"Tailwind CSS IntelliSense"
+"PostCSS Language Support" - To remove warnings on @tailwind
+
+Run these commands:
+`npm install -D tailwindcss postcss autoprefixer`
+`npx tailwindcss init -p`
+
 ## --- Backend ---
 
 Generate migration files based on models:
