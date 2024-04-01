@@ -31,26 +31,45 @@ function ReviewCard({ card, showAnswer, setShowAnswer, handleNextCard }) {
           <p className="question">{card.question}</p>
           <p className="answer">{card.answer}</p>
       </div>
-      {!showAnswer && <button onClick={changeShowAnswer}>Reveal Answer</button>}
+      {!showAnswer && <button className="answerChoice" onClick={changeShowAnswer}>Reveal Answer</button>}
       {showAnswer && (
         <div className="answerChoice">
-          <button onClick={handleNextCard}>Again</button>
-          <button onClick={handleNextCard}>Hard</button>
-          <button onClick={handleNextCard}>Good</button>
-          <button onClick={handleNextCard}>Easy</button>
+          <button className="againButton" onClick={handleNextCard}>Again <br /> 10m</button>
+          <button className="hardButton" onClick={handleNextCard}>Hard <br /> 1h</button>
+          <button className="goodButton" onClick={handleNextCard}>Good <br /> 6h</button>
+          <button className="easyButton" onClick={handleNextCard}>Easy <br /> 1d</button>
         </div>
       )}
     </div>
   );
 }
 
+function FinishView() {
+  return (
+    <div className="finishView"> 
+      <img className="partyPopper" src="../party-popper-flip.png" alt="Party Popper" />
+      <div className="finishViewMiddle">
+        <h3 className="finishText">You have study all the cards</h3>
+        <Link to="/User">
+          <button>Back to deck</button>
+        </Link>
+      </div>
+      <img className="partyPopper" src="../party-popper.png" alt="Party Popper" />
+    </div>
+  )
+}
+
 function Review() {
   const [cardIndex, setcardIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
+  const [finish, setFinish] = useState(false);
 
   const handleNextCard = () => {
     setcardIndex(cardIndex + 1);
     setShowAnswer(false)
+    if (cardIndex === dummyCards.length -1){
+      setFinish(true)
+    }
   };
 
   return (
@@ -59,7 +78,8 @@ function Review() {
       <Sidebar />
       <div className="reviewContainer">
         <h2 className="deckName">Database</h2>
-        <ReviewCard card={dummyCards[cardIndex]} showAnswer={showAnswer} setShowAnswer={setShowAnswer} handleNextCard={handleNextCard} />
+        {!finish && <ReviewCard card={dummyCards[cardIndex]} showAnswer={showAnswer} setShowAnswer={setShowAnswer} handleNextCard={handleNextCard} />}
+        {finish && <FinishView />}
       </div>
     </div>
   );

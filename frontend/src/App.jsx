@@ -6,6 +6,7 @@ import CardPage from "./components/CardPage";
 import CardCreate from "./components/CardCreate";
 import User from "./components/UserPage";
 import Review from "./components/ReviewPage";
+import Landing from "./components/LandingPage";
 
 const queryClient = new QueryClient();
 
@@ -27,7 +28,7 @@ function App() {
         <Routes>
           {/* /user and /guest should be one page? Depend on if the user login or not to display what screen */}
           <Route path="/user" element={<User />} />
-          <Route path="/" element={<h1>This is the guest main page</h1>} />
+          <Route path="/" element={<Landing />} />
           <Route path="/review" element={<Review />} />
           <Route path="/help" element={<h1>This is the helpr page</h1>} />
           <Route path="/create" element={<CardCreate />} />

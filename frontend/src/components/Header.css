@@ -1,4 +1,4 @@
-header {
+  .mainHeader {
     position: fixed;
     top: 0;
     left: 0;
@@ -8,26 +8,27 @@ header {
   }
   
   
-  .Navigation {
+  .navigation {
     width: 100vw;
     display: flex;
     flex-direction: row;
     justify-content: space-around;
   }
   
-  .Navigation_Logo {
+  .navigationLogo {
     display: flex;
     margin-right: auto;
     margin-left: 50px;
   }
   
-  .Navigation_Logo a {
+  .navigationLogo a {
     color: white;
   }
   
   .logo {
     display: flex;
     align-items: center;
+    font-weight: bold;
   }
   
   .logo img {
@@ -35,20 +36,20 @@ header {
     margin-right: 10px;
   }
   
-  .Navigation_Control {
+  .navigationControl {
     display: flex;
     margin-left: auto;
     align-items: center;
   }
   
-  .Navigation_Control a {
+  .navigationControl a {
     padding: 10px;
     position: relative;
     color: white;
     transition: background-color 0.3s;
   }
   
-  .Navigation_Control a::before {
+  .navigationControl a::before {
     content: '';
     position: absolute;
     top: -10%; /* Adjustment for the box to appear */
@@ -59,6 +60,68 @@ header {
     transition: background-color 0.3s;
   }
   
-  .Navigation_Control a:hover::before {
+  .navigationControl a:hover::before {
     background-color: #999;
+  }
+
+  .guestHeader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    background-color: white;
+    place-items: top;
+  }
+
+  .navigationGuest {
+    width: 100vw;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .navigationLogoGuest {
+    display: flex;
+    margin-right: -200px;
+    margin-left: 200px;
+  }
+  
+  .navigationLogoGuest a {
+    color: black;
+  }
+
+  .navigationControlGuest {
+    display: flex;
+    margin-left: auto;
+    margin-right: 200px;
+  }
+  
+  .navigationControlGuest a {
+    padding: 10px;
+    position: relative;
+    color: black;
+    font-weight: bold;
+    transition: background-color 0.3s;
+  }
+  
+  .navigationControlGuest a::before {
+    content: '';
+    position: absolute;
+    top: -10%; /* Adjustment for the box to appear */
+    left: 15%;
+    width: 70%;
+    height: 10%;
+    background-color: transparent;
+    transition: background-color 0.3s;
+  }
+  
+  .navigationControlGuest a:hover::before {
+    background-color: #999;
+  }
+
+  .signIn {
+    border: 0px solid black; /* Add border */
+    background-color: #0D79A1;
+    border-radius: 10px;
   }
