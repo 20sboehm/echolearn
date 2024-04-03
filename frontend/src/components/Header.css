@@ -1,4 +1,4 @@
-.mainHeader {
+/* .mainHeader {
     position: fixed;
     top: 0;
     left: 0;
@@ -23,7 +23,7 @@
 
 .navigationLogo a {
     color: white;
-}
+} */
 
 .logo {
     display: flex;
@@ -36,7 +36,7 @@
     margin-right: 10px;
 }
 
-.navigationControl {
+/* .navigationControl {
     display: flex;
     margin-left: auto;
     align-items: center;
@@ -52,7 +52,7 @@
 .navigationControl a::before {
     content: '';
     position: absolute;
-    top: -10%; /* Adjustment for the box to appear */
+    top: -10%;
     left: 15%;
     width: 70%;
     height: 10%;
@@ -62,7 +62,7 @@
 
 .navigationControl a:hover::before {
     background-color: #999;
-}
+} */
 
 .guestHeader {
     position: fixed;
@@ -108,7 +108,7 @@
 .navigationControlGuest a::before {
     content: '';
     position: absolute;
-    top: -10%; /* Adjustment for the box to appear */
+    top: 0%; /* Adjustment for the box to appear */
     left: 15%;
     width: 70%;
     height: 10%;

@@ -50,7 +50,7 @@ function FinishView() {
       <img className="partyPopper" src="../party-popper-flip.png" alt="Party Popper" />
       <div className="finishViewMiddle">
         <h3 className="finishText">You have study all the cards</h3>
-        <Link to="/User">
+        <Link to="/home">
           <button>Back to deck</button>
         </Link>
       </div>

@@ -70,7 +70,7 @@ function CreateCard() {
     return (
       <>
         <UserHeader />
-        <h1 className='text-4xl mb-10 font-medium'>New Card</h1>
+        <h1 className='text-4xl mb-10 mt-10 font-medium'>New Card</h1>
         <form onSubmit={handleSubmit} className='flex flex-col'>
           <select value={deckId} onChange={(e) => setDeckId(e.target.value)} className='mb-4 p-2 rounded-md h-10' style={{ width: '30vw' }} >
             <option key='select-deck-key' value='' className='text-gray-400'>Select a deck</option>

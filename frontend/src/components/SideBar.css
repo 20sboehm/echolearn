@@ -3,7 +3,7 @@
     background-color: #f0f0f0;
     padding: 20px;
     position: fixed;
-    top: 57px;
+    top: 64px;
     left: -200px;
     bottom: 0;
     transition: transform 0.5s ease-in-out;
@@ -12,6 +12,7 @@
   
 .sidebarButton {
     position: fixed;
+    margin-left: 5px;
     top: 50%;
 }
 

@@ -51,7 +51,7 @@ function CreateFolder() {
   return (
     <>
       <UserHeader />
-      <h1 className='text-4xl mb-10 font-medium'>New Folder</h1>
+      <h1 className='text-4xl mb-10 mt-10 font-medium'>New Folder</h1>
       <form onSubmit={handleSubmit} className='flex flex-col'>
         <input 
           type='text' 
