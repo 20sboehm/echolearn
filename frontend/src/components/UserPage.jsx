@@ -58,7 +58,7 @@ function TaskList() {
   )
 }
 
-function User() {
+function HomePage() {
   return (
     <div>
       <Header />
@@ -69,4 +69,4 @@ function User() {
   )
 }
 
-export default User
+export default HomePage

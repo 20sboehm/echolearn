@@ -1,5 +1,6 @@
 from ninja import Router
 from flashcards.models import Folder
+from django.contrib.auth.models import User
 from typing import List
 import flashcards.schemas as sc
 
@@ -17,6 +18,9 @@ def get_folder(request, folder_id: int):
 
 @folders_router.post("")
 def create_folder(request, payload: sc.CreateFolder):
+    owner_ref = User.objects.get(pk=payload.owner_id)
+
     Folder.objects.create(
-        name=payload.name
+        name=payload.name,
+        owner=owner_ref
     )
