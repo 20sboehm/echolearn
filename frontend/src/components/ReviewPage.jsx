@@ -19,7 +19,7 @@ const dummyCards = [
   },
 ]
 
-function ReviewCard({ card, showAnswer, setShowAnswer }) {
+function ReviewCard({ card, showAnswer, setShowAnswer, handleNextCard }) {
 
   const changeShowAnswer = () => {
     setShowAnswer(true);
@@ -27,24 +27,49 @@ function ReviewCard({ card, showAnswer, setShowAnswer }) {
 
   return (
     <div className="card">
-      <h3>{card.question}</h3>
-      {/* Right now the button and answer test is tie together */}
-      {/* TODO: split them up */}
-      {!showAnswer && (
-        <button onClick={changeShowAnswer}>Reveal Answer</button>
+      <div className={`reviewCard ${showAnswer ? "show" : "hide"}`}>
+          <p className="question">{card.question}</p>
+          <p className="answer">{card.answer}</p>
+      </div>
+      {!showAnswer && <button className="answerChoice" onClick={changeShowAnswer}>Reveal Answer</button>}
+      {showAnswer && (
+        <div className="answerChoice">
+          <button className="againButton" onClick={handleNextCard}>Again <br /> 10m</button>
+          <button className="hardButton" onClick={handleNextCard}>Hard <br /> 1h</button>
+          <button className="goodButton" onClick={handleNextCard}>Good <br /> 6h</button>
+          <button className="easyButton" onClick={handleNextCard}>Easy <br /> 1d</button>
+        </div>
       )}
-      {showAnswer && <p>{card.answer}</p>}
     </div>
   );
+}
+
+function FinishView() {
+  return (
+    <div className="finishView"> 
+      <img className="partyPopper" src="../party-popper-flip.png" alt="Party Popper" />
+      <div className="finishViewMiddle">
+        <h3 className="finishText">You have study all the cards</h3>
+        <Link to="/User">
+          <button>Back to deck</button>
+        </Link>
+      </div>
+      <img className="partyPopper" src="../party-popper.png" alt="Party Popper" />
+    </div>
+  )
 }
 
 function Review() {
   const [cardIndex, setcardIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
+  const [finish, setFinish] = useState(false);
 
   const handleNextCard = () => {
     setcardIndex(cardIndex + 1);
     setShowAnswer(false)
+    if (cardIndex === dummyCards.length -1){
+      setFinish(true)
+    }
   };
 
   return (
@@ -52,10 +77,9 @@ function Review() {
       <Header />
       <Sidebar />
       <div className="reviewContainer">
-        <ReviewCard card={dummyCards[cardIndex]} showAnswer={showAnswer} setShowAnswer={setShowAnswer} />
-        {cardIndex < dummyCards.length - 1 && (
-          <button onClick={handleNextCard}>Next</button>
-        )}
+        <h2 className="deckName">Database</h2>
+        {!finish && <ReviewCard card={dummyCards[cardIndex]} showAnswer={showAnswer} setShowAnswer={setShowAnswer} handleNextCard={handleNextCard} />}
+        {finish && <FinishView />}
       </div>
     </div>
   );
