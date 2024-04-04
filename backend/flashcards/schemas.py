@@ -60,3 +60,19 @@ class CreateCard(Schema):
     deck_id: int
     question: str
     answer: str
+
+# -----------------------------------------------
+# ------------------ Sidebar --------------------
+# -----------------------------------------------
+
+class DeckInfo(Schema):
+    deck_id: int
+    name: str
+
+class FolderInfo(Schema):
+    folder_id: int
+    name: str
+    decks: list[DeckInfo]
+
+class GetSidebar(Schema):
+    Folders: list[FolderInfo]
