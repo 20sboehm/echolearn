@@ -21,6 +21,8 @@ const dummyCards = [
 
 function ReviewCard({ card, showAnswer, setShowAnswer, handleNextCard }) {
 
+  const { deckId } = useParams();
+  
   const changeShowAnswer = () => {
     setShowAnswer(true);
   };

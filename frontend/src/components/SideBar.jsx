@@ -40,6 +40,7 @@ function SidebarContent({ isOpen, sidebarRef }) {
         <button onClick={createDefaultFolder}>Create</button>
       ) : (
         <div className="Folders">
+          
           <ul>
             {sidebarData.Folders.map(folder => (
               <li key={folder.folder_id} onClick={() => openFolder(folder.folder_id)}>
