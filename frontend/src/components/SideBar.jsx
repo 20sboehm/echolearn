@@ -14,7 +14,6 @@ function SidebarContent({ isOpen, sidebarRef }) {
         response.json()
       ),
     onSuccess: () => {
-      console.log(sidebarData)
       setFolderCreated(true)
     },
     onError: () => {
@@ -44,11 +43,21 @@ function SidebarContent({ isOpen, sidebarRef }) {
           <ul>
             {sidebarData.Folders.map(folder => (
               <li key={folder.folder_id} onClick={() => openFolder(folder.folder_id)}>
-                {folder.name}
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <img src={openFolderIds.includes(folder.folder_id) ? "../folder_Open.png" : "../folder_Close.png"} 
+                    style={{ width: openFolderIds.includes(folder.folder_id) ? "15%" : "10%", marginRight:"5px"}}/>
+                  <span>{folder.name}</span>
+                </div>
                 {openFolderIds.includes(folder.folder_id) && (
                 <ul>
                   {folder.decks.map(deck => (
-                    <li key={deck.deck_id}>{deck.name}</li>
+                    <li key={deck.deck_id}>
+                      {/* it should work after we got the deck page done */}
+                        <Link to={`/decks/${deck.deck_id}`} style={{ display: "flex", alignItems: "center"  }}>
+                          <img src="../Decks.png" style={{ width: "25%" }} />
+                          {deck.name}
+                        </Link>
+                    </li>
                   ))}
                 </ul>
                 )}
