@@ -43,3 +43,6 @@ yarn-error.log*
 
 # Ignore .DS_Store files on macOS
 .DS_Store
+
+# Ignore database log in information
+config.json
