@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import "./ReviewPage.css";
 import Sidebar from "./SideBar";
 import Header from "./Header";
+import Markdown from 'react-markdown'
 
 const dummyCards = [
   {
@@ -25,15 +26,20 @@ function ReviewCard({ card, showAnswer, setShowAnswer }) {
     setShowAnswer(true);
   };
 
+  const markdownTextQuetion = `*${card.question}*`;
+  const markdownTextAnswer = `*${card.answer}*`;
   return (
     <div className="card">
-      <h3>{card.question}</h3>
+      <h3><Markdown>{markdownTextQuetion}</Markdown></h3>
+
+      {/* <h3>{card.question}</h3> */}
+
       {/* Right now the button and answer test is tie together */}
       {/* TODO: split them up */}
       {!showAnswer && (
         <button onClick={changeShowAnswer}>Reveal Answer</button>
       )}
-      {showAnswer && <p>{card.answer}</p>}
+      {showAnswer && <Markdown>{markdownTextAnswer}</Markdown>}
     </div>
   );
 }
