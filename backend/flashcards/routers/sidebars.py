@@ -4,25 +4,25 @@ from django.contrib.auth.models import User
 from typing import List
 import flashcards.schemas as sc
 
-router = Router()
+sidebar_router = Router(tags=["Sidebar"])
 
 # Right now it get all the folder without care who the user is
-@router.get("/", response=sc.GetSidebar)
+@sidebar_router.get("", response=sc.GetSidebar)
 def get_sidebarinfo(request):
     sidebar_data = []
-    folders = Folder.objects.all()
+    folders = Folder.objects.filter(owner_id=1)
     for folder in folders:
-        folder_data = {
-            "folder_id": folder.folder_id,
-            "name": folder.name,
-            "decks": []
-        }
+        folder_data = sc.FolderInfo(
+            folder_id=folder.folder_id,
+            name=folder.name,
+            decks=[]
+        )
         decks = Deck.objects.filter(folder=folder)
         for deck in decks:
-            folder_data["decks"].append({
-                "deck_id": deck.deck_id,
-                "name": deck.name
-        })
+            folder_data.decks.append(sc.DeckInfo(
+                deck_id=deck.deck_id,
+                name=deck.name
+            ))
         sidebar_data.append(folder_data)
-    return sidebar_data
+    return sc.GetSidebar(Folders=sidebar_data)
         
