@@ -12,8 +12,6 @@ def get_reviews(request, deck_id: int):
 
     cards = Card.objects.filter(deck=deck)
     today = datetime.now(cards.first().next_review.tzinfo)
-    print("Today:", today)
-
 
     reviewSets = []
     for card in cards:
