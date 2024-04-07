@@ -8,7 +8,7 @@ sidebar_router = Router(tags=["Sidebar"])
 
 # Right now it get all the folder without care who the user is
 @sidebar_router.get("", response=sc.GetSidebar)
-def get_sidebarinfo(request):
+def get_sidebar_info(request):
     sidebar_data = []
     folders = Folder.objects.filter(owner_id=1)
     for folder in folders:

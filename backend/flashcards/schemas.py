@@ -61,6 +61,17 @@ class CreateCard(Schema):
     question: str
     answer: str
 
+class Cards(Schema):
+    card_id: int
+    question: str
+    answer: str
+    bucket: int
+    next_review: datetime
+
+class ReviewCards(Schema):
+    deck_id: int
+    cards: list[Cards]
+
 # -----------------------------------------------
 # ------------------ Sidebar --------------------
 # -----------------------------------------------
