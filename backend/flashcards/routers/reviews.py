@@ -1,7 +1,8 @@
+import json
 from ninja import Router
 from flashcards.models import Deck, Card
 from django.contrib.auth.models import User
-from datetime import datetime
+from datetime import datetime, timedelta
 import flashcards.schemas as sc
 
 review_router = Router(tags=["Review"])
@@ -24,4 +25,22 @@ def get_reviews(request, deck_id: int):
                 "next_review": card.next_review
             })
 
-    return {"deck_id": deck.deck_id, "cards": reviewSets}
+    return {"deck_id": deck.deck_id, "deck_name": deck.name, "cards": reviewSets}
+
+@review_router.post("/{card_id}/update", response=sc.GetCard)
+def update_review(request, card_id: int):
+    try:
+        card = Card.objects.get(card_id=card_id)
+    except Card.DoesNotExist:
+        return 404, {"message": "Card not found"}
+
+    # Extract the time value from the request body
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+    time_value = int(body.get("time_value", 0))
+
+    # Add the specified time interval to the current next_review time
+    card.next_review += timedelta(milliseconds=time_value)
+    card.save()
+
+    return card

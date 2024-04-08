@@ -70,6 +70,7 @@ class Cards(Schema):
 
 class ReviewCards(Schema):
     deck_id: int
+    deck_name: str
     cards: list[Cards]
 
 # -----------------------------------------------

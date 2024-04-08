@@ -46,21 +46,38 @@ function Review() {
       fetch(`http://localhost:8000/api/reviews/${deckId}`).then((response) =>
         response.json()
       ),
-    onSuccess: () => {
-      console.log(reviews)
-    },
-    onError: () => {
-      console.log('An error occurred fetching reviews')
-    }
   });
 
-  const handleNextCard = () => {
-    setCardIndex(cardIndex + 1);
-    setShowAnswer(false)
-    if (cardIndex === reviews.cards.length -1){
-      setFinish(true)
-    }
+  const handleNextCard = (interval) => {
+    // Calculate the new next_review time based on the interval
+    const now = new Date();
+    const nextReviewTime = new Date(now.getTime() + interval);
+  
+    // Make a POST request to update the next_review of the current card
+    fetch(`http://localhost:8000/api/reviews/${reviews.cards[cardIndex].card_id}/update`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ time_value: interval }),
+    })
+      .then(response => {
+        if (response.ok) {
+          if (cardIndex < reviews.cards.length - 1) {
+            setCardIndex(cardIndex + 1);
+            setShowAnswer(false);
+          } else {
+            setFinish(true);
+          }
+        } else {
+          console.error('Failed to update next_review');
+        }
+      })
+      .catch(error => {
+        console.error('Error updating next_review:', error);
+      });
   };
+  
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -75,7 +92,7 @@ function Review() {
       <Header />
       {/* <Sidebar /> */}
       <div className="reviewContainer">
-        <h2 className="deckName">Database</h2>
+        <h2 className="deckName">{reviews.deck_name}</h2>
         {!finish && (
           <ReviewCard
             card={reviews.cards[cardIndex]}
@@ -89,7 +106,6 @@ function Review() {
     </div>
   );
 }
-
 
 
 function ReviewCard({ card, showAnswer, setShowAnswer, handleNextCard }) {
@@ -107,16 +123,15 @@ function ReviewCard({ card, showAnswer, setShowAnswer, handleNextCard }) {
       {!showAnswer && <button className="answerChoice" onClick={changeShowAnswer}>Reveal Answer</button>}
       {showAnswer && (
         <div className="answerChoice">
-          <button className="againButton" onClick={handleNextCard}>Again <br /> 10m</button>
-          <button className="hardButton" onClick={handleNextCard}>Hard <br /> 1h</button>
-          <button className="goodButton" onClick={handleNextCard}>Good <br /> 6h</button>
-          <button className="easyButton" onClick={handleNextCard}>Easy <br /> 1d</button>
+          {/* The math is converting it into milliseconds */}
+          <button className="againButton" onClick={() => handleNextCard(10 * 60 * 1000)}>Again <br /> 10m</button>
+          <button className="hardButton" onClick={() => handleNextCard(1 * 60 * 60 * 1000)}>Hard <br /> 1h</button>
+          <button className="goodButton" onClick={() => handleNextCard(6 * 60 * 60 * 1000)}>Good <br /> 6h</button>
+          <button className="easyButton" onClick={() => handleNextCard(24 * 60 * 60 * 1000)}>Easy <br /> 1d</button>
         </div>
       )}
     </div>
   );
 }
-
-
 
 export default Review
