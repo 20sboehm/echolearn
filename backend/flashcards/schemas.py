@@ -60,3 +60,31 @@ class CreateCard(Schema):
     deck_id: int
     question: str
     answer: str
+
+class Cards(Schema):
+    card_id: int
+    question: str
+    answer: str
+    bucket: int
+    next_review: datetime
+
+class ReviewCards(Schema):
+    deck_id: int
+    deck_name: str
+    cards: list[Cards]
+
+# -----------------------------------------------
+# ------------------ Sidebar --------------------
+# -----------------------------------------------
+
+class DeckInfo(Schema):
+    deck_id: int
+    name: str
+
+class FolderInfo(Schema):
+    folder_id: int
+    name: str
+    decks: list[DeckInfo]
+
+class GetSidebar(Schema):
+    Folders: list[FolderInfo]
