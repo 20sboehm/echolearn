@@ -31,7 +31,7 @@ function Header() {
     )
   } else {
     return (
-      <header className="py-3 fixed top-0 left-0 w-full bg-userHeaderColor">
+      <header className="h-16 flex justify-center top-0 left-0 w-full bg-userHeaderColor">
         <div className="w-screen flex flex-row justify-around">
           <div className="flex mr-auto ml-20">
             <Link to="/" className="flex items-center">

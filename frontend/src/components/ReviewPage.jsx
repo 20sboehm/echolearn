@@ -2,7 +2,6 @@ import { useState, useRef } from "react";
 import { Link, useParams } from "react-router-dom";
 import "./ReviewPage.css";
 import Sidebar from "./SideBar";
-import Header from "./Header";
 
 const dummyCards = [
   {
@@ -74,7 +73,6 @@ function Review() {
 
   return (
     <div>
-      <Header />
       <Sidebar />
       <div className="reviewContainer">
         <h2 className="deckName">Database</h2>
