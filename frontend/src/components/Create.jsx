@@ -2,7 +2,6 @@ import { useQuery } from "react-query";
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import SideBar from "./SideBar.jsx";
-import UserHeader from "./Header.jsx";
 import "./Create.css";
 
 function Create() {
@@ -20,7 +19,6 @@ function Create() {
 
   return (
     <div className="card-create-page">
-      <UserHeader />
       <SideBar />
       <div className="selection">
         {/* Folder Dropdown, later will change to folder that the user has */}

@@ -3,7 +3,6 @@ import { useMutation, useQuery } from 'react-query';
 import { Link, useParams } from "react-router-dom";
 import "./ReviewPage.css";
 import Sidebar from "./SideBar";
-import Header from "./Header";
 
 const dummyCards = [
   {
@@ -89,8 +88,7 @@ function Review() {
 
   return (
     <div>
-      <Header />
-      {/* <Sidebar /> */}
+      <Sidebar />
       <div className="reviewContainer">
         <h2 className="deckName">{reviews.deck_name}</h2>
         {!finish && (
