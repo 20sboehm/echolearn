@@ -1,13 +1,37 @@
 import { useState, useRef } from "react";
+import { useMutation, useQuery } from 'react-query';
 import { Link, useParams } from "react-router-dom";
 import "./SideBar.css";
 
 function SidebarContent({ isOpen, sidebarRef }) {
   const [folderCreated, setFolderCreated] = useState(false);
+  const [openFolderIds, setOpenFolderIds] = useState([]);
+
+  // Fetch sidebar info
+  const { data: sidebarData, isLoading, error } = useQuery({
+    queryFn: () =>
+      fetch(`http://127.0.0.1:8000/api/sidebar`).then((response) =>
+        response.json()
+      ),
+    onSuccess: () => {
+      setFolderCreated(true)
+    },
+    onError: () => {
+      console.log('An error occurred fetching sidebar')
+    }
+  });
 
   const createDefaultFolder = () => {
     setFolderCreated(true)
   };
+
+  const openFolder = (folderId) => {
+    if(openFolderIds.includes(folderId)) {
+      setOpenFolderIds(openFolderIds.filter(id => id !== folderId));
+    }else {
+      setOpenFolderIds(openFolderIds.concat(folderId));
+    }
+  }
 
   // This will need be modify it with how the json (data) will be look like
   return (
@@ -16,19 +40,30 @@ function SidebarContent({ isOpen, sidebarRef }) {
         <button onClick={createDefaultFolder}>Create</button>
       ) : (
         <div className="Folders">
+          
           <ul>
-            <li>Library</li>
-            <ul>
-              <li>Database</li>
-              <ul>
-                <li>Locks</li>
-              </ul>
-              <li>Computer System</li>
-              <ul>
-                <li>Bit Shift</li>
-                <li>Assembly x86</li>
-              </ul>
-            </ul>
+            {sidebarData.Folders.map(folder => (
+              <li key={folder.folder_id} onClick={() => openFolder(folder.folder_id)}>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <img src={openFolderIds.includes(folder.folder_id) ? "../folder_Open.png" : "../folder_Close.png"} 
+                    style={{ width: openFolderIds.includes(folder.folder_id) ? "15%" : "10%", marginRight:"5px"}}/>
+                  <span>{folder.name}</span>
+                </div>
+                {openFolderIds.includes(folder.folder_id) && (
+                <ul>
+                  {folder.decks.map(deck => (
+                    <li key={deck.deck_id}>
+                      {/* it should work after we got the deck page done */}
+                        <Link to={`/decks/${deck.deck_id}`} style={{ display: "flex", alignItems: "center"  }}>
+                          <img src="../Decks.png" style={{ width: "25%" }} />
+                          {deck.name}
+                        </Link>
+                    </li>
+                  ))}
+                </ul>
+                )}
+              </li>
+            ))}
           </ul>
         </div>
       )}

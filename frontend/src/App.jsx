@@ -37,7 +37,7 @@ function App() {
           <Route path="/cards" element={<CreateCard />} />
           <Route path="/decks" element={<CreateDeck />} />
           <Route path="/folders" element={<CreateFolder />} />
-          <Route path="/review" element={<Review />} />
+          <Route path="/review/:deckId" element={<Review />} />
           <Route path="/help" element={<h1>This is the help page</h1>} />
           <Route path="/create" element={<Create />} />
           <Route path="/cards/:cardId" element={<CardPage />} />
