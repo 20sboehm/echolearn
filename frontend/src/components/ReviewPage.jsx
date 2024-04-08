@@ -88,7 +88,7 @@ function Review() {
 
   return (
     <div>
-      <Sidebar />
+      {/* <Sidebar /> */}
       <div className="reviewContainer">
         <h2 className="deckName">{reviews.deck_name}</h2>
         {!finish && (
