@@ -2,7 +2,7 @@ import json
 from ninja import Router
 from flashcards.models import Deck, Card
 from django.contrib.auth.models import User
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import flashcards.schemas as sc
 
 review_router = Router(tags=["Review"])
@@ -12,7 +12,7 @@ def get_reviews(request, deck_id: int):
     deck = Deck.objects.get(deck_id=deck_id)
 
     cards = Card.objects.filter(deck=deck)
-    today = datetime.now(cards.first().next_review.tzinfo)
+    today = datetime.now(timezone.utc)
 
     reviewSets = []
     for card in cards:
@@ -40,7 +40,9 @@ def update_review(request, card_id: int):
     time_value = int(body.get("time_value", 0))
 
     # Add the specified time interval to the current next_review time
-    card.next_review += timedelta(milliseconds=time_value)
+    today = datetime.now()
+    card.next_review = today + timedelta(milliseconds=time_value)
+    card.last_reviewed = today
     card.save()
 
     return card
