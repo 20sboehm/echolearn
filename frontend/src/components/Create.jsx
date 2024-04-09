@@ -18,7 +18,7 @@ function Create() {
   const [image, setImage] = useState(null);
   const [imageUrl, setImageUrl] = useState(''); 
   const url =  "https://www.youtube.com/embed/dQw4w9WgXcQ";
-  
+  const iseditable = true;
   // Define functions to handle dropdown value changes
   const folderChange = (event) => {
     setFolderValue(event.target.value);
@@ -37,6 +37,13 @@ function Create() {
     }
     setrequirement(value);
   }
+  const makeLink =()=> {
+    const url = prompt("Enter the URL:", "http://");
+    console.log(url);
+    //iseditable = !iseditable;
+    document.execCommand('createLink', false, url);
+  }
+  
   const handleEditorChange = (event) => {
     setEditorContent(event.currentTarget.textContent);
   };
@@ -112,16 +119,15 @@ function Create() {
       <h2>Following will be the text editor to create cards</h2>
 
       <form  onSubmit={handleSubmit}>
-        <button type = "button" onClick={() => handleRequirement('Image')}>Image</button>
+        <button type = "button" onClick={() => handleRequirement('image')}>Image</button>
         <button type = "button" onClick={() => handleRequirement('video')}>video</button>
         <button type = "button" onClick={() => formatText('bold')}>bold</button>
         <button type = "button" onClick={() => formatText('italic')}>italic</button>
         <button type = "button" onClick={() => formatText('underline')}>underline</button>
-        <button type = "button" onClick={() => formatText('insertUnorderedList')}>orderedlist</button>
         <button type = "button" onClick={() => handleRequirement('latex')}>latex</button>
-        <button type = "button" onClick={() => handleRequirement('URL')}>URL</button>
+        <button type = "button" onClick={() => makeLink()}>URL</button>
   
-        <div contentEditable={true} onBlur={handleEditorChange} className="editableArea" style={{border: '1px solid black', textAlign: 'left',  minHeight: '100px', padding: '10px', marginTop: '10px',backgroundColor:'grey'}}>
+        <div contentEditable={iseditable} onBlur={handleEditorChange} className="editableArea" style={{border: '1px solid black', textAlign: 'left',  minHeight: '100px', padding: '10px', marginTop: '10px',backgroundColor:'grey'}}>
         {editorContent}
         </div>
 
@@ -135,10 +141,12 @@ function Create() {
           )}
         </div>
       )}
-      
-      <input type="file" accept="image/*"  onChange={handleImageChange}></input>
-      {imageUrl && <img src={imageUrl} alt="Uploaded" style={{maxWidth: '500px', maxHeight: '500px'}} />}
-      
+       {requirement === 'image' && (
+        <div>
+        <input type="file" accept="image/*"  onChange={handleImageChange}></input>
+        <img src={imageUrl} alt="Uploaded" style={{maxWidth: '500px', maxHeight: '500px'}} />
+        </div>
+       )}
       <button type='submit'>Submit</button>
       
       </form>
