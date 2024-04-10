@@ -1,8 +1,10 @@
+import json
 from ninja import Router
 from flashcards.models import Folder
 from django.contrib.auth.models import User
 from typing import List
 import flashcards.schemas as sc
+from django.shortcuts import get_object_or_404
 
 folders_router = Router(tags=["Folders"])
 
@@ -24,3 +26,13 @@ def create_folder(request, payload: sc.CreateFolder):
         name=payload.name,
         owner=owner_ref
     )
+    
+@folders_router.ptach("/{folder_id}", response={200: sc.GetFolder, 404: str})
+def update_deck(request, folder_id: int, payload:sc.UpdateFolder): 
+    folder = get_object_or_404(Folder, deck_id = folder_id)
+    
+    for name in payload.dict().items:
+        setattr(folder,name)  
+    folder.save()
+    
+    return folder

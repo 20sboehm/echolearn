@@ -1,8 +1,10 @@
+import json
 from ninja import Router
 from flashcards.models import Deck, Folder
 from django.contrib.auth.models import User
 from typing import List
 import flashcards.schemas as sc
+from django.shortcuts import get_object_or_404
 
 decks_router = Router(tags=["Decks"])
 
@@ -27,3 +29,13 @@ def create_deck(request, payload: sc.CreateDeck):
         name=payload.name,
         description=payload.description
     )
+    
+@decks_router.ptach("/{deck_id}", response={200: sc.GetDeck, 404: str})
+def update_deck(request, deck_id: int, payload:sc.UpdateDeck): 
+    deck = get_object_or_404(Deck, deck_id = deck_id)
+    
+    for name, description in payload.dict().items:
+        setattr(deck,name,description)  
+    deck.save()
+    
+    return deck
