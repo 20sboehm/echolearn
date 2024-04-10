@@ -30,7 +30,7 @@ def create_deck(request, payload: sc.CreateDeck):
         description=payload.description
     )
     
-@decks_router.ptach("/{deck_id}", response={200: sc.GetDeck, 404: str})
+@decks_router.patch("/{deck_id}", response={200: sc.GetDeck, 404: str})
 def update_deck(request, deck_id: int, payload:sc.UpdateDeck): 
     deck = get_object_or_404(Deck, deck_id = deck_id)
     

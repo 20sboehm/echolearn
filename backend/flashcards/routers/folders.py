@@ -27,7 +27,7 @@ def create_folder(request, payload: sc.CreateFolder):
         owner=owner_ref
     )
     
-@folders_router.ptach("/{folder_id}", response={200: sc.GetFolder, 404: str})
+@folders_router.patch("/{folder_id}", response={200: sc.GetFolder, 404: str})
 def update_deck(request, folder_id: int, payload:sc.UpdateFolder): 
     folder = get_object_or_404(Folder, deck_id = folder_id)
     

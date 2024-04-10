@@ -28,7 +28,7 @@ def create_card(request, payload: sc.CreateCard):
     )
     
     
-@cards_router.ptach("/{card_id}", response={200: sc.GetCard, 404: str})
+@cards_router.patch("/{card_id}", response={200: sc.GetCard, 404: str})
 def update_card(request, card_id: int, payload:sc.UpdateCard):
  
     card = get_object_or_404(Card, card_id = card_id)
