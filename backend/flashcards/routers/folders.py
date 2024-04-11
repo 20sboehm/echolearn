@@ -36,3 +36,9 @@ def update_deck(request, folder_id: int, payload:sc.UpdateFolder):
     folder.save()
     
     return folder
+
+@folders_router.delete("/{folder_id}")
+def delete_deck(request, folder_id: int): 
+    folder = get_object_or_404(Folder, deck_id = folder_id)
+    
+    folder.delete()

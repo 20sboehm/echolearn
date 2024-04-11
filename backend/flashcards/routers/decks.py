@@ -1,6 +1,6 @@
 import json
 from ninja import Router
-from flashcards.models import Deck, Folder
+from flashcards.models import Deck, Folder, Card
 from django.contrib.auth.models import User
 from typing import List
 import flashcards.schemas as sc
@@ -39,3 +39,13 @@ def update_deck(request, deck_id: int, payload:sc.UpdateDeck):
     deck.save()
     
     return deck
+
+@decks_router.delete("/{deck_id}")
+def delete_deck(request, deck_id: int): 
+   deck = get_object_or_404(Deck, deck_id = deck_id)
+   deck.delete()
+
+@decks_router.get("/{deck_id}/cards", response=List[sc.GetCard])
+def get_cards_from_deck(request, deck_id: int):
+    card_list = Card.objects.get(deck_id = deck_id)
+    return card_list

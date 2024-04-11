@@ -39,4 +39,9 @@ def update_card(request, card_id: int, payload:sc.UpdateCard):
     
     return card
 
+@cards_router.delete("/{card_id}")
+def delete_card(request, card_id: int):
+    card = get_object_or_404(Card, card_id = card_id)
+    
+    card.delete()
    
