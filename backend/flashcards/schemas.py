@@ -16,10 +16,12 @@ class GetFolder(Schema):
     name: str
     last_edited: datetime
     created_at: datetime
+    parent_id: Optional[int]
 
 class CreateFolder(Schema):
     name: str
     owner_id: int
+    parent_id: Optional[int] = None
 
 # -----------------------------------------------
 # -------------------- Decks --------------------
