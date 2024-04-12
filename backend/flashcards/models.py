@@ -7,6 +7,7 @@ class Folder(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE) 
     created_at= models.DateTimeField(auto_now_add=True)
     last_edited = models.DateTimeField(auto_now_add=True)
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
 
     def __str__(self):
         return f"{self.name} (id={self.folder_id})"
