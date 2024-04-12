@@ -4,20 +4,6 @@ import { Link, useParams } from "react-router-dom";
 import "./ReviewPage.css";
 import Sidebar from "./SideBar";
 
-const dummyCards = [
-  {
-    "question": "Question 1",
-    "answer": "Answer 1"
-  },
-  {
-    "question": "Question 2",
-    "answer": "Answer 2"
-  },
-  {
-    "question": "Question 3",
-    "answer": "Answer 3"
-  },
-]
 function FinishView() {
   return (
     <div className="finishView"> 
@@ -77,13 +63,17 @@ function Review() {
       });
   };
   
-
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
   if (error) {
     return <div>Error: {error.message}</div>;
+  }
+
+  // Check if reviews data is available
+  if (!reviews || !reviews.cards || reviews.cards.length === 0) {
+    return <div>No cards found for review.</div>;
   }
 
   return (
