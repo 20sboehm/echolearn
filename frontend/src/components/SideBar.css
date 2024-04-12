@@ -1,25 +1,30 @@
 .sidebar {
-    width: 200px;
+    width: 300px;
     background-color: #f0f0f0;
     padding: 20px;
     position: fixed;
-    top: 64px;
-    left: -200px;
+    left: -300px;
     bottom: 0;
+    top: 60px;
     transition: transform 0.5s ease-in-out;
-    transform: translateX(-200px);
 }
   
 .sidebarButton {
     position: fixed;
     margin-left: 5px;
+    left: 10px;
     top: 50%;
+    transition: transform 0.5s ease-in-out;
+    border: 1px solid black;
+}
+
+.sidebarButton.open {
+    transform: translateX(300px);
 }
 
 .sidebar.open {
-    transform: translateX(200px);
+    transform: translateX(300px);
 }
-
 
 .Folders li {
     color: black;
