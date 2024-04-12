@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from 'react-query';
 import { useState } from 'react';
-import UserHeader from './Header'
+import SideBar from './SideBar'
 
 function CreateFolder() {
   const [showPopup, setShowPopup] = useState(false);
@@ -50,18 +50,22 @@ function CreateFolder() {
 
   return (
     <>
-      <UserHeader />
+      <SideBar />
       <h1 className='text-4xl mb-10 mt-10 font-medium'>New Folder</h1>
-      <form onSubmit={handleSubmit} className='flex flex-col'>
-        <input 
-          type='text' 
-          value={folderName} 
-          onChange={(e) => {setFolderName(e.target.value)}} 
-          placeholder='Folder Name' 
-          className='mb-4 p-2 rounded-md' 
+      <form onSubmit={handleSubmit} className='flex flex-col items-center'>
+        <input
+          type='text'
+          value={folderName}
+          onChange={(e) => { setFolderName(e.target.value) }}
+          placeholder='Folder Name'
+          className='mb-4 p-2 rounded-md'
           style={{ width: '30vw' }}
         />
-        <button type='submit'>Submit</button>
+        <button type='submit' class="rounded-lg border border-transparent px-4 py-2 
+          font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+          active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>
+          Submit
+        </button>
       </form>
       {showPopup && (
         <div className={`fixed bottom-20 left-1/2 -translate-x-1/2 transform p-4 bg-${popupColor}-500 rounded-md transition-opacity duration-1000 ${popupOpacity}`}>
