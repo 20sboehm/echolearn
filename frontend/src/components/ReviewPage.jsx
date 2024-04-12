@@ -9,9 +9,9 @@ function FinishView() {
     <div className="finishView"> 
       <img className="partyPopper" src="../party-popper-flip.png" alt="Party Popper" />
       <div className="finishViewMiddle">
-        <h3 className="finishText">You have study all the cards</h3>
+        <h3 className="finishText">You have studied all the cards in this deck</h3>
         <Link to="/home">
-          <button>Back to deck</button>
+          <button className="border rounded-md px-2 py-1">Back to deck</button>
         </Link>
       </div>
       <img className="partyPopper" src="../party-popper.png" alt="Party Popper" />
@@ -79,8 +79,8 @@ function Review() {
   return (
     <div>
       <Sidebar />
-      <div className="reviewContainer">
-        <h2 className="deckName">{reviews.deck_name}</h2>
+      <div className="border rounded-lg p-8 mt-40 h-[60vh] w-[40vw] flex flex-col">
+        <h2 className="mb-40 text-center text-[2em]">{reviews.deck_name}</h2>
         {!finish && (
           <ReviewCard
             card={reviews.cards[cardIndex]}
@@ -101,21 +101,21 @@ function ReviewCard({ card, showAnswer, setShowAnswer, handleNextCard }) {
   const changeShowAnswer = () => {
     setShowAnswer(true);
   };
-
+  
   return (
-    <div className="card">
+    <div className="flex flex-col items-center">
       <div className={`reviewCard ${showAnswer ? "show" : "hide"}`}>
-          <p className="question">{card.question}</p>
-          <p className="answer">{card.answer}</p>
+          <p className="question h-20">{card.question}</p>
+          <p className="answer h-20">{card.answer}</p>
       </div>
-      {!showAnswer && <button className="answerChoice" onClick={changeShowAnswer}>Reveal Answer</button>}
+      {!showAnswer && <button className="mt-8 border rounded-md w-[50%]" onClick={changeShowAnswer}>Reveal Answer</button>}
       {showAnswer && (
-        <div className="answerChoice">
+        <div className="flex justify-center mt-8">
           {/* The math is converting it into milliseconds */}
-          <button className="againButton" onClick={() => handleNextCard(10 * 60 * 1000)}>Again <br /> 10m</button>
-          <button className="hardButton" onClick={() => handleNextCard(1 * 60 * 60 * 1000)}>Hard <br /> 1h</button>
-          <button className="goodButton" onClick={() => handleNextCard(6 * 60 * 60 * 1000)}>Good <br /> 6h</button>
-          <button className="easyButton" onClick={() => handleNextCard(24 * 60 * 60 * 1000)}>Easy <br /> 1d</button>
+          <button className="againButton" onClick={() => handleNextCard(1000 * 60 * 10)}>Again <br /> 10m</button>
+          <button className="hardButton" onClick={() => handleNextCard(1000 * 60 * 60)}>Hard <br /> 1h</button>
+          <button className="goodButton" onClick={() => handleNextCard(1000 * 60 * 60 * 6)}>Good <br /> 6h</button>
+          <button className="easyButton" onClick={() => handleNextCard(1000 * 60 * 60 * 24)}>Easy <br /> 1d</button>
         </div>
       )}
     </div>

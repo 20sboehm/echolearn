@@ -54,10 +54,10 @@ function SidebarContent({ isOpen, sidebarRef }) {
       <div className="Folders">
         <ul>
           {sidebarData.Folders.map(folder => (
-            <li key={folder.folder_id} onClick={() => openFolder(folder.folder_id)}>
-              <div style={{ display: "flex", alignItems: "center" }}>
+            <li key={folder.folder_id} onClick={() => openFolder(folder.folder_id)} className="mb-4">
+              <div className="cursor-pointer" style={{ display: "flex", alignItems: "center" }}>
                 <img src={openFolderIds.includes(folder.folder_id) ? "../folder_Open.png" : "../folder_Close.png"} 
-                  style={{ width: openFolderIds.includes(folder.folder_id) ? "15%" : "10%", marginRight:"5px"}}/>
+                  style={{ width: openFolderIds.includes(folder.folder_id) ? "15%" : "12%", marginRight:"8px"}}/>
                 <span>{folder.name}</span>
               </div>
               {openFolderIds.includes(folder.folder_id) && (
@@ -82,18 +82,9 @@ function SidebarContent({ isOpen, sidebarRef }) {
 
 
 function SidebarButton({ isOpen, toggleSidebar, sidebarRef }) {
-  const sidebarRect = isOpen ? sidebarRef.current.getBoundingClientRect() : null;
-  const buttonPosition = isOpen ? sidebarRect.width - 20 : 0;
-
-  const buttonStyle = {
-    left: buttonPosition + "px",
-    transform: "rotate(270deg)",
-    transition: "right 0.5s ease-in-out",
-  };
-
   return (
-    <button className="sidebarButton" style={buttonStyle} onClick={toggleSidebar}>
-      {isOpen ? "Close" : "Open"}
+    <button className={`sidebarButton p-2 py-1 rounded-md bg-[#383838] ${isOpen ? "open" : ""}`} onClick={toggleSidebar}>
+      {isOpen ? "←" : "→"}
     </button>
   );
 }
