@@ -1,11 +1,10 @@
 import { useQuery } from "react-query";
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import SideBar from "./SideBar";
-import Header from "./Header";
-import "./CardCreate.css";
+import SideBar from "./SideBar.jsx";
+import "./Create.css";
 
-function cardCreate() {
+function Create() {
   const [folders, setFolderValue] = useState("");
   const [decks, setDeckValue] = useState("");
 
@@ -20,7 +19,6 @@ function cardCreate() {
 
   return (
     <div className="card-create-page">
-      <Header />
       <SideBar />
       <div className="selection">
         {/* Folder Dropdown, later will change to folder that the user has */}
@@ -43,4 +41,4 @@ function cardCreate() {
   );
 }
 
-export default cardCreate;
+export default Create;

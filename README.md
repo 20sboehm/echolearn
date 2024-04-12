@@ -23,6 +23,16 @@ Install react-query:
 Install react-router-dom:
 `npm install react-router-dom`
 
+### --- Tailwind CSS ---
+
+VSCode Extensions:
+"Tailwind CSS IntelliSense"
+"PostCSS Language Support" - To remove warnings on @tailwind
+
+Run these commands:
+`npm install -D tailwindcss postcss autoprefixer`
+`npx tailwindcss init -p`
+
 ## --- Backend ---
 
 Generate migration files based on models:
@@ -54,6 +64,16 @@ python manage.py migrate
 // populate database with data from custom script
 python makedata.py
 ```
+
+
+
+python manage.py makemigrations
+rm db.sqlite3
+python manage.py migrate
+python makedata.py
+
+
+
 
 ^^^ IF THIS GIVES YOU THE ERROR ALONG THE LINES OF: "It is impossible to add the field 'created_at' with 'auto_now_add=True' to card without providing a default. This is because the database needs something to populate existing rows."
 
