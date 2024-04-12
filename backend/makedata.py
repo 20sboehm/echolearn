@@ -15,7 +15,7 @@ def initial_data():
     # Create folders
     history_folder = Folder.objects.create(name="History", owner=admin)
     math_folder = Folder.objects.create(name="Math", owner=admin)
-    calculus_folder = Folder.objects.create(name="Calculus", owner=admin, parent = math_folder)
+    calculus_folder = Folder.objects.create(name="Calculus", owner=admin, parent=math_folder)
 
     # Create decks
     us_pres_deck = Deck.objects.create(folder=history_folder, owner=admin, name="US Presidents", description="A deck for United States presidents.")
