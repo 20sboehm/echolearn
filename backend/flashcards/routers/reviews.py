@@ -40,7 +40,7 @@ def update_review(request, card_id: int):
     time_value = int(body.get("time_value", 0))
 
     # Add the specified time interval to the current next_review time
-    today = datetime.now()
+    today = datetime.now(timezone.utc)
     card.next_review = today + timedelta(milliseconds=time_value)
     card.last_reviewed = today
     card.save()

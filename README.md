@@ -65,6 +65,16 @@ python manage.py migrate
 python makedata.py
 ```
 
+
+
+python manage.py makemigrations
+rm db.sqlite3
+python manage.py migrate
+python makedata.py
+
+
+
+
 ^^^ IF THIS GIVES YOU THE ERROR ALONG THE LINES OF: "It is impossible to add the field 'created_at' with 'auto_now_add=True' to card without providing a default. This is because the database needs something to populate existing rows."
 
 -> This means that there is an unapplied migration file that is based off the old models.py, meaning it is trying to add incomplete rows
