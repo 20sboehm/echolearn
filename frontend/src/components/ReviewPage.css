@@ -9,8 +9,9 @@
 
 .deckName {
     position: relative;
+    font-weight: bold;
     top: -125px;
-    left: -200px;
+    /* left: -200px; */
 }
 
 .reviewCard {
@@ -71,11 +72,15 @@
 .answerChoice {
     position: relative;
     top: 80px;
+    left: 43%;
 }
-
 
 .againButton, .hardButton, .goodButton, .easyButton {
     color: black;
+    position: relative;
+    left: -13%;
+    padding: 0 1rem;
+    margin-right: 15px;
 }
 .againButton {
     background-color: rgb(236, 49, 49);
