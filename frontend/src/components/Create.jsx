@@ -144,7 +144,7 @@ function Create() {
        {requirement === 'image' && (
         <div>
         <input type="file" accept="image/*"  onChange={handleImageChange}></input>
-        <img src={imageUrl} alt="Uploaded" style={{maxWidth: '500px', maxHeight: '500px'}} />
+        <img src={imageUrl} style={{maxWidth: '500px', maxHeight: '500px'}} />
         </div>
        )}
       <button type='submit'>Submit</button>
