@@ -79,7 +79,7 @@ function Review() {
   return (
     <div>
       <Sidebar />
-      <div className="border rounded-lg p-8 mt-40 h-[60vh] w-[40vw] flex flex-col">
+      <div className="border rounded-lg p-8 mt-[10vh] h-[60vh] w-[40vw] flex flex-col">
         <h2 className="mb-40 text-center text-[2em]">{reviews.deck_name}</h2>
         {!finish && (
           <ReviewCard
