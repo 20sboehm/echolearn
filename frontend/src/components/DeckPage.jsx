@@ -102,12 +102,16 @@ function DeckPage() {
           </div>
         </div>
 
-        <h1>Cards In This Deck ({dummyData.cards.length})</h1>
         <div className="h-[50vh] overflow-y-auto">
           {dummyData.cards.map(card => (
             <div className="grid grid-cols-2 gap-4 font-medium px-2" key={card.card_id}>
               <p className="border bg-white text-black mt-2 px-2 py-2">{card.question}</p>
-              <p className="border bg-white text-black mt-2 px-2 py-2">{card.answer}</p>
+              <div className="border bg-white text-black mt-2 px-2 py-2 relative">
+                <p>{card.answer}</p>
+                <Link to={`/edit/${card.card_id}`}>
+                  <img src="../public/Edit_icon.png" alt="Edit_Icon" className="absolute top-0 right-0 h-6 w-8" />
+                </Link>
+              </div>
             </div>
           ))}
         </div>
