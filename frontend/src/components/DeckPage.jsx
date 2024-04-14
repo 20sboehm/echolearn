@@ -66,6 +66,20 @@ const dummyData = {
 }
 
 function DeckPage() {
+  const [deleteMode, setDeleteMode] = useState(false);
+
+  const changeMode = () => {
+    setDeleteMode(!deleteMode);
+  };
+
+  const handleCardClick = (cardId) => {
+    if (deleteMode) {
+      // Wanting on the backend
+      // Will be updated to sending a delete request to the backend
+      console.log("Deleting card with ID:", cardId);
+    }
+  };
+
   const { deckId } = useParams();
   return (
     <>
@@ -102,11 +116,19 @@ function DeckPage() {
           </div>
         </div>
 
+        <div className="flex flex-row items-center justify-between mt-2">
+          <h1>Cards In This Deck ({dummyData.cards.length})</h1>
+          <button className="rounded-lg border border-transparent px-2 py-1 
+              font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+              active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s"}} onClick={changeMode}>
+                {deleteMode ? "Cancel" : "Delete"}</button>
+        </div>
+
         <div className="h-[50vh] overflow-y-auto">
           {dummyData.cards.map(card => (
             <div className="grid grid-cols-2 gap-4 font-medium px-2" key={card.card_id}>
-              <p className="border bg-white text-black mt-2 px-2 py-2">{card.question}</p>
-              <div className="border bg-white text-black mt-2 px-2 py-2 relative">
+              <p className="border bg-white text-black mt-2 px-2 py-2" onClick={() => handleCardClick(card.card_id)}>{card.question}</p>
+              <div className="border bg-white text-black mt-2 px-2 py-2 relative" onClick={() => handleCardClick(card.card_id)}>
                 <p>{card.answer}</p>
                 <Link to={`/edit/${card.card_id}`}>
                   <img src="../public/Edit_icon.png" alt="Edit_Icon" className="absolute top-0 right-0 h-6 w-8" />

@@ -22,8 +22,6 @@ function EditPage() {
       setPopupOpacity('opacity-0'); // Start fading out
       setTimeout(() => setShowPopup(false), 1000); // Give it 1 second to fade
     }, 1000); // Stay fully visible for 1 second
-    // setQuestion('');
-    // setAnswer('');
   }
 
   // Fetch the card data
