@@ -1,6 +1,9 @@
 import { useMutation, useQuery } from 'react-query';
-import { useState } from 'react';
+import { useState , useEffect,useRef} from 'react';
 import SideBar from './SideBar'
+import ReactPlayer from 'react-player';
+import { BlockMath } from 'react-katex';
+import sanitizeHtml from 'sanitize-html';
 
 function CreateCard() {
   const [showPopup, setShowPopup] = useState(false);
@@ -8,9 +11,94 @@ function CreateCard() {
   const [popupColor, setPopupColor] = useState('');
   const [popupOpacity, setPopupOpacity] = useState('opacity-100');
 
+  const answerDivRef = useRef(null);
+  const questionDivRef = useRef(null);
+
   const [deckId, setDeckId] = useState('');
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');
+
+  const [Normal_question, setNormalQuestion] = useState('');
+  const [Normal_answer, setNormalAnswer] = useState('');
+
+
+  const [latexInput, setLatexInput] = useState('');
+  const [requirement, setrequirement] = useState('');
+  const [editorContent, setEditorContent] = useState('');
+  const [image, setImage] = useState(null);
+  const [imageUrl, setImageUrl] = useState(''); 
+  const url =  "https://www.youtube.com/embed/dQw4w9WgXcQ";
+  
+  const iseditable = true;
+
+  const handleRequirement =(value) =>{
+    if(requirement === value)
+    {
+      setrequirement("");
+      return;
+    }
+    setrequirement(value);
+  }
+  const makeLink =()=> {
+    const url = prompt("Enter the URL:", "http://");
+    console.log(url);
+    //iseditable = !iseditable;
+    document.execCommand('createLink', false, url);
+  }
+  
+  const handleEditorChange = (event) => {
+    setEditorContent(event.currentTarget.textContent);
+  };
+  
+  const formatText = (command) => {
+    document.execCommand(command, false, null);
+  };
+  
+  useEffect(() => {
+    const element = answerDivRef.current;
+    if (element) {
+      // Move the cursor to the end of the element
+      const range = document.createRange();
+      const selection = window.getSelection();
+      range.selectNodeContents(element);
+      range.collapse(false);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+  }, [answer]);
+
+  useEffect(() => {
+    const element = questionDivRef.current;
+    if (element) {
+      // Move the cursor to the end of the element
+      const range = document.createRange();
+      const selection = window.getSelection();
+      range.selectNodeContents(element);
+      range.collapse(false);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+  }, [question]);
+
+  const handleAnswerInput = (e) => {
+    const newText = e.currentTarget.innerHTML;
+    setNormalAnswer(e.currentTarget.textContent)
+    const safeHtml = sanitizeHtml(newText, {
+      allowedTags: sanitizeHtml.defaults.allowedTags.concat(['b', 'i', 'u', 'strong', 'em']),  // Allow basic formatting tags
+      allowedAttributes: {}  // Restrict all attributes to prevent potential XSS vectors
+    });
+    setAnswer(safeHtml);
+  };
+
+  const handleQuestionInput = (e) => {
+    const newText = e.currentTarget.innerHTML;
+    setNormalQuestion(e.currentTarget.textContent)
+    const safeHtml = sanitizeHtml(newText, {
+      allowedTags: sanitizeHtml.defaults.allowedTags.concat(['b', 'i', 'u', 'strong', 'em']),  // Allow basic formatting tags
+      allowedAttributes: {}  // Restrict all attributes to prevent potential XSS vectors
+    });
+    setQuestion(safeHtml);
+  };
 
   function popupDetails(popupMessage, popupColor) {
     setShowPopup(true);
@@ -23,6 +111,8 @@ function CreateCard() {
     }, 1000); // Stay fully visible for 1 second
     setQuestion('');
     setAnswer('');
+    setNormalAnswer('');
+    setNormalQuestion('');
   }
 
   // Fetch decks
@@ -78,10 +168,100 @@ function CreateCard() {
               <option key={deck.deck_id} value={deck.deck_id}>{deck.name}</option>
             ))}
           </select>
-          <textarea value={question} onChange={(e) => setQuestion(e.target.value)}
-            placeholder='Question' className='mb-4 p-2 rounded-md h-40' style={{ width: '30vw' }} />
-          <textarea value={answer} onChange={(e) => setAnswer(e.target.value)}
-            placeholder='Answer' className='mb-4 p-2 rounded-md h-40' style={{ width: '30vw' }} />
+          <div>
+          <button type = "button" onClick={() => handleRequirement('image')} class="rounded-lg border border-transparent px-4 py-2 
+          font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+          active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>Image</button>
+          <button type = "button" onClick={() => handleRequirement('video')} class="rounded-lg border border-transparent px-4 py-2 
+          font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+          active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>video</button>
+          <button type = "button" onClick={() => formatText('bold')} class="rounded-lg border border-transparent px-4 py-2 
+          font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+          active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>bold</button>
+          <button type = "button" onClick={() => formatText('italic')} class="rounded-lg border border-transparent px-4 py-2 
+          font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+          active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>italic</button>
+          <button type = "button" onClick={() => formatText('underline')} class="rounded-lg border border-transparent px-4 py-2 
+          font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+          active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>underline</button>
+          <button type = "button" onClick={() => handleRequirement('latex')} class="rounded-lg border border-transparent px-4 py-2 
+          font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+          active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>latex</button>
+          <button type = "button" onClick={() => makeLink()} class="rounded-lg border border-transparent px-4 py-2 
+          font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+          active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>URL</button>
+          </div>
+
+          <div  onInput={handleQuestionInput} dangerouslySetInnerHTML={{ __html: question }}  contentEditable
+          style={{border: '1px solid black', textAlign: 'left',  minHeight: '180px', width:'500px', padding: '10px', marginTop: '10px',backgroundColor:'grey'}}>
+          </div>
+
+          {requirement === 'latex' && (
+            <div>
+            <h2>Preview</h2>
+            <div style={{border: '1px solid #ccc', padding: '10px',minHeight: '180px', width:'500px'}}>
+              <BlockMath math={Normal_question} errorColor={'#cc0000'} />
+            </div>
+          </div>
+          )}
+
+         
+          <div>
+            {ReactPlayer.canPlay(Normal_question) ? (
+              <ReactPlayer url= {Normal_question} controls={true} />
+            ) : (
+              <p>The link is not available</p>
+            )}
+          </div>
+             
+          <div>
+            <button type = "button" onClick={() => handleRequirement('image')} class="rounded-lg border border-transparent px-4 py-2 
+            font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+            active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>Image</button>
+            <button type = "button" onClick={() => handleRequirement('video')} class="rounded-lg border border-transparent px-4 py-2 
+            font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+            active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>video</button>
+            <button type = "button" onClick={() => formatText('bold')} class="rounded-lg border border-transparent px-4 py-2 
+            font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+            active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>bold</button>
+            <button type = "button" onClick={() => formatText('italic')} class="rounded-lg border border-transparent px-4 py-2 
+            font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+            active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>italic</button>
+            <button type = "button" onClick={() => formatText('underline')} class="rounded-lg border border-transparent px-4 py-2 
+            font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+            active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>underline</button>
+            <button type = "button" onClick={() => handleRequirement('latex')} class="rounded-lg border border-transparent px-4 py-2 
+            font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+            active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>latex</button>
+            <button type = "button" onClick={() => makeLink()} class="rounded-lg border border-transparent px-4 py-2 
+            font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+            active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>URL</button>
+          </div>
+
+          <div  onInput={handleAnswerInput} dangerouslySetInnerHTML={{ __html: answer }}  contentEditable
+          style={{border: '1px solid black', minHeight: '180px', width:'500px', padding: '10px',backgroundColor:'grey'}}>
+         
+          </div>
+
+          {requirement === 'latex' && (
+            <div>
+            <h2>Preview</h2>
+            <div style={{border: '1px solid #ccc', padding: '10px',minHeight: '180px', width:'500px'}}>
+              <BlockMath math={Normal_answer} errorColor={'#cc0000'} />
+            </div>
+          </div>
+          )}
+
+          {requirement === 'video' && (
+          <div>
+            {ReactPlayer.canPlay(Normal_answer) ? (
+              <ReactPlayer url= {Normal_answer} controls={true} />
+            ) : (
+              <p>The link is not available</p>
+            )}
+          </div>
+          )}
+
           <button type='submit' class="rounded-lg border border-transparent px-4 py-2 
           font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>
