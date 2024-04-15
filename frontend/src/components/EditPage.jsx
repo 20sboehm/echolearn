@@ -36,22 +36,22 @@ function EditPage() {
   const formSubmissionMutation = useMutation(async (formData) => {
     console.log(JSON.stringify(formData))
 
-    // const response = await fetch('Wait for backend', {
-    //   method: 'PATCH',
-    //   body: JSON.stringify({
-    //     question: formData.question,
-    //     answer: formData.answer
-    //   }),
-    //   headers: {
-    //     'Content-Type': 'application/json'
-    //   }
-    // });
+    const response = await fetch(`http://localhost:8000/api/cards/${formData.card_id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        question: formData.question,
+        answer: formData.answer
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
 
-    // if (!response.ok) {
-    //   throw new Error(`Network response was not ok: ${reponse.status_code}`);
-    // }
+    if (!response.ok) {
+      throw new Error(`Network response was not ok: ${response.status_code}`);
+    }
 
-    // return response.json();
+    return response.json();
   });
 
   useEffect(() => {

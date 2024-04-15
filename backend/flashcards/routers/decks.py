@@ -45,7 +45,9 @@ def delete_deck(request, deck_id: int):
    deck = get_object_or_404(Deck, deck_id = deck_id)
    deck.delete()
 
-@decks_router.get("/{deck_id}/cards", response=List[sc.GetCard])
+@decks_router.get("/{deck_id}/cards", response=sc.DeckCards)
 def get_cards_from_deck(request, deck_id: int):
-    card_list = Card.objects.get(deck_id = deck_id)
-    return card_list
+    deck = Deck.objects.get(deck_id = deck_id)
+    card_list = Card.objects.filter(deck_id = deck_id)
+
+    return {"deck_id": deck.deck_id, "deck_name": deck.name, "cards": card_list}

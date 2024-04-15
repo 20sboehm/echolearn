@@ -3,6 +3,8 @@ from ninja import Router
 from flashcards.models import Card, Deck
 from typing import List
 import flashcards.schemas as sc
+from typing import Optional
+from datetime import datetime, timedelta, timezone
 from django.shortcuts import get_object_or_404
 
 cards_router = Router(tags=["Cards"])
@@ -28,16 +30,22 @@ def create_card(request, payload: sc.CreateCard):
     )
     
     
-@cards_router.patch("/{card_id}", response={200: sc.GetCard, 404: str})
-def update_card(request, card_id: int, payload:sc.UpdateCard):
+@cards_router.patch("/{card_id}", response={200: sc.EditCards, 404: str})
+def update_card(request, card_id: int, payload: sc.EditCards):
  
     card = get_object_or_404(Card, card_id = card_id)
     
-    for question, answer in payload.dict().items:
-        setattr(card,question,answer)  
+    if payload.question is not None:
+        card.question = payload.question
+    if payload.answer is not None:
+        card.answer = payload.answer
+
+    card.last_edited = datetime.now(timezone.utc)
     card.save()
+
+    response_model = sc.EditCards(question=card.question, answer=card.answer)
     
-    return card
+    return response_model
 
 @cards_router.delete("/{card_id}")
 def delete_card(request, card_id: int):

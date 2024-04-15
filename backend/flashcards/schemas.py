@@ -84,6 +84,15 @@ class ReviewCards(Schema):
     deck_name: str
     cards: list[Cards]
 
+class DeckCards(Schema):
+    deck_id: int
+    deck_name: str
+    cards: list[GetCard]
+
+class EditCards(Schema):
+    question: Optional[str] = None
+    answer: Optional[str] = None
+
 # -----------------------------------------------
 # ------------------ Sidebar --------------------
 # -----------------------------------------------
