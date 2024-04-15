@@ -5,6 +5,8 @@ from flashcards.models import Deck, Card, Folder, SharedDeck
 # Create your tests here.
 
 class FlashcardsTestCase(TestCase):
+    
+    #MySQL test start here
     # Set up data for the whole TestCase
     def setUp(self):
         self.owner = User.objects.create_user('jzz', 'jzz@test.com', 'jpassword')
@@ -44,3 +46,4 @@ class FlashcardsTestCase(TestCase):
         self.assertTrue(SharedDeck.objects.filter(deck=self.deck, shared_with=self.shared_with_user).exists())
         self.assertEqual(SharedDeck.objects.count(), 1)
         self.assertEqual(SharedDeck.objects.first(), self.shared_deck)
+    #MySQL test end here
