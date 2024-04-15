@@ -21,6 +21,9 @@ class CreateFolder(Schema):
     name: str
     owner_id: int
 
+class UpdateFolder(Schema):
+    name: Optional[str] = None
+
 # -----------------------------------------------
 # -------------------- Decks --------------------
 # -----------------------------------------------
@@ -40,6 +43,10 @@ class CreateDeck(Schema):
     owner_id: int
     name: str
     description: Optional[str] = None
+    
+class UpdateDeck(Schema):
+    name: Optional[str] = None
+    description: Optional[str] = None
 
 # -----------------------------------------------
 # -------------------- Cards --------------------
@@ -55,6 +62,10 @@ class GetCard(Schema):
     next_review: datetime
     created_at: datetime
     last_edited: datetime
+
+class UpdateCard(Schema):
+    question: Optional[str] = None
+    answer: Optional[str] = None
 
 class CreateCard(Schema):
     deck_id: int
