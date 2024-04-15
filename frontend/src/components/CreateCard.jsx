@@ -11,9 +11,6 @@ function CreateCard() {
   const [popupColor, setPopupColor] = useState('');
   const [popupOpacity, setPopupOpacity] = useState('opacity-100');
 
-  const answerDivRef = useRef(null);
-  const questionDivRef = useRef(null);
-
   const [deckId, setDeckId] = useState('');
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');
@@ -28,8 +25,6 @@ function CreateCard() {
   const [image, setImage] = useState(null);
   const [imageUrl, setImageUrl] = useState(''); 
   const url =  "https://www.youtube.com/embed/dQw4w9WgXcQ";
-  
-  const iseditable = true;
 
   const handleRequirement =(value) =>{
     if(requirement === value)
@@ -54,31 +49,6 @@ function CreateCard() {
     document.execCommand(command, false, null);
   };
   
-  useEffect(() => {
-    const element = answerDivRef.current;
-    if (element) {
-      // Move the cursor to the end of the element
-      const range = document.createRange();
-      const selection = window.getSelection();
-      range.selectNodeContents(element);
-      range.collapse(false);
-      selection.removeAllRanges();
-      selection.addRange(range);
-    }
-  }, [answer]);
-
-  useEffect(() => {
-    const element = questionDivRef.current;
-    if (element) {
-      // Move the cursor to the end of the element
-      const range = document.createRange();
-      const selection = window.getSelection();
-      range.selectNodeContents(element);
-      range.collapse(false);
-      selection.removeAllRanges();
-      selection.addRange(range);
-    }
-  }, [question]);
 
   const handleAnswerInput = (e) => {
     const newText = e.currentTarget.innerHTML;
@@ -192,8 +162,9 @@ function CreateCard() {
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>URL</button>
           </div>
 
-          <div  onInput={handleQuestionInput} dangerouslySetInnerHTML={{ __html: question }}  contentEditable
+          <div  onInput={handleQuestionInput} contentEditable
           style={{border: '1px solid black', textAlign: 'left',  minHeight: '180px', width:'500px', padding: '10px', marginTop: '10px',backgroundColor:'grey'}}>
+          <htmlcontent html = {question}></htmlcontent>
           </div>
 
           {requirement === 'latex' && (
@@ -238,9 +209,9 @@ function CreateCard() {
             active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>URL</button>
           </div>
 
-          <div  onInput={handleAnswerInput} dangerouslySetInnerHTML={{ __html: answer }}  contentEditable
+          <div  onInput={handleAnswerInput}  contentEditable
           style={{border: '1px solid black', minHeight: '180px', width:'500px', padding: '10px',backgroundColor:'grey'}}>
-         
+          <htmlcontent html = {answer}></htmlcontent>
           </div>
 
           {requirement === 'latex' && (
