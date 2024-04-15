@@ -8,7 +8,7 @@ function LandingBody() {
     <div className="landingBody">
       <div className="landingMiddle">
         <div className="middleText">
-          <h3>Learn Efficiently, Remeber Forever</h3>
+          <h3>Learn Efficiently, Remember Forever</h3>
           <p>Unlock your learning potential with EchoLearn. Our smart flashcard system makes remembering information easy and fun.</p>
         </div>
         <img src="../public/Study.png" alt="Study PNG"></img>
