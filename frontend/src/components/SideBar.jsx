@@ -127,7 +127,12 @@ function SidebarContent({ isOpen, sidebarRef }) {
       fetchSidebarData();
     },
   });
-  // TO-DO
+
+  const sendDeleteRequest = (folder_id) => {
+    console.log(`Deleting folder_id: ${folder_id}`);
+    setContextMenu(null);
+  }
+
   // need to update this that when user click the "create" button it will create the root folder to the database for the user
   const createDefaultFolder = () => {
     setFolderCreated(true);
@@ -224,7 +229,8 @@ function SidebarContent({ isOpen, sidebarRef }) {
         folderId={contextMenu.folderId} 
         name={contextMenu.name}
         createFolder={handleCreateFolder} 
-        folderEdit={handleEditFolder} />}
+        folderEdit={handleEditFolder} 
+        folderDelete={sendDeleteRequest}/>}
     </div>
   );
 }
@@ -238,12 +244,12 @@ function SidebarButton({ isOpen, toggleSidebar, sidebarRef }) {
   );
 }
 
-function ContextMenu({ x, y, folderId, name, createFolder, folderEdit }) {
+function ContextMenu({ x, y, folderId, name, createFolder, folderEdit, folderDelete }) {
   return (
     <ul className="context-menu" style={{ top: y-30, left: x, position: 'absolute', backgroundColor: 'black', border: '1px solid #ccc' }}>
       <li onClick={createFolder} style={{ padding: '5px 15px', cursor: 'pointer' }}>Create</li>
       <li onClick={() => folderEdit(folderId, name)} style={{ padding: '5px 15px', cursor: 'pointer' }}>Rename</li>
-      <li onClick={() => alert(`Delete folder ${folderId}`)} style={{ padding: '5px 15px', cursor: 'pointer' }}>Delete</li>
+      <li onClick={() => folderDelete(folderId)} style={{ padding: '5px 15px', cursor: 'pointer' }}>Delete</li>
     </ul>
   );
 }
