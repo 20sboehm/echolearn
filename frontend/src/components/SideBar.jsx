@@ -10,6 +10,7 @@ function SidebarContent({ isOpen, sidebarRef }) {
   const [contextMenu, setContextMenu] = useState(null);
   const [newFolderName, setNewFolderName] = useState('');
   const [showNewFolderInput, setShowNewFolderInput] = useState(false);
+  const [folderEdit, setFolderEdit] = useState(0);
 
   // Fetch sidebar info when the sidebar is opened for the first time
   useEffect(() => {
@@ -21,7 +22,6 @@ function SidebarContent({ isOpen, sidebarRef }) {
   
   useEffect(() => {
     const handleOutsideClick = (event) => {
-      console.log("I am here");
       if (contextMenu && (!sidebarRef.current || !sidebarRef.current.contains(event.target))) {
         setContextMenu(null); // Close the context menu
       }
@@ -61,6 +61,14 @@ function SidebarContent({ isOpen, sidebarRef }) {
     fetchSidebarData();
   };
 
+  const sendPostRequest = () => {
+    if (newFolderName.trim() === '') {
+      setShowNewFolderInput(false);
+      return;
+    }
+    createFolderMutation.mutate({ name: newFolderName, owner_id: 1});
+  }
+
   const createFolderMutation = useMutation(async (formData) => {
     const response = await fetch('http://localhost:8000/api/folders', {
       method: 'POST',
@@ -83,14 +91,42 @@ function SidebarContent({ isOpen, sidebarRef }) {
     },
   });
 
-  
-  const sendPostRequest = () => {
+  const handleEditFolder = (folder_id, name) => {
+    setNewFolderName(name)
+    setFolderEdit(folder_id)
+    setContextMenu(null);
+  }
+
+  const sendPetchRequest = () => {
     if (newFolderName.trim() === '') {
-      setShowNewFolderInput(false);
+      alert("Detect blank folder name, please rename")
       return;
     }
-    createFolderMutation.mutate({ name: newFolderName, owner_id: 1});
+    // depending how the backend is this will change
+    editFolderMutation.mutate({ folder_id: folderEdit, name: newFolderName});
   }
+
+  const editFolderMutation = useMutation(async (formData) => {
+    const response = await fetch('Waiting on backend', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    });
+  
+    if (!response.ok) {
+      throw new Error(`Network response was not ok: ${response.status}`);
+    }
+  
+    return response.json();
+  },
+  {
+    onSuccess: () => {
+      setFolderEdit(0);
+      fetchSidebarData();
+    },
+  });
   // TO-DO
   // need to update this that when user click the "create" button it will create the root folder to the database for the user
   const createDefaultFolder = () => {
@@ -105,15 +141,13 @@ function SidebarContent({ isOpen, sidebarRef }) {
     }
   };
 
-  const handleContextMenu = (event, folderId) => {
+  const handleContextMenu = (event, folderId, name) => {
     event.preventDefault();
-    console.log("Page X/Y:", event.pageX, event.pageY);
-    console.log("Client X/Y:", event.clientX, event.clientY);
-    console.log("Offset X/Y:", event.nativeEvent.offsetX, event.nativeEvent.offsetY);
     setContextMenu({
       x: event.nativeEvent.pageX,
       y: event.nativeEvent.pageY - event.nativeEvent.offsetY,
-      folderId: folderId
+      folderId: folderId,
+      name: name
     });
   };
   
@@ -130,11 +164,29 @@ function SidebarContent({ isOpen, sidebarRef }) {
       <div className="Folders">
         <ul>
           {sidebarData.Folders.map(folder => (
-            <li key={folder.folder_id} onClick={() => openFolder(folder.folder_id)} onContextMenu={(e) => handleContextMenu(e, folder.folder_id)} className="mb-4">
+            <li key={folder.folder_id} onClick={() => openFolder(folder.folder_id)} onContextMenu={(e) => handleContextMenu(e, folder.folder_id, folder.name)} className="mb-4">
               <div className="cursor-pointer" style={{ display: "flex", alignItems: "center" }}>
-                <img src={openFolderIds.includes(folder.folder_id) ? "../folder_Open.png" : "../folder_Close.png"} 
-                  style={{ width: openFolderIds.includes(folder.folder_id) ? "15%" : "12%", marginRight:"8px"}}/>
-                <span>{folder.name}</span>
+              {
+                folderEdit === folder.folder_id ? (
+                  <textarea 
+                    value={newFolderName} 
+                    onChange={(e) => setNewFolderName(e.target.value)}
+                    onClick={(e) => e.stopPropagation()} // Stop event propagation
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        sendPetchRequest();
+                      }
+                    }}
+                    style={{ width: '100%', height: '50px', background: 'white', color: 'black' }} 
+                  />
+                ) : (
+                  <>
+                  <img src={openFolderIds.includes(folder.folder_id) ? "../folder_Open.png" : "../folder_Close.png"} 
+                    style={{ width: openFolderIds.includes(folder.folder_id) ? "15%" : "12%", marginRight:"8px"}}/>
+                  <span>{folder.name}</span>
+                  </>
+                )
+              }
               </div>
               {openFolderIds.includes(folder.folder_id) && (
                 <ul>
@@ -167,7 +219,12 @@ function SidebarContent({ isOpen, sidebarRef }) {
             />
           </div>
         )}
-      {contextMenu && <ContextMenu x={contextMenu.x} y={contextMenu.y} onClose={() => setContextMenu(null)} folderId={contextMenu.folderId} createFolder={handleCreateFolder} />}
+      {contextMenu && <ContextMenu x={contextMenu.x} y={contextMenu.y} 
+        onClose={() => setContextMenu(null)} 
+        folderId={contextMenu.folderId} 
+        name={contextMenu.name}
+        createFolder={handleCreateFolder} 
+        folderEdit={handleEditFolder} />}
     </div>
   );
 }
@@ -181,12 +238,11 @@ function SidebarButton({ isOpen, toggleSidebar, sidebarRef }) {
   );
 }
 
-function ContextMenu({ x, y, folderId, createFolder }) {
-  console.log(x,y)
+function ContextMenu({ x, y, folderId, name, createFolder, folderEdit }) {
   return (
     <ul className="context-menu" style={{ top: y-30, left: x, position: 'absolute', backgroundColor: 'black', border: '1px solid #ccc' }}>
       <li onClick={createFolder} style={{ padding: '5px 15px', cursor: 'pointer' }}>Create</li>
-      <li onClick={() => alert(`Rename folder ${folderId}`)} style={{ padding: '5px 15px', cursor: 'pointer' }}>Rename</li>
+      <li onClick={() => folderEdit(folderId, name)} style={{ padding: '5px 15px', cursor: 'pointer' }}>Rename</li>
       <li onClick={() => alert(`Delete folder ${folderId}`)} style={{ padding: '5px 15px', cursor: 'pointer' }}>Delete</li>
     </ul>
   );
