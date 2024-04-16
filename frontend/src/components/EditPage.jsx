@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "react-query";
 import { useState, useEffect } from "react";
 import Sidebar from "./SideBar";
@@ -12,6 +12,8 @@ function EditPage() {
   const { cardId } = useParams();
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');
+
+  const navigate = useNavigate();
 
   function popupDetails(popupMessage, popupColor) {
     setShowPopup(true);
@@ -51,7 +53,8 @@ function EditPage() {
       throw new Error(`Network response was not ok: ${response.status_code}`);
     }
 
-    return response.json();
+    // Navigate back to deck page
+    navigate(`/decks/${card.deck_id}`);
   });
 
   useEffect(() => {

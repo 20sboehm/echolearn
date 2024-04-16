@@ -47,6 +47,7 @@ class CreateDeck(Schema):
 class UpdateDeck(Schema):
     name: Optional[str] = None
     description: Optional[str] = None
+    folder_id: Optional[int] = None
 
 # -----------------------------------------------
 # -------------------- Cards --------------------
@@ -62,10 +63,13 @@ class GetCard(Schema):
     next_review: datetime
     created_at: datetime
     last_edited: datetime
+    is_new: bool
 
 class UpdateCard(Schema):
     question: Optional[str] = None
     answer: Optional[str] = None
+    bucket: Optional[int] = None
+    next_review: Optional[datetime] = None
 
 class CreateCard(Schema):
     deck_id: int
