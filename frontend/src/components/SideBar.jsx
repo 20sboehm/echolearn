@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { useQuery } from 'react-query';
+import { useQuery, useMutation } from 'react-query';
 import { Link, useParams } from "react-router-dom";
 import "./SideBar.css";
 
@@ -8,6 +8,8 @@ function SidebarContent({ isOpen, sidebarRef }) {
   const [openFolderIds, setOpenFolderIds] = useState([]);
   const [sidebarData, setSidebarData] = useState(null);
   const [contextMenu, setContextMenu] = useState(null);
+  const [newFolderName, setNewFolderName] = useState('');
+  const [showNewFolderInput, setShowNewFolderInput] = useState(false);
 
   // Fetch sidebar info when the sidebar is opened for the first time
   useEffect(() => {
@@ -52,6 +54,43 @@ function SidebarContent({ isOpen, sidebarRef }) {
       });
   };
 
+  const handleCreateFolder = () => {
+    setNewFolderName('');
+    setContextMenu(null);
+    setShowNewFolderInput(!showNewFolderInput);
+    fetchSidebarData();
+  };
+
+  const createFolderMutation = useMutation(async (formData) => {
+    const response = await fetch('http://localhost:8000/api/folders', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    });
+  
+    if (!response.ok) {
+      throw new Error(`Network response was not ok: ${response.status}`);
+    }
+  
+    return response.json();
+  },
+  {
+    onSuccess: () => {
+      setShowNewFolderInput(false);
+      fetchSidebarData();
+    },
+  });
+
+  
+  const sendPostRequest = () => {
+    if (newFolderName.trim() === '') {
+      setShowNewFolderInput(false);
+      return;
+    }
+    createFolderMutation.mutate({ name: newFolderName, owner_id: 1});
+  }
   // TO-DO
   // need to update this that when user click the "create" button it will create the root folder to the database for the user
   const createDefaultFolder = () => {
@@ -72,8 +111,8 @@ function SidebarContent({ isOpen, sidebarRef }) {
     console.log("Client X/Y:", event.clientX, event.clientY);
     console.log("Offset X/Y:", event.nativeEvent.offsetX, event.nativeEvent.offsetY);
     setContextMenu({
-      x: event.nativeEvent.pageX ,
-      y: event.nativeEvent.pageY,
+      x: event.nativeEvent.pageX,
+      y: event.nativeEvent.pageY - event.nativeEvent.offsetY,
       folderId: folderId
     });
   };
@@ -113,7 +152,22 @@ function SidebarContent({ isOpen, sidebarRef }) {
           ))}
         </ul>
       </div>
-      {contextMenu && <ContextMenu x={contextMenu.x} y={contextMenu.y} onClose={() => setContextMenu(null)} folderId={contextMenu.folderId} />}
+      {showNewFolderInput && (
+          <div>
+            <textarea 
+              value={newFolderName} 
+              onChange={(e) => setNewFolderName(e.target.value)} 
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  sendPostRequest();
+                }
+              }}
+              placeholder="Enter folder name" 
+              style={{ width: '100%', height: '50px', background: 'white', color: 'black' }} 
+            />
+          </div>
+        )}
+      {contextMenu && <ContextMenu x={contextMenu.x} y={contextMenu.y} onClose={() => setContextMenu(null)} folderId={contextMenu.folderId} createFolder={handleCreateFolder} />}
     </div>
   );
 }
@@ -126,10 +180,12 @@ function SidebarButton({ isOpen, toggleSidebar, sidebarRef }) {
     </button>
   );
 }
-function ContextMenu({ x, y, folderId }) {
+
+function ContextMenu({ x, y, folderId, createFolder }) {
   console.log(x,y)
   return (
-    <ul className="context-menu" style={{ top: y, left: x, position: 'absolute', backgroundColor: 'black', border: '1px solid #ccc' }}>
+    <ul className="context-menu" style={{ top: y-30, left: x, position: 'absolute', backgroundColor: 'black', border: '1px solid #ccc' }}>
+      <li onClick={createFolder} style={{ padding: '5px 15px', cursor: 'pointer' }}>Create</li>
       <li onClick={() => alert(`Rename folder ${folderId}`)} style={{ padding: '5px 15px', cursor: 'pointer' }}>Rename</li>
       <li onClick={() => alert(`Delete folder ${folderId}`)} style={{ padding: '5px 15px', cursor: 'pointer' }}>Delete</li>
     </ul>
