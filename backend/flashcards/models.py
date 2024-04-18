@@ -33,6 +33,8 @@ class Card(models.Model):
     answervideolink = models.TextField(max_length=255)
     questionimagelink = models.TextField(max_length=255)
     answerimagelink = models.TextField(max_length=255)
+    questionlatex = models.TextField(max_length=255)
+    answerlatex = models.TextField(max_length=255)
     bucket = models.IntegerField(default=0)
     last_reviewed = models.DateTimeField(auto_now_add=True)
     next_review = models.DateTimeField(auto_now_add=True)

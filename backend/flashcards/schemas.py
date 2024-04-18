@@ -54,6 +54,8 @@ class GetCard(Schema):
     answervideolink:str
     questionimagelink:str
     answerimagelink:str
+    questionlatex:str
+    answerlatex:str
     bucket: int
     last_reviewed: datetime
     next_review: datetime
@@ -68,6 +70,8 @@ class CreateCard(Schema):
     answervideolink:str
     questionimagelink:str
     answerimagelink:str
+    questionlatex:str
+    answerlatex:str
 
 class Cards(Schema):
     card_id: int

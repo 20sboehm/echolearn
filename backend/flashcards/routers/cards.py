@@ -26,5 +26,7 @@ def create_card(request, payload: sc.CreateCard):
         questionvideolink=payload.questionvideolink,
         answervideolink = payload.answervideolink,
         questionimagelink = payload.questionimagelink,
-        answerimagelink = payload.answerimagelink
+        answerimagelink = payload.answerimagelink,
+        questionlatex = payload.questionlatex,
+        answerlatex = payload.answerlatex
     )

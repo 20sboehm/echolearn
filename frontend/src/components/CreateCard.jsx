@@ -14,15 +14,14 @@ function CreateCard() {
   const [deckId, setDeckId] = useState('');
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');
-
   const [Normal_question, setNormalQuestion] = useState('');
   const [Normal_answer, setNormalAnswer] = useState('');
   
   const[questionvideolink,setQuestionVideoLink] = useState('');
   const[answervideolink,setAnswerVideoLink] = useState('');
 
-  const [AnswerlatexInput, setAnswerLatexInput] = useState('');
-  const [QuestioinlatexInput, setQuestionLatexInput] = useState('');
+  const [answerlatex, setAnswerLatexInput] = useState('');
+  const [questionlatex, setQuestionLatexInput] = useState('');
 
   const [Answer_requirement, setAnswer_requirement] = useState('');
   const [Question_requirement, setQuestion_requirement] = useState('');
@@ -95,6 +94,8 @@ function CreateCard() {
     setAnswerVideoLink('');
     setAnswer_ImageUrl('');
     setQuestion_ImageUrl('');
+    setQuestionLatexInput('');
+    setAnswerLatexInput('');
     document.getElementById("QuestionDiv").textContent = '';
     document.getElementById("AnswerDiv").textContent = '';
   }
@@ -130,7 +131,7 @@ function CreateCard() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    formSubmissionMutation.mutate({ deck_id: deckId, question, answer,questionvideolink,answervideolink,questionimagelink,answerimagelink}, {
+    formSubmissionMutation.mutate({ deck_id: deckId, question, answer,questionvideolink,answervideolink,questionimagelink,answerimagelink,questionlatex,answerlatex}, {
       onSuccess: () => {
         popupDetails('Card created successfully!', 'green')
       },
@@ -183,9 +184,11 @@ function CreateCard() {
 
           {Question_requirement === 'latex' && (
             <div>
+              <textarea value={questionlatex} onChange={(e)=>setQuestionLatexInput(e.target.value)}style={{border: '1px solid black', textAlign: 'left',  minHeight: '180px', width:'500px', padding: '10px', marginTop: '10px',backgroundColor:'grey'}}></textarea>
             <h2>Preview</h2>
             <div style={{border: '1px solid #ccc', padding: '10px',minHeight: '180px', width:'500px'}}>
-              <BlockMath math={Normal_question} errorColor={'#cc0000'} />
+
+              <BlockMath math={questionlatex} errorColor={'#cc0000'} />
             </div>
           </div>
           )}
@@ -244,9 +247,10 @@ function CreateCard() {
 
           {Answer_requirement === 'latex' && (
             <div>
+               <textarea value={answerlatex} onChange={(e)=>setAnswerLatexInput(e.target.value)}style={{border: '1px solid black', textAlign: 'left',  minHeight: '180px', width:'500px', padding: '10px', marginTop: '10px',backgroundColor:'grey'}}></textarea>
             <h2>Preview</h2>
             <div style={{border: '1px solid #ccc', padding: '10px',minHeight: '180px', width:'500px'}}>
-              <BlockMath math={Normal_answer} errorColor={'#cc0000'} />
+              <BlockMath math={answerlatex} errorColor={'#cc0000'} />
             </div>
           </div>
           )}
