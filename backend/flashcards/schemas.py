@@ -58,6 +58,12 @@ class GetCard(Schema):
     deck_id: int
     question: str
     answer: str
+    questionvideolink:str
+    answervideolink:str
+    questionimagelink:str
+    answerimagelink:str
+    questionlatex:str
+    answerlatex:str
     bucket: int
     last_reviewed: datetime
     next_review: datetime
@@ -75,6 +81,12 @@ class CreateCard(Schema):
     deck_id: int
     question: str
     answer: str
+    questionvideolink:str
+    answervideolink:str
+    questionimagelink:str
+    answerimagelink:str
+    questionlatex:str
+    answerlatex:str
 
 class Cards(Schema):
     card_id: int
