@@ -10,7 +10,7 @@ function SidebarContent({ isOpen, sidebarRef }) {
 
   // Fetch sidebar info when the sidebar is opened for the first time
   useEffect(() => {
-    if (isOpen && !folderCreated) {
+    if (isOpen) {
       fetchSidebarData();
     }
   }, [isOpen]);

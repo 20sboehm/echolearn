@@ -1,29 +1,76 @@
 from ninja import Router
-from flashcards.models import Deck, Folder
-from django.contrib.auth.models import User
+from flashcards.models import Deck, Folder, Card
 from typing import List
 import flashcards.schemas as sc
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.models import User
 
 decks_router = Router(tags=["Decks"])
 
-@decks_router.get("", response=List[sc.GetDeck])
+# ---------------------------------------------
+# -------------------- GET --------------------
+# ---------------------------------------------
+
+@decks_router.get("", response={200: List[sc.GetDeck]})
 def get_decks(request):
     decks = Deck.objects.all()
     return decks
 
-@decks_router.get("/{deck_id}", response=sc.GetDeck)
+@decks_router.get("/{deck_id}", response={200: sc.GetDeck, 404: str})
 def get_deck(request, deck_id: int):
-    deck = Deck.objects.get(deck_id=deck_id)
+    deck = get_object_or_404(Deck, deck_id=deck_id)
     return deck
 
-@decks_router.post("")
-def create_deck(request, payload: sc.CreateDeck):
-    folder_ref = Folder.objects.get(pk=payload.folder_id)
-    owner_ref = User.objects.get(pk=payload.owner_id)
+@decks_router.get("/{deck_id}/cards", response={200: sc.DeckCards, 404: str})
+def get_cards_from_deck(request, deck_id: int):
+    deck = get_object_or_404(Deck, deck_id=deck_id)
+    card_list = Card.objects.filter(deck_id=deck_id)
 
-    Deck.objects.create(
+    return {"deck_id": deck.deck_id, "deck_name": deck.name, "cards": card_list}
+
+# ---------------------------------------------
+# -------------------- POST -------------------
+# ---------------------------------------------
+
+@decks_router.post("", response={201: sc.GetDeck, 404: str})
+def create_deck(request, payload: sc.CreateDeck):
+    folder_ref = get_object_or_404(Folder, pk=payload.folder_id)
+    owner_ref = get_object_or_404(User, pk=payload.owner_id)
+
+    deck = Deck.objects.create(
         folder=folder_ref,
         owner=owner_ref,
         name=payload.name,
         description=payload.description
     )
+    return 201, deck
+
+# ---------------------------------------------
+# -------------------- PATCH ------------------
+# ---------------------------------------------
+
+@decks_router.patch("/{deck_id}", response={200: sc.GetDeck, 404: str})
+def update_deck(request, deck_id: int, payload: sc.UpdateDeck): 
+    deck = get_object_or_404(Deck, deck_id=deck_id)
+    
+    for attribute, value in payload.dict(exclude_unset=True).items():
+        if attribute == "folder_id":
+            folder_ref = get_object_or_404(Folder, folder_id=value)
+            setattr(deck, "folder", folder_ref)  
+        else:
+            setattr(deck, attribute, value)  
+    deck.save()
+    
+    return deck
+
+# ---------------------------------------------
+# -------------------- DELETE -----------------
+# ---------------------------------------------
+
+@decks_router.delete("/{deck_id}", response={204: None, 404: str})
+def delete_deck(request, deck_id: int): 
+    deck = get_object_or_404(Deck, deck_id=deck_id)
+    
+    deck.delete()
+
+    return 204, None

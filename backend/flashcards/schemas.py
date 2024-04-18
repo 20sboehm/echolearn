@@ -21,6 +21,9 @@ class CreateFolder(Schema):
     name: str
     owner_id: int
 
+class UpdateFolder(Schema):
+    name: Optional[str] = None
+
 # -----------------------------------------------
 # -------------------- Decks --------------------
 # -----------------------------------------------
@@ -40,6 +43,11 @@ class CreateDeck(Schema):
     owner_id: int
     name: str
     description: Optional[str] = None
+    
+class UpdateDeck(Schema):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    folder_id: Optional[int] = None
 
 # -----------------------------------------------
 # -------------------- Cards --------------------
@@ -55,6 +63,13 @@ class GetCard(Schema):
     next_review: datetime
     created_at: datetime
     last_edited: datetime
+    is_new: bool
+
+class UpdateCard(Schema):
+    question: Optional[str] = None
+    answer: Optional[str] = None
+    bucket: Optional[int] = None
+    next_review: Optional[datetime] = None
 
 class CreateCard(Schema):
     deck_id: int
@@ -72,6 +87,15 @@ class ReviewCards(Schema):
     deck_id: int
     deck_name: str
     cards: list[Cards]
+
+class DeckCards(Schema):
+    deck_id: int
+    deck_name: str
+    cards: list[GetCard]
+
+class EditCards(Schema):
+    question: Optional[str] = None
+    answer: Optional[str] = None
 
 # -----------------------------------------------
 # ------------------ Sidebar --------------------

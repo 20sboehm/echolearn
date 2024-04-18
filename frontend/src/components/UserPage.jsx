@@ -38,8 +38,8 @@ function TaskList() {
           </li>
           <ScrollContainer className="border">
             {decks.map((deck) => {
-              const newCardsCount = cards.filter(card => card.deck_id === deck.deck_id && card.created_at === card.last_reviewed).length;
-              const reviewCardsCount = cards.filter(card => card.deck_id === deck.deck_id && card.created_at !== card.last_reviewed && Date.parse(card.next_review) < Date.now()).length;
+              const newCardsCount = cards.filter(card => card.deck_id === deck.deck_id && card.is_new === true).length;
+              const reviewCardsCount = cards.filter(card => card.deck_id === deck.deck_id && card.is_new === false && Date.parse(card.next_review) < Date.now()).length;
 
               if (newCardsCount === 0 && reviewCardsCount === 0) {
                 return null;

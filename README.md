@@ -66,11 +66,14 @@ python makedata.py
 ```
 
 
-
+// ONLY RUN THIS COMMAND IF YOU HAVE CHANGED SOMETHING IN THE DATABASE - otherwise it is not necessary
 python manage.py makemigrations
+
 rm db.sqlite3
 python manage.py migrate
 python makedata.py
+
+// Run just these 3 commands to reset your data ^
 
 
 
