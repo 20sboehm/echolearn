@@ -17,38 +17,46 @@ function CreateCard() {
 
   const [Normal_question, setNormalQuestion] = useState('');
   const [Normal_answer, setNormalAnswer] = useState('');
+  
+  const[questionvideolink,setQuestionVideoLink] = useState('');
+  const[answervideolink,setAnswerVideoLink] = useState('');
 
+  const [AnswerlatexInput, setAnswerLatexInput] = useState('');
+  const [QuestioinlatexInput, setQuestionLatexInput] = useState('');
 
-  const [latexInput, setLatexInput] = useState('');
-  const [requirement, setrequirement] = useState('');
-  const [editorContent, setEditorContent] = useState('');
-  const [image, setImage] = useState(null);
-  const [imageUrl, setImageUrl] = useState(''); 
-  const url =  "https://www.youtube.com/embed/dQw4w9WgXcQ";
+  const [Answer_requirement, setAnswer_requirement] = useState('');
+  const [Question_requirement, setQuestion_requirement] = useState('');
 
-  const handleRequirement =(value) =>{
-    if(requirement === value)
+  const [answerimagelink, setAnswer_ImageUrl] = useState(''); 
+  const [questionimagelink, setQuestion_ImageUrl] = useState(''); 
+
+  const handleAnswerRequirement =(value) =>{
+    if(Answer_requirement === value)
     {
-      setrequirement("");
+      setAnswer_requirement("");
       return;
     }
-    setrequirement(value);
+    setAnswer_requirement(value);
   }
+
+  const handleQuestionRequirement =(value) =>{
+    if(Question_requirement === value)
+    {
+      setQuestion_requirement("");
+      return;
+    }
+    setQuestion_requirement(value);
+  }
+
   const makeLink =()=> {
     const url = prompt("Enter the URL:", "http://");
     console.log(url);
-    //iseditable = !iseditable;
     document.execCommand('createLink', false, url);
   }
-  
-  const handleEditorChange = (event) => {
-    setEditorContent(event.currentTarget.textContent);
-  };
   
   const formatText = (command) => {
     document.execCommand(command, false, null);
   };
-  
 
   const handleAnswerInput = (e) => {
     const newText = e.currentTarget.innerHTML;
@@ -83,6 +91,12 @@ function CreateCard() {
     setAnswer('');
     setNormalAnswer('');
     setNormalQuestion('');
+    setQuestionVideoLink('');
+    setAnswerVideoLink('');
+    setAnswer_ImageUrl('');
+    setQuestion_ImageUrl('');
+    document.getElementById("QuestionDiv").textContent = '';
+    document.getElementById("AnswerDiv").textContent = '';
   }
 
   // Fetch decks
@@ -116,7 +130,7 @@ function CreateCard() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    formSubmissionMutation.mutate({ deck_id: deckId, question, answer }, {
+    formSubmissionMutation.mutate({ deck_id: deckId, question, answer,questionvideolink,answervideolink,questionimagelink,answerimagelink}, {
       onSuccess: () => {
         popupDetails('Card created successfully!', 'green')
       },
@@ -139,10 +153,10 @@ function CreateCard() {
             ))}
           </select>
           <div>
-          <button type = "button" onClick={() => handleRequirement('image')} class="rounded-lg border border-transparent px-4 py-2 
+          <button type = "button" onClick={() => handleQuestionRequirement('image')} class="rounded-lg border border-transparent px-4 py-2 
           font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>Image</button>
-          <button type = "button" onClick={() => handleRequirement('video')} class="rounded-lg border border-transparent px-4 py-2 
+          <button type = "button" onClick={() => handleQuestionRequirement('video')} class="rounded-lg border border-transparent px-4 py-2 
           font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>video</button>
           <button type = "button" onClick={() => formatText('bold')} class="rounded-lg border border-transparent px-4 py-2 
@@ -154,7 +168,7 @@ function CreateCard() {
           <button type = "button" onClick={() => formatText('underline')} class="rounded-lg border border-transparent px-4 py-2 
           font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>underline</button>
-          <button type = "button" onClick={() => handleRequirement('latex')} class="rounded-lg border border-transparent px-4 py-2 
+          <button type = "button" onClick={() => handleQuestionRequirement('latex')} class="rounded-lg border border-transparent px-4 py-2 
           font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>latex</button>
           <button type = "button" onClick={() => makeLink()} class="rounded-lg border border-transparent px-4 py-2 
@@ -162,12 +176,12 @@ function CreateCard() {
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>URL</button>
           </div>
 
-          <div  onInput={handleQuestionInput} contentEditable
+          <div id = "QuestionDiv"  onInput={handleQuestionInput} contentEditable
           style={{border: '1px solid black', textAlign: 'left',  minHeight: '180px', width:'500px', padding: '10px', marginTop: '10px',backgroundColor:'grey'}}>
           <htmlcontent html = {question}></htmlcontent>
           </div>
 
-          {requirement === 'latex' && (
+          {Question_requirement === 'latex' && (
             <div>
             <h2>Preview</h2>
             <div style={{border: '1px solid #ccc', padding: '10px',minHeight: '180px', width:'500px'}}>
@@ -176,20 +190,34 @@ function CreateCard() {
           </div>
           )}
 
-         
+          {Question_requirement === 'video' && (
           <div>
-            {ReactPlayer.canPlay(Normal_question) ? (
-              <ReactPlayer url= {Normal_question} controls={true} />
-            ) : (
-              <p>The link is not available</p>
-            )}
-          </div>
+            <label htmlFor='videoInput'>Put your video link here : </label>
+            <input name = "videoInput" type="text" value={questionvideolink}   onChange={(e) => setQuestionVideoLink(e.target.value)} style={{ width: '250px', height:'50px' }}></input>
+              {ReactPlayer.canPlay(questionvideolink) ? (
+                <>
+                  <p>below is the preview of video</p>
+                  <ReactPlayer url= {questionvideolink} controls={true} />
+                </>
+                ) : (
+                  <p>The link is not available</p>
+                )}
+            </div>
+          )}
+
+          {Question_requirement === 'image' && (
+            <div>
+            <label htmlFor='QuestionimageInput'>Put your image here:</label>
+            <input name='QuestionimageInput' value={questionimagelink} type="text"  onChange={(e)=>setQuestion_ImageUrl(e.target.value)}></input>
+            <img src={questionimagelink} style={{maxWidth: '250px', maxHeight: '250px'} } />
+            </div>
+          )}
              
           <div>
-            <button type = "button" onClick={() => handleRequirement('image')} class="rounded-lg border border-transparent px-4 py-2 
+            <button type = "button" onClick={() => handleAnswerRequirement('image')} class="rounded-lg border border-transparent px-4 py-2 
             font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
             active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>Image</button>
-            <button type = "button" onClick={() => handleRequirement('video')} class="rounded-lg border border-transparent px-4 py-2 
+            <button type = "button" onClick={() =>handleAnswerRequirement('video')} class="rounded-lg border border-transparent px-4 py-2 
             font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
             active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>video</button>
             <button type = "button" onClick={() => formatText('bold')} class="rounded-lg border border-transparent px-4 py-2 
@@ -201,7 +229,7 @@ function CreateCard() {
             <button type = "button" onClick={() => formatText('underline')} class="rounded-lg border border-transparent px-4 py-2 
             font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
             active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>underline</button>
-            <button type = "button" onClick={() => handleRequirement('latex')} class="rounded-lg border border-transparent px-4 py-2 
+            <button type = "button" onClick={() => handleAnswerRequirement('latex')} class="rounded-lg border border-transparent px-4 py-2 
             font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
             active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>latex</button>
             <button type = "button" onClick={() => makeLink()} class="rounded-lg border border-transparent px-4 py-2 
@@ -209,12 +237,12 @@ function CreateCard() {
             active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>URL</button>
           </div>
 
-          <div  onInput={handleAnswerInput}  contentEditable
+          <div id = "AnswerDiv"  onInput={handleAnswerInput}  contentEditable
           style={{border: '1px solid black', minHeight: '180px', width:'500px', padding: '10px',backgroundColor:'grey'}}>
           <htmlcontent html = {answer}></htmlcontent>
           </div>
 
-          {requirement === 'latex' && (
+          {Answer_requirement === 'latex' && (
             <div>
             <h2>Preview</h2>
             <div style={{border: '1px solid #ccc', padding: '10px',minHeight: '180px', width:'500px'}}>
@@ -223,14 +251,27 @@ function CreateCard() {
           </div>
           )}
 
-          {requirement === 'video' && (
+          {Answer_requirement === 'video' && (
           <div>
-            {ReactPlayer.canPlay(Normal_answer) ? (
-              <ReactPlayer url= {Normal_answer} controls={true} />
-            ) : (
-              <p>The link is not available</p>
-            )}
-          </div>
+            <label htmlFor='videoInput'>Put your video link here : </label>
+            <input name = "videoInput" type="text" value={answervideolink}  onChange={(e) => setAnswerVideoLink(e.target.value)} style={{ width: '250px', height:'50px' }}></input>
+              {ReactPlayer.canPlay(answervideolink) ? (
+                <>
+                  <p>preview </p>
+                  <ReactPlayer url= {answervideolink} controls={true} />
+                </>
+                ) : (
+                  <p>The link is not available</p>
+                )}
+            </div>
+          )}
+
+          {Answer_requirement === 'image' && (
+            <div>
+            <label htmlFor='AnswerimageInput'>Put your image here:</label>
+            <input name='AnswerimageInput' value={answerimagelink} type="text"  onChange={(e)=>setAnswer_ImageUrl(e.target.value)}></input>
+            <img src={answerimagelink} style={{maxWidth: '250px', maxHeight: '250px'}} />
+            </div>
           )}
 
           <button type='submit' class="rounded-lg border border-transparent px-4 py-2 

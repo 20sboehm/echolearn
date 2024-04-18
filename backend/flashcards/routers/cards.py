@@ -22,5 +22,9 @@ def create_card(request, payload: sc.CreateCard):
     Card.objects.create(
         deck=deck_ref,
         question=payload.question,
-        answer=payload.answer
+        answer=payload.answer,
+        questionvideolink=payload.questionvideolink,
+        answervideolink = payload.answervideolink,
+        questionimagelink = payload.questionimagelink,
+        answerimagelink = payload.answerimagelink
     )
