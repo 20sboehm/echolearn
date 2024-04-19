@@ -101,3 +101,8 @@ python manage.py migrate --run-syncdb
 // run custom script to add data
 python makedata.py
 ```
+
+
+## Create and activate virtual environment
+`python -m venv myenv`
+`myenv\Scripts\activate`

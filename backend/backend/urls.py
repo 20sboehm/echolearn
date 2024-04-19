@@ -18,14 +18,31 @@ from django.contrib import admin
 from django.urls import path
 from django.shortcuts import redirect
 from backend.api import api
-# from flashcards.routers import cards
+import os
+
 def redirect_to_docs(request):
     return redirect('/api/docs')
+
+# def redirect_to_docs_local(request):
+#     return redirect('/api/docs')
+# def redirect_to_docs_dev(request):
+#     return redirect('/dev/api/docs')
+
+# if os.environ.get("DB_LOCATION") == "EFS":
+#     urlpatterns = [
+#         path('admin/', admin.site.urls),
+#         path('api/', api.urls),
+#         path("", redirect_to_docs_dev),
+#     ]
+# else:
+#     urlpatterns = [
+#         path('admin/', admin.site.urls),
+#         path('api/', api.urls),
+#         path("", redirect_to_docs_local),
+#     ]
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', api.urls),
     path("", redirect_to_docs),
-    # path('api/item/', cards.get_post, name='item-create'),
-    # path('api/csrf/', cards.get_csrf, name='get_csrf'),
 ]

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +26,8 @@ SECRET_KEY = 'django-insecure-2k&widn7w$x*a%p4sd=k7d#s30k40t00)u==b85x2j+bovg#7+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = ['gktvbalc0h.execute-api.us-west-2.amazonaws.com', 'https://gktvbalc0h.execute-api.us-west-2.amazonaws.com/dev']
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -39,6 +41,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'ninja',
     'flashcards',
+    'django_s3_storage',
 ]
 
 MIDDLEWARE = [
@@ -52,9 +55,13 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:5173", "gktvbalc0h.execute-api.us-west-2.amazonaws.com"
+# ]
+
+# CORS_ALLOWED_ORIGINS = [
+#     "*"
+# ]
 
 CORS_ALLOW_CREDENTIALS = True 
 
@@ -120,13 +127,44 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+# STATIC_URL = '/static/'
+# STATIC_URL = 'https://us-west-2.console.aws.amazon.com/s3/buckets/echolearn-django-storages'
+# STATIC_URL = 'https://s3-us-west-2.amazonaws.com/echolearn-django-storages/'
+# STATIC_URL = 'https://echolearn-django-storages.s3.amazonaws.com/'
+# STATIC_URL = '/static/'
+# STATIC_URL = 'https://echolearn-django-storages.s3.amazonaws.com/'
+
+# import tempfile
+
+# Set STATIC_ROOT to a temporary directory
+# STATIC_ROOT = tempfile.mkdtemp()
+STATIC_ROOT = None
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+# AWS_STORAGE_BUCKET_NAME = 'echolearn-django-storages'
+
+# AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+
+# STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+# STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
+
+if os.environ.get("DB_LOCATION") == "EFS":
+    AWS_STORAGE_BUCKET_NAME = 'echolearn-django-storages'
+
+    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+
+    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
+else:
+    STATIC_URL = '/static/'
