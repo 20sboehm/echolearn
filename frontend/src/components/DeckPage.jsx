@@ -3,21 +3,6 @@ import { useQuery, useMutation } from "react-query";
 import { useState, useEffect } from "react";
 import Sidebar from "./SideBar";
 
-const percentage = 33.3; // 33.3% percentage
-
-const radius = 60;
-
-// Calculate the circumference of the circle
-const circumference = Math.PI * 2 * radius;
-
-// Calculate the length of the dash
-const dashLength = (percentage / 100) * circumference;
-
-// Calculate the length of the gap
-const gapLength = circumference - dashLength;
-
-const strokeDashoffset = circumference / 4;
-
 function DeckPage() {
   const [deleteMode, setDeleteMode] = useState(false);
   const { deckId } = useParams();
@@ -36,9 +21,38 @@ function DeckPage() {
     refetch();
   }, [deckId, refetch]);
 
+  useEffect(() => {
+    console.log("Deck Cards:", deckCards);
+  }, [deckCards]);
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
+
+  let reviewedCardsCount = 0;
+  // Check if 'cards' property exists and is an array
+  if (deckCards.cards && Array.isArray(deckCards.cards)) {
+    reviewedCardsCount = deckCards.cards.filter(card => !card.is_new || (card.next_review && Date.parse(card.next_review) >= Date.now())).length;
+  }
+
+  const totalCardsCount = deckCards.cards.length; // Total number of cards in the deck
+
+  // Calculate the percentage of cards that don't need review
+  const percentage = totalCardsCount > 0 ? ((reviewedCardsCount / totalCardsCount) * 100).toFixed(2) : 100;
+
+  const radius = 60;
+
+  // Calculate the circumference of the circle
+  const circumference = Math.PI * 2 * radius;
+
+  // Calculate the length of the dash
+  const dashLength = (percentage / 100) * circumference;
+
+  // Calculate the length of the gap
+  const gapLength = circumference - dashLength;
+
+  const strokeDashoffset = circumference / 4;
+
 
   const changeMode = () => {
     setDeleteMode(!deleteMode);
