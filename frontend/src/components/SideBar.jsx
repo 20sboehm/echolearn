@@ -157,9 +157,17 @@ function SidebarContent({ isOpen, sidebarRef }) {
 
   const handleContextMenu = (event, folderId, name) => {
     event.preventDefault();
+    var x = event.nativeEvent.pageX
+    var y = event.nativeEvent.pageY
+    if (x > 230) {
+      x = 200;
+    }
+    if (y > 650) {
+      y = 550;
+    }
     setContextMenu({
-      x: event.nativeEvent.pageX,
-      y: event.nativeEvent.pageY - event.nativeEvent.offsetY,
+      x: x,
+      y: y - event.nativeEvent.offsetY,
       folderId: folderId,
       name: name
     });
