@@ -33,15 +33,23 @@ function CreateCard() {
     if(Answer_requirement === value)
     {
       setAnswer_requirement("");
+
       return;
     }
     setAnswer_requirement(value);
   }
 
   const handleQuestionRequirement =(value) =>{
+    setQuestionVideoLink('');
+    setAnswerVideoLink('');
+    setAnswer_ImageUrl('');
+    setQuestion_ImageUrl('');
+    setQuestionLatexInput('');
+    setAnswerLatexInput('');
     if(Question_requirement === value)
     {
       setQuestion_requirement("");
+    
       return;
     }
     setQuestion_requirement(value);
@@ -176,7 +184,7 @@ function CreateCard() {
           font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>URL</button>
           </div>
-
+          <a href='https://www.youtube.com/watch?v=dQw4w9WgXcQ'>qheoqwhoieqwhoe</a>
           <div id = "QuestionDiv"  onInput={handleQuestionInput} contentEditable
           style={{border: '1px solid black', textAlign: 'left',  minHeight: '180px', width:'500px', padding: '10px', marginTop: '10px',backgroundColor:'grey'}}>
           <htmlcontent html = {question}></htmlcontent>
