@@ -61,6 +61,9 @@ function SidebarContent({ isOpen, sidebarRef }) {
     fetchSidebarData();
   };
 
+  /**
+   *  Following is the post request when user trying to create a folder with the context-menu
+   */
   const sendPostRequest = () => {
     if (newFolderName.trim() === '') {
       setShowNewFolderInput(false);
@@ -84,20 +87,23 @@ function SidebarContent({ isOpen, sidebarRef }) {
 
     return response.json();
   },
-    {
-      onSuccess: () => {
-        setShowNewFolderInput(false);
-        fetchSidebarData();
-      },
-    });
+  {
+    onSuccess: () => {
+      setShowNewFolderInput(false);
+      fetchSidebarData();
+    },
+  });
 
+  /**
+   *  Following is the Patch request when user trying to edit a folder name with the context-menu
+   */
   const handleEditFolder = (folder_id, name) => {
     setNewFolderName(name)
     setFolderEdit(folder_id)
     setContextMenu(null);
   }
 
-  const sendPetchRequest = () => {
+  const sendPatchRequest = () => {
     if (newFolderName.trim() === '') {
       alert("Detect blank folder name, please rename")
       return;
@@ -121,19 +127,22 @@ function SidebarContent({ isOpen, sidebarRef }) {
 
     return response.json();
   },
-    {
-      onSuccess: () => {
-        setFolderEdit(0);
-        fetchSidebarData();
-      },
-    });
+  {
+    onSuccess: () => {
+      setFolderEdit(0);
+      fetchSidebarData();
+    },
+  });
 
+  /**
+   *  Following is the delete request when user trying to delete a folder with the context-menu
+   */
   const sendDeleteRequest = (folder_id) => {
     console.log(`Deleting folder_id: ${folder_id}`);
     setContextMenu(null);
   }
 
-  // need to update this that when user click the "create" button it will create the root folder to the database for the user
+  
   const createDefaultFolder = () => {
     setFolderCreated(true);
   };
@@ -179,7 +188,7 @@ function SidebarContent({ isOpen, sidebarRef }) {
                       onClick={(e) => e.stopPropagation()} // Stop event propagation
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') {
-                          sendPetchRequest();
+                          sendPatchRequest();
                         }
                       }}
                       style={{ width: '100%', height: '50px', background: 'white', color: 'black' }}
