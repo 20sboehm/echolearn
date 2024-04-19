@@ -17,9 +17,9 @@ function SidebarContent({ isOpen, sidebarRef }) {
     if (isOpen) {
       fetchSidebarData();
     }
-    
+
   }, [isOpen]);
-  
+
   useEffect(() => {
     const handleOutsideClick = (event) => {
       if (contextMenu && (!sidebarRef.current || !sidebarRef.current.contains(event.target))) {
@@ -66,7 +66,7 @@ function SidebarContent({ isOpen, sidebarRef }) {
       setShowNewFolderInput(false);
       return;
     }
-    createFolderMutation.mutate({ name: newFolderName, owner_id: 1});
+    createFolderMutation.mutate({ name: newFolderName, owner_id: 1 });
   }
 
   const createFolderMutation = useMutation(async (formData) => {
@@ -77,19 +77,19 @@ function SidebarContent({ isOpen, sidebarRef }) {
       },
       body: JSON.stringify(formData),
     });
-  
+
     if (!response.ok) {
       throw new Error(`Network response was not ok: ${response.status}`);
     }
-  
+
     return response.json();
   },
-  {
-    onSuccess: () => {
-      setShowNewFolderInput(false);
-      fetchSidebarData();
-    },
-  });
+    {
+      onSuccess: () => {
+        setShowNewFolderInput(false);
+        fetchSidebarData();
+      },
+    });
 
   const handleEditFolder = (folder_id, name) => {
     setNewFolderName(name)
@@ -103,7 +103,7 @@ function SidebarContent({ isOpen, sidebarRef }) {
       return;
     }
     // depending how the backend is this will change
-    editFolderMutation.mutate({ folder_id: folderEdit, name: newFolderName});
+    editFolderMutation.mutate({ folder_id: folderEdit, name: newFolderName });
   }
 
   const editFolderMutation = useMutation(async (formData) => {
@@ -114,19 +114,19 @@ function SidebarContent({ isOpen, sidebarRef }) {
       },
       body: JSON.stringify(formData),
     });
-  
+
     if (!response.ok) {
       throw new Error(`Network response was not ok: ${response.status}`);
     }
-  
+
     return response.json();
   },
-  {
-    onSuccess: () => {
-      setFolderEdit(0);
-      fetchSidebarData();
-    },
-  });
+    {
+      onSuccess: () => {
+        setFolderEdit(0);
+        fetchSidebarData();
+      },
+    });
 
   const sendDeleteRequest = (folder_id) => {
     console.log(`Deleting folder_id: ${folder_id}`);
@@ -155,7 +155,7 @@ function SidebarContent({ isOpen, sidebarRef }) {
       name: name
     });
   };
-  
+
   if (!folderCreated) {
     return (
       <div className="sidebar" ref={sidebarRef}>
@@ -165,33 +165,38 @@ function SidebarContent({ isOpen, sidebarRef }) {
   }
 
   return (
-    <div className={`sidebar ${isOpen ? "open" : ""}`} ref={sidebarRef}>
+    <div className={`sidebar ${isOpen ? "open" : ""}`} ref={sidebarRef} style={{ overflowY: "auto" }}>
       <div className="Folders">
         <ul>
           {sidebarData.Folders.map(folder => (
             <li key={folder.folder_id} onClick={() => openFolder(folder.folder_id)} onContextMenu={(e) => handleContextMenu(e, folder.folder_id, folder.name)} className="mb-4">
               <div className="cursor-pointer" style={{ display: "flex", alignItems: "center" }}>
-              {
-                folderEdit === folder.folder_id ? (
-                  <textarea 
-                    value={newFolderName} 
-                    onChange={(e) => setNewFolderName(e.target.value)}
-                    onClick={(e) => e.stopPropagation()} // Stop event propagation
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        sendPetchRequest();
-                      }
-                    }}
-                    style={{ width: '100%', height: '50px', background: 'white', color: 'black' }} 
-                  />
-                ) : (
-                  <>
-                  <img src={openFolderIds.includes(folder.folder_id) ? "../folder_Open.png" : "../folder_Close.png"} 
-                    style={{ width: openFolderIds.includes(folder.folder_id) ? "15%" : "12%", marginRight:"8px"}}/>
-                  <span>{folder.name}</span>
-                  </>
-                )
-              }
+                {
+                  folderEdit === folder.folder_id ? (
+                    <textarea
+                      value={newFolderName}
+                      onChange={(e) => setNewFolderName(e.target.value)}
+                      onClick={(e) => e.stopPropagation()} // Stop event propagation
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          sendPetchRequest();
+                        }
+                      }}
+                      style={{ width: '100%', height: '50px', background: 'white', color: 'black' }}
+                    />
+                  ) : (
+                    <>
+                      <div className="folderContainer">
+                        <img src={openFolderIds.includes(folder.folder_id) ? "../folder_Open.png" : "../folder_Close.png"}
+                          style={{ width: openFolderIds.includes(folder.folder_id) ? "15%" : "12%", marginRight: "8px" }} />
+                        <span>{folder.name}</span>
+                      </div>
+                      <div className="tripleDotContainer" onClick={(e) => handleContextMenu(e, folder.folder_id, folder.name)}>
+                        <div className="tripleDot">⋮</div>
+                      </div>
+                    </>
+                  )
+                }
               </div>
               {openFolderIds.includes(folder.folder_id) && (
                 <ul>
@@ -210,27 +215,27 @@ function SidebarContent({ isOpen, sidebarRef }) {
         </ul>
       </div>
       {showNewFolderInput && (
-          <div>
-            <textarea 
-              value={newFolderName} 
-              onChange={(e) => setNewFolderName(e.target.value)} 
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  sendPostRequest();
-                }
-              }}
-              placeholder="Enter folder name" 
-              style={{ width: '100%', height: '50px', background: 'white', color: 'black' }} 
-            />
-          </div>
-        )}
-      {contextMenu && <ContextMenu x={contextMenu.x} y={contextMenu.y} 
-        onClose={() => setContextMenu(null)} 
-        folderId={contextMenu.folderId} 
+        <div>
+          <textarea
+            value={newFolderName}
+            onChange={(e) => setNewFolderName(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                sendPostRequest();
+              }
+            }}
+            placeholder="Enter folder name"
+            style={{ width: '100%', height: '50px', background: 'white', color: 'black' }}
+          />
+        </div>
+      )}
+      {contextMenu && <ContextMenu x={contextMenu.x} y={contextMenu.y}
+        onClose={() => setContextMenu(null)}
+        folderId={contextMenu.folderId}
         name={contextMenu.name}
-        createFolder={handleCreateFolder} 
-        folderEdit={handleEditFolder} 
-        folderDelete={sendDeleteRequest}/>}
+        createFolder={handleCreateFolder}
+        folderEdit={handleEditFolder}
+        folderDelete={sendDeleteRequest} />}
     </div>
   );
 }
@@ -246,7 +251,7 @@ function SidebarButton({ isOpen, toggleSidebar, sidebarRef }) {
 
 function ContextMenu({ x, y, folderId, name, createFolder, folderEdit, folderDelete }) {
   return (
-    <ul className="context-menu" style={{ top: y-30, left: x, position: 'absolute', backgroundColor: 'black', border: '1px solid #ccc' }}>
+    <ul className="context-menu" style={{ top: y - 30, left: x, position: 'absolute', backgroundColor: 'black', border: '1px solid #ccc' }}>
       <li onClick={createFolder} style={{ padding: '5px 15px', cursor: 'pointer' }}>Create</li>
       <li onClick={() => folderEdit(folderId, name)} style={{ padding: '5px 15px', cursor: 'pointer' }}>Rename</li>
       <li onClick={() => folderDelete(folderId)} style={{ padding: '5px 15px', cursor: 'pointer' }}>Delete</li>
