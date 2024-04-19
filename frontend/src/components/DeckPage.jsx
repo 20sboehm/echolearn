@@ -142,11 +142,11 @@ function DeckPage() {
 
               <div className="border bg-white text-black mt-2 px-2 py-2 relative" onClick={() => handleCardClick(card.card_id)}>
                 <div dangerouslySetInnerHTML={{ __html: card.answer }} />
-                {ReactPlayer.canPlay(card.questionvideolink) && (
+                {ReactPlayer.canPlay(card.answervideolink) && (
                   <>
                     <p>Below is the preview of the video:</p>
                     <ReactPlayer
-                      url={card.questionvideolink}
+                      url={card.answervideolink}
                       controls={true}
                       style={{ maxWidth: '100%', maxHeight: '100%' }}
                     />
