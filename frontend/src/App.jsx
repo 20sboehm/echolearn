@@ -9,8 +9,6 @@ import CreateDeck from "./components/CreateDeck"
 import CreateFolder from "./components/CreateFolder"
 import Review from "./components/ReviewPage";
 import HelpPage from "./components/HelpPage"
-import Create from "./components/Create";
-import CardPage from "./components/CardPage";
 import DeckPage from './components/DeckPage';
 import EditPage from './components/EditPage';
 import Header from "./components/Header"
@@ -41,9 +39,7 @@ function Main() {
         <Route path="/folders" element={<CreateFolder />} />
         <Route path="/review/:deckId" element={<Review />} />
         <Route path="/help" element={<HelpPage />} />
-        <Route path="/create" element={<Create />} />
         <Route path="/edit/:cardId" element={<EditPage />} />
-        <Route path="/cards/:cardId" element={<CardPage />} />
         <Route path="/decks/:deckId" element={<DeckPage />} />
         <Route path="*" element={<Navigate to="/error/404/Page%20Not%20Found" />} />
       </Routes>
