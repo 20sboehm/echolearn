@@ -37,7 +37,6 @@ function LandingBody() {
 function Landing() {
   return (
     <div className="landingPage">
-      <Header />
       <LandingBody />
     </div>
   )
