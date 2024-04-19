@@ -2,7 +2,7 @@ import { Link, useParams } from "react-router-dom";
 import { useQuery, useMutation } from "react-query";
 import { useState, useEffect } from "react";
 import Sidebar from "./SideBar";
-
+import ReactPlayer from 'react-player';
 const percentage = 33.3; // 33.3% percentage
 
 const radius = 60;
@@ -73,7 +73,7 @@ function DeckPage() {
             <h1 className="text-4xl font-bold my-4">{deckCards.deck_name}</h1>
             <Link to={`/review/${deckId}`} className="rounded-lg border border-transparent px-[100px] py-2 
               font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-              active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s"}}>
+              active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>
               <button>Study</button>
             </Link>
           </div>
@@ -83,7 +83,7 @@ function DeckPage() {
             <svg width="200" height="200" viewBox="0 20 200 150">
               <circle cx="100" cy="100" r={radius} fill="none" stroke="#ECEFF1" strokeWidth="7.5" />
               <circle cx="100" cy="100" r={radius} fill="none" stroke="#29A5DC" strokeWidth="7.5" strokeLinecap="round"
-                      strokeDasharray={`${dashLength},${gapLength}`} strokeDashoffset={strokeDashoffset}>
+                strokeDasharray={`${dashLength},${gapLength}`} strokeDashoffset={strokeDashoffset}>
                 <title>Progress</title>
               </circle>
               <text x="100" y="100" textAnchor="middle" dominantBaseline="middle" fill="white" fontSize="16">
@@ -92,8 +92,8 @@ function DeckPage() {
             </svg>
             <button className="rounded-lg border border-transparent px-4 py-2 
               font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-              active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s"}}>
-                More Statistics</button>
+              active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>
+              More Statistics</button>
           </div>
         </div>
 
@@ -101,14 +101,23 @@ function DeckPage() {
           <h1>Cards In This Deck ({deckCards.cards.length})</h1>
           <button className="rounded-lg border border-transparent px-2 py-1 
               font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-              active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s"}} onClick={changeMode}>
-                {deleteMode ? "Cancel" : "Delete"}</button>
+              active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={changeMode}>
+            {deleteMode ? "Cancel" : "Delete"}</button>
         </div>
 
         <div className="h-[50vh] overflow-y-auto">
           {deckCards.cards.map(card => (
             <div className="grid grid-cols-2 gap-4 font-medium px-2" key={card.card_id}>
-              <p className="border bg-white text-black mt-2 px-2 py-2" onClick={() => handleCardClick(card.card_id)}>{card.question}</p>
+              <div>
+                <div className="border bg-white text-black mt-2 px-2 py-2" dangerouslySetInnerHTML={{ __html: card.question }} />
+                {ReactPlayer.canPlay(card.questionvideolink) && (
+                  <div className="border bg-white text-black mt-2 px-2 py-2">
+                    <p>below is the preview of video</p>
+                    <ReactPlayer url={card.questionvideolink} controls={true} style={{ maxWidth: '100%', maxHeight: '100%' }} />
+                  </div>
+                )}
+              </div>
+
               <div className="border bg-white text-black mt-2 px-2 py-2 relative" onClick={() => handleCardClick(card.card_id)}>
                 <p>{card.answer}</p>
                 <Link to={`/edit/${card.card_id}`}>
