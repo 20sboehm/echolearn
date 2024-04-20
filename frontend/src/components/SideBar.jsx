@@ -2,8 +2,11 @@ import { useState, useRef, useEffect } from "react";
 import { useQuery, useMutation } from 'react-query';
 import { Link, useParams } from "react-router-dom";
 import "./SideBar.css";
+import { useApi } from "../api";
 
 function SidebarContent({ isOpen, sidebarRef }) {
+  const api = useApi();
+
   const [folderCreated, setFolderCreated] = useState(false);
   const [openFolderIds, setOpenFolderIds] = useState([]);
   const [sidebarData, setSidebarData] = useState(null);
@@ -43,7 +46,7 @@ function SidebarContent({ isOpen, sidebarRef }) {
   }, [contextMenu]);
 
   const fetchSidebarData = () => {
-    fetch(`http://127.0.0.1:8000/api/sidebar`)
+    api._get('/api/sidebar')
       .then((response) => response.json())
       .then((data) => {
         setSidebarData(data);
@@ -73,13 +76,7 @@ function SidebarContent({ isOpen, sidebarRef }) {
   }
 
   const createFolderMutation = useMutation(async (formData) => {
-    const response = await fetch('http://localhost:8000/api/folders', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData),
-    });
+    const response = await api._post('/api/folders', formData);
 
     if (!response.ok) {
       throw new Error(`Network response was not ok: ${response.status}`);
@@ -87,12 +84,12 @@ function SidebarContent({ isOpen, sidebarRef }) {
 
     return response.json();
   },
-  {
-    onSuccess: () => {
-      setShowNewFolderInput(false);
-      fetchSidebarData();
-    },
-  });
+    {
+      onSuccess: () => {
+        setShowNewFolderInput(false);
+        fetchSidebarData();
+      },
+    });
 
   /**
    *  Following is the Patch request when user trying to edit a folder name with the context-menu
@@ -113,13 +110,15 @@ function SidebarContent({ isOpen, sidebarRef }) {
   }
 
   const editFolderMutation = useMutation(async (formData) => {
-    const response = await fetch('Waiting on backend', {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData),
-    });
+
+    const response = await api._patch(`/api/folders/${formData.folder_id}`, formData);
+    // const response = await fetch('Waiting on backend', {
+    //   method: 'PATCH',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify(formData),
+    // });
 
     if (!response.ok) {
       throw new Error(`Network response was not ok: ${response.status}`);
@@ -127,12 +126,12 @@ function SidebarContent({ isOpen, sidebarRef }) {
 
     return response.json();
   },
-  {
-    onSuccess: () => {
-      setFolderEdit(0);
-      fetchSidebarData();
-    },
-  });
+    {
+      onSuccess: () => {
+        setFolderEdit(0);
+        fetchSidebarData();
+      },
+    });
 
   /**
    *  Following is the delete request when user trying to delete a folder with the context-menu
@@ -142,7 +141,7 @@ function SidebarContent({ isOpen, sidebarRef }) {
     setContextMenu(null);
   }
 
-  
+
   const createDefaultFolder = () => {
     setFolderCreated(true);
   };
