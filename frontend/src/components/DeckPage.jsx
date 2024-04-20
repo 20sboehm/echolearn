@@ -120,7 +120,7 @@ function DeckPage() {
         <div className="h-[50vh] overflow-y-auto">
           {deckCards.cards.map(card => (
             <div className="grid grid-cols-2 gap-4 font-medium px-2" key={card.card_id}>
-              <div>
+            
                 <div className="border bg-white text-black mt-2 px-2 py-2">
                   <div dangerouslySetInnerHTML={{ __html: card.question }} />
 
@@ -134,11 +134,10 @@ function DeckPage() {
                       />
                     </>
                   )}
-                  {card.answerimagelink && <img src={card.answerimagelink} style={{maxWidth: '250px', maxHeight: '250px'} } />}
+                  {card.questionimagelink && <img src={card.questionimagelink} style={{maxWidth: '250px', maxHeight: '250px'} } />}
                   {card.questionlatex && <KatexOutput latex={card.questionlatex}  />}
                 </div>
-              </div>
-
+           
 
               <div className="border bg-white text-black mt-2 px-2 py-2 relative" onClick={() => handleCardClick(card.card_id)}>
                 <div dangerouslySetInnerHTML={{ __html: card.answer }} />

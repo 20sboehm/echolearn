@@ -76,6 +76,12 @@ class UpdateCard(Schema):
     answer: Optional[str] = None
     bucket: Optional[int] = None
     next_review: Optional[datetime] = None
+    questionvideolink:Optional[str] = None
+    answervideolink:Optional[str] = None
+    questionimagelink:Optional[str] = None
+    answerimagelink:Optional[str] = None
+    questionlatex:Optional[str] = None
+    answerlatex:Optional[str] = None
 
 class CreateCard(Schema):
     deck_id: int
