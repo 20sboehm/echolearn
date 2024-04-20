@@ -4,6 +4,7 @@ import { useState, useEffect ,useRef} from "react";
 import Sidebar from "./SideBar";
 import sanitizeHtml from 'sanitize-html';
 import ReactPlayer from 'react-player';
+import { BlockMath } from 'react-katex';
 
 function EditPage() {
   const [showPopup, setShowPopup] = useState(false);
