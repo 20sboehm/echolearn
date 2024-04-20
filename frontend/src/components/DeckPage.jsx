@@ -2,6 +2,10 @@ import { Link, useParams } from "react-router-dom";
 import { useQuery, useMutation } from "react-query";
 import { useState, useEffect } from "react";
 import Sidebar from "./SideBar";
+import ReactPlayer from 'react-player';
+import { BlockMath } from "react-katex";
+import katex from 'katex';
+import 'katex/dist/katex.min.css'; 
 import { useApi } from "../api";
 
 function DeckPage() {
@@ -82,6 +86,15 @@ function DeckPage() {
     }
   };
 
+  const KatexOutput = ({ latex }) => {
+    const html = katex.renderToString(latex, {
+      throwOnError: false,
+      output: "html"
+    });
+  
+    return <div dangerouslySetInnerHTML={{ __html: html }} />;
+  };
+
   return (
     <>
       <Sidebar />
@@ -91,7 +104,7 @@ function DeckPage() {
             <h1 className="text-4xl font-bold my-4">{deckCards.deck_name}</h1>
             <Link to={`/review/${deckId}`} className="rounded-lg border border-transparent px-[100px] py-2 
               font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-              active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>
+              active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s"  }}>
               <button>Study</button>
             </Link>
           </div>
@@ -126,9 +139,39 @@ function DeckPage() {
         <div className="h-[50vh] overflow-y-auto">
           {deckCards.cards.map(card => (
             <div className="grid grid-cols-2 gap-4 font-medium px-2" key={card.card_id}>
-              <p className="border bg-white text-black mt-2 px-2 py-2" onClick={() => handleCardClick(card.card_id)}>{card.question}</p>
+            
+                <div className="border bg-white text-black mt-2 px-2 py-2">
+                  <div dangerouslySetInnerHTML={{ __html: card.question }} />
+
+                  {ReactPlayer.canPlay(card.questionvideolink) && (
+                    <>
+                      <p>Below is the preview of the video:</p>
+                      <ReactPlayer
+                        url={card.questionvideolink}
+                        controls={true}
+                        style={{ maxWidth: '100%', maxHeight: '100%' }}
+                      />
+                    </>
+                  )}
+                  {card.questionimagelink && <img src={card.questionimagelink} style={{maxWidth: '250px', maxHeight: '250px'} } />}
+                  {card.questionlatex && <KatexOutput latex={card.questionlatex}  />}
+                </div>
+           
+
               <div className="border bg-white text-black mt-2 px-2 py-2 relative" onClick={() => handleCardClick(card.card_id)}>
-                <p>{card.answer}</p>
+                <div dangerouslySetInnerHTML={{ __html: card.answer }} />
+                {ReactPlayer.canPlay(card.answervideolink) && (
+                  <>
+                    <p>Below is the preview of the video:</p>
+                    <ReactPlayer
+                      url={card.answervideolink}
+                      controls={true}
+                      style={{ maxWidth: '100%', maxHeight: '100%' }}
+                    />
+                  </>
+                )}
+                {card.answerimagelink && <img src={card.answerimagelink} style={{maxWidth: '250px', maxHeight: '250px'} } />}
+                {card.answerlatex && <KatexOutput latex={card.answerlatex}  />}
                 <Link to={`/edit/${card.card_id}`}>
                   <img src="../public/Edit_icon.png" alt="Edit_Icon" className="absolute top-0 right-0 h-6 w-8" />
                 </Link>
