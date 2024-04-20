@@ -2,12 +2,15 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "react-query";
 import { useState, useEffect } from "react";
 import Sidebar from "./SideBar";
+import { useApi } from "../api";
 
 function EditPage() {
+  const api = useApi();
+
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState('');
   const [popupColor, setPopupColor] = useState('');
-  const [popupOpacity, setPopupOpacity] = useState('opacity-100');  
+  const [popupOpacity, setPopupOpacity] = useState('opacity-100');
 
   const { cardId } = useParams();
   const [question, setQuestion] = useState('');
@@ -30,24 +33,29 @@ function EditPage() {
   const { data: card, isLoading, error } = useQuery({
     queryKey: ["cards", cardId],
     queryFn: () =>
-      fetch(`http://127.0.0.1:8000/api/cards/${cardId}`).then((response) =>
-        response.json()
-      ),
+      api._get(`/api/cards/${cardId}`).then((response) => response.json()),
+    // fetch(`http://127.0.0.1:8000/api/cards/${cardId}`).then((response) =>
+    //   response.json()
+    // ),
   });
 
   const formSubmissionMutation = useMutation(async (formData) => {
     console.log(JSON.stringify(formData))
 
-    const response = await fetch(`http://localhost:8000/api/cards/${formData.card_id}`, {
-      method: 'PATCH',
-      body: JSON.stringify({
-        question: formData.question,
-        answer: formData.answer
-      }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
+    const response = await api._patch(
+      `/api/cards/${formData.card_id}`,
+      { question: formData.question, answer: formData.answer }
+    );
+    // const response = await fetch(`http://localhost:8000/api/cards/${formData.card_id}`, {
+    //   method: 'PATCH',
+    //   body: JSON.stringify({
+    //     question: formData.question,
+    //     answer: formData.answer
+    //   }),
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   }
+    // });
 
     if (!response.ok) {
       throw new Error(`Network response was not ok: ${response.status_code}`);
@@ -64,7 +72,7 @@ function EditPage() {
       setAnswer(card.answer);
     }
   }, [card]);
-  
+
   if (isLoading) {
     return <div>Loading...</div>;
   }

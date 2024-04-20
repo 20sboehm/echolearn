@@ -2,18 +2,21 @@ import { Link, useParams } from "react-router-dom";
 import { useQuery, useMutation } from "react-query";
 import { useState, useEffect } from "react";
 import Sidebar from "./SideBar";
+import { useApi } from "../api";
 
 function DeckPage() {
+  const api = useApi();
+
   const [deleteMode, setDeleteMode] = useState(false);
   const { deckId } = useParams();
-
 
   // Fetch reviews info
   const { data: deckCards, isLoading, error, refetch } = useQuery({
     queryFn: () =>
-      fetch(`http://localhost:8000/api/decks/${deckId}/cards`).then((response) =>
-        response.json()
-      ),
+      api._get(`/api/decks/${deckId}/cards`).then((response) => response.json()),
+    // fetch(`http://localhost:8000/api/decks/${deckId}/cards`).then((response) =>
+    //   response.json()
+    // ),
   });
 
   // Refetch data whenever the deckId changes
@@ -61,12 +64,13 @@ function DeckPage() {
   const handleCardClick = async (cardId) => {
     if (deleteMode) {
       try {
-        const response = await fetch(`http://localhost:8000/api/cards/${cardId}`, {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
+        const response = await api._delete(`/api/cards/${cardId}`);
+        // const response = await fetch(`http://localhost:8000/api/cards/${cardId}`, {
+        //   method: 'DELETE',
+        //   headers: {
+        //     'Content-Type': 'application/json',
+        //   },
+        // });
         if (!response.ok) {
           throw new Error('Failed to delete card');
         }
@@ -87,7 +91,7 @@ function DeckPage() {
             <h1 className="text-4xl font-bold my-4">{deckCards.deck_name}</h1>
             <Link to={`/review/${deckId}`} className="rounded-lg border border-transparent px-[100px] py-2 
               font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-              active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s"}}>
+              active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>
               <button>Study</button>
             </Link>
           </div>
@@ -97,7 +101,7 @@ function DeckPage() {
             <svg width="200" height="200" viewBox="0 20 200 150">
               <circle cx="100" cy="100" r={radius} fill="none" stroke="#ECEFF1" strokeWidth="7.5" />
               <circle cx="100" cy="100" r={radius} fill="none" stroke="#29A5DC" strokeWidth="7.5" strokeLinecap="round"
-                      strokeDasharray={`${dashLength},${gapLength}`} strokeDashoffset={strokeDashoffset}>
+                strokeDasharray={`${dashLength},${gapLength}`} strokeDashoffset={strokeDashoffset}>
                 <title>Progress</title>
               </circle>
               <text x="100" y="100" textAnchor="middle" dominantBaseline="middle" fill="white" fontSize="16">
@@ -106,8 +110,8 @@ function DeckPage() {
             </svg>
             <button className="rounded-lg border border-transparent px-4 py-2 
               font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-              active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s"}}>
-                More Statistics</button>
+              active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>
+              More Statistics</button>
           </div>
         </div>
 
@@ -115,8 +119,8 @@ function DeckPage() {
           <h1>Cards In This Deck ({deckCards.cards.length})</h1>
           <button className="rounded-lg border border-transparent px-2 py-1 
               font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-              active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s"}} onClick={changeMode}>
-                {deleteMode ? "Cancel" : "Delete"}</button>
+              active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={changeMode}>
+            {deleteMode ? "Cancel" : "Delete"}</button>
         </div>
 
         <div className="h-[50vh] overflow-y-auto">

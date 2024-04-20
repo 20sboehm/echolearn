@@ -4,8 +4,11 @@ import SideBar from './SideBar'
 import ReactPlayer from 'react-player';
 import { BlockMath } from 'react-katex';
 import sanitizeHtml from 'sanitize-html';
+import { useApi } from '../api';
 
 function CreateCard() {
+  const api = useApi();
+
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState('');
   const [popupColor, setPopupColor] = useState('');
@@ -112,9 +115,10 @@ function CreateCard() {
   const { data: decks, isLoading, error } = useQuery({
     queryKey: ['decks'],
     queryFn: () =>
-      fetch(`http://127.0.0.1:8000/api/decks`).then((response) =>
-        response.json()
-      ),
+      api._get('/api/decks').then((response) => response.json()),
+      // fetch(`http://127.0.0.1:8000/api/decks`).then((response) =>
+      //   response.json()
+      // ),
     onSuccess: () => {
       console.log(decks)
     },
@@ -125,10 +129,7 @@ function CreateCard() {
 
   const formSubmissionMutation = useMutation(async (formData) => {
     console.log(JSON.stringify(formData))
-    const response = await fetch('http://localhost:8000/api/cards', {
-      method: 'POST',
-      body: JSON.stringify(formData)
-    });
+    const response = await api._post('/api/cards', formData)
 
     if (!response.ok) {
       throw new Error(`Network response was not ok: ${reponse.status_code}`);

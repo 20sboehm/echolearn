@@ -2,7 +2,6 @@ import { useState, useRef } from "react";
 import { Link, useParams, useLocation } from "react-router-dom";
 
 function Header() {
-
   const location = useLocation();
   const isGuestPage = location.pathname === "/";
 
