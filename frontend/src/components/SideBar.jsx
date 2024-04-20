@@ -137,8 +137,13 @@ function SidebarContent({ isOpen, sidebarRef }) {
    *  Following is the delete request when user trying to delete a folder with the context-menu
    */
   const sendDeleteRequest = (folder_id) => {
-    console.log(`Deleting folder_id: ${folder_id}`);
-    setContextMenu(null);
+    const response = api._delete(`/api/folders/${folder_id}`);
+    if (response.ok) {
+      setContextMenu(null);
+      fetchSidebarData();
+    } else {
+      alert("Fail to delete folder, please make sure there isn't decks inside the folder to delete");
+    }
   }
 
 
