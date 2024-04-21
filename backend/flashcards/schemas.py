@@ -99,6 +99,12 @@ class Cards(Schema):
     question: str
     answer: str
     bucket: int
+    questionvideolink:str
+    answervideolink:str
+    questionimagelink:str
+    answerimagelink:str
+    questionlatex:str
+    answerlatex:str
     next_review: datetime
 
 class ReviewCards(Schema):

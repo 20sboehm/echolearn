@@ -3,6 +3,9 @@ import { useMutation, useQuery } from 'react-query';
 import { Link, useParams } from "react-router-dom";
 import Sidebar from "./SideBar";
 import { useApi } from "../api";
+import ReactPlayer from 'react-player';
+import { BlockMath } from 'react-katex';
+import sanitizeHtml from 'sanitize-html';
 
 function FinishView() {
   return (
@@ -77,8 +80,25 @@ function ReviewCard({ card, showAnswer, setShowAnswer, updateReviewedCard }) {
     <div className="flex flex-col items-center">
       <div className={`flex flex-col items-center h-auto w-80 mx-auto`}>
         <div className="w-full">
-          <p className={`bg-white rounded-md px-4 py-2 flex justify-center items-center text-black h-20 mb-12 transition-margin duration-500 ease-in-out ${showAnswer ? "-mt-24" : "mt-0"}`}>{card.question}</p>
-          <p className={`bg-white rounded-md px-4 py-2 flex justify-center items-center text-black h-20 ${showAnswer ? "opacity-100 transition-opacity duration-500" : "opacity-0"}`}>{card.answer}</p>
+          <div className={`bg-white rounded-md px-4 py-2 flex justify-center items-center text-black h-20 mb-12 transition-margin duration-500 ease-in-out ${showAnswer ? "-mt-24" : "mt-0"}`} >
+            <div dangerouslySetInnerHTML={{ __html: card.question }}></div>
+
+          </div>
+          <div className={`bg-white rounded-md px-4 py-2 flex justify-center items-center text-black h-20 ${showAnswer ? "opacity-100 transition-opacity duration-500" : "opacity-0"}`} >
+            <div dangerouslySetInnerHTML={{ __html: card.answer }} />
+            {ReactPlayer.canPlay(card.answervideolink) && (
+                  <>
+                    <p>Below is the preview of the video:</p>
+                    <ReactPlayer
+                      url={card.answervideolink}
+                      controls={true}
+                      style={{ maxWidth: '100%', maxHeight: '100%' }}
+                    />
+                  </>
+                )}
+          </div>
+          {/* <p className={`bg-white rounded-md px-4 py-2 flex justify-center items-center text-black h-20 mb-12 transition-margin duration-500 ease-in-out ${showAnswer ? "-mt-24" : "mt-0"}`}>{card.question}</p>
+          <p className={`bg-white rounded-md px-4 py-2 flex justify-center items-center text-black h-20 ${showAnswer ? "opacity-100 transition-opacity duration-500" : "opacity-0"}`}>{card.answer}</p> */}
         </div>
       </div>
       {!showAnswer && <button className="mt-8 border rounded-md w-[50%]" onClick={changeShowAnswer}>Reveal Answer</button>}
