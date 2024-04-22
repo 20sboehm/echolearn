@@ -6,6 +6,7 @@ import { useApi } from "../api";
 import ReactPlayer from 'react-player';
 import { BlockMath } from 'react-katex';
 import sanitizeHtml from 'sanitize-html';
+import katex from 'katex';
 
 function FinishView() {
   return (
@@ -76,26 +77,49 @@ function ReviewCard({ card, showAnswer, setShowAnswer, updateReviewedCard }) {
     return formattedTime.trim(); // Trim any trailing whitespace (which is left to account for a possible next unit, ex: "2d 3h")
   }
 
+  const KatexOutput = ({ latex }) => {
+    const html = katex.renderToString(latex, {
+      throwOnError: false,
+      output: "html"
+    });
+  
+    return <div dangerouslySetInnerHTML={{ __html: html }} />;
+  };
   return (
     <div className="flex flex-col items-center">
       <div className={`flex flex-col items-center h-auto w-80 mx-auto`}>
         <div className="w-full">
-          <div className={`bg-white rounded-md px-4 py-2 flex justify-center items-center text-black h-20 mb-12 transition-margin duration-500 ease-in-out ${showAnswer ? "-mt-24" : "mt-0"}`} >
-            <div dangerouslySetInnerHTML={{ __html: card.question }}></div>
-
+          <div className={`bg-white rounded-md px-4 py-2 flex flex-col justify-center items-center text-black h-40 mb-12 transition-margin duration-500 ease-in-out ${showAnswer ? "-mt-24" : "mt-0"}`} >
+            <div  dangerouslySetInnerHTML={{ __html: card.question }}></div>
+            {ReactPlayer.canPlay(card.questionvideolink) && (
+                    <>
+     
+                      <ReactPlayer
+                        url={card.questionvideolink}
+                        controls={true}
+                        style={{ maxWidth: '80%', maxHeight: '80%' }}
+                      />
+                    </>
+                  )}
+                  {card.questionimagelink && <img src={card.questionimagelink} style={{maxWidth: '80%', maxHeight: '80%'} } />}
+                  {card.questionlatex && <KatexOutput latex={card.questionlatex}  />}
           </div>
-          <div className={`bg-white rounded-md px-4 py-2 flex justify-center items-center text-black h-20 ${showAnswer ? "opacity-100 transition-opacity duration-500" : "opacity-0"}`} >
-            <div dangerouslySetInnerHTML={{ __html: card.answer }} />
+          <div className={`bg-white rounded-md px-4 py-2 flex flex-col justify-center items-center text-black h-40 ${showAnswer ? "opacity-100 transition-opacity duration-500" : "opacity-0"}`} >
+            <div  dangerouslySetInnerHTML={{ __html: card.answer }} />
+
             {ReactPlayer.canPlay(card.answervideolink) && (
                   <>
-                    <p>Below is the preview of the video:</p>
+             
                     <ReactPlayer
                       url={card.answervideolink}
                       controls={true}
-                      style={{ maxWidth: '100%', maxHeight: '100%' }}
+                      style={{ maxWidth: '80%', maxHeight: '80%' }}
                     />
                   </>
                 )}
+              {card.answerimagelink && <img src={card.answerimagelink} style={{maxWidth: '80%', maxHeight: '80%'} } />}
+              {card.answerlatex && <KatexOutput latex={card.answerlatex}  />}
+      
           </div>
           {/* <p className={`bg-white rounded-md px-4 py-2 flex justify-center items-center text-black h-20 mb-12 transition-margin duration-500 ease-in-out ${showAnswer ? "-mt-24" : "mt-0"}`}>{card.question}</p>
           <p className={`bg-white rounded-md px-4 py-2 flex justify-center items-center text-black h-20 ${showAnswer ? "opacity-100 transition-opacity duration-500" : "opacity-0"}`}>{card.answer}</p> */}
