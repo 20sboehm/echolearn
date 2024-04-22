@@ -39,7 +39,7 @@ function DeckPage() {
   let reviewedCardsCount = 0;
   // Check if 'cards' property exists and is an array
   if (deckCards.cards && Array.isArray(deckCards.cards)) {
-    reviewedCardsCount = deckCards.cards.filter(card => !card.is_new || (card.next_review && Date.parse(card.next_review) >= Date.now())).length;
+    reviewedCardsCount = deckCards.cards.filter(card => card.next_review && Date.parse(card.next_review) >= Date.now()).length;
   }
 
   const totalCardsCount = deckCards.cards.length; // Total number of cards in the deck
@@ -173,7 +173,7 @@ function DeckPage() {
                 {card.answerimagelink && <img src={card.answerimagelink} style={{maxWidth: '250px', maxHeight: '250px'} } />}
                 {card.answerlatex && <KatexOutput latex={card.answerlatex}  />}
                 <Link to={`/edit/${card.card_id}`}>
-                  <img src="../public/Edit_icon.png" alt="Edit_Icon" className="absolute top-0 right-0 h-6 w-8" />
+                  <img src="../Edit_icon.png" alt="Edit_Icon" className="absolute top-0 right-0 h-6 w-8" />
                 </Link>
               </div>
             </div>
