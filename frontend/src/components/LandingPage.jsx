@@ -4,14 +4,14 @@ import { Link, useParams } from "react-router-dom";
 function LandingBody() {
   return (
     <>
-      <div className="flex justify-between">
-        <div className="h-[50vh] bg-customBlue text-black p-8 flex flex-col">
+      <div className="flex justify-between w-full">
+        <div className="h-[50vh] w-2/3 bg-customBlue text-black p-8 flex flex-col">
           <h3 className="text-4xl font-bold mb-4">Learn Efficiently, Remember Forever</h3>
-          <p>Unlock your learning potential with EchoLearn. Our smart flashcard system makes remembering information easy and fun.</p>
+          <p className="text-2xl">Unlock your learning potential with EchoLearn. Our smart flashcard system makes remembering information easy and fun.</p>
         </div>
         <img src="../public/Study.png" alt="Study PNG" className="w-1/3"></img>
       </div>
-      <div className="flex justify-between">
+      <div className="flex justify-between w-full">
         <div className="flex flex-col items-center flex-grow">
           <img src="../public/growth.png" alt="growth PNG" className="w-1/3 mt-2"></img>
           <h3 className="text-2xl font-bold text-center">Spaced repetition made simple</h3>
