@@ -136,9 +136,10 @@ function SidebarContent({ isOpen, sidebarRef }) {
   /**
    *  Following is the delete request when user trying to delete a folder with the context-menu
    */
-  const sendDeleteRequest = (folder_id) => {
-    const response = api._delete(`/api/folders/${folder_id}`);
-    if (response.ok) {
+  const sendDeleteRequest = async (folder_id) => {
+    const response = await api._delete(`/api/folders/${folder_id}`);
+    console.log("STATUS: " + response.status);
+    if (response.status === 204) {
       setContextMenu(null);
       fetchSidebarData();
     } else {

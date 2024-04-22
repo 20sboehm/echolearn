@@ -4,6 +4,7 @@ from typing import List
 import flashcards.schemas as sc
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
+from django.db.models.deletion import ProtectedError
 
 folders_router = Router(tags=["Folders"])
 
@@ -55,10 +56,15 @@ def update_folder(request, folder_id: int, payload:sc.UpdateFolder):
 # -------------------- DELETE -----------------
 # ---------------------------------------------
 
-@folders_router.delete("/{folder_id}", response={204: None, 404: str})
+@folders_router.delete("/{folder_id}", response={204: None, 404: str, 409: str})
 def delete_folder(request, folder_id: int): 
     folder = get_object_or_404(Folder, folder_id=folder_id)
+    print("here 1")
     
-    folder.delete()
+    try:
+        folder.delete()
+    except ProtectedError as e:
+        print(e)
+        return 409, "Cannot delete folder with decks in it"
 
     return 204, None
