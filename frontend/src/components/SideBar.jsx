@@ -3,6 +3,9 @@ import { useQuery, useMutation } from 'react-query';
 import { Link, useParams } from "react-router-dom";
 import "./SideBar.css";
 import { useApi } from "../api";
+import folderOpenImg from "../assets/folder-open.png"
+import folderCloseImg from "../assets/folder-close.png"
+import decksImg from "../assets/decks.png"
 
 function SidebarContent({ isOpen, sidebarRef }) {
   const api = useApi();
@@ -191,7 +194,7 @@ function SidebarContent({ isOpen, sidebarRef }) {
       <div className="Folders">
         <ul>
           {sidebarData.Folders.map(folder => (
-            <li key={folder.folder_id} onClick={() => openFolder(folder.folder_id)} onContextMenu={(e) => handleContextMenu(e, folder.folder_id, folder.name)} className="mb-4">
+            <li key={folder.folder_id} onClick={() => openFolder(folder.folder_id)} onContextMenu={(e) => handleContextMenu(e, folder.folder_id, folder.name)} className="mb-4 select-none">
               <div className="cursor-pointer" style={{ display: "flex", alignItems: "center" }}>
                 {
                   folderEdit === folder.folder_id ? (
@@ -209,7 +212,7 @@ function SidebarContent({ isOpen, sidebarRef }) {
                   ) : (
                     <>
                       <div className="folderContainer">
-                        <img src={openFolderIds.includes(folder.folder_id) ? "../folder_Open.png" : "../folder_Close.png"}
+                        <img src={openFolderIds.includes(folder.folder_id) ? folderOpenImg : folderCloseImg}
                           style={{ width: openFolderIds.includes(folder.folder_id) ? "15%" : "12%", marginRight: "8px" }} />
                         <span>{folder.name}</span>
                       </div>
@@ -223,9 +226,9 @@ function SidebarContent({ isOpen, sidebarRef }) {
               {openFolderIds.includes(folder.folder_id) && (
                 <ul>
                   {folder.decks.map(deck => (
-                    <li key={deck.deck_id}>
+                    <li key={deck.deck_id} className="select-none">
                       <Link to={`/decks/${deck.deck_id}`} style={{ display: "flex", alignItems: "center" }}>
-                        <img src="../Decks.png" style={{ width: "25%" }} />
+                        <img src={decksImg} style={{ width: "25%" }} />
                         {deck.name}
                       </Link>
                     </li>

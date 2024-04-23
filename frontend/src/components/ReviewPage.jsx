@@ -7,18 +7,20 @@ import ReactPlayer from 'react-player';
 import { BlockMath } from 'react-katex';
 import sanitizeHtml from 'sanitize-html';
 import katex from 'katex';
+import partyPopperImg from '../assets/party-popper.png'
+import partyPopperFlipImg from '../assets/party-popper-flip.png'
 
 function FinishView() {
   return (
     <div className="flex flex-row justify-center items-center -mt-[10vh]">
-      <img className="w-1/3 h-1/2 mt-[-10vh]" src="../party-popper-flip.png" alt="Party Popper" />
+      <img className="w-40 h-40 mt-[-10vh]" src={partyPopperFlipImg} alt="Party Popper" />
       <div className="flex flex-col justify-center items-center mx-4">
         <h3 className="h-[25vh] flex justify-center items-center w-full border-black bg-white rounded-md p-5 text-2xl text-black my-4">You have studied all the cards in this deck</h3>
         <Link to="/home">
           <button className="border rounded-md px-2 py-1">Back to deck</button>
         </Link>
       </div>
-      <img className="w-1/3 h-1/2 mt-[-10vh]" src="../party-popper.png" alt="Party Popper" />
+      <img className="w-40 h-40 mt-[-10vh]" src={partyPopperImg} alt="Party Popper" />
     </div>
   )
 }
@@ -67,10 +69,10 @@ function ReviewCard({ card, showAnswer, setShowAnswer, updateReviewedCard }) {
     if (days > 0) {
       formattedTime += `${days}d `;
     }
-    if (hours > 0 && days === 0) {
+    if (hours > 0 && days <= 4) {
       formattedTime += `${hours}h `;
     }
-    if (days === 0 && hours === 0) { // Only show minutes if there are minutes or if the time is less than 1 hour
+    if (days === 0 && hours <= 4) { // Only show minutes if there are minutes or if the time is less than 1 hour
       formattedTime += `${minutes}m`;
     }
 
@@ -128,16 +130,16 @@ function ReviewCard({ card, showAnswer, setShowAnswer, updateReviewedCard }) {
       {!showAnswer && <button className="mt-8 border rounded-md w-[50%]" onClick={changeShowAnswer}>Reveal Answer</button>}
       {showAnswer && (
         <div className="flex justify-center mt-28">
-          <button className="px-4 mr-4 text-black bg-red-600 hover:bg-red-700" onClick={() => updateReviewedCard(0, getNextReviewTime(1), card)}>Again <br />
+          <button className="rounded-md w-24 px-4 mr-4 text-black bg-red-600 hover:bg-red-700" onClick={() => updateReviewedCard(0, getNextReviewTime(1), card)}>Again <br />
             {formatTimeDifference(now.getTime(), getNextReviewTime(1))}</button>
 
-          <button className="px-4 mr-4 text-black bg-yellow-400 hover:bg-yellow-500" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(2), card)}>Hard <br />
+          <button className="rounded-md w-24 px-4 mr-4 text-black bg-yellow-400 hover:bg-yellow-500" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(2), card)}>Hard <br />
             {formatTimeDifference(now.getTime(), getNextReviewTime(2))}</button>
 
-          <button className="px-4 mr-4 text-black bg-green-700 hover:bg-green-800" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(3), card)}>Good <br />
+          <button className="rounded-md w-24 px-4 mr-4 text-black bg-green-700 hover:bg-green-800" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(3), card)}>Good <br />
             {formatTimeDifference(now.getTime(), getNextReviewTime(3))}</button>
 
-          <button className="px-4 text-black bg-green-400 hover:bg-green-500" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(4), card)}>Easy <br />
+          <button className="rounded-md w-24 px-4 text-black bg-green-400 hover:bg-green-500" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(4), card)}>Easy <br />
             {formatTimeDifference(now.getTime(), getNextReviewTime(4))}</button>
         </div>
       )}

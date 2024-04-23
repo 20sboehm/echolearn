@@ -3,10 +3,10 @@ import { useQuery, useMutation } from "react-query";
 import { useState, useEffect } from "react";
 import Sidebar from "./SideBar";
 import ReactPlayer from 'react-player';
-import { BlockMath } from "react-katex";
 import katex from 'katex';
 import 'katex/dist/katex.min.css'; 
 import { useApi } from "../api";
+import editIconImg from "../assets/edit-icon.png"
 
 function DeckPage() {
   const api = useApi();
@@ -100,12 +100,12 @@ function DeckPage() {
       <Sidebar />
       <div className="w-[65vw]">
         <div className="flex flex-row">
-          <div className="flex flex-col ">
+          <div className="flex flex-col items-start">
             <h1 className="text-4xl font-bold my-4">{deckCards.deck_name}</h1>
-            <Link to={`/review/${deckId}`} className="rounded-lg border border-transparent px-[100px] py-2 
+            <Link to={`/review/${deckId}`} className="rounded-lg border border-transparent px-12 py-2 text-center
               font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
               active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s"  }}>
-              <button>Study</button>
+              Study
             </Link>
           </div>
 
@@ -128,24 +128,23 @@ function DeckPage() {
           </div>
         </div>
 
-        <div className="flex flex-row items-center justify-between mt-2">
-          <h1>Cards In This Deck ({deckCards.cards.length})</h1>
-          <button className="rounded-lg border border-transparent px-2 py-1 
-              font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-              active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={changeMode}>
+        <div className="flex flex-row items-center justify-between mt-2 mb-4 border-t border-gray-500 pt-4">
+          <h1>{deckCards.cards.length} Cards</h1>
+          <button className={`${deleteMode ? "bg-red-500" : "bg-blue-500"} rounded-lg border border-transparent px-2 py-1 
+              font-semibold hover:border-white hover:text-white active:scale-[0.97]`} 
+              style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={changeMode}>
             {deleteMode ? "Cancel" : "Delete"}</button>
         </div>
 
-        <div className="h-[50vh] overflow-y-auto">
+        <div className="h-[50vh] overflow-y-auto border-t border-gray-500">
           {deckCards.cards.map(card => (
             <div className="grid grid-cols-2 gap-4 font-medium px-2" key={card.card_id}>
             
-                <div className="border bg-white text-black mt-2 px-2 py-2" onClick={() => handleCardClick(card.card_id)}>
+                <div className="border rounded-sm bg-white text-black mt-2 px-2 py-2" onClick={() => handleCardClick(card.card_id)}>
                   <div dangerouslySetInnerHTML={{ __html: card.question }} />
 
                   {ReactPlayer.canPlay(card.questionvideolink) && (
                     <>
-                      <p>Below is the preview of the video:</p>
                       <ReactPlayer
                         url={card.questionvideolink}
                         controls={true}
@@ -158,11 +157,10 @@ function DeckPage() {
                 </div>
            
 
-              <div className="border bg-white text-black mt-2 px-2 py-2 relative" onClick={() => handleCardClick(card.card_id)}>
+              <div className="border rounded-sm bg-white text-black mt-2 px-2 py-2 relative" onClick={() => handleCardClick(card.card_id)}>
                 <div dangerouslySetInnerHTML={{ __html: card.answer }} />
                 {ReactPlayer.canPlay(card.answervideolink) && (
                   <>
-                    <p>Below is the preview of the video:</p>
                     <ReactPlayer
                       url={card.answervideolink}
                       controls={true}
@@ -173,7 +171,7 @@ function DeckPage() {
                 {card.answerimagelink && <img src={card.answerimagelink} style={{maxWidth: '250px', maxHeight: '250px'} } />}
                 {card.answerlatex && <KatexOutput latex={card.answerlatex}  />}
                 <Link to={`/edit/${card.card_id}`}>
-                  <img src="../Edit_icon.png" alt="Edit_Icon" className="absolute top-0 right-0 h-6 w-8" />
+                  <img src={editIconImg} alt="Edit_Icon" className="absolute top-0 right-0 h-6 w-8" />
                 </Link>
               </div>
             </div>

@@ -1,10 +1,21 @@
 import { useMutation, useQuery } from 'react-query';
-import { useState , useEffect,useRef} from 'react';
+import { useState, useEffect, useRef } from 'react';
 import SideBar from './SideBar'
 import ReactPlayer from 'react-player';
 import { BlockMath } from 'react-katex';
 import sanitizeHtml from 'sanitize-html';
 import { useApi } from '../api';
+
+const CustomButton = ({ onClick, text }) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className="rounded-lg border border-transparent px-4 py-2 font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] active:border-[#555]"
+    style={{ transition: "border-color 0.10s, color 0.10s" }}
+  >
+    {text}
+  </button>
+);
 
 function CreateCard() {
   const api = useApi();
@@ -17,60 +28,54 @@ function CreateCard() {
   const [deckId, setDeckId] = useState('');
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');
-  const [Normal_question, setNormalQuestion] = useState('');
-  const [Normal_answer, setNormalAnswer] = useState('');
-  
-  const[questionvideolink,setQuestionVideoLink] = useState('');
-  const[answervideolink,setAnswerVideoLink] = useState('');
 
-  const [answerlatex, setAnswerLatexInput] = useState('');
-  const [questionlatex, setQuestionLatexInput] = useState('');
+  const [questionVideoLink, setQuestionVideoLink] = useState('');
+  const [answerVideoLink, setAnswerVideoLink] = useState('');
 
-  const [Answer_requirement, setAnswer_requirement] = useState('');
-  const [Question_requirement, setQuestion_requirement] = useState('');
+  const [answerLatex, setAnswerLatex] = useState('');
+  const [questionLatex, setQuestionLatex] = useState('');
 
-  const [answerimagelink, setAnswer_ImageUrl] = useState(''); 
-  const [questionimagelink, setQuestion_ImageUrl] = useState(''); 
+  const [answerRequirement, setAnswerRequirement] = useState('');
+  const [questionRequirement, setQuestionRequirement] = useState('');
 
-  const handleAnswerRequirement =(value) =>{
-    if(Answer_requirement === value)
-    {
-      setAnswer_requirement("");
+  const [answerImageLink, setAnswerImageLink] = useState('');
+  const [questionImageLink, setQuestionImageLink] = useState('');
+
+  const handleAnswerRequirement = (value) => {
+    if (answerRequirement === value) {
+      setAnswerRequirement("");
 
       return;
     }
-    setAnswer_requirement(value);
+    setAnswerRequirement(value);
   }
 
-  const handleQuestionRequirement =(value) =>{
+  const handleQuestionRequirement = (value) => {
     setQuestionVideoLink('');
     setAnswerVideoLink('');
-    setAnswer_ImageUrl('');
-    setQuestion_ImageUrl('');
-    setQuestionLatexInput('');
-    setAnswerLatexInput('');
-    if(Question_requirement === value)
-    {
-      setQuestion_requirement("");
-    
+    setAnswerImageLink('');
+    setQuestionImageLink('');
+    setQuestionLatex('');
+    setAnswerLatex('');
+    if (questionRequirement === value) {
+      setQuestionRequirement("");
+
       return;
     }
-    setQuestion_requirement(value);
+    setQuestionRequirement(value);
   }
 
-  const makeLink =()=> {
+  const makeLink = () => {
     const url = prompt("Enter the URL:", "http://");
-    console.log(url);
     document.execCommand('createLink', false, url);
   }
-  
+
   const formatText = (command) => {
     document.execCommand(command, false, null);
   };
 
   const handleAnswerInput = (e) => {
     const newText = e.currentTarget.innerHTML;
-    setNormalAnswer(e.currentTarget.textContent)
     const safeHtml = sanitizeHtml(newText, {
       allowedTags: sanitizeHtml.defaults.allowedTags.concat(['b', 'i', 'u', 'strong', 'em']),  // Allow basic formatting tags
       allowedAttributes: {}  // Restrict all attributes to prevent potential XSS vectors
@@ -80,7 +85,6 @@ function CreateCard() {
 
   const handleQuestionInput = (e) => {
     const newText = e.currentTarget.innerHTML;
-    setNormalQuestion(e.currentTarget.textContent)
     const safeHtml = sanitizeHtml(newText, {
       allowedTags: sanitizeHtml.defaults.allowedTags.concat(['b', 'i', 'u', 'strong', 'em']),  // Allow basic formatting tags
       allowedAttributes: {}  // Restrict all attributes to prevent potential XSS vectors
@@ -99,14 +103,12 @@ function CreateCard() {
     }, 1000); // Stay fully visible for 1 second
     setQuestion('');
     setAnswer('');
-    setNormalAnswer('');
-    setNormalQuestion('');
     setQuestionVideoLink('');
     setAnswerVideoLink('');
-    setAnswer_ImageUrl('');
-    setQuestion_ImageUrl('');
-    setQuestionLatexInput('');
-    setAnswerLatexInput('');
+    setAnswerImageLink('');
+    setQuestionImageLink('');
+    setQuestionLatex('');
+    setAnswerLatex('');
     document.getElementById("QuestionDiv").textContent = '';
     document.getElementById("AnswerDiv").textContent = '';
   }
@@ -116,11 +118,11 @@ function CreateCard() {
     queryKey: ['decks'],
     queryFn: () =>
       api._get('/api/decks').then((response) => response.json()),
-      // fetch(`http://127.0.0.1:8000/api/decks`).then((response) =>
-      //   response.json()
-      // ),
+    // fetch(`http://127.0.0.1:8000/api/decks`).then((response) =>
+    //   response.json()
+    // ),
     onSuccess: () => {
-      console.log(decks)
+      // console.log(decks)
     },
     onError: () => {
       console.log('An error occurred fetching decks')
@@ -128,7 +130,7 @@ function CreateCard() {
   });
 
   const formSubmissionMutation = useMutation(async (formData) => {
-    console.log(JSON.stringify(formData))
+    // console.log(JSON.stringify(formData))
     const response = await api._post('/api/cards', formData)
 
     if (!response.ok) {
@@ -140,7 +142,7 @@ function CreateCard() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    formSubmissionMutation.mutate({ deck_id: deckId, question, answer,questionvideolink,answervideolink,questionimagelink,answerimagelink,questionlatex,answerlatex}, {
+    formSubmissionMutation.mutate({ deck_id: deckId, question, answer, questionvideolink: questionVideoLink, answervideolink: answerVideoLink, questionimagelink: questionImageLink, answerimagelink: answerImageLink, questionlatex: questionLatex, answerlatex: answerLatex }, {
       onSuccess: () => {
         popupDetails('Card created successfully!', 'green')
       },
@@ -162,131 +164,103 @@ function CreateCard() {
               <option key={deck.deck_id} value={deck.deck_id}>{deck.name}</option>
             ))}
           </select>
+
           <div>
-          <button type = "button" onClick={() => handleQuestionRequirement('image')} class="rounded-lg border border-transparent px-4 py-2 
-          font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-          active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>Image</button>
-          <button type = "button" onClick={() => handleQuestionRequirement('video')} class="rounded-lg border border-transparent px-4 py-2 
-          font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-          active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>video</button>
-          <button type = "button" onClick={() => formatText('bold')} class="rounded-lg border border-transparent px-4 py-2 
-          font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-          active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>bold</button>
-          <button type = "button" onClick={() => formatText('italic')} class="rounded-lg border border-transparent px-4 py-2 
-          font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-          active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>italic</button>
-          <button type = "button" onClick={() => formatText('underline')} class="rounded-lg border border-transparent px-4 py-2 
-          font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-          active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>underline</button>
-          <button type = "button" onClick={() => handleQuestionRequirement('latex')} class="rounded-lg border border-transparent px-4 py-2 
-          font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-          active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>latex</button>
-          <button type = "button" onClick={() => makeLink()} class="rounded-lg border border-transparent px-4 py-2 
-          font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-          active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>URL</button>
-          </div>
-          <div id = "QuestionDiv"  onInput={handleQuestionInput} contentEditable
-          style={{border: '1px solid black', textAlign: 'left',  minHeight: '180px', width:'500px', padding: '10px', marginTop: '10px',backgroundColor:'grey'}}>
-          <htmlcontent html = {question}></htmlcontent>
+            <CustomButton onClick={() => handleQuestionRequirement('image')} text="Image" />
+            <CustomButton onClick={() => handleQuestionRequirement('video')} text="Video" />
+            <CustomButton onClick={() => formatText('bold')} text="Bold" />
+            <CustomButton onClick={() => formatText('italic')} text="Italic" />
+            <CustomButton onClick={() => formatText('underline')} text="Underline" />
+            <CustomButton onClick={() => handleQuestionRequirement('latex')} text="Latex" />
+            <CustomButton onClick={() => makeLink()} text="URL" />
           </div>
 
-          {Question_requirement === 'latex' && (
+          <div id="QuestionDiv" onInput={handleQuestionInput} contentEditable
+            style={{ border: '1px solid black', textAlign: 'left', minHeight: '180px', width: '500px', padding: '10px', marginTop: '10px', backgroundColor: 'grey' }}>
+          </div>
+
+          {questionRequirement === 'latex' && (
             <div>
-              <textarea value={questionlatex} onChange={(e)=>setQuestionLatexInput(e.target.value)}style={{border: '1px solid black', textAlign: 'left',  minHeight: '180px', width:'500px', padding: '10px', marginTop: '10px',backgroundColor:'grey'}}></textarea>
-            <h2>Preview</h2>
-            <div style={{border: '1px solid #ccc', padding: '10px',minHeight: '180px', width:'500px'}}>
+              <textarea value={questionLatex} onChange={(e) => setQuestionLatex(e.target.value)} style={{ border: '1px solid black', textAlign: 'left', minHeight: '180px', width: '500px', padding: '10px', marginTop: '10px', backgroundColor: 'grey' }}></textarea>
+              <h2>Preview</h2>
+              <div style={{ border: '1px solid #ccc', padding: '10px', minHeight: '180px', width: '500px' }}>
 
-              <BlockMath math={questionlatex} errorColor={'#cc0000'} />
+                <BlockMath math={questionLatex} errorColor={'#cc0000'} />
+              </div>
             </div>
-          </div>
           )}
 
-          {Question_requirement === 'video' && (
-          <div>
-            <label htmlFor='videoInput'>Put your video link here : </label>
-            <input name = "videoInput" type="text" value={questionvideolink}   onChange={(e) => setQuestionVideoLink(e.target.value)} style={{ width: '250px', height:'50px' }}></input>
-              {ReactPlayer.canPlay(questionvideolink) ? (
+          {questionRequirement === 'video' && (
+            <div>
+              <label htmlFor='videoInput'>Put your video link here : </label>
+              <input name="videoInput" type="text" value={questionVideoLink} onChange={(e) => setQuestionVideoLink(e.target.value)} style={{ width: '250px', height: '50px' }}></input>
+              {ReactPlayer.canPlay(questionVideoLink) ? (
                 <>
                   <p>below is the preview of video</p>
-                  <ReactPlayer url= {questionvideolink} controls={true} />
+                  <ReactPlayer url={questionVideoLink} controls={true} />
                 </>
-                ) : (
-                  <p>The link is not available</p>
-                )}
+              ) : (
+                <p>The link is not available</p>
+              )}
             </div>
           )}
 
-          {Question_requirement === 'image' && (
+          {questionRequirement === 'image' && (
             <div>
-            <label htmlFor='QuestionimageInput'>Put your image here:</label>
-            <input name='QuestionimageInput' value={questionimagelink} type="text"  onChange={(e)=>setQuestion_ImageUrl(e.target.value)}></input>
-            <img src={questionimagelink} style={{maxWidth: '250px', maxHeight: '250px'} } />
+              <label htmlFor='QuestionimageInput'>Put your image here:</label>
+              <input name='QuestionimageInput' value={questionImageLink} type="text" onChange={(e) => setQuestionImageLink(e.target.value)}></input>
+              <img src={questionImageLink} style={{ maxWidth: '250px', maxHeight: '250px' }} />
             </div>
           )}
-             
+
           <div>
-            <button type = "button" onClick={() => handleAnswerRequirement('image')} class="rounded-lg border border-transparent px-4 py-2 
-            font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-            active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>Image</button>
-            <button type = "button" onClick={() =>handleAnswerRequirement('video')} class="rounded-lg border border-transparent px-4 py-2 
-            font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-            active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>video</button>
-            <button type = "button" onClick={() => formatText('bold')} class="rounded-lg border border-transparent px-4 py-2 
-            font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-            active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>bold</button>
-            <button type = "button" onClick={() => formatText('italic')} class="rounded-lg border border-transparent px-4 py-2 
-            font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-            active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>italic</button>
-            <button type = "button" onClick={() => formatText('underline')} class="rounded-lg border border-transparent px-4 py-2 
-            font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-            active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>underline</button>
-            <button type = "button" onClick={() => handleAnswerRequirement('latex')} class="rounded-lg border border-transparent px-4 py-2 
-            font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-            active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>latex</button>
-            <button type = "button" onClick={() => makeLink()} class="rounded-lg border border-transparent px-4 py-2 
-            font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-            active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>URL</button>
+            <CustomButton onClick={() => handleQuestionRequirement('image')} text="Image" />
+            <CustomButton onClick={() => handleQuestionRequirement('video')} text="Video" />
+            <CustomButton onClick={() => formatText('bold')} text="Bold" />
+            <CustomButton onClick={() => formatText('italic')} text="Italic" />
+            <CustomButton onClick={() => formatText('underline')} text="Underline" />
+            <CustomButton onClick={() => handleQuestionRequirement('latex')} text="Latex" />
+            <CustomButton onClick={() => makeLink()} text="URL" />
           </div>
 
-          <div id = "AnswerDiv"  onInput={handleAnswerInput}  contentEditable
-          style={{border: '1px solid black', minHeight: '180px', width:'500px', padding: '10px',backgroundColor:'grey'}}>
-          <htmlcontent html = {answer}></htmlcontent>
+          <div id="AnswerDiv" onInput={handleAnswerInput} contentEditable
+            style={{ border: '1px solid black', minHeight: '180px', width: '500px', padding: '10px', backgroundColor: 'grey' }}>
           </div>
 
-          {Answer_requirement === 'latex' && (
+          {answerRequirement === 'latex' && (
             <div>
-               <textarea value={answerlatex} onChange={(e)=>setAnswerLatexInput(e.target.value)}style={{border: '1px solid black', textAlign: 'left',  minHeight: '180px', width:'500px', padding: '10px', marginTop: '10px',backgroundColor:'grey'}}></textarea>
-            <h2>Preview</h2>
-            <div style={{border: '1px solid #ccc', padding: '10px',minHeight: '180px', width:'500px'}}>
-              <BlockMath math={answerlatex} errorColor={'#cc0000'} />
+              <textarea value={answerLatex} onChange={(e) => setAnswerLatex(e.target.value)} style={{ border: '1px solid black', textAlign: 'left', minHeight: '180px', width: '500px', padding: '10px', marginTop: '10px', backgroundColor: 'grey' }}></textarea>
+              <h2>Preview</h2>
+              <div style={{ border: '1px solid #ccc', padding: '10px', minHeight: '180px', width: '500px' }}>
+                <BlockMath math={answerLatex} errorColor={'#cc0000'} />
+              </div>
             </div>
-          </div>
           )}
 
-          {Answer_requirement === 'video' && (
-          <div>
-            <label htmlFor='videoInput'>Put your video link here : </label>
-            <input name = "videoInput" type="text" value={answervideolink}  onChange={(e) => setAnswerVideoLink(e.target.value)} style={{ width: '250px', height:'50px' }}></input>
-              {ReactPlayer.canPlay(answervideolink) ? (
+          {answerRequirement === 'video' && (
+            <div>
+              <label htmlFor='videoInput'>Put your video link here : </label>
+              <input name="videoInput" type="text" value={answerVideoLink} onChange={(e) => setAnswerVideoLink(e.target.value)} style={{ width: '250px', height: '50px' }}></input>
+              {ReactPlayer.canPlay(answerVideoLink) ? (
                 <>
                   <p>preview </p>
-                  <ReactPlayer url= {answervideolink} controls={true} />
+                  <ReactPlayer url={answerVideoLink} controls={true} />
                 </>
-                ) : (
-                  <p>The link is not available</p>
-                )}
+              ) : (
+                <p>The link is not available</p>
+              )}
             </div>
           )}
 
-          {Answer_requirement === 'image' && (
+          {answerRequirement === 'image' && (
             <div>
-            <label htmlFor='AnswerimageInput'>Put your image here:</label>
-            <input name='AnswerimageInput' value={answerimagelink} type="text"  onChange={(e)=>setAnswer_ImageUrl(e.target.value)}></input>
-            <img src={answerimagelink} style={{maxWidth: '250px', maxHeight: '250px'}} />
+              <label htmlFor='AnswerimageInput'>Put your image here:</label>
+              <input name='AnswerimageInput' value={answerImageLink} type="text" onChange={(e) => setAnswerImageLink(e.target.value)}></input>
+              <img src={answerImageLink} style={{ maxWidth: '250px', maxHeight: '250px' }} />
             </div>
           )}
 
-          <button type='submit' class="rounded-lg border border-transparent px-4 py-2 
+          <button type='submit' className="rounded-lg border border-transparent px-4 py-2 
           font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>
             Submit
