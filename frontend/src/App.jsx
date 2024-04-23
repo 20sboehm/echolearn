@@ -12,6 +12,7 @@ import HelpPage from "./components/HelpPage"
 import DeckPage from './components/DeckPage';
 import EditPage from './components/EditPage';
 import Header from "./components/Header"
+import Login from './components/Login';
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,7 @@ function Main() {
         <Route path="/help" element={<HelpPage />} />
         <Route path="/edit/:cardId" element={<EditPage />} />
         <Route path="/decks/:deckId" element={<DeckPage />} />
+        <Route path="/login" element={<Login />} />
         <Route path="*" element={<Navigate to="/error/404/Page%20Not%20Found" />} />
       </Routes>
     </main>

@@ -136,3 +136,11 @@ class FolderInfo(Schema):
 
 class GetSidebar(Schema):
     Folders: list[FolderInfo]
+    
+# -----------------------------------------------
+# ------------------ User --------------------
+# -----------------------------------------------
+
+class GetUser(Schema):
+    username: str
+    userpassword: str
