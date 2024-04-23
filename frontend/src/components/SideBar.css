@@ -39,4 +39,22 @@
     /* Adding space between each buttet*/
     padding-left: 0px;
 }
+
+.folderContainer {
+    display: flex;
+    align-items: center;
+}
+
+.tripleDotContainer {
+    margin-left: auto;
+}
+
+.tripleDot {
+    visibility: hidden;
+}
+
+.cursor-pointer:hover .tripleDot {
+    visibility: visible;
+}
+  
   

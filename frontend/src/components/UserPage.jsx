@@ -3,14 +3,15 @@ import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import SideBar from "./SideBar";
 import ScrollContainer from "./ScrollContainer";
+import { useApi } from "../api";
 
 function TaskList() {
+  const api = useApi();
+
   const { data: decks, isLoadingDecks, errorDecks } = useQuery({
     queryKey: ["decks"],
     queryFn: () =>
-      fetch(`http://127.0.0.1:8000/api/decks`).then((response) =>
-        response.json()
-      ),
+      api._get('/api/decks').then((response) => response.json()),
     onError: () => {
       console.log(`An error occurred fetching decks ${errorDecks.text}`)
     }
@@ -19,9 +20,7 @@ function TaskList() {
   const { data: cards, isLoadingCards, errorCards } = useQuery({
     queryKey: ["cards"],
     queryFn: () =>
-      fetch(`http://127.0.0.1:8000/api/cards`).then((response) =>
-        response.json()
-      ),
+      api._get('/api/cards').then((response) => response.json()),
     onError: () => {
       console.log(`An error occurred fetching cards ${errorCards.text}`)
     }

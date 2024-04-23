@@ -8,6 +8,7 @@ export default {
 		extend: {
 			colors: {
 				userHeaderColor: '#0D79A1',
+				customBlue: '#82DEFF',
 			},
 		},
 	},

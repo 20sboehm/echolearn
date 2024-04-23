@@ -1,8 +1,11 @@
 import { useMutation, useQuery } from 'react-query';
 import { useState } from 'react';
 import SideBar from './SideBar'
+import { useApi } from "../api";
 
 function CreateFolder() {
+  const api = useApi();
+
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState('');
   const [popupColor, setPopupColor] = useState('');
@@ -24,10 +27,11 @@ function CreateFolder() {
 
   const formSubmissionMutation = useMutation(async (formData) => {
     console.log(JSON.stringify(formData))
-    const response = await fetch('http://localhost:8000/api/folders', {
-      method: 'POST',
-      body: JSON.stringify(formData)
-    });
+    const response = await api._post('/api/folders', formData);
+    // const response = await fetch('http://localhost:8000/api/folders', {
+    //   method: 'POST',
+    //   body: JSON.stringify(formData)
+    // });
 
     if (!response.ok) {
       throw new Error(`Network response was not ok: ${reponse.status_code}`);
@@ -61,7 +65,7 @@ function CreateFolder() {
           className='mb-4 p-2 rounded-md'
           style={{ width: '30vw' }}
         />
-        <button type='submit' class="rounded-lg border border-transparent px-4 py-2 
+        <button type='submit' className="rounded-lg border border-transparent px-4 py-2 
           font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>
           Submit

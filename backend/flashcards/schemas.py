@@ -58,6 +58,12 @@ class GetCard(Schema):
     deck_id: int
     question: str
     answer: str
+    questionvideolink:str
+    answervideolink:str
+    questionimagelink:str
+    answerimagelink:str
+    questionlatex:str
+    answerlatex:str
     bucket: int
     last_reviewed: datetime
     next_review: datetime
@@ -70,17 +76,35 @@ class UpdateCard(Schema):
     answer: Optional[str] = None
     bucket: Optional[int] = None
     next_review: Optional[datetime] = None
+    questionvideolink:Optional[str] = None
+    answervideolink:Optional[str] = None
+    questionimagelink:Optional[str] = None
+    answerimagelink:Optional[str] = None
+    questionlatex:Optional[str] = None
+    answerlatex:Optional[str] = None
 
 class CreateCard(Schema):
     deck_id: int
     question: str
     answer: str
+    questionvideolink:str
+    answervideolink:str
+    questionimagelink:str
+    answerimagelink:str
+    questionlatex:str
+    answerlatex:str
 
 class Cards(Schema):
     card_id: int
     question: str
     answer: str
     bucket: int
+    questionvideolink:str
+    answervideolink:str
+    questionimagelink:str
+    answerimagelink:str
+    questionlatex:str
+    answerlatex:str
     next_review: datetime
 
 class ReviewCards(Schema):
@@ -112,3 +136,11 @@ class FolderInfo(Schema):
 
 class GetSidebar(Schema):
     Folders: list[FolderInfo]
+    
+# -----------------------------------------------
+# ------------------ User --------------------
+# -----------------------------------------------
+
+class GetUser(Schema):
+    username: str
+    userpassword: str
