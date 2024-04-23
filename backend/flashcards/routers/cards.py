@@ -31,13 +31,7 @@ def create_card(request, payload: sc.CreateCard):
     card = Card.objects.create(
         deck=deck_ref,
         question=payload.question,
-        answer=payload.answer,
-        questionvideolink=payload.questionvideolink,
-        answervideolink = payload.answervideolink,
-        questionimagelink = payload.questionimagelink,
-        answerimagelink = payload.answerimagelink,
-        questionlatex = payload.questionlatex,
-        answerlatex = payload.answerlatex
+        answer=payload.answer
     )
     return 201, card
 
