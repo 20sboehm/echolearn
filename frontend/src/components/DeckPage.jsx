@@ -18,9 +18,6 @@ function DeckPage() {
   const { data: deckCards, isLoading, error, refetch } = useQuery({
     queryFn: () =>
       api._get(`/api/decks/${deckId}/cards`).then((response) => response.json()),
-    // fetch(`http://localhost:8000/api/decks/${deckId}/cards`).then((response) =>
-    //   response.json()
-    // ),
   });
 
   // Refetch data whenever the deckId changes
@@ -69,12 +66,6 @@ function DeckPage() {
     if (deleteMode) {
       try {
         const response = await api._delete(`/api/cards/${cardId}`);
-        // const response = await fetch(`http://localhost:8000/api/cards/${cardId}`, {
-        //   method: 'DELETE',
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //   },
-        // });
         if (!response.ok) {
           throw new Error('Failed to delete card');
         }

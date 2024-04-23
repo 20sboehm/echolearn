@@ -2,8 +2,11 @@ import { useMutation, useQuery } from 'react-query';
 import { useState } from 'react';
 import SideBar from './SideBar'
 import { useNavigate } from 'react-router-dom';
+import { useApi } from '../api';
 
 function Login() {
+  const api = useApi();
+
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState('');
   const [popupColor, setPopupColor] = useState('');
@@ -27,12 +30,9 @@ function Login() {
   }
 
   const formSubmissionMutation = useMutation(async (formData) => {
-    console.log(JSON.stringify(formData))
-   
-    const response = await fetch('http://localhost:8000/api/login', {
-      method: 'POST',
-      body: JSON.stringify(formData)
-    });
+    console.log(JSON.stringify(formData));
+
+    const response = await api._post('/api/login', formData);
 
     if (!response.ok) {
       throw new Error(`Network response was not ok: ${reponse.status_code}`);

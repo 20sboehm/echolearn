@@ -118,9 +118,6 @@ function CreateCard() {
     queryKey: ['decks'],
     queryFn: () =>
       api._get('/api/decks').then((response) => response.json()),
-    // fetch(`http://127.0.0.1:8000/api/decks`).then((response) =>
-    //   response.json()
-    // ),
     onSuccess: () => {
       // console.log(decks)
     },

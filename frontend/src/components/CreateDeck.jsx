@@ -33,9 +33,6 @@ function CreateDeck() {
     queryKey: ['folders'],
     queryFn: () =>
       api._get('/api/folders').then((response) => response.json()),
-    // fetch(`http://127.0.0.1:8000/api/folders`).then((response) =>
-    //   response.json()
-    // ),
     onSuccess: () => {
       console.log(folders)
     },
@@ -47,10 +44,6 @@ function CreateDeck() {
   const formSubmissionMutation = useMutation(async (formData) => {
     console.log(JSON.stringify(formData))
     const response = await api._post('/api/decks', formData);
-    // const response = await fetch('http://localhost:8000/api/decks', {
-    //   method: 'POST',
-    //   body: JSON.stringify(formData)
-    // });
 
     if (!response.ok) {
       throw new Error(`Network response was not ok: ${reponse.status_code}`);

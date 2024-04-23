@@ -13,9 +13,10 @@
     position: fixed;
     margin-left: 5px;
     left: 10px;
+    height: 3rem;
     top: 50%;
     transition: transform 0.5s ease-in-out;
-    border: 1px solid black;
+    z-index: 100;
 }
 
 .sidebarButton.open {

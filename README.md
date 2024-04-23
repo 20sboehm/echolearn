@@ -80,3 +80,12 @@ rm db.sqlite3
 python manage.py migrate --run-syncdb
 python makedata.py
 ```
+
+On EC2
+```
+python3 manage.py makemigrations
+python3 manage.py migrate
+rm db.sqlite3
+python3 manage.py migrate --run-syncdb
+python3 makedata.py
+```
