@@ -65,10 +65,10 @@ function Login() {
         <SideBar />
         <form onSubmit={handleSubmit} className='flex flex-col items-center'>
           <label htmlFor='username'>User name:</label>
-          <input id = 'username' name = 'username' type = "text" onChange={e => setUsername(e.target.value)}></input>
+          <input value = {username} id = 'username' name = 'username' type = "text" onChange={e => setUsername(e.target.value)}></input>
           
           <label htmlFor='userpassword'>Password :</label>
-          <input id = 'userpassword' type = 'password' name = "userpassword" onChange={e => setUserpassword(e.target.value)}></input>
+          <input value={userpassword} id = 'userpassword' type = 'password' name = "userpassword" onChange={e => setUserpassword(e.target.value)}></input>
             <a href=''> new user need signIn first</a>
           <button type='submit'>Submit</button>
         </form>
