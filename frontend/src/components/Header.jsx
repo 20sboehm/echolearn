@@ -18,9 +18,8 @@ function Header() {
             <Link to="/" className="text-black font-bold transition duration-100 hover:bg-gray-300 block text-center py-2 px-4">Features</Link>
             <Link to="/" className="text-black font-bold transition duration-100 hover:bg-gray-300 block text-center py-2 px-4">Contact</Link>
           </div>
-          <div className="flex items-center space-x-4 justify-end">
+          <div className="flex items-center space-x-4 justify-end mr-10">
             <Link to="/home" className="px-4 py-2 text-black font-bold transition duration-100 hover:bg-gray-300">Log in</Link>
-            {/* could add a div with mr-x to make space */}
             <Link to="/home" className="px-4 py-2 bg-userHeaderColor text-white rounded-lg font-bold transition duration-100 hover:text-black py-2">Sign in</Link>
           </div>
         </div>
