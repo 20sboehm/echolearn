@@ -1,31 +1,34 @@
 import { useState, useRef } from "react";
 import { Link, useParams, useLocation } from "react-router-dom";
+import "./Header.css";
 
 function Header() {
+
   const location = useLocation();
   const isGuestPage = location.pathname === "/";
 
   if (isGuestPage) {
     return (
-      <header className="h-16 w-full flex justify-between items-center top-0 left-0 bg-white">
-        <div className="w-screen flex flex-row justify-between">
-          <div className="flex items-center font-bold justify-start mr-auto ml-20">
-            <Link to="/" className="flex items-center">
-              <img src="../EchoLearn.png" alt="EchoLearn Logo" className="h-10 mr-2" />
-              <p className="text-black font-bold">EchoLearn</p>
+      <header className="guestHeader">
+        <div className="navigationGuest">
+          <div className="navigationLogoGuest">
+            <Link to="/" className="logo">
+              <img src="../EchoLearn.png" alt="EchoLearn Logo" />
+              <p>EchoLearn</p>
             </Link>
-            <Link to="/" className="ml-8 text-black font-bold transition duration-100 hover:bg-gray-300 block text-center py-2 px-4">About</Link>
-            <Link to="/" className="text-black font-bold transition duration-100 hover:bg-gray-300 block text-center py-2 px-4">Features</Link>
-            <Link to="/" className="text-black font-bold transition duration-100 hover:bg-gray-300 block text-center py-2 px-4">Contact</Link>
           </div>
-        
-          <div className="flex items-center space-x-4 justify-end mr-10">
-            <Link to="/login" className="px-4 py-2 text-black font-bold transition duration-100 hover:bg-gray-300">Log in</Link>
-            <Link to="/" className="px-4 py-2 bg-userHeaderColor text-white rounded-lg font-bold transition duration-100 hover:text-black py-2">Sign up</Link>
+          <div className="navigationControlGuest">
+            <Link to="/">About</Link>
+            <Link to="/">Features</Link>
+            <Link to="/">Contact</Link>
+          </div>
+          <div className="navigationControlGuest">
+            <Link to="/home">Log in</Link>
+            <Link to="/home" className="signIn">Sign in</Link>
           </div>
         </div>
       </header>
-    );
+    )
   } else {
     return (
       <header className="h-16 flex justify-center top-0 left-0 w-full bg-userHeaderColor">
@@ -45,7 +48,7 @@ function Header() {
           </div>
         </div>
       </header>
-    );
+    );  
   }
 }
 

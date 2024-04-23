@@ -1,5 +1,0 @@
-div[contenteditable="true"] a {
-    color: blue;
-    text-decoration: underline; /* Makes the link underlined */
-    cursor: pointer; /* Changes cursor to the pointer hand */
-}
