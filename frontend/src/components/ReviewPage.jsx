@@ -10,13 +10,13 @@ import katex from 'katex';
 import partyPopperImg from '../assets/party-popper.png'
 import partyPopperFlipImg from '../assets/party-popper-flip.png'
 
-function FinishView() {
+function FinishView(deckId) {
   return (
     <div className="flex flex-row justify-center items-center -mt-[10vh]">
       <img className="w-40 h-40 mt-[-10vh]" src={partyPopperFlipImg} alt="Party Popper" />
       <div className="flex flex-col justify-center items-center mx-4">
         <h3 className="h-[25vh] flex justify-center items-center w-full border-black bg-white rounded-md p-5 text-2xl text-black my-4">You have studied all the cards in this deck</h3>
-        <Link to="/home">
+        <Link to={`/decks/${deckId.deckId}`}>
           <button className="border rounded-md px-2 py-1">Back to deck</button>
         </Link>
       </div>
@@ -224,7 +224,7 @@ function Review() {
             updateReviewedCard={updateReviewedCard}
           />
         )}
-        {finish && <FinishView />}
+        {finish && <FinishView deckId={deckId} />}
       </div>
     </div>
   );
