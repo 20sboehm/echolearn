@@ -23,10 +23,8 @@ function Header() {
             <Link to="/">Contact</Link>
           </div>
           <div className="navigationControlGuest">
-            <Link to="/home">Log in</Link>
+            <Link to="/login">Log in</Link>
             <Link to="/home" className="signIn">Sign in</Link>
-            <Link to="/login">fake_Log in</Link>
-            <Link to="/login" className="signIn">fake_Sign in</Link>
           </div>
         </div>
       </header>
