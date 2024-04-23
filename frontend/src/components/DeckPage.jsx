@@ -140,7 +140,7 @@ function DeckPage() {
           {deckCards.cards.map(card => (
             <div className="grid grid-cols-2 gap-4 font-medium px-2" key={card.card_id}>
             
-                <div className="border bg-white text-black mt-2 px-2 py-2">
+                <div className="border bg-white text-black mt-2 px-2 py-2" onClick={() => handleCardClick(card.card_id)}>
                   <div dangerouslySetInnerHTML={{ __html: card.question }} />
 
                   {ReactPlayer.canPlay(card.questionvideolink) && (
