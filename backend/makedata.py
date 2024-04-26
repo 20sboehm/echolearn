@@ -17,6 +17,7 @@ def initial_data():
     math_folder = Folder.objects.create(name="Math", owner=admin)
     misc_folder = Folder.objects.create(name="Misc", owner=admin)
     spanish_folder = Folder.objects.create(name="Spanish", owner=admin)
+    calculus_folder = Folder.objects.create(name="Calculus", owner=admin, parent=math_folder)
 
     # Create decks
     us_pres_deck = Deck.objects.create(folder=history_folder, owner=admin, name="US Presidents", description="A deck for United States presidents.")
@@ -24,6 +25,7 @@ def initial_data():
     subtraction_deck = Deck.objects.create(folder=math_folder, owner=admin, name="Subtraction", description="A deck for subtraction practice.")
     phones = Deck.objects.create(folder=misc_folder, owner=admin, name="Phones", description="A deck for remembering people's phone numbers.")
     spanish_nouns = Deck.objects.create(folder=spanish_folder, owner=admin, name="Common Spanish Nouns", description="A deck for Spanish nouns.")
+    derivative_deck = Deck.objects.create(folder=calculus_folder, owner=admin, name="Derivative", description="A deck for derivative practice.")
 
     # Create cards
     Card.objects.create(deck=us_pres_deck, question="1st president", answer="George Washington")
@@ -98,6 +100,7 @@ def initial_data():
     Card.objects.create(deck=spanish_nouns, question="Country", answer="El país")
     Card.objects.create(deck=spanish_nouns, question="Food", answer="La comida")
 
+    Card.objects.create(deck=derivative_deck, question="What is the derivative of x^2?", answer="2x")
 
 if __name__ == "__main__":
     initial_data()
