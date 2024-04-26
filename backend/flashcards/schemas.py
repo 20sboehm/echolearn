@@ -16,12 +16,12 @@ class GetFolder(Schema):
     name: str
     last_edited: datetime
     created_at: datetime
-    parent: Optional[int]
+    parent_id: Optional[int] = None
 
 class CreateFolder(Schema):
     name: str
     owner_id: int
-    parent: Optional[int] = None
+    parent_id: Optional[int] = None
 
 class UpdateFolder(Schema):
     name: Optional[str] = None
