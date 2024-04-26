@@ -53,7 +53,7 @@ function TaskList() {
                   <div className="col-span-2">{reviewCardsCount}</div>
                   <div className="col-span-2">
                     <Link to={`/review/${deck.deck_id}`} className="rounded-lg border border-transparent px-4 py-2 
-                     font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+                     font-semibold bg-[#111111] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
                      active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>
                       <button>Review</button>
                     </Link>

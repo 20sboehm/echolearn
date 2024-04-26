@@ -10,7 +10,8 @@ const CustomButton = ({ onClick, text }) => (
   <button
     type="button"
     onClick={onClick}
-    className="rounded-lg border border-transparent px-4 py-2 font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] active:border-[#555]"
+    className="rounded-lg border border-transparent px-2 py-1 mx-1 mt-8 font-normal bg-[#111111] 
+    hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] active:border-[#555]"
     style={{ transition: "border-color 0.10s, color 0.10s" }}
   >
     {text}
@@ -41,10 +42,36 @@ function CreateCard() {
   const [answerImageLink, setAnswerImageLink] = useState('');
   const [questionImageLink, setQuestionImageLink] = useState('');
 
+  // const handleAnswerRequirement = (value) => {
+  //   if (answerRequirement === value) {
+  //     setAnswerRequirement("");
+
+  //     return;
+  //   }
+  //   setAnswerRequirement(value);
+  // }
+
+  // const handleQuestionRequirement = (value) => {
+  //   setQuestionVideoLink('');
+  //   setAnswerVideoLink('');
+  //   setAnswerImageLink('');
+  //   setQuestionImageLink('');
+  //   setQuestionLatex('');
+  //   setAnswerLatex('');
+  //   if (questionRequirement === value) {
+  //     setQuestionRequirement("");
+
+  //     return;
+  //   }
+  //   setQuestionRequirement(value);
+  // }
+
   const handleAnswerRequirement = (value) => {
+    setAnswerVideoLink('');
+    setAnswerImageLink('');
+    setAnswerLatex('');
     if (answerRequirement === value) {
       setAnswerRequirement("");
-
       return;
     }
     setAnswerRequirement(value);
@@ -52,14 +79,10 @@ function CreateCard() {
 
   const handleQuestionRequirement = (value) => {
     setQuestionVideoLink('');
-    setAnswerVideoLink('');
-    setAnswerImageLink('');
     setQuestionImageLink('');
     setQuestionLatex('');
-    setAnswerLatex('');
     if (questionRequirement === value) {
       setQuestionRequirement("");
-
       return;
     }
     setQuestionRequirement(value);
@@ -139,7 +162,11 @@ function CreateCard() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    formSubmissionMutation.mutate({ deck_id: deckId, question, answer, questionvideolink: questionVideoLink, answervideolink: answerVideoLink, questionimagelink: questionImageLink, answerimagelink: answerImageLink, questionlatex: questionLatex, answerlatex: answerLatex }, {
+    formSubmissionMutation.mutate({
+      deck_id: deckId, question, answer, questionvideolink: questionVideoLink,
+      answervideolink: answerVideoLink, questionimagelink: questionImageLink, answerimagelink: answerImageLink,
+      questionlatex: questionLatex, answerlatex: answerLatex
+    }, {
       onSuccess: () => {
         popupDetails('Card created successfully!', 'green')
       },
@@ -155,12 +182,14 @@ function CreateCard() {
         <SideBar />
         <h1 className='text-4xl mb-10 mt-10 font-medium'>New Card</h1>
         <form onSubmit={handleSubmit} className='flex flex-col items-center'>
-          <select value={deckId} onChange={(e) => setDeckId(e.target.value)} className='mb-4 px-2 rounded-md h-10' style={{ width: '30vw' }} >
+          <select value={deckId} onChange={(e) => setDeckId(e.target.value)} className='px-2 rounded-md h-10' style={{ width: '30vw' }} >
             <option key='select-deck-key' value='' className='text-gray-400'>Select a deck</option>
             {decks.map((deck) => (
               <option key={deck.deck_id} value={deck.deck_id}>{deck.name}</option>
             ))}
           </select>
+
+          {/* QUESTION SECTION */}
 
           <div>
             <CustomButton onClick={() => handleQuestionRequirement('image')} text="Image" />
@@ -172,13 +201,13 @@ function CreateCard() {
             <CustomButton onClick={() => makeLink()} text="URL" />
           </div>
 
-          <div id="QuestionDiv" onInput={handleQuestionInput} contentEditable
-            style={{ border: '1px solid black', textAlign: 'left', minHeight: '180px', width: '500px', padding: '10px', marginTop: '10px', backgroundColor: 'grey' }}>
+          <div id="QuestionDiv" onInput={handleQuestionInput} contentEditable className='mt-2 rounded-lg'
+            style={{ border: '1px solid black', textAlign: 'left', minHeight: '180px', width: '500px', padding: '10px', marginTop: '10px', backgroundColor: '#666666' }}>
           </div>
 
           {questionRequirement === 'latex' && (
             <div>
-              <textarea value={questionLatex} onChange={(e) => setQuestionLatex(e.target.value)} style={{ border: '1px solid black', textAlign: 'left', minHeight: '180px', width: '500px', padding: '10px', marginTop: '10px', backgroundColor: 'grey' }}></textarea>
+              <textarea value={questionLatex} onChange={(e) => setQuestionLatex(e.target.value)} style={{ border: '1px solid black', textAlign: 'left', minHeight: '180px', width: '500px', padding: '10px', marginTop: '10px', backgroundColor: '#666666' }}></textarea>
               <h2>Preview</h2>
               <div style={{ border: '1px solid #ccc', padding: '10px', minHeight: '180px', width: '500px' }}>
 
@@ -197,36 +226,38 @@ function CreateCard() {
                   <ReactPlayer url={questionVideoLink} controls={true} />
                 </>
               ) : (
-                <p>The link is not available</p>
+                <p>Current link not valid</p>
               )}
             </div>
           )}
 
           {questionRequirement === 'image' && (
-            <div>
+            <div className='mt-2'>
               <label htmlFor='QuestionimageInput'>Put your image here:</label>
-              <input name='QuestionimageInput' value={questionImageLink} type="text" onChange={(e) => setQuestionImageLink(e.target.value)}></input>
+              <input name='QuestionimageInput' className='mb-2' value={questionImageLink} type="text" onChange={(e) => setQuestionImageLink(e.target.value)}></input>
               <img src={questionImageLink} style={{ maxWidth: '250px', maxHeight: '250px' }} />
             </div>
           )}
 
+          {/* ANSWER SECTION */}
+
           <div>
-            <CustomButton onClick={() => handleQuestionRequirement('image')} text="Image" />
-            <CustomButton onClick={() => handleQuestionRequirement('video')} text="Video" />
+            <CustomButton onClick={() => handleAnswerRequirement('image')} text="Image" />
+            <CustomButton onClick={() => handleAnswerRequirement('video')} text="Video" />
             <CustomButton onClick={() => formatText('bold')} text="Bold" />
             <CustomButton onClick={() => formatText('italic')} text="Italic" />
             <CustomButton onClick={() => formatText('underline')} text="Underline" />
-            <CustomButton onClick={() => handleQuestionRequirement('latex')} text="Latex" />
+            <CustomButton onClick={() => handleAnswerRequirement('latex')} text="Latex" />
             <CustomButton onClick={() => makeLink()} text="URL" />
           </div>
 
-          <div id="AnswerDiv" onInput={handleAnswerInput} contentEditable
-            style={{ border: '1px solid black', minHeight: '180px', width: '500px', padding: '10px', backgroundColor: 'grey' }}>
+          <div id="AnswerDiv" onInput={handleAnswerInput} contentEditable className='mt-2 rounded-lg'
+            style={{ border: '1px solid black', minHeight: '180px', width: '500px', padding: '10px', backgroundColor: '#666666' }}>
           </div>
 
           {answerRequirement === 'latex' && (
             <div>
-              <textarea value={answerLatex} onChange={(e) => setAnswerLatex(e.target.value)} style={{ border: '1px solid black', textAlign: 'left', minHeight: '180px', width: '500px', padding: '10px', marginTop: '10px', backgroundColor: 'grey' }}></textarea>
+              <textarea value={answerLatex} onChange={(e) => setAnswerLatex(e.target.value)} style={{ border: '1px solid black', textAlign: 'left', minHeight: '180px', width: '500px', padding: '10px', marginTop: '10px', backgroundColor: '#666666' }}></textarea>
               <h2>Preview</h2>
               <div style={{ border: '1px solid #ccc', padding: '10px', minHeight: '180px', width: '500px' }}>
                 <BlockMath math={answerLatex} errorColor={'#cc0000'} />
@@ -257,8 +288,8 @@ function CreateCard() {
             </div>
           )}
 
-          <button type='submit' className="rounded-lg border border-transparent px-4 py-2 
-          font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+          <button type='submit' className="rounded-lg border border-transparent px-4 py-2 mt-6
+          font-semibold bg-[#111111] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>
             Submit
           </button>

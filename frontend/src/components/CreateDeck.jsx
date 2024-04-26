@@ -87,7 +87,7 @@ function CreateDeck() {
           <textarea value={deckDescription} onChange={(e) => setDeckDescription(e.target.value)}
             placeholder='Deck description' className='mb-4 p-2 rounded-md h-40' style={{ width: '30vw' }} />
           <button type='submit' class="rounded-lg border border-transparent px-4 py-2 
-          font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+          font-semibold bg-[#111111] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>
             Submit
           </button>

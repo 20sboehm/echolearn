@@ -11,7 +11,8 @@ const CustomButton = ({ onClick, text }) => (
   <button
     type="button"
     onClick={onClick}
-    className="rounded-lg border border-transparent px-4 py-2 font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] active:border-[#555]"
+    className="rounded-lg border border-transparent px-2 py-1 mx-1 mt-8 font-normal bg-[#111111] 
+    hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] active:border-[#555]"
     style={{ transition: "border-color 0.10s, color 0.10s" }}
   >
     {text}
@@ -235,13 +236,13 @@ function EditPage() {
           <CustomButton onClick={() => makeLink()} text="URL" />
         </div>
 
-        <div id="QuestionDiv" onInput={handleQuestionInput} contentEditable
-          style={{ border: '1px solid black', minHeight: '180px', width: '500px', padding: '10px', backgroundColor: 'grey' }} dangerouslySetInnerHTML={{ __html: card.question }}>
+        <div id="QuestionDiv" onInput={handleQuestionInput} contentEditable className='mt-2 rounded-lg'
+          style={{ border: '1px solid black', minHeight: '180px', width: '500px', padding: '10px', backgroundColor: '#666666' }} dangerouslySetInnerHTML={{ __html: card.question }}>
         </div>
 
         {questionRequirement === 'latex' && (
           <div>
-            <textarea value={questionlatex} onChange={(e) => setQuestionLatexInput(e.target.value)} style={{ border: '1px solid black', textAlign: 'left', minHeight: '180px', width: '500px', padding: '10px', marginTop: '10px', backgroundColor: 'grey' }}></textarea>
+            <textarea value={questionlatex} onChange={(e) => setQuestionLatexInput(e.target.value)} style={{ border: '1px solid black', textAlign: 'left', minHeight: '180px', width: '500px', padding: '10px', marginTop: '10px', backgroundColor: '#666666' }}></textarea>
             <h2>Preview</h2>
             <div style={{ border: '1px solid #ccc', padding: '10px', minHeight: '180px', width: '500px' }}>
 
@@ -260,13 +261,13 @@ function EditPage() {
                 <ReactPlayer url={questionvideolink} controls={true} />
               </>
             ) : (
-              <p>The link is not available</p>
+              <p>Current link not valid</p>
             )}
           </div>
         )}
 
         {questionRequirement === 'image' && (
-          <div>
+          <div className='mt-2'>
             <label htmlFor='QuestionimageInput'>Put your image here:</label>
             <input name='QuestionimageInput' value={questionImageLink} type="text" onChange={(e) => setQuestionImageLink(e.target.value)}></input>
             <img src={questionImageLink} style={{ maxWidth: '250px', maxHeight: '250px' }} />
@@ -283,13 +284,13 @@ function EditPage() {
           <CustomButton onClick={() => makeLink()} text="URL" />
         </div>
 
-        <div id="AnswerDiv" onInput={handleAnswerInput} contentEditable
-          style={{ border: '1px solid black', minHeight: '180px', width: '500px', padding: '10px', backgroundColor: 'grey' }} dangerouslySetInnerHTML={{ __html: card.answer }}>
+        <div id="AnswerDiv" onInput={handleAnswerInput} contentEditable className='mt-2 rounded-lg'
+          style={{ border: '1px solid black', minHeight: '180px', width: '500px', padding: '10px', backgroundColor: '#666666' }} dangerouslySetInnerHTML={{ __html: card.answer }}>
         </div>
 
         {answerRequirement === 'latex' && (
           <div>
-            <textarea value={answerlatex} onChange={(e) => setAnswerLatexInput(e.target.value)} style={{ border: '1px solid black', textAlign: 'left', minHeight: '180px', width: '500px', padding: '10px', marginTop: '10px', backgroundColor: 'grey' }}></textarea>
+            <textarea value={answerlatex} onChange={(e) => setAnswerLatexInput(e.target.value)} style={{ border: '1px solid black', textAlign: 'left', minHeight: '180px', width: '500px', padding: '10px', marginTop: '10px', backgroundColor: '#666666' }}></textarea>
             <h2>Preview</h2>
             <div style={{ border: '1px solid #ccc', padding: '10px', minHeight: '180px', width: '500px' }}>
               <BlockMath math={answerlatex} errorColor={'#cc0000'} />
@@ -313,15 +314,15 @@ function EditPage() {
         )}
 
         {answerRequirement === 'image' && (
-          <div>
+          <div className='mt-2'>
             <label htmlFor='AnswerimageInput'>Put your image here:</label>
             <input name='AnswerimageInput' value={answerImageLink} type="text" onChange={(e) => setAnswerImageLink(e.target.value)}></input>
             <img src={answerImageLink} style={{ maxWidth: '250px', maxHeight: '250px' }} />
           </div>
         )}
 
-        <button type='submit' className="rounded-lg border border-transparent px-4 py-2 
-          font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+        <button type='submit' className="rounded-lg border border-transparent px-4 py-2 mt-6
+          font-semibold bg-[#111111] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>
           Submit
         </button>
