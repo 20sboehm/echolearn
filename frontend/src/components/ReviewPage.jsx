@@ -12,7 +12,7 @@ import partyPopperFlipImg from '../assets/party-popper-flip.png'
 
 // Two layers in order to maintain border rounding with active scrollbar
 const cardOuterCSS = "bg-white rounded-md overflow-hidden"
-const cardInnerCSS = "h-[30vh] px-4 py-2 text-black flex flex-col items-center overflow-x-hidden overflow-y-auto"
+const cardInnerCSS = "h-[30vh] px-4 py-2 text-black flex flex-col items-center overflow-x-hidden overflow-y-auto text-[1.4em] py-4"
 
 const KatexOutput = ({ latex }) => {
   const html = katex.renderToString(latex, {
@@ -24,28 +24,30 @@ const KatexOutput = ({ latex }) => {
 };
 
 function QuestionCard({ card }) {
-  return (
-    <div className={`mt-8 ${cardOuterCSS}`}>
-      <div className={`${cardInnerCSS}`} style={{scrollbarGutter: 'stable both-edges'}}>
-        <div dangerouslySetInnerHTML={{ __html: card.question }}></div>
-        {ReactPlayer.canPlay(card.questionvideolink) && (
-          <ReactPlayer
-            url={card.questionvideolink}
-            controls={true}
-            style={{ maxWidth: '80%', maxHeight: '80%' }} // ReactPlayer is likely incompatible with Tailwind
-          />
-        )}
-        {card.questionimagelink && <img src={card.questionimagelink} className="max-w-[80%] max-h-[80%]" />}
-        {card.questionlatex && <KatexOutput latex={card.questionlatex} />}
+  if (card) {
+    return (
+      <div className={`mt-8 ${cardOuterCSS}`}>
+        <div className={`${cardInnerCSS}`} style={{ scrollbarGutter: 'stable both-edges' }}>
+          <div dangerouslySetInnerHTML={{ __html: card.question }}></div>
+          {ReactPlayer.canPlay(card.questionvideolink) && (
+            <ReactPlayer
+              url={card.questionvideolink}
+              controls={true}
+              style={{ maxWidth: '80%', maxHeight: '80%' }} // ReactPlayer is likely incompatible with Tailwind
+            />
+          )}
+          {card.questionimagelink && <img src={card.questionimagelink} className="max-w-[80%] max-h-[80%]" />}
+          {card.questionlatex && <KatexOutput latex={card.questionlatex} />}
+        </div>
       </div>
-    </div>
-  )
+    )
+  }
 }
 
 function AnswerCard({ card, showAnswer }) {
   return (
     <div className={`${cardOuterCSS} transition-all duration-300 ${showAnswer ? "mt-8 opacity-100" : "mt-12 opacity-0"}`}>
-      <div className={`${cardInnerCSS}`} style={{scrollbarGutter: 'stable both-edges'}}>
+      <div className={`${cardInnerCSS}`} style={{ scrollbarGutter: 'stable both-edges' }}>
         {showAnswer && <div dangerouslySetInnerHTML={{ __html: card.answer }} />}
         {ReactPlayer.canPlay(card.answervideolink) && showAnswer && (
           <ReactPlayer
