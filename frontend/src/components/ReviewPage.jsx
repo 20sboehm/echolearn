@@ -10,22 +10,56 @@ import katex from 'katex';
 import partyPopperImg from '../assets/party-popper.png'
 import partyPopperFlipImg from '../assets/party-popper-flip.png'
 
-function FinishView(deckId) {
+{/* <div className="overflow-hidden rounded-md bg-white px-4 py-2 h-[30vh] mt-8">
+<div className="flex flex-col items-center text-black overflow-hidden" > */}
+
+{/* <div className="overflow-hidden rounded-md">
+<div className={`${cardCSS}`} > */}
+
+// const cardCSS = "bg-white px-4 py-2 flex flex-col items-center text-black h-[30vh] mt-8 overflow-auto"
+
+const cardOuterCSS = "bg-white mt-8 rounded-md overflow-hidden"
+const cardInnerCSS = "bg-white h-[30vh] px-4 py-2 text-black flex flex-col items-center overflow-auto"
+
+function QuestionCard({ card }) {
   return (
-    <div className="flex flex-row justify-center items-center -mt-[10vh]">
-      <img className="w-40 h-40 mt-[-10vh]" src={partyPopperFlipImg} alt="Party Popper" />
-      <div className="flex flex-col justify-center items-center mx-4">
-        <h3 className="h-[25vh] flex justify-center items-center w-full border-black bg-white rounded-md p-5 text-2xl text-black my-4">You have studied all the cards in this deck</h3>
-        <Link to={`/decks/${deckId.deckId}`}>
-          <button className="border rounded-md px-2 py-1">Back to deck</button>
-        </Link>
+    <div className={`${cardOuterCSS}`}>
+      <div className={`${cardInnerCSS}`} >
+        <div dangerouslySetInnerHTML={{ __html: card.question }}></div>
+        {ReactPlayer.canPlay(card.questionvideolink) && (
+          <ReactPlayer
+            url={card.questionvideolink}
+            controls={true}
+            style={{ maxWidth: '80%', maxHeight: '80%' }} // ReactPlayer is likely incompatible with Tailwind
+          />
+        )}
+        {card.questionimagelink && <img src={card.questionimagelink} className="max-w-[80%] max-h-[80%]" />}
+        {card.questionlatex && <KatexOutput latex={card.questionlatex} />}
       </div>
-      <img className="w-40 h-40 mt-[-10vh]" src={partyPopperImg} alt="Party Popper" />
     </div>
   )
 }
 
-function ReviewCard({ card, showAnswer, setShowAnswer, updateReviewedCard }) {
+function AnswerCard({ card, showAnswer }) {
+  return (
+    <div className={`${cardOuterCSS} transition-all duration-300 ${showAnswer ? "mt-8 opacity-100" : "mt-16 opacity-0"}`}>
+      <div className={`${cardInnerCSS}`} >
+        {showAnswer && <div dangerouslySetInnerHTML={{ __html: card.answer }} />}
+        {ReactPlayer.canPlay(card.answervideolink) && showAnswer && (
+          <ReactPlayer
+            url={card.answervideolink}
+            controls={true}
+            style={{ maxWidth: '80%', maxHeight: '80%' }} // ReactPlayer is likely incompatible with Tailwind
+          />
+        )}
+        {card.answerimagelink && showAnswer && <img src={card.answerimagelink} style={{ maxWidth: '80%', maxHeight: '80%' }} />}
+        {card.answerlatex && showAnswer && <KatexOutput latex={card.answerlatex} />}
+      </div>
+    </div>
+  )
+}
+
+function ShowAnswerButtons({ card, showAnswer, setShowAnswer, updateReviewedCard }) {
   const changeShowAnswer = () => {
     setShowAnswer(true);
   };
@@ -41,12 +75,7 @@ function ReviewCard({ card, showAnswer, setShowAnswer, updateReviewedCard }) {
 
   // 8 hours in milliseconds
   const baseInterval = 28800000;
-  console.log(baseInterval);
-
   const bucketMultiplier = Math.pow(3, card.bucket);
-  console.log(bucketMultiplier);
-
-  console.log(baseInterval * bucketMultiplier * confidence_scale_factors[2]);
 
   const getNextReviewTime = (confidence_level) => {
     return new Date(now.getTime() + (baseInterval * bucketMultiplier * confidence_scale_factors[confidence_level]));
@@ -79,71 +108,71 @@ function ReviewCard({ card, showAnswer, setShowAnswer, updateReviewedCard }) {
     return formattedTime.trim(); // Trim any trailing whitespace (which is left to account for a possible next unit, ex: "2d 3h")
   }
 
+  return (
+    <div className="fixed bottom-8 left-0 right-0 mx-auto w-[30vw] flex justify-center">
+      {!showAnswer && <button className="mt-8 border rounded-md w-[50%]" onClick={changeShowAnswer}>Reveal Answer</button>}
+      {
+        showAnswer && (
+          <div className="flex justify-center mt-28">
+            <button className="rounded-md w-24 px-4 mr-4 text-black bg-red-600 hover:bg-red-700" onClick={() => updateReviewedCard(0, getNextReviewTime(1), card)}>Again <br />
+              {formatTimeDifference(now.getTime(), getNextReviewTime(1))}</button>
+
+            <button className="rounded-md w-24 px-4 mr-4 text-black bg-yellow-400 hover:bg-yellow-500" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(2), card)}>Hard <br />
+              {formatTimeDifference(now.getTime(), getNextReviewTime(2))}</button>
+
+            <button className="rounded-md w-24 px-4 mr-4 text-black bg-green-700 hover:bg-green-800" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(3), card)}>Good <br />
+              {formatTimeDifference(now.getTime(), getNextReviewTime(3))}</button>
+
+            <button className="rounded-md w-24 px-4 text-black bg-green-400 hover:bg-green-500" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(4), card)}>Easy <br />
+              {formatTimeDifference(now.getTime(), getNextReviewTime(4))}</button>
+          </div>
+        )
+      }
+    </div>
+  )
+}
+
+function FinishView(deckId) {
+  return (
+    <div className="flex flex-row justify-center items-center mt-[10vh]">
+      <img className="w-40 h-40 mt-[-10vh]" src={partyPopperFlipImg} alt="Party Popper" />
+      <div className="flex flex-col justify-center items-center mx-4">
+        <h3 className="h-[25vh] flex justify-center items-center w-full border-black bg-white rounded-md p-5 text-2xl text-black my-4">You have studied all the cards in this deck</h3>
+        <Link to={`/decks/${deckId.deckId}`}>
+          <button className="border rounded-md px-2 py-1">Back to deck</button>
+        </Link>
+      </div>
+      <img className="w-40 h-40 mt-[-10vh]" src={partyPopperImg} alt="Party Popper" />
+    </div>
+  )
+}
+
+function ReviewCard({ card, showAnswer, setShowAnswer, updateReviewedCard }) {
+  const changeShowAnswer = () => {
+    setShowAnswer(true);
+  };
+
   const KatexOutput = ({ latex }) => {
     const html = katex.renderToString(latex, {
       throwOnError: false,
       output: "html"
     });
-  
+
     return <div dangerouslySetInnerHTML={{ __html: html }} />;
   };
-  return (
-    <div className="flex flex-col items-center">
-      <div className={`flex flex-col items-center h-auto w-80 mx-auto`}>
-        <div className="w-full">
-          <div className={`bg-white rounded-md px-4 py-2 flex flex-col justify-center items-center text-black h-40 mb-12 transition-margin duration-500 ease-in-out ${showAnswer ? "-mt-24" : "mt-0"}`} >
-            <div  dangerouslySetInnerHTML={{ __html: card.question }}></div>
-            {ReactPlayer.canPlay(card.questionvideolink) && (
-                    <>
-     
-                      <ReactPlayer
-                        url={card.questionvideolink}
-                        controls={true}
-                        style={{ maxWidth: '80%', maxHeight: '80%' }}
-                      />
-                    </>
-                  )}
-                  {card.questionimagelink && <img src={card.questionimagelink} style={{maxWidth: '80%', maxHeight: '80%'} } />}
-                  {card.questionlatex && <KatexOutput latex={card.questionlatex}  />}
-          </div>
-          <div className={`bg-white rounded-md px-4 py-2 flex flex-col justify-center items-center text-black h-40 ${showAnswer ? "opacity-100 transition-opacity duration-500" : "opacity-0"}`} >
-            <div  dangerouslySetInnerHTML={{ __html: card.answer }} />
 
-            {ReactPlayer.canPlay(card.answervideolink) && (
-                  <>
-             
-                    <ReactPlayer
-                      url={card.answervideolink}
-                      controls={true}
-                      style={{ maxWidth: '80%', maxHeight: '80%' }}
-                    />
-                  </>
-                )}
-              {card.answerimagelink && <img src={card.answerimagelink} style={{maxWidth: '80%', maxHeight: '80%'} } />}
-              {card.answerlatex && <KatexOutput latex={card.answerlatex}  />}
-      
+  return (
+    <>
+      <div className="flex flex-col items-center">
+        <div className={`flex flex-col items-center h-auto w-[30vw] mx-auto`}>
+          <div className="w-full">
+            <QuestionCard card={card}></QuestionCard>
+            <AnswerCard card={card} showAnswer={showAnswer}></AnswerCard>
           </div>
-          {/* <p className={`bg-white rounded-md px-4 py-2 flex justify-center items-center text-black h-20 mb-12 transition-margin duration-500 ease-in-out ${showAnswer ? "-mt-24" : "mt-0"}`}>{card.question}</p>
-          <p className={`bg-white rounded-md px-4 py-2 flex justify-center items-center text-black h-20 ${showAnswer ? "opacity-100 transition-opacity duration-500" : "opacity-0"}`}>{card.answer}</p> */}
         </div>
       </div>
-      {!showAnswer && <button className="mt-8 border rounded-md w-[50%]" onClick={changeShowAnswer}>Reveal Answer</button>}
-      {showAnswer && (
-        <div className="flex justify-center mt-28">
-          <button className="rounded-md w-24 px-4 mr-4 text-black bg-red-600 hover:bg-red-700" onClick={() => updateReviewedCard(0, getNextReviewTime(1), card)}>Again <br />
-            {formatTimeDifference(now.getTime(), getNextReviewTime(1))}</button>
-
-          <button className="rounded-md w-24 px-4 mr-4 text-black bg-yellow-400 hover:bg-yellow-500" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(2), card)}>Hard <br />
-            {formatTimeDifference(now.getTime(), getNextReviewTime(2))}</button>
-
-          <button className="rounded-md w-24 px-4 mr-4 text-black bg-green-700 hover:bg-green-800" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(3), card)}>Good <br />
-            {formatTimeDifference(now.getTime(), getNextReviewTime(3))}</button>
-
-          <button className="rounded-md w-24 px-4 text-black bg-green-400 hover:bg-green-500" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(4), card)}>Easy <br />
-            {formatTimeDifference(now.getTime(), getNextReviewTime(4))}</button>
-        </div>
-      )}
-    </div>
+      <ShowAnswerButtons card={card} showAnswer={showAnswer} setShowAnswer={setShowAnswer} updateReviewedCard={updateReviewedCard}></ShowAnswerButtons>
+    </>
   );
 }
 
@@ -159,23 +188,12 @@ function Review() {
   const { data: reviews, isLoading, error } = useQuery({
     queryFn: () =>
       api._get(`/api/reviews/${deckId}`).then((response) => response.json()),
-    // fetch(`http://localhost:8000/api/reviews/${deckId}`).then((response) =>
-    //   response.json()
-    // ),
   });
 
   const updateReviewedCard = (newBucket, nextReviewTime, card) => {
     const formatTime = (time) => {
       return time.toISOString();
     }
-
-    // fetch(`http://localhost:8000/api/cards/${card.card_id}`, {
-    //   method: 'PATCH',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({ bucket: newBucket, next_review: formatTime(nextReviewTime) }),
-    // })
 
     api._patch(
       `/api/cards/${card.card_id}`,
@@ -212,10 +230,10 @@ function Review() {
   }
 
   return (
-    <div>
+    <>
       <Sidebar />
-      <div className="border rounded-lg p-8 mt-[10vh] h-[60vh] w-[40vw] flex flex-col">
-        <h2 className="mb-[20vh] text-center text-[2em]">{reviews.deck_name}</h2>
+      <div className="rounded-lg mt-[2%] h-[60vh] w-[40vw] flex flex-col">
+        <h2 className="text-center text-[2em] border-b">{reviews.deck_name}</h2>
         {!finish && (
           <ReviewCard
             card={reviews.cards[cardIndex]}
@@ -226,7 +244,7 @@ function Review() {
         )}
         {finish && <FinishView deckId={deckId} />}
       </div>
-    </div>
+    </>
   );
 }
 
