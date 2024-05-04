@@ -95,6 +95,14 @@ function DeckPage() {
     return <div dangerouslySetInnerHTML={{ __html: html }} />;
   };
 
+
+  const speakText = (question) => {
+    // setQuestion(e.card.question);
+    console.log('what')
+    const outputVoice = new SpeechSynthesisUtterance(question);
+    outputVoice.lang = "en";
+    speechSynthesis.speak(outputVoice);
+  };
   return (
     <>
       <Sidebar />
@@ -142,7 +150,7 @@ function DeckPage() {
             
                 <div className="border bg-white text-black mt-2 px-2 py-2" onClick={() => handleCardClick(card.card_id)}>
                   <div dangerouslySetInnerHTML={{ __html: card.question }} />
-
+                  
                   {ReactPlayer.canPlay(card.questionvideolink) && (
                     <>
                       <p>Below is the preview of the video:</p>
@@ -155,11 +163,15 @@ function DeckPage() {
                   )}
                   {card.questionimagelink && <img src={card.questionimagelink} style={{maxWidth: '250px', maxHeight: '250px'} } />}
                   {card.questionlatex && <KatexOutput latex={card.questionlatex}  />}
+                  <Link onClick={()=>speakText(card.question)}>
+                    <img src="../voice.png" alt="Voice_Icon" className="  top-45 left-20 right-1 h-6 w-8" />
+                  </Link>
                 </div>
            
 
-              <div className="border bg-white text-black mt-2 px-2 py-2 relative" onClick={() => handleCardClick(card.card_id)}>
+              <div className="border bg-white text-black mt-2 px-2 py-4 relative" onClick={() => handleCardClick(card.card_id)}>
                 <div dangerouslySetInnerHTML={{ __html: card.answer }} />
+               
                 {ReactPlayer.canPlay(card.answervideolink) && (
                   <>
                     <p>Below is the preview of the video:</p>
@@ -174,6 +186,9 @@ function DeckPage() {
                 {card.answerlatex && <KatexOutput latex={card.answerlatex}  />}
                 <Link to={`/edit/${card.card_id}`}>
                   <img src="../Edit_icon.png" alt="Edit_Icon" className="absolute top-0 right-0 h-6 w-8" />
+                </Link>
+                <Link onClick={()=>speakText(card.answer)}>
+                  <img src="../voice.png" alt="Voice_Icon" className="absolute top-8 right-0 h-6 w-8" />
                 </Link>
               </div>
             </div>
