@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef, createContext, useContext } from "react";
 import { useMutation, useQuery } from 'react-query';
 import { Link, useParams } from "react-router-dom";
 import Sidebar from "./SideBar";
@@ -10,21 +10,23 @@ import katex from 'katex';
 import partyPopperImg from '../assets/party-popper.png'
 import partyPopperFlipImg from '../assets/party-popper-flip.png'
 
-{/* <div className="overflow-hidden rounded-md bg-white px-4 py-2 h-[30vh] mt-8">
-<div className="flex flex-col items-center text-black overflow-hidden" > */}
+// Two layers in order to maintain border rounding with active scrollbar
+const cardOuterCSS = "bg-white rounded-md overflow-hidden"
+const cardInnerCSS = "h-[30vh] px-4 py-2 text-black flex flex-col items-center overflow-x-hidden overflow-y-auto"
 
-{/* <div className="overflow-hidden rounded-md">
-<div className={`${cardCSS}`} > */}
+const KatexOutput = ({ latex }) => {
+  const html = katex.renderToString(latex, {
+    throwOnError: false,
+    output: "html"
+  });
 
-// const cardCSS = "bg-white px-4 py-2 flex flex-col items-center text-black h-[30vh] mt-8 overflow-auto"
-
-const cardOuterCSS = "bg-white mt-8 rounded-md overflow-hidden"
-const cardInnerCSS = "bg-white h-[30vh] px-4 py-2 text-black flex flex-col items-center overflow-auto"
+  return <div dangerouslySetInnerHTML={{ __html: html }} />;
+};
 
 function QuestionCard({ card }) {
   return (
-    <div className={`${cardOuterCSS}`}>
-      <div className={`${cardInnerCSS}`} >
+    <div className={`mt-8 ${cardOuterCSS}`}>
+      <div className={`${cardInnerCSS}`} style={{scrollbarGutter: 'stable both-edges'}}>
         <div dangerouslySetInnerHTML={{ __html: card.question }}></div>
         {ReactPlayer.canPlay(card.questionvideolink) && (
           <ReactPlayer
@@ -42,17 +44,17 @@ function QuestionCard({ card }) {
 
 function AnswerCard({ card, showAnswer }) {
   return (
-    <div className={`${cardOuterCSS} transition-all duration-300 ${showAnswer ? "mt-8 opacity-100" : "mt-16 opacity-0"}`}>
-      <div className={`${cardInnerCSS}`} >
+    <div className={`${cardOuterCSS} transition-all duration-300 ${showAnswer ? "mt-8 opacity-100" : "mt-12 opacity-0"}`}>
+      <div className={`${cardInnerCSS}`} style={{scrollbarGutter: 'stable both-edges'}}>
         {showAnswer && <div dangerouslySetInnerHTML={{ __html: card.answer }} />}
         {ReactPlayer.canPlay(card.answervideolink) && showAnswer && (
           <ReactPlayer
             url={card.answervideolink}
             controls={true}
-            style={{ maxWidth: '80%', maxHeight: '80%' }} // ReactPlayer is likely incompatible with Tailwind
+            style={{ maxWidth: '80%', maxHeight: '80%' }}
           />
         )}
-        {card.answerimagelink && showAnswer && <img src={card.answerimagelink} style={{ maxWidth: '80%', maxHeight: '80%' }} />}
+        {card.answerimagelink && showAnswer && <img src={card.answerimagelink} className="max-w-[80%] max-h-[80%]" />}
         {card.answerlatex && showAnswer && <KatexOutput latex={card.answerlatex} />}
       </div>
     </div>
@@ -109,11 +111,11 @@ function ShowAnswerButtons({ card, showAnswer, setShowAnswer, updateReviewedCard
   }
 
   return (
-    <div className="fixed bottom-8 left-0 right-0 mx-auto w-[30vw] flex justify-center">
-      {!showAnswer && <button className="mt-8 border rounded-md w-[50%]" onClick={changeShowAnswer}>Reveal Answer</button>}
+    <div className="fixed bottom-8 left-0 right-0 mx-auto w-[100vw] flex justify-center">
+      {!showAnswer && <button className="mt-8 border rounded-md w-[20%] min-w-[16rem]" onClick={changeShowAnswer}>Reveal Answer</button>}
       {
         showAnswer && (
-          <div className="flex justify-center mt-28">
+          <div className="flex justify-center mt-28 flex-wrap">
             <button className="rounded-md w-24 px-4 mr-4 text-black bg-red-600 hover:bg-red-700" onClick={() => updateReviewedCard(0, getNextReviewTime(1), card)}>Again <br />
               {formatTimeDifference(now.getTime(), getNextReviewTime(1))}</button>
 
@@ -164,7 +166,7 @@ function ReviewCard({ card, showAnswer, setShowAnswer, updateReviewedCard }) {
   return (
     <>
       <div className="flex flex-col items-center">
-        <div className={`flex flex-col items-center h-auto w-[30vw] mx-auto`}>
+        <div className={`flex flex-col items-center h-auto w-[35vw] min-w-[16rem] mx-auto`}>
           <div className="w-full">
             <QuestionCard card={card}></QuestionCard>
             <AnswerCard card={card} showAnswer={showAnswer}></AnswerCard>
@@ -176,7 +178,7 @@ function ReviewCard({ card, showAnswer, setShowAnswer, updateReviewedCard }) {
   );
 }
 
-function Review() {
+function ReviewPage() {
   const api = useApi();
 
   const [cardIndex, setCardIndex] = useState(0);
@@ -232,7 +234,7 @@ function Review() {
   return (
     <>
       <Sidebar />
-      <div className="rounded-lg mt-[2%] h-[60vh] w-[40vw] flex flex-col">
+      <div className="rounded-lg mt-[2%] h-[60vh] w-[40vw] flex flex-col min-w-[16rem]">
         <h2 className="text-center text-[2em] border-b">{reviews.deck_name}</h2>
         {!finish && (
           <ReviewCard
@@ -248,4 +250,4 @@ function Review() {
   );
 }
 
-export default Review
+export default ReviewPage

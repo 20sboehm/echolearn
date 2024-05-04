@@ -7,7 +7,7 @@ import HomePage from "./components/UserPage";
 import CreateCard from "./components/CreateCard"
 import CreateDeck from "./components/CreateDeck"
 import CreateFolder from "./components/CreateFolder"
-import Review from "./components/ReviewPage";
+import ReviewPage from "./components/ReviewPage";
 import HelpPage from "./components/HelpPage"
 import DeckPage from './components/DeckPage';
 import EditPage from './components/EditPage';
@@ -29,8 +29,6 @@ function ErrorPage() {
 
 function Main() {
   return (
-    // <main className="w-full h-[calc(100%-4rem)] mt-[4rem] flex flex-col items-center">
-    // <main className="w-full h-full">
     <main className="w-full h-full flex flex-col items-center">
       <Routes>
         <Route path="/" element={<LandingPage />} />
@@ -38,7 +36,7 @@ function Main() {
         <Route path="/cards" element={<CreateCard />} />
         <Route path="/decks" element={<CreateDeck />} />
         <Route path="/folders" element={<CreateFolder />} />
-        <Route path="/review/:deckId" element={<Review />} />
+        <Route path="/review/:deckId" element={<ReviewPage />} />
         <Route path="/help" element={<HelpPage />} />
         <Route path="/edit/:cardId" element={<EditPage />} />
         <Route path="/decks/:deckId" element={<DeckPage />} />
