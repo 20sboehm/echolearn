@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from 'react-query';
-import { useState , useEffect,useRef} from 'react';
+import { useState, useEffect, useRef } from 'react';
 import SideBar from './SideBar'
 import ReactPlayer from 'react-player';
 import { BlockMath } from 'react-katex';
@@ -19,9 +19,9 @@ function CreateCard() {
   const [answer, setAnswer] = useState('');
   const [Normal_question, setNormalQuestion] = useState('');
   const [Normal_answer, setNormalAnswer] = useState('');
-  
-  const[questionvideolink,setQuestionVideoLink] = useState('');
-  const[answervideolink,setAnswerVideoLink] = useState('');
+
+  const [questionvideolink, setQuestionVideoLink] = useState('');
+  const [answervideolink, setAnswerVideoLink] = useState('');
 
   const [answerlatex, setAnswerLatexInput] = useState('');
   const [questionlatex, setQuestionLatexInput] = useState('');
@@ -29,12 +29,14 @@ function CreateCard() {
   const [Answer_requirement, setAnswer_requirement] = useState('');
   const [Question_requirement, setQuestion_requirement] = useState('');
 
-  const [answerimagelink, setAnswer_ImageUrl] = useState(''); 
-  const [questionimagelink, setQuestion_ImageUrl] = useState(''); 
+  const [answerimagelink, setAnswer_ImageUrl] = useState('');
+  const [questionimagelink, setQuestion_ImageUrl] = useState('');
 
-  const handleAnswerRequirement =(value) =>{
-    if(Answer_requirement === value)
-    {
+  const [questionisListening, setquestionIsListening] = useState(false);
+  const [answerisListening, setanswerIsListening] = useState(false);
+  
+  const handleAnswerRequirement = (value) => {
+    if (Answer_requirement === value) {
       setAnswer_requirement("");
 
       return;
@@ -42,28 +44,27 @@ function CreateCard() {
     setAnswer_requirement(value);
   }
 
-  const handleQuestionRequirement =(value) =>{
+  const handleQuestionRequirement = (value) => {
     setQuestionVideoLink('');
     setAnswerVideoLink('');
     setAnswer_ImageUrl('');
     setQuestion_ImageUrl('');
     setQuestionLatexInput('');
     setAnswerLatexInput('');
-    if(Question_requirement === value)
-    {
+    if (Question_requirement === value) {
       setQuestion_requirement("");
-    
+
       return;
     }
     setQuestion_requirement(value);
   }
 
-  const makeLink =()=> {
+  const makeLink = () => {
     const url = prompt("Enter the URL:", "http://");
     console.log(url);
     document.execCommand('createLink', false, url);
   }
-  
+
   const formatText = (command) => {
     document.execCommand(command, false, null);
   };
@@ -87,6 +88,33 @@ function CreateCard() {
     });
     setQuestion(safeHtml);
   };
+
+  const updateQuestionWithTranscript = (newTranscript) => {
+    // Append new transcript to the existing content
+    const combinedText = question + ' ' + newTranscript;
+
+    setNormalQuestion(combinedText);
+    const safeHtml = sanitizeHtml(combinedText, {
+      allowedTags: sanitizeHtml.defaults.allowedTags.concat(['b', 'i', 'u', 'strong', 'em']),
+      allowedAttributes: {}
+    });
+    setQuestion(safeHtml);
+    document.getElementById("QuestionDiv").innerHTML = safeHtml;
+  };
+
+  const updateAnswerWithTranscript = (newTranscript) => {
+    // Append new transcript to the existing content
+    const combinedText = answer + ' ' + newTranscript;
+
+    setNormalAnswer(combinedText);
+    const safeHtml = sanitizeHtml(combinedText, {
+      allowedTags: sanitizeHtml.defaults.allowedTags.concat(['b', 'i', 'u', 'strong', 'em']),
+      allowedAttributes: {}
+    });
+    setAnswer(safeHtml);
+    document.getElementById("AnswerDiv").innerHTML = safeHtml;
+  };
+
 
   function popupDetails(popupMessage, popupColor) {
     setShowPopup(true);
@@ -116,9 +144,9 @@ function CreateCard() {
     queryKey: ['decks'],
     queryFn: () =>
       api._get('/api/decks').then((response) => response.json()),
-      // fetch(`http://127.0.0.1:8000/api/decks`).then((response) =>
-      //   response.json()
-      // ),
+    // fetch(`http://127.0.0.1:8000/api/decks`).then((response) =>
+    //   response.json()
+    // ),
     onSuccess: () => {
       console.log(decks)
     },
@@ -140,7 +168,7 @@ function CreateCard() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    formSubmissionMutation.mutate({ deck_id: deckId, question, answer,questionvideolink,answervideolink,questionimagelink,answerimagelink,questionlatex,answerlatex}, {
+    formSubmissionMutation.mutate({ deck_id: deckId, question, answer, questionvideolink, answervideolink, questionimagelink, answerimagelink, questionlatex, answerlatex }, {
       onSuccess: () => {
         popupDetails('Card created successfully!', 'green')
       },
@@ -150,11 +178,92 @@ function CreateCard() {
     });
   };
 
+
+  useEffect(() => {
+    //check if support speech input and careate speech recognition object
+    const speechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new speechRecognition();
+
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'en-US';
+
+    recognition.onstart = () => {
+      console.log('Voice recognition activated. Start speaking.');
+    };
+
+    recognition.onresult = (event) => {
+      // Check if the current transcript is final
+      const current = event.resultIndex;
+      const transcript = event.results[current][0].transcript;
+      if (event.results[current].isFinal) {
+        updateQuestionWithTranscript(transcript + ' '); // Add a space for separation
+      } else {
+        console.log("Interim result: " + transcript);
+      }
+    };
+
+    recognition.onend = () => {
+      console.log('Voice recognition stopped.');
+    };
+
+    if (questionisListening) {
+      recognition.start();
+    } else {
+      recognition.stop();
+    }
+
+    return () => {
+      recognition.stop();
+    };
+  }, [questionisListening]);
+
+  useEffect(() => {
+    //check if support speech input and careate speech recognition object
+    const speechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new speechRecognition();
+
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'en-US';
+
+    recognition.onstart = () => {
+      console.log('Voice recognition activated. Start speaking.');
+    };
+
+    recognition.onresult = (event) => {
+      // Check if the current transcript is final
+      const current = event.resultIndex;
+      const transcript = event.results[current][0].transcript;
+      if (event.results[current].isFinal) {
+        updateAnswerWithTranscript(transcript + ' '); // Add a space for separation
+      } else {
+        console.log("Interim result: " + transcript);
+      }
+    };
+
+    recognition.onend = () => {
+      console.log('Voice recognition stopped.');
+    };
+
+    if (answerisListening) {
+      recognition.start();
+    } else {
+      recognition.stop();
+    }
+
+    return () => {
+      recognition.stop();
+    };
+  }, [answerisListening]);
+
+
   if (decks) {
     return (
       <>
         <SideBar />
         <h1 className='text-4xl mb-10 mt-10 font-medium'>New Card</h1>
+       
         <form onSubmit={handleSubmit} className='flex flex-col items-center'>
           <select value={deckId} onChange={(e) => setDeckId(e.target.value)} className='mb-4 px-2 rounded-md h-10' style={{ width: '30vw' }} >
             <option key='select-deck-key' value='' className='text-gray-400'>Select a deck</option>
@@ -163,126 +272,133 @@ function CreateCard() {
             ))}
           </select>
           <div>
-          <button type = "button" onClick={() => handleQuestionRequirement('image')} class="rounded-lg border border-transparent px-4 py-2 
+            <button type="button" onClick={() => handleQuestionRequirement('image')} class="rounded-lg border border-transparent px-4 py-2 
           font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>Image</button>
-          <button type = "button" onClick={() => handleQuestionRequirement('video')} class="rounded-lg border border-transparent px-4 py-2 
+            <button type="button" onClick={() => handleQuestionRequirement('video')} class="rounded-lg border border-transparent px-4 py-2 
           font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>video</button>
-          <button type = "button" onClick={() => formatText('bold')} class="rounded-lg border border-transparent px-4 py-2 
+            <button type="button" onClick={() => formatText('bold')} class="rounded-lg border border-transparent px-4 py-2 
           font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>bold</button>
-          <button type = "button" onClick={() => formatText('italic')} class="rounded-lg border border-transparent px-4 py-2 
+            <button type="button" onClick={() => formatText('italic')} class="rounded-lg border border-transparent px-4 py-2 
           font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>italic</button>
-          <button type = "button" onClick={() => formatText('underline')} class="rounded-lg border border-transparent px-4 py-2 
+            <button type="button" onClick={() => formatText('underline')} class="rounded-lg border border-transparent px-4 py-2 
           font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>underline</button>
-          <button type = "button" onClick={() => handleQuestionRequirement('latex')} class="rounded-lg border border-transparent px-4 py-2 
+            <button type="button" onClick={() => handleQuestionRequirement('latex')} class="rounded-lg border border-transparent px-4 py-2 
           font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>latex</button>
-          <button type = "button" onClick={() => makeLink()} class="rounded-lg border border-transparent px-4 py-2 
+            <button type="button" onClick={() => makeLink()} class="rounded-lg border border-transparent px-4 py-2 
           font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>URL</button>
+            <button type="button" onClick={() => setquestionIsListening(prevState => !prevState)} class="rounded-lg border border-transparent px-4 py-2 
+          font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+          active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>{questionisListening ? 'Stop Listening' : 'Start Listening'}</button>
           </div>
-          <div id = "QuestionDiv"  onInput={handleQuestionInput} contentEditable
-          style={{border: '1px solid black', textAlign: 'left',  minHeight: '180px', width:'500px', padding: '10px', marginTop: '10px',backgroundColor:'grey'}}>
-          <htmlcontent html = {question}></htmlcontent>
+          <div id="QuestionDiv" onInput={handleQuestionInput} contentEditable
+            style={{ border: '1px solid black', textAlign: 'left', minHeight: '180px', width: '500px', padding: '10px', marginTop: '10px', backgroundColor: 'grey' }}>
+
+            <htmlcontent html={question}></htmlcontent>
           </div>
 
           {Question_requirement === 'latex' && (
             <div>
-              <textarea value={questionlatex} onChange={(e)=>setQuestionLatexInput(e.target.value)}style={{border: '1px solid black', textAlign: 'left',  minHeight: '180px', width:'500px', padding: '10px', marginTop: '10px',backgroundColor:'grey'}}></textarea>
-            <h2>Preview</h2>
-            <div style={{border: '1px solid #ccc', padding: '10px',minHeight: '180px', width:'500px'}}>
+              <textarea value={questionlatex} onChange={(e) => setQuestionLatexInput(e.target.value)} style={{ border: '1px solid black', textAlign: 'left', minHeight: '180px', width: '500px', padding: '10px', marginTop: '10px', backgroundColor: 'grey' }}></textarea>
+              <h2>Preview</h2>
+              <div style={{ border: '1px solid #ccc', padding: '10px', minHeight: '180px', width: '500px' }}>
 
-              <BlockMath math={questionlatex} errorColor={'#cc0000'} />
+                <BlockMath math={questionlatex} errorColor={'#cc0000'} />
+              </div>
             </div>
-          </div>
           )}
 
           {Question_requirement === 'video' && (
-          <div>
-            <label htmlFor='videoInput'>Put your video link here : </label>
-            <input name = "videoInput" type="text" value={questionvideolink}   onChange={(e) => setQuestionVideoLink(e.target.value)} style={{ width: '250px', height:'50px' }}></input>
+            <div>
+              <label htmlFor='videoInput'>Put your video link here : </label>
+              <input name="videoInput" type="text" value={questionvideolink} onChange={(e) => setQuestionVideoLink(e.target.value)} style={{ width: '250px', height: '50px' }}></input>
               {ReactPlayer.canPlay(questionvideolink) ? (
                 <>
                   <p>below is the preview of video</p>
-                  <ReactPlayer url= {questionvideolink} controls={true} />
+                  <ReactPlayer url={questionvideolink} controls={true} />
                 </>
-                ) : (
-                  <p>The link is not available</p>
-                )}
+              ) : (
+                <p>The link is not available</p>
+              )}
             </div>
           )}
 
           {Question_requirement === 'image' && (
             <div>
-            <label htmlFor='QuestionimageInput'>Put your image here:</label>
-            <input name='QuestionimageInput' value={questionimagelink} type="text"  onChange={(e)=>setQuestion_ImageUrl(e.target.value)}></input>
-            <img src={questionimagelink} style={{maxWidth: '250px', maxHeight: '250px'} } />
+              <label htmlFor='QuestionimageInput'>Put your image here:</label>
+              <input name='QuestionimageInput' value={questionimagelink} type="text" onChange={(e) => setQuestion_ImageUrl(e.target.value)}></input>
+              <img src={questionimagelink} style={{ maxWidth: '250px', maxHeight: '250px' }} />
             </div>
           )}
-             
+
           <div>
-            <button type = "button" onClick={() => handleAnswerRequirement('image')} class="rounded-lg border border-transparent px-4 py-2 
+            <button type="button" onClick={() => handleAnswerRequirement('image')} class="rounded-lg border border-transparent px-4 py-2 
             font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
             active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>Image</button>
-            <button type = "button" onClick={() =>handleAnswerRequirement('video')} class="rounded-lg border border-transparent px-4 py-2 
+            <button type="button" onClick={() => handleAnswerRequirement('video')} class="rounded-lg border border-transparent px-4 py-2 
             font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
             active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>video</button>
-            <button type = "button" onClick={() => formatText('bold')} class="rounded-lg border border-transparent px-4 py-2 
+            <button type="button" onClick={() => formatText('bold')} class="rounded-lg border border-transparent px-4 py-2 
             font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
             active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>bold</button>
-            <button type = "button" onClick={() => formatText('italic')} class="rounded-lg border border-transparent px-4 py-2 
+            <button type="button" onClick={() => formatText('italic')} class="rounded-lg border border-transparent px-4 py-2 
             font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
             active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>italic</button>
-            <button type = "button" onClick={() => formatText('underline')} class="rounded-lg border border-transparent px-4 py-2 
+            <button type="button" onClick={() => formatText('underline')} class="rounded-lg border border-transparent px-4 py-2 
             font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
             active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>underline</button>
-            <button type = "button" onClick={() => handleAnswerRequirement('latex')} class="rounded-lg border border-transparent px-4 py-2 
+            <button type="button" onClick={() => handleAnswerRequirement('latex')} class="rounded-lg border border-transparent px-4 py-2 
             font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
             active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>latex</button>
-            <button type = "button" onClick={() => makeLink()} class="rounded-lg border border-transparent px-4 py-2 
+            <button type="button" onClick={() => makeLink()} class="rounded-lg border border-transparent px-4 py-2 
             font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
             active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>URL</button>
+            <button type="button" onClick={() => setanswerIsListening(prevState => !prevState)} class="rounded-lg border border-transparent px-4 py-2 
+          font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+          active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>{answerisListening ? 'Stop Listening' : 'Start Listening'}</button>
           </div>
 
-          <div id = "AnswerDiv"  onInput={handleAnswerInput}  contentEditable
-          style={{border: '1px solid black', minHeight: '180px', width:'500px', padding: '10px',backgroundColor:'grey'}}>
-          <htmlcontent html = {answer}></htmlcontent>
+          <div id="AnswerDiv" onInput={handleAnswerInput} contentEditable
+            style={{ border: '1px solid black', minHeight: '180px', width: '500px', padding: '10px', backgroundColor: 'grey' }}>
+            <htmlcontent html={answer}></htmlcontent>
           </div>
 
           {Answer_requirement === 'latex' && (
             <div>
-               <textarea value={answerlatex} onChange={(e)=>setAnswerLatexInput(e.target.value)}style={{border: '1px solid black', textAlign: 'left',  minHeight: '180px', width:'500px', padding: '10px', marginTop: '10px',backgroundColor:'grey'}}></textarea>
-            <h2>Preview</h2>
-            <div style={{border: '1px solid #ccc', padding: '10px',minHeight: '180px', width:'500px'}}>
-              <BlockMath math={answerlatex} errorColor={'#cc0000'} />
+              <textarea value={answerlatex} onChange={(e) => setAnswerLatexInput(e.target.value)} style={{ border: '1px solid black', textAlign: 'left', minHeight: '180px', width: '500px', padding: '10px', marginTop: '10px', backgroundColor: 'grey' }}></textarea>
+              <h2>Preview</h2>
+              <div style={{ border: '1px solid #ccc', padding: '10px', minHeight: '180px', width: '500px' }}>
+                <BlockMath math={answerlatex} errorColor={'#cc0000'} />
+              </div>
             </div>
-          </div>
           )}
 
           {Answer_requirement === 'video' && (
-          <div>
-            <label htmlFor='videoInput'>Put your video link here : </label>
-            <input name = "videoInput" type="text" value={answervideolink}  onChange={(e) => setAnswerVideoLink(e.target.value)} style={{ width: '250px', height:'50px' }}></input>
+            <div>
+              <label htmlFor='videoInput'>Put your video link here : </label>
+              <input name="videoInput" type="text" value={answervideolink} onChange={(e) => setAnswerVideoLink(e.target.value)} style={{ width: '250px', height: '50px' }}></input>
               {ReactPlayer.canPlay(answervideolink) ? (
                 <>
                   <p>preview </p>
-                  <ReactPlayer url= {answervideolink} controls={true} />
+                  <ReactPlayer url={answervideolink} controls={true} />
                 </>
-                ) : (
-                  <p>The link is not available</p>
-                )}
+              ) : (
+                <p>The link is not available</p>
+              )}
             </div>
           )}
 
           {Answer_requirement === 'image' && (
             <div>
-            <label htmlFor='AnswerimageInput'>Put your image here:</label>
-            <input name='AnswerimageInput' value={answerimagelink} type="text"  onChange={(e)=>setAnswer_ImageUrl(e.target.value)}></input>
-            <img src={answerimagelink} style={{maxWidth: '250px', maxHeight: '250px'}} />
+              <label htmlFor='AnswerimageInput'>Put your image here:</label>
+              <input name='AnswerimageInput' value={answerimagelink} type="text" onChange={(e) => setAnswer_ImageUrl(e.target.value)}></input>
+              <img src={answerimagelink} style={{ maxWidth: '250px', maxHeight: '250px' }} />
             </div>
           )}
 
