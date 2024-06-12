@@ -40,6 +40,7 @@ function Header() {
             <Link to="/cards" className="px-4 mx-2 transition duration-100 hover:text-black py-2">Create Card</Link>
             <Link to="/decks" className="px-4 mx-2 transition duration-100 hover:text-black py-2">Create Deck</Link>
             <Link to="/folders" className="px-4 mx-2 transition duration-100 hover:text-black py-2">Create Folder</Link>
+            <Link to="/test" className="px-4 mx-2 transition duration-100 hover:text-black py-2">Test Mode</Link>
             <Link to="/help" className="px-4 mx-2 transition duration-100 hover:text-black py-2">Help</Link>
             <Link to="/home" className="px-4 ml-2 mr-20 transition duration-100 hover:text-black py-2">Home</Link>
           </div>

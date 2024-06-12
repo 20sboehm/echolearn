@@ -3,15 +3,16 @@ import { useState } from 'react';
 import SideBar from './SideBar'
 import { useNavigate } from 'react-router-dom';
 
-function Login() {
+function Test() {
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState('');
   const [popupColor, setPopupColor] = useState('');
   const [popupOpacity, setPopupOpacity] = useState('opacity-100');
 
-  const [deckId, setDeckId] = useState('');
-  const [username, setUsername] = useState('');
-  const [userpassword, setUserpassword] = useState('');
+
+  const [inputquestion,setinputquestion] = useState('');
+  const [response,setresponse] = useState('');
+
   const navigate = useNavigate();
   function popupDetails(popupMessage, popupColor) {
     setShowPopup(true);
@@ -22,14 +23,13 @@ function Login() {
       setPopupOpacity('opacity-0'); // Start fading out
       setTimeout(() => setShowPopup(false), 1000); // Give it 1 second to fade
     }, 1000); // Stay fully visible for 1 second
-    setUsername('');
-    setUserpassword('');
+
   }
 
   const formSubmissionMutation = useMutation(async (formData) => {
     console.log(JSON.stringify(formData))
    
-    const response = await fetch('http://localhost:8000/api/login', {
+    const response = await fetch('http://localhost:8000/api/test', {
       method: 'POST',
       body: JSON.stringify(formData)
     });
@@ -43,31 +43,35 @@ function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const formData = new FormData(e.target.value);
-    console.log(formData)
-    setUsername( formData.get("username"))
-    setUserpassword(formData.get("userpassword"))
-    
-    formSubmissionMutation.mutate({username, userpassword }, {
-      onSuccess: () => {
-        popupDetails('User Login successfully!', 'green')
-      },
-      onError: () => {
-        popupDetails('Check your username or password...', 'red')
-      }
-    });
+    const question = inputquestion.trim();
+
+  if (!question) {
+    popupDetails('Please enter a question.', 'red');
+    return;
+  }
+
+  formSubmissionMutation.mutate({ question }, {
+    onSuccess: (data) => {
+      // Assuming the API response includes the answer
+      setresponse(data.answer);
+      navigate("/home");
+      popupDetails('Received response successfully!', 'green');
+    },
+    onError: () => {
+      popupDetails('Failed to fetch response. Check your connection.', 'red');
+    }
+  });
   };
 
     return (
       <>
         <SideBar />
         <form onSubmit={handleSubmit} className='flex flex-col items-start mt-10'>
-          <label className="text-sm" htmlFor='username'>Username</label>
-          <input className="mb-4 rounded-md" value = {username} id = 'username' name = 'username' type = "text" onChange={e => setUsername(e.target.value)}></input>
-          
-          <label className="text-sm" htmlFor='userpassword'>Password</label>
-          <input className="mb-4 rounded-md" value={userpassword} id = 'userpassword' type = 'password' name = "userpassword" onChange={e => setUserpassword(e.target.value)}></input>
-            {/* <a href=''> new user need signIn first</a> */}
+          <label className="text-sm" htmlFor='question' >Input question </label>
+          <textarea value={inputquestion} id = 'question' onChange={e =>setinputquestion(e.target.value)}></textarea>
+         
+          <label className="text-sm" htmlFor='answer'>response</label>
+          {response}
           <button className="w-full rounded-lg border border-transparent px-4 py-2 font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }} type='submit'>Submit</button>
         </form>
@@ -80,4 +84,4 @@ function Login() {
     );
   }
 
-export default Login
+export default Test
