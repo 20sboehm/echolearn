@@ -18,16 +18,22 @@ def test(request):
         return JsonResponse({'error': 'No question provided'}, status=400)
 
     try:
-        response = client.completions.create(
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo",  # or another model version like gpt-3.5-turbo or gpt-4
-            prompt=f"Question: {question}\nRéponse:",
-            max_tokens=1024,
-            n=1,
-             stop=["\n"],
-            temperature=0.7,
+            # prompt=f"Question: {question}\nRéponse:",
+            # max_tokens=1024,
+            # n=1,
+            # stop=["\n"],
+            # temperature=0.7,
+            messages = [
+            {"role": "system", "content": "Please generate a multiple-choice question based on the following topic."},
+            {"role": "user", "content": question},
+            ]
         )
         print("2")
-        return JsonResponse({'answer': response.choices[0].text})
+        response_message = response.choices[0].message.content
+        print(response_message)
+        return JsonResponse({'answer': response.choices[0].message.content})
     
     except Exception as e:
         print(e)
