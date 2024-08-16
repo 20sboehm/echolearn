@@ -7,8 +7,10 @@ import ReactPlayer from 'react-player';
 import { BlockMath } from 'react-katex';
 import sanitizeHtml from 'sanitize-html';
 import katex from 'katex';
-import partyPopperImg from '../assets/party-popper.png'
-import partyPopperFlipImg from '../assets/party-popper-flip.png'
+import partyPopperImg from '../assets/party-popper.png';
+import partyPopperFlipImg from '../assets/party-popper-flip.png';
+import set from '../assets/reviewSwitch2.png';
+import card from '../assets/reviewSwitch.png';
 
 // Two layers in order to maintain border rounding with active scrollbar
 const cardOuterCSS = "bg-white rounded-md overflow-hidden"
@@ -151,7 +153,7 @@ function FinishView(deckId) {
   )
 }
 
-function ReviewCard({ card, showAnswer, setShowAnswer, updateReviewedCard }) {
+function ReviewCard({ card, showAnswer, setShowAnswer, updateReviewedCard, changeAnimation }) {
   const changeShowAnswer = () => {
     setShowAnswer(true);
   };
@@ -170,8 +172,9 @@ function ReviewCard({ card, showAnswer, setShowAnswer, updateReviewedCard }) {
       <div className="flex flex-col items-center">
         <div className={`flex flex-col items-center h-auto w-[35vw] min-w-[16rem] mx-auto`}>
           <div className="w-full">
-            <QuestionCard card={card}></QuestionCard>
-            <AnswerCard card={card} showAnswer={showAnswer}></AnswerCard>
+            {!changeAnimation && (<QuestionCard card={card}></QuestionCard>)}
+            {!changeAnimation && (<AnswerCard card={card} showAnswer={showAnswer}></AnswerCard>)}
+            {changeAnimation && <p>Hello</p>}
           </div>
         </div>
       </div>
@@ -186,8 +189,17 @@ function ReviewPage() {
   const [cardIndex, setCardIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
   const [finish, setFinish] = useState(false);
+  const [changeAnimation, setAnimation] = useState(false);
+  const [currImage, setCurrImage] = useState(set);
   const { deckId } = useParams();
 
+
+  const changeImage = () => {
+    setCurrImage((prev) => 
+      prev === set ? card : set
+    );
+    setAnimation(!changeAnimation);
+  }
   // Fetch reviews info
   const { data: reviews, isLoading, error } = useQuery({
     queryFn: () =>
@@ -237,13 +249,19 @@ function ReviewPage() {
     <>
       <Sidebar />
       <div className="rounded-lg mt-[2%] h-[60vh] w-[40vw] flex flex-col min-w-[16rem]">
-        <h2 className="text-center text-[2em] border-b">{reviews.deck_name}</h2>
+      <div className="flex items-center border-b pb-[1rem]">
+        <h2 className="text-[2em] absolute left-1/2 transform -translate-x-1/2">{reviews.deck_name}</h2>
+        <button className="border w-[12%] ml-auto" onClick={changeImage}>
+          <img src={currImage}></img>
+        </button>
+      </div>
         {!finish && (
           <ReviewCard
             card={reviews.cards[cardIndex]}
             showAnswer={showAnswer}
             setShowAnswer={setShowAnswer}
             updateReviewedCard={updateReviewedCard}
+            changeAnimation={changeAnimation}
           />
         )}
         {finish && <FinishView deckId={deckId} />}
