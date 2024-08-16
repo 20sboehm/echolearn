@@ -65,6 +65,47 @@ function AnswerCard({ card, showAnswer }) {
   )
 }
 
+function FlashCard({ card, setShowAnswer }) {
+  setShowAnswer(true);
+  const [flip, setFlip] = useState(false);
+
+  const toggleFlip = () => setFlip(!flip);
+
+  return (
+    <div className={`mt-8 ${cardOuterCSS}`} onClick={toggleFlip}>
+      <div className="h-[60vh] px-4 py-2 text-black flex flex-col justify-center items-center overflow-x-hidden overflow-y-auto text-[2em]" style={{ scrollbarGutter: 'stable both-edges' }}>
+      {!flip ? (
+        <>
+          <div dangerouslySetInnerHTML={{ __html: card.question }}></div>
+          {ReactPlayer.canPlay(card.questionvideolink) && (
+            <ReactPlayer
+              url={card.questionvideolink}
+              controls={true}
+              style={{ maxWidth: '80%', maxHeight: '80%' }} // ReactPlayer is likely incompatible with Tailwind
+            />
+          )}
+          {card.questionimagelink && <img src={card.questionimagelink} className="max-w-[80%] max-h-[80%]" />}
+          {card.questionlatex && <KatexOutput latex={card.questionlatex} />}
+        </>
+        ) : (
+        <>
+          <div dangerouslySetInnerHTML={{ __html: card.answer }}></div>
+          {ReactPlayer.canPlay(card.answervideolink) && (
+            <ReactPlayer
+              url={card.answervideolink}
+              controls={true}
+              style={{ maxWidth: '80%', maxHeight: '80%' }} // ReactPlayer is likely incompatible with Tailwind
+            />
+          )}
+          {card.answerimagelink && <img src={card.answerimagelink} className="max-w-[80%] max-h-[80%]" />}
+          {card.answerlatex && <KatexOutput latex={card.answerlatex} />}
+        </>
+      )}
+      </div>
+    </div>
+  )
+}
+
 function ShowAnswerButtons({ card, showAnswer, setShowAnswer, updateReviewedCard }) {
   const changeShowAnswer = () => {
     setShowAnswer(true);
@@ -174,7 +215,7 @@ function ReviewCard({ card, showAnswer, setShowAnswer, updateReviewedCard, chang
           <div className="w-full">
             {!changeAnimation && (<QuestionCard card={card}></QuestionCard>)}
             {!changeAnimation && (<AnswerCard card={card} showAnswer={showAnswer}></AnswerCard>)}
-            {changeAnimation && <p>Hello</p>}
+            {changeAnimation && (<FlashCard card={card} setShowAnswer={setShowAnswer}></FlashCard>)}
           </div>
         </div>
       </div>

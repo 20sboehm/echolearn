@@ -1,0 +1,13 @@
+.flip-card-front, .flip-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    top: 0;
+    left: 0;
+  }
+  
+  .flip-card-back {
+    transform: rotateY(180deg);
+  }
+  
