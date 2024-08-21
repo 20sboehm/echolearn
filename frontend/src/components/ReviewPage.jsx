@@ -167,16 +167,16 @@ function ShowAnswerButtons({ card, showAnswer, setShowAnswer, updateReviewedCard
       {
         showAnswer && (
           <div className="flex justify-center mt-28 flex-wrap">
-            <button className="rounded-md w-24 px-4 mr-4 text-black bg-red-600 hover:bg-red-700" onClick={() => updateReviewedCard(0, getNextReviewTime(1), card)}>Again <br />
+            <button className="rounded-md w-24 px-4 mr-4 text-black bg-red-600 hover:bg-red-700" onClick={() => updateReviewedCard(0, getNextReviewTime(1), card, setFlip)}>Again <br />
               {formatTimeDifference(now.getTime(), getNextReviewTime(1))}</button>
 
-            <button className="rounded-md w-24 px-4 mr-4 text-black bg-yellow-400 hover:bg-yellow-500" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(2), card)}>Hard <br />
+            <button className="rounded-md w-24 px-4 mr-4 text-black bg-yellow-400 hover:bg-yellow-500" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(2), card, setFlip)}>Hard <br />
               {formatTimeDifference(now.getTime(), getNextReviewTime(2))}</button>
 
-            <button className="rounded-md w-24 px-4 mr-4 text-black bg-green-700 hover:bg-green-800" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(3), card)}>Good <br />
+            <button className="rounded-md w-24 px-4 mr-4 text-black bg-green-700 hover:bg-green-800" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(3), card, setFlip)}>Good <br />
               {formatTimeDifference(now.getTime(), getNextReviewTime(3))}</button>
 
-            <button className="rounded-md w-24 px-4 text-black bg-green-400 hover:bg-green-500" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(4), card)}>Easy <br />
+            <button className="rounded-md w-24 px-4 text-black bg-green-400 hover:bg-green-500" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(4), card, setFlip)}>Easy <br />
               {formatTimeDifference(now.getTime(), getNextReviewTime(4))}</button>
           </div>
         )
@@ -200,9 +200,7 @@ function FinishView(deckId) {
   )
 }
 
-function ReviewCard({ card, showAnswer, setShowAnswer, updateReviewedCard, changeAnimation }) {
-  
-  const [flip, setFlip] = useState(false);
+function ReviewCard({ card, showAnswer, setShowAnswer, updateReviewedCard, changeAnimation, flip, setFlip }) {
 
   const changeShowAnswer = () => {
     setShowAnswer(true);
@@ -243,13 +241,15 @@ function ReviewPage() {
   const [currImage, setCurrImage] = useState(set);
   const { deckId } = useParams();
 
+  const [flip, setFlip] = useState(false);
 
-  const changeImage = () => {
+  const switchAnimation = () => {
     setCurrImage((prev) => 
       prev === set ? card : set
     );
     setAnimation(!changeAnimation);
     setShowAnswer(false);
+    setFlip(false);
   }
   // Fetch reviews info
   const { data: reviews, isLoading, error } = useQuery({
@@ -257,7 +257,9 @@ function ReviewPage() {
       api._get(`/api/reviews/${deckId}`).then((response) => response.json()),
   });
 
-  const updateReviewedCard = (newBucket, nextReviewTime, card) => {
+  const updateReviewedCard = (newBucket, nextReviewTime, card, setFlip) => {
+    setFlip(false);
+
     const formatTime = (time) => {
       return time.toISOString();
     }
@@ -302,7 +304,7 @@ function ReviewPage() {
       <div className="rounded-lg mt-[2%] h-[60vh] w-[40vw] flex flex-col min-w-[16rem]">
       <div className="flex items-center border-b pb-[1rem]">
         <h2 className="text-[2em] absolute left-1/2 transform -translate-x-1/2">{reviews.deck_name}</h2>
-        <button className="border w-[12%] ml-auto" onClick={changeImage}>
+        <button className="border w-[12%] ml-auto" onClick={switchAnimation}>
           <img src={currImage}></img>
         </button>
       </div>
@@ -313,6 +315,8 @@ function ReviewPage() {
             setShowAnswer={setShowAnswer}
             updateReviewedCard={updateReviewedCard}
             changeAnimation={changeAnimation}
+            flip={flip}
+            setFlip={setFlip}
           />
         )}
         {finish && <FinishView deckId={deckId} />}
