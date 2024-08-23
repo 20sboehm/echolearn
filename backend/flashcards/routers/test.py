@@ -25,6 +25,7 @@ def test(request):
             # n=1,
             # stop=["\n"],
             # temperature=0.7,
+            #send question to got and take answer as one of choice
             messages = [
             {"role": "system", "content": "Please generate a multiple-choice question based on the following topic."},
             {"role": "user", "content": question},
