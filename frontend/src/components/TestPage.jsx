@@ -1,7 +1,6 @@
 import { useMutation, useQuery } from 'react-query';
 import { useState } from 'react';
 import SideBar from './SideBar'
-import { useNavigate } from 'react-router-dom';
 import { useApi } from '../api';
 
 function Test() {
@@ -12,12 +11,10 @@ function Test() {
   const [popupOpacity, setPopupOpacity] = useState('opacity-100');
 
 
-  const [inputquestion,setinputquestion] = useState('');
-  const [response,setresponse] = useState('');
-
+  const [response,setresponse] = useState([]);
   const [deckId, setDeckId] = useState('');
+  const [userAnswers, setUserAnswers] = useState({});
 
-  const navigate = useNavigate();
   function popupDetails(popupMessage, popupColor) {
     setShowPopup(true);
     setPopupMessage(popupMessage)
@@ -61,24 +58,26 @@ const { data: decks, isLoading, error } = useQuery({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const question = inputquestion.trim();
 
-  if (!question) {
-    popupDetails('Please enter a question.', 'red');
-    return;
-  }
-
-  formSubmissionMutation.mutate({ question }, {
+  formSubmissionMutation.mutate({deckid:deckId}, {
     onSuccess: (data) => {
-      // Assuming the API response includes the answer
-      setresponse(data.answer);
-      //navigate("/home");
+      console.log(data)
+      setresponse(data.quiz);
+      console.log(response)
+
+     
       popupDetails('Received response successfully!', 'green');
     },
     onError: () => {
       popupDetails('Failed to fetch response. Check your connection.', 'red');
     }
   });
+  };
+  const handleSelectAnswer = (questionIndex, selectedOption) => {
+    setUserAnswers({
+      ...userAnswers,
+      [questionIndex]: selectedOption,
+    });
   };
 
     return (
@@ -87,17 +86,38 @@ const { data: decks, isLoading, error } = useQuery({
         <div className="m-4">
         <form onSubmit={handleSubmit} className='flex flex-col items-start mt-10'>
 
-        <select value={deckId} onChange={(e) => setDeckId(e.target.value)} className='mb-4 px-2 rounded-md h-10' style={{ width: '30vw' }} >
+        <select value={deckId} onChange={(e) => setDeckId(e.target.value)} className='mb-4 px-2 rounded-md h-10' style={{ width: '30vw' }}  required>
             <option key='select-deck-key' value='' className='text-gray-400'>Select a deck</option>
             {decks && decks.map((deck) => (
               <option key={deck.deck_id} value={deck.deck_id}>{deck.name}</option>
             ))}
           </select>
           
-          <label className="text-sm" htmlFor='question' >Input question </label>
-          <textarea className='mt-1 block w-3/4 p-3' value={inputquestion} id = 'question' placeholder="Example: What is torque in physics?" onChange={e =>setinputquestion(e.target.value)}></textarea>
-          <label className="text-sm" htmlFor='answer'>response</label>
-          {response}
+          <div>
+          <h1>Quiz</h1>
+          {response.map((quiz, index) => (
+            <div key={index}>
+              <h3>{quiz.question}</h3>
+              <ul>
+                {Object.entries(quiz.choices).map(([key, value]) => (
+                  <li key={key} 
+                      onClick={() => handleSelectAnswer(index, key)}
+                      style={{
+                        cursor: 'pointer',
+                        color: userAnswers[index] === key ? 'red' : 'black'
+                      }}>
+                    {key}: {value}
+                  </li>
+                ))}
+              </ul>
+              {userAnswers[index] && (
+                <p>
+                  Your answer ({userAnswers[index]}: {quiz.choices[userAnswers[index]]}) is {userAnswers[index] === quiz.answer ? 'correct' : 'incorrect'}.
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
           <button className="w-full rounded-lg border border-transparent px-4 py-2 font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }} type='submit'>Submit</button>
           </form>
