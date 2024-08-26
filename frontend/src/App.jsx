@@ -2,17 +2,19 @@ import { useState } from 'react'
 import { QueryClient, QueryClientProvider } from "react-query";
 import { BrowserRouter, Navigate, Routes, Route, useParams } from "react-router-dom";
 
-import LandingPage from "./components/LandingPage"
+import LandingPage from "./components/LandingPage";
 import HomePage from "./components/UserPage";
-import CreateCard from "./components/CreateCard"
-import CreateDeck from "./components/CreateDeck"
-import CreateFolder from "./components/CreateFolder"
+import CreateCard from "./components/CreateCard";
+import CreateDeck from "./components/CreateDeck";
+import CreateFolder from "./components/CreateFolder";
 import ReviewPage from "./components/ReviewPage";
-import HelpPage from "./components/HelpPage"
+import HelpPage from "./components/HelpPage";
 import DeckPage from './components/DeckPage';
 import EditPage from './components/EditPage';
-import Header from "./components/Header"
+import Header from "./components/Header";
 import Login from './components/Login';
+import FeaturePage from './components/FeaturesPage';
+import AboutPage from './components/AboutPage';
 
 const queryClient = new QueryClient();
 
@@ -41,6 +43,8 @@ function Main() {
         <Route path="/edit/:cardId" element={<EditPage />} />
         <Route path="/decks/:deckId" element={<DeckPage />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/features" element={<FeaturePage />} />
+        <Route path="/about" element={<AboutPage />} />
         <Route path="*" element={<Navigate to="/error/404/Page%20Not%20Found" />} />
       </Routes>
     </main>

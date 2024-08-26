@@ -5,7 +5,7 @@ import echolearnLogoWhite from "../assets/echolearn-logo-white.png"
 
 function Header() {
   const location = useLocation();
-  const isGuestPage = location.pathname === "/";
+  const isGuestPage = location.pathname === "/" || location.pathname === "/features" || location.pathname === "/about";
 
   if (isGuestPage) {
     return (
@@ -16,8 +16,8 @@ function Header() {
               <img src={echolearnLogoBlue} alt="EchoLearn Logo" className="h-10 mr-2" />
               <p className="text-black font-bold">EchoLearn</p>
             </Link>
-            <Link to="/" className="ml-8 text-black font-bold transition duration-100 hover:bg-gray-300 block text-center py-2 px-4">About</Link>
-            <Link to="/" className="text-black font-bold transition duration-100 hover:bg-gray-300 block text-center py-2 px-4">Features</Link>
+            <Link to="/about" className="ml-8 text-black font-bold transition duration-100 hover:bg-gray-300 block text-center py-2 px-4">About</Link>
+            <Link to="/features" className="text-black font-bold transition duration-100 hover:bg-gray-300 block text-center py-2 px-4">Features</Link>
             <Link to="/" className="text-black font-bold transition duration-100 hover:bg-gray-300 block text-center py-2 px-4">Contact</Link>
           </div>
         
