@@ -46,7 +46,7 @@ function FeaturePage() {
 
   return (
     <>
-      <div className="flex flex-col items-center w-full h-screen bg-featureBackground text-white">
+      <div className="flex flex-col items-center w-full h-screen bg-featureBackground text-black">
         <div className="text-center py-10">
           <h1 className="text-4xl font-bold">FEATURES</h1>
           <p className="text-xl mt-2">Overview of our key features, make Echolearn your next memory.</p>
@@ -57,14 +57,14 @@ function FeaturePage() {
             {featureCards.map((feature, index) => (
               <div key={index} className="flex flex-col items-center text-center p-6" onClick={() => handleCardClick(index)}>
                 <div className={`flipCard ${flippedIndex === index ? 'flipped' : ''}`}>
-                <div className="cardInner">
-                  <div className={`cardFront ${cardCSS}`}>
-                    <div className="text-4xl mb-4">{feature.picture}</div>
-                    <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
-                  </div>
-                  <div className={`cardBack ${cardCSS}`}>
-                    <p>{feature.description}</p>
-                  </div>
+                  <div className="cardInner">
+                    <div className={`cardFront ${cardCSS}`}>
+                      <div className="text-4xl mb-4">{feature.picture}</div>
+                      <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
+                    </div>
+                    <div className={`cardBack ${cardCSS}`}>
+                      <p>{feature.description}</p>
+                    </div>
                   </div>
                 </div>
               </div>
