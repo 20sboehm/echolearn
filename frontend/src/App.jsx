@@ -44,7 +44,7 @@ function Main() {
         <Route path="/edit/:cardId" element={<EditPage />} />
         <Route path="/decks/:deckId" element={<DeckPage />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/test" element={<Test />} />
+        <Route path="/test/:deckId" element={<Test />} />
         <Route path="*" element={<Navigate to="/error/404/Page%20Not%20Found" />} />
       </Routes>
     </main>

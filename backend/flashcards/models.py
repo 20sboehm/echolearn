@@ -20,7 +20,6 @@ class Deck(models.Model):
     statistics = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     last_edited = models.DateTimeField(auto_now_add=True)
-    quiz = models.JSONField(default=list)
     def __str__(self):
         return f"{self.name} (id={self.deck_id})"
 

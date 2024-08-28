@@ -107,8 +107,15 @@ function DeckPage() {
               active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s"  }}>
               <button>Study</button>
             </Link>
+            
           </div>
-
+          <div className="flex flex-col ">
+          <Link to={`/test/${deckId}`} className="rounded-lg border border-transparent px-[100px] py-2 
+              font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+              active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s"  }}>
+              <button>Quiz</button>
+            </Link>
+            </div>
           <div className="flex flex-col ml-auto justify-center items-center mb-4">
             {/* JavaScript code to draw the graph */}
             <svg width="200" height="200" viewBox="0 20 200 150">
