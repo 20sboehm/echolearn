@@ -7,8 +7,8 @@ const featureCards = [
   {
     picture: "📝",
     title: "Space repetition",
-    description: "Space repetition is effective memorize algorithm that Echolearn use to help you gain long-term recall",
-    // or should we describe space repetition?
+    description: "Space repetition is a technique where you review information at increasing intervals to retain knowledge in long-term memory."
+    // "Space repetition is effective memorize algorithm that Echolearn use to help you gain long-term recall",
   },
   {
     picture: "📥",
@@ -46,7 +46,7 @@ function FeaturePage() {
 
   return (
     <>
-      <div className="flex flex-col items-center w-full h-screen bg-featureBackground text-black">
+      <div className="flex flex-col items-center w-full h-screen bg-featureBackground text-white">
         <div className="text-center py-10">
           <h1 className="text-4xl font-bold">FEATURES</h1>
           <p className="text-xl mt-2">Overview of our key features, make Echolearn your next memory.</p>
