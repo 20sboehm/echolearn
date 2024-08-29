@@ -36,7 +36,7 @@ function AboutPage() {
             <h2 className="text-3xl text-green-300 font-bold mb-4">Team Members</h2>
             {teamInfo.map((member, index) => (
               <div key={index} className="text-blue-800">
-                <h3 className="text-xl font-bold mb-2">{member.name}</h3>
+                <h3 className="text-xl font-bold mb-2 text-white">{member.name}</h3>
                 <ul className="list-disc ml-4">
                   {member.roles.map((role, roleIndex) => (
                     <li key={roleIndex} className="text-sm">{role}</li>

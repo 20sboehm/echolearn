@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from "react";
 import './FeaturesPage.css';
 
 const cardCSS = "flex flex-col items-center justify-center bg-white text-black rounded-lg shadow-2xl p-6"
