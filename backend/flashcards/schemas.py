@@ -6,6 +6,22 @@ from typing import Optional
 Schemas are used to define the structure of the data that your API endpoints can recieve (request) or return (response).
 """
 
+# -----------------------------------------------
+# ------------------ Users --------------------
+# -----------------------------------------------
+
+class GetUser(Schema):
+    age: Optional[int] = None
+    country: Optional[str] = None
+
+class UserLogin(Schema):
+    username: str
+    userpassword: str
+
+# class GetUser(Schema):
+    
+
+
 # -------------------------------------------------
 # -------------------- Folders --------------------
 # -------------------------------------------------
@@ -136,11 +152,3 @@ class FolderInfo(Schema):
 
 class GetSidebar(Schema):
     Folders: list[FolderInfo]
-    
-# -----------------------------------------------
-# ------------------ User --------------------
-# -----------------------------------------------
-
-class GetUser(Schema):
-    username: str
-    userpassword: str

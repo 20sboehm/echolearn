@@ -35,6 +35,12 @@ Run these commands:
 
 ## --- Backend ---
 
+Add dependencies to requirements.txt so that other people can easily download them
+`pip freeze > requirements.txt`
+
+Install dependencies from requirements.txt
+`pip install -r requirements.txt`
+
 Generate migration files based on models:
 `python manage.py makemigrations`
 
