@@ -47,11 +47,13 @@ function AboutPage() {
             ))}
           </div>
 
-          <div className="w-3/4">
-            <img src={echoLearnImg} alt="Echolearn Image" className="w-1/3 h-auto mb-4 rounded-md" />
-            <p className="text-xl text-black">
-              Team Members from left to right:<br/> Wilson Pan, Di Zhou, Zengzheng Jiang, Seth Boehm
-            </p>
+          <div className="flex flex-col w-3/4">
+            <div className="flex flex-row">
+              <img src={echoLearnImg} alt="Echolearn Image" className="w-1/3 h-auto mb-4 rounded-md" />
+              <p className="text-xl text-black m-2">
+                Team Members from left to right:<br/> Wilson Pan, Di Zhou, Zengzheng Jiang, Seth Boehm
+              </p>
+            </div>
             <p className="text-lg text-gray-700 mt-4">
               {story}
             </p>
