@@ -1,28 +1,36 @@
 import { useState } from "react";
+import TODOImg from "../assets/TO-DOList.png"
+
 const topics = [
   { 
     title: "TO DO list",
-    guide: "On the home page, the TO-DO list will show which decks need review, the number of cards you haven't reviewed, and the cards that need to be reviewed again. You can easily start reviewing by clicking the 'Review' button or access the deck page by clicking on the deck name."
+    guide: "On the home page, the TO-DO list will show which decks need review, the number of cards you haven't reviewed, and the cards that need to be reviewed again. You can easily start reviewing by clicking the 'Review' button or access the deck page by clicking on the deck name.",
+    image: TODOImg,
   },
   { 
     title: "Create Folder", 
-    guide: "the"
+    guide: "the",
+    image: "",
   },
   { 
     title: "Create Deck", 
-    guide: "the" 
+    guide: "the",
+    image: "",
   },
   { 
     title: "Create Card", 
-    guide: "the" 
+    guide: "the",
+    image: "",
   },
   { 
     title: "Sidebar", 
-    guide: "the" 
+    guide: "the",
+    image: "",
   },
   { 
     title: "How to study", 
-    guide: "the" 
+    guide: "the",
+    image: "",
   },
 ];
 
@@ -42,6 +50,14 @@ function HelpPage() {
   const filteredTopics = topics.filter((topic) =>
     topic.title.toLowerCase().includes(search.toLowerCase())
   );
+
+  const handleCardClick = (topic) => {
+    if (selectedTopic === topic) {
+      setSelectedTopic(null);
+    } else {
+      setSelectedTopic(topic);
+    }
+  };
 
   const calculateTransform = (index) => {
     const card = cardsData[index];
@@ -89,10 +105,11 @@ function HelpPage() {
             }}
             className={`bg-white text-black absolute p-4 border rounded transition-transform duration-300 ease-in-out ${selectedTopic === topic ? 'shadow-xl' : ''
               } ${cardsData[index].width} flex flex-col items-center`}
-            onClick={() => setSelectedTopic(topic)}
+            onClick={() => handleCardClick(topic)}
           >
             <h2 className="text-2xl font-bold mb-4">{topic.title}</h2>
             {selectedTopic === topic && <p className="mt-2">{topic.guide}</p>}
+            {selectedTopic === topic && <img src={topic.image} alt={topic.title} className="mt-4 mx-auto max-w-full h-auto"/>}
           </div>
         ))}
       </div>
