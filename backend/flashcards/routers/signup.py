@@ -18,15 +18,15 @@ def sign_up(request):
 
         if not username:
             print("No username provided.")
-            return 400, "Username is required."
+            return JsonResponse({"detail": "Username is required."}, status=409)
 
         if User.objects.filter(username=username).exists():
             print("Username already exists.")
-            return 400, "Username already exists."
+            return JsonResponse({"detail": "Username already exists."}, status=409)
         
         if User.objects.filter(email=email).exists():
             print("Email already exists.")
-            return 400, "Email already exists."
+            return JsonResponse({"detail": "Email already exists."}, status=409)
 
         user = User.objects.create_user(
             username=username,

@@ -34,10 +34,16 @@ function SignUp() {
 
     const response = await api._post('/api/signup', formData);
 
-    if (!response.ok) {
-      throw new Error(`Network response was not ok: ${response.status}`);
+    if(response.status == 409){
+      const errorDetails = await response.json();
+      console.log(errorDetails)
+      throw new Error(`Conflict: ${errorDetails.detail}`);
     }
-    
+
+    if (!response.ok) {
+      throw new Error(`Network response was not ok: ${reponse.status_code}`);
+    }
+
     return response.json();
   });
 
@@ -56,8 +62,16 @@ function SignUp() {
           navigate('/login');
         }, 2000);
       },
-      onError: () => {
-        popupDetails('Failed: User might already exist.', 'red');
+      onError: (error) => {
+        
+        console.log("*error*:" + error.message)
+        if (error.message.includes("Username")) {
+          popupDetails('Registration failed: Username already exists.', 'red');
+        } else if (error.message.includes("Email")) {
+          popupDetails('Registration failed: Email already exists.', 'red');
+        } else {
+          popupDetails('Registration failed: An unknown error occurred.', 'red');
+        }
       }
     });
   };
