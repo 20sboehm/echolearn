@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from 'react-query';
 import { useState } from 'react';
 import SideBar from './SideBar'
-import { useApi } from "../api";
+import { useApi } from "../hooks";
 
 function CreateFolder() {
   const api = useApi();

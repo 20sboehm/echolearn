@@ -4,7 +4,7 @@ import SideBar from './SideBar'
 import ReactPlayer from 'react-player';
 import { BlockMath } from 'react-katex';
 import sanitizeHtml from 'sanitize-html';
-import { useApi } from '../api';
+import { useApi } from '../hooks';
 
 const CustomButton = ({ onClick, text }) => (
   <button

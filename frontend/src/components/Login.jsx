@@ -2,10 +2,10 @@ import { useMutation, useQuery } from 'react-query';
 import { useState } from 'react';
 import SideBar from './SideBar'
 import { useNavigate } from 'react-router-dom';
-import { useApi } from '../api';
+import { useApiWithoutToken, useAuth } from '../hooks';
 
 function Login() {
-  const api = useApi();
+  const api = useApiWithoutToken();
 
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState('');
@@ -15,7 +15,10 @@ function Login() {
   const [deckId, setDeckId] = useState('');
   const [username, setUsername] = useState('');
   const [userpassword, setUserpassword] = useState('');
+
   const navigate = useNavigate();
+  const { _login } = useAuth();
+
   function popupDetails(popupMessage, popupColor) {
     setShowPopup(true);
     setPopupMessage(popupMessage)
@@ -32,54 +35,54 @@ function Login() {
   const formSubmissionMutation = useMutation(async (formData) => {
     console.log(JSON.stringify(formData));
 
-    const response = await api._post('/api/login', formData);
+    const response = await api._post('/api/token/pair', formData);
 
     if (!response.ok) {
       throw new Error(`Network response was not ok: ${reponse.status_code}`);
     }
-    
+
     return response.json();
   });
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target.value);
-    console.log(formData)
-    setUsername( formData.get("username"))
-    setUserpassword(formData.get("userpassword"))
-    
-    formSubmissionMutation.mutate({username, userpassword }, {
-      onSuccess: () => {
-        
-        navigate("/home")
-        popupDetails('User Login successfully!', 'green')
+    console.log(formData);
+    setUsername(formData.get("username"));
+    setUserpassword(formData.get("userpassword"));
+
+    formSubmissionMutation.mutate({ username: username, password: userpassword }, {
+      onSuccess: (data) => {
+        _login(data);
+        navigate("/");
+        // popupDetails('User Login successfully!', 'green'); // I don't think this will get displayed because the user gets redirected
       },
       onError: () => {
-        popupDetails('Check your username or password...', 'red')
+        popupDetails('Check your username or password...', 'red');
       }
     });
   };
 
-    return (
-      <>
-        <SideBar />
-        <form onSubmit={handleSubmit} className='flex flex-col items-start mt-10'>
-          <label className="text-base" htmlFor='username'>Username</label>
-          <input className="mb-4 rounded-md text-xl px-2 py-2 border border-gray-500" value = {username} id = 'username' name = 'username' type = "text" onChange={e => setUsername(e.target.value)}></input>
-          
-          <label className="text-base" htmlFor='userpassword'>Password</label>
-          <input className="mb-4 rounded-md text-xl px-2 py-2 border border-gray-500" value={userpassword} id = 'userpassword' type = 'password' name = "userpassword" onChange={e => setUserpassword(e.target.value)}></input>
-          
-          <button className="mt-4 w-full rounded-lg border border-transparent px-4 py-2 font-semibold bg-[#111111] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+  return (
+    <>
+      <SideBar />
+      <form onSubmit={handleSubmit} className='flex flex-col items-start mt-10'>
+        <label className="text-base" htmlFor='username'>Username</label>
+        <input className="mb-4 rounded-md text-xl px-2 py-2 border border-gray-500" value={username} id='username' name='username' type="text" onChange={e => setUsername(e.target.value)}></input>
+
+        <label className="text-base" htmlFor='userpassword'>Password</label>
+        <input className="mb-4 rounded-md text-xl px-2 py-2 border border-gray-500" value={userpassword} id='userpassword' type='password' name="userpassword" onChange={e => setUserpassword(e.target.value)}></input>
+
+        <button className="mt-4 w-full rounded-lg border border-transparent px-4 py-2 font-semibold bg-[#111111] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }} type='submit'>Submit</button>
-        </form>
-        {showPopup && (
-          <div className={`fixed bottom-20 left-1/2 -translate-x-1/2 transform p-4 bg-${popupColor}-500 rounded-md transition-opacity duration-1000 ${popupOpacity}`}>
-            {popupMessage}
-          </div>
-        )}
-      </>
-    );
-  }
+      </form>
+      {showPopup && (
+        <div className={`fixed bottom-20 left-1/2 -translate-x-1/2 transform p-4 bg-${popupColor}-500 rounded-md transition-opacity duration-1000 ${popupOpacity}`}>
+          {popupMessage}
+        </div>
+      )}
+    </>
+  );
+}
 
 export default Login
