@@ -4,10 +4,11 @@ from flashcards.models import Deck, Card
 from django.contrib.auth.models import User
 from datetime import datetime, timedelta, timezone
 import flashcards.schemas as sc
+from ninja_jwt.authentication import JWTAuth
 
 review_router = Router(tags=["Review"])
 
-@review_router.get("/{deck_id}", response=sc.ReviewCards)
+@review_router.get("/{deck_id}", response=sc.ReviewCards, auth=JWTAuth())
 def get_reviews(request, deck_id: int):
     deck = Deck.objects.get(deck_id=deck_id)
 

@@ -8,7 +8,7 @@ const api = () => {
     const _get = (url) => {
         return fetch(baseUrl + url, { method: "GET", headers });
     };
-    
+
     const _post = (url, body) => {
         return fetch(
             baseUrl + url,

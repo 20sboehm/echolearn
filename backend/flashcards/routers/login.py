@@ -1,12 +1,9 @@
 import json
 from ninja import Router
-from flashcards.models import Folder
-from django.contrib.auth.models import User
-from typing import List
 import flashcards.schemas as sc
 from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import redirect, render
 from django.http import HttpResponse
+from ninja_jwt.authentication import JWTAuth
 
 login_router = Router(tags=["Login"])
 

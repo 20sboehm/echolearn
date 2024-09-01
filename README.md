@@ -56,6 +56,9 @@ Install cors headers:
 Install django ninja:
 `pip install django-ninja`
 
+If you run into an error like "django.db.utils.OperationalError: no such table: ...", run this command:
+`python manage.py migrate --run-syncdb`
+
 Reset the database:
 ```
 python manage.py makemigrations
