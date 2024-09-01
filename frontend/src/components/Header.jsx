@@ -18,7 +18,7 @@ function Header() {
             </Link>
             <Link to="/about" className="ml-8 text-black font-bold transition duration-100 hover:bg-gray-300 block text-center py-2 px-4">About</Link>
             <Link to="/features" className="text-black font-bold transition duration-100 hover:bg-gray-300 block text-center py-2 px-4">Features</Link>
-            <Link to="/" className="text-black font-bold transition duration-100 hover:bg-gray-300 block text-center py-2 px-4">Contact</Link>
+            {/* <Link to="/" className="text-black font-bold transition duration-100 hover:bg-gray-300 block text-center py-2 px-4">Contact</Link> */}
           </div>
         
           <div className="flex items-center space-x-4 justify-end mr-10">

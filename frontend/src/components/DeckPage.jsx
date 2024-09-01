@@ -96,7 +96,7 @@ function DeckPage() {
             <Link to={`/review/${deckId}`} className="rounded-lg border border-transparent px-12 py-2 text-center
               font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
               active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s"  }}>
-              Study
+              Review
             </Link>
           </div>
 

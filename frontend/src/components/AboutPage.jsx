@@ -1,7 +1,8 @@
 import echoLearnImg from "../assets/EchoLearn.jpg"
 import logoImg from "../assets/echolearn-logo-white.png"
 
-const story = "EchoLearn is our senior project for the year 2024. Our goal is to create a user-friendly and easily accessible resource to help users retain their knowledge in long-term memory."
+const story = "EchoLearn is our senior project for the year 2024. Memory retention is often a challenge when learning new information. Our leader, Seth Boehm, enjoys using flashcards to review materials, which inspired us to come up with an idea: a web-based flashcard system that uses the memorization technique of spaced repetition to help users retain knowledge in their long-term memory. Our goal is to create a user-friendly and easily accessible resource to support users in retaining information more effectively.";
+
 const teamInfo = [
   {
     name: "Di Zhou",
