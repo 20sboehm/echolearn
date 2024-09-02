@@ -7,15 +7,17 @@ import { AuthProvider } from "./context/auth";
 
 import LandingPage from "./components/LandingPage"
 import HomePage from "./components/UserPage";
-import CreateCard from "./components/CreateCard"
-import CreateDeck from "./components/CreateDeck"
-import CreateFolder from "./components/CreateFolder"
+import CreateCard from "./components/CreateCard";
+import CreateDeck from "./components/CreateDeck";
+import CreateFolder from "./components/CreateFolder";
 import ReviewPage from "./components/ReviewPage";
-import HelpPage from "./components/HelpPage"
+import HelpPage from "./components/HelpPage";
 import DeckPage from './components/DeckPage';
 import EditPage from './components/EditPage';
-import Header from "./components/Header"
+import Header from "./components/Header";
 import Login from './components/Login';
+import FeaturePage from './components/FeaturesPage';
+import AboutPage from './components/AboutPage';
 
 const queryClient = new QueryClient();
 
