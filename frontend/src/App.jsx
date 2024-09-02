@@ -53,7 +53,8 @@ function UnauthenticatedRoutes() {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
-      <Route path="/help" element={<HelpPage />} />
+      <Route path="/about" element={<AboutPage />} />
+      <Route path="/features" element={<FeaturePage />} />
       <Route path="/login" element={<Login />} />
       <Route path="*" element={<Navigate to="/login" />} />
     </Routes>
