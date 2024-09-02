@@ -149,6 +149,7 @@ class FolderInfo(Schema):
     folder_id: int
     name: str
     decks: list[DeckInfo]
+    children: Optional[list['FolderInfo']] = []
 
 class GetSidebar(Schema):
     Folders: list[FolderInfo]
