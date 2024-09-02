@@ -1,9 +1,8 @@
 from ninja import Router
-from flashcards.models import Folder
+from flashcards.models import Folder, CustomUser
 from typing import List
 import flashcards.schemas as sc
 from django.shortcuts import get_object_or_404
-from django.contrib.auth.models import User
 from django.db.models.deletion import ProtectedError
 from ninja_jwt.authentication import JWTAuth
 
@@ -29,7 +28,7 @@ def get_folder(request, folder_id: int):
 
 @folders_router.post("", response={201: sc.GetFolder, 404: str}, auth=JWTAuth())
 def create_folder(request, payload: sc.CreateFolder):
-    owner_ref = get_object_or_404(User, pk=payload.owner_id)
+    owner_ref = get_object_or_404(CustomUser, pk=payload.owner_id)
 
     folder = Folder.objects.create(
         name=payload.name,

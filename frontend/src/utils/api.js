@@ -27,7 +27,7 @@ const api = () => {
     }
 
     const getNewToken = async () => {
-        console.log("Retrieving new access token.");
+        console.log("Access token is expired. Retrieving new access token.");
         const response = await fetch(`${baseUrl}/api/token/refresh`, { method: "POST", headers, body: JSON.stringify({ refresh: refreshToken }) });
 
         // If refresh token expired, log user out and redirect them to login page
@@ -41,18 +41,22 @@ const api = () => {
         const data = await response.json();
         let newToken = data.access
         headers["Authorization"] = "Bearer " + newToken;
+
+        // Have the auth context store this new token since it is the global source of truth for tokens/authentication
         await _storeRefreshedToken(newToken);
 
         return newToken;
     }
 
     const _get = async (url) => {
+        console.log("Sending GET request");
         await verifyTokenAndRefresh();
 
         return fetch(baseUrl + url, { method: "GET", headers });
     };
 
     const _post = async (url, body) => {
+        console.log("Sending POST request");
         await verifyTokenAndRefresh();
 
         return fetch(
@@ -66,6 +70,7 @@ const api = () => {
     };
 
     const _patch = async (url, body) => {
+        console.log("Sending PATCH request");
         await verifyTokenAndRefresh();
 
         return fetch(
@@ -79,6 +84,7 @@ const api = () => {
     };
 
     const _delete = async (url) => {
+        console.log("Sending DELETE request");
         await verifyTokenAndRefresh();
 
         return fetch(

@@ -41,7 +41,7 @@ const AuthProvider = ({ children }) => {
     };
 
     const _storeRefreshedToken = async (newToken) => {
-        console.log("Refreshing access token.");
+        console.log("Storing new access token.");
         setToken(newToken);
         localStorage.setItem("echolearn_token", newToken); // Update the token in storage
         return newToken;

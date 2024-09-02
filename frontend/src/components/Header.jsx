@@ -5,8 +5,12 @@ import echolearnLogoWhite from "../assets/echolearn-logo-white.png"
 import { useAuth } from "../hooks";
 
 function Header() {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, _logout } = useAuth();
   const isGuestPage = !isLoggedIn;
+
+  const handleLogout = () => {
+    _logout();
+  };
 
   if (isGuestPage) {
     return (
@@ -44,7 +48,10 @@ function Header() {
             <Link to="/decks" className="px-4 mx-2 transition duration-100 hover:text-black py-2">Create Deck</Link>
             <Link to="/folders" className="px-4 mx-2 transition duration-100 hover:text-black py-2">Create Folder</Link>
             <Link to="/help" className="px-4 mx-2 transition duration-100 hover:text-black py-2">Help</Link>
-            <Link to="/home" className="px-4 ml-2 mr-10 transition duration-100 hover:text-black py-2">Home</Link>
+            <Link to="/home" className="px-4 ml-2 transition duration-100 hover:text-black py-2">Home</Link>
+            <button onClick={handleLogout} className="px-4 ml-2 mr-10 transition duration-100 hover:text-black py-2">
+              Log Out
+            </button>
           </div>
         </div>
       </header>

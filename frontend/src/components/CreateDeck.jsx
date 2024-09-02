@@ -46,7 +46,7 @@ function CreateDeck() {
     const response = await api._post('/api/decks', formData);
 
     if (!response.ok) {
-      throw new Error(`Network response was not ok: ${reponse.status_code}`);
+      throw new Error(`Network response was not ok: ${response.status_code}`);
     }
 
     return response.json();

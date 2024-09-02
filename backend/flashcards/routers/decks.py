@@ -1,9 +1,8 @@
 from ninja import Router
-from flashcards.models import Deck, Folder, Card
+from flashcards.models import Deck, Folder, Card, CustomUser
 from typing import List
 import flashcards.schemas as sc
 from django.shortcuts import get_object_or_404
-from django.contrib.auth.models import User
 from ninja_jwt.authentication import JWTAuth
 
 decks_router = Router(tags=["Decks"])
@@ -36,7 +35,7 @@ def get_cards_from_deck(request, deck_id: int):
 @decks_router.post("", response={201: sc.GetDeck, 404: str}, auth=JWTAuth())
 def create_deck(request, payload: sc.CreateDeck):
     folder_ref = get_object_or_404(Folder, pk=payload.folder_id)
-    owner_ref = get_object_or_404(User, pk=payload.owner_id)
+    owner_ref = get_object_or_404(CustomUser, pk=payload.owner_id)
 
     deck = Deck.objects.create(
         folder=folder_ref,

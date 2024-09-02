@@ -1,7 +1,5 @@
-import json
 from ninja import Router
 from flashcards.models import Deck, Card
-from django.contrib.auth.models import User
 from datetime import datetime, timedelta, timezone
 import flashcards.schemas as sc
 from ninja_jwt.authentication import JWTAuth
