@@ -304,6 +304,7 @@ function CreateCard() {
             </button>
            
             <h3>Preview</h3>
+            <div className="h-[50vh] overflow-y-auto">
             {preview.map((item, index) => (
                  <div className="grid grid-cols-2 gap-4 font-medium px-2" key={index}>  
                     <div className="border bg-white text-black mt-2 px-2 py-2">
@@ -314,6 +315,7 @@ function CreateCard() {
                     </div>
                 </div>
             ))}
+            </div>
           </form>
         )}
         {multipleRequired == false && (
