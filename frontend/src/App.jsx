@@ -16,6 +16,7 @@ import DeckPage from './components/DeckPage';
 import EditPage from './components/EditPage';
 import Header from "./components/Header";
 import Login from './components/Login';
+import SignUp from './components/SignUp';
 import FeaturePage from './components/FeaturesPage';
 import AboutPage from './components/AboutPage';
 
