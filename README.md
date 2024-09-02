@@ -35,6 +35,12 @@ Run these commands:
 
 ## --- Backend ---
 
+Add dependencies to requirements.txt so that other people can easily download them
+`pip freeze > requirements.txt`
+
+Install dependencies from requirements.txt
+`pip install -r requirements.txt`
+
 Generate migration files based on models:
 `python manage.py makemigrations`
 
@@ -49,6 +55,9 @@ Install cors headers:
 
 Install django ninja:
 `pip install django-ninja`
+
+If you run into an error like "django.db.utils.OperationalError: no such table: ...", run this command:
+`python manage.py migrate --run-syncdb`
 
 Reset the database:
 ```

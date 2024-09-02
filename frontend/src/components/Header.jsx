@@ -2,10 +2,15 @@ import { useState, useRef } from "react";
 import { Link, useParams, useLocation } from "react-router-dom";
 import echolearnLogoBlue from "../assets/echolearn-logo-blue.png"
 import echolearnLogoWhite from "../assets/echolearn-logo-white.png"
+import { useAuth } from "../hooks";
 
 function Header() {
-  const location = useLocation();
-  const isGuestPage = location.pathname === "/";
+  const { isLoggedIn, _logout } = useAuth();
+  const isGuestPage = !isLoggedIn;
+
+  const handleLogout = () => {
+    _logout();
+  };
 
   if (isGuestPage) {
     return (
@@ -16,11 +21,11 @@ function Header() {
               <img src={echolearnLogoBlue} alt="EchoLearn Logo" className="h-10 mr-2" />
               <p className="text-black font-bold">EchoLearn</p>
             </Link>
-            <Link to="/" className="ml-8 text-black font-bold transition duration-100 hover:bg-gray-300 block text-center py-2 px-4">About</Link>
-            <Link to="/" className="text-black font-bold transition duration-100 hover:bg-gray-300 block text-center py-2 px-4">Features</Link>
-            <Link to="/" className="text-black font-bold transition duration-100 hover:bg-gray-300 block text-center py-2 px-4">Contact</Link>
+            <Link to="/about" className="ml-8 text-black font-bold transition duration-100 hover:bg-gray-300 block text-center py-2 px-4">About</Link>
+            <Link to="/features" className="text-black font-bold transition duration-100 hover:bg-gray-300 block text-center py-2 px-4">Features</Link>
+            {/* <Link to="/" className="text-black font-bold transition duration-100 hover:bg-gray-300 block text-center py-2 px-4">Contact</Link> */}
           </div>
-        
+
           <div className="flex items-center space-x-4 justify-end mr-10">
             <Link to="/login" className="px-4 py-2 text-black font-bold transition duration-100 hover:bg-gray-300">Log in</Link>
             <Link to="/signup" className="px-4 py-2 bg-userHeaderColor text-white rounded-lg font-bold transition duration-100 hover:text-black">Sign up</Link>
@@ -43,7 +48,10 @@ function Header() {
             <Link to="/decks" className="px-4 mx-2 transition duration-100 hover:text-black py-2">Create Deck</Link>
             <Link to="/folders" className="px-4 mx-2 transition duration-100 hover:text-black py-2">Create Folder</Link>
             <Link to="/help" className="px-4 mx-2 transition duration-100 hover:text-black py-2">Help</Link>
-            <Link to="/home" className="px-4 ml-2 mr-10 transition duration-100 hover:text-black py-2">Home</Link>
+            <Link to="/home" className="px-4 ml-2 transition duration-100 hover:text-black py-2">Home</Link>
+            <button onClick={handleLogout} className="px-4 ml-2 mr-10 transition duration-100 hover:text-black py-2">
+              Log Out
+            </button>
           </div>
         </div>
       </header>

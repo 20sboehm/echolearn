@@ -9,6 +9,7 @@ export default {
 			colors: {
 				userHeaderColor: '#0D79A1',
 				customBlue: '#82DEFF',
+				featureBackground: '#33A1FD',
 			},
 		},
 	},

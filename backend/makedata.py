@@ -4,13 +4,12 @@ import django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.settings")
 django.setup()
 
-from django.contrib.auth.models import User
-from flashcards.models import Deck, Card, Folder
+from flashcards.models import Deck, Card, Folder, CustomUser
 
 def initial_data():
     # Create users
-    admin = User.objects.create_superuser(username="echo", email="echolearn@cs.utah.edu", password="echo")
-    joe = User.objects.create_user(username="joe", email="joe@cs.utah.edu", password="joe")
+    admin = CustomUser.objects.create_superuser(username="echo", email="echolearn@cs.utah.edu", password="echo")
+    joe = CustomUser.objects.create_user(username="joe", email="joe@cs.utah.edu", password="joe", age=30, country="USA")
 
     # Create folders
     history_folder = Folder.objects.create(name="History", owner=admin)

@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useQuery, useMutation } from 'react-query';
 import { Link, useParams } from "react-router-dom";
 import "./SideBar.css";
-import { useApi } from "../api";
+import { useApi } from "../hooks";
 import folderOpenImg from "../assets/folder-open.png"
 import folderCloseImg from "../assets/folder-close.png"
 import decksImg from "../assets/decks.png"
