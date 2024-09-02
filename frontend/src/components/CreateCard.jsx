@@ -37,7 +37,7 @@ function CreateCard() {
 
   const [selectedOptionSpace, setSelectedOptionspace] = useState('spacetab');
   const [selectedOptionLine, setSelectedOptionline] = useState('newline');
-
+  const [preview, setPreview] = useState([]);
   const handleOptionChangeSpace = (event) => {
     setSelectedOptionspace(event.target.value);
   };
@@ -188,6 +188,19 @@ function CreateCard() {
       }
     });
   };
+
+  useEffect(() => {
+    let spaceChoice = selectedOptionSpace === "spacetab" ? '\t' : ',';
+    let lineChoice = selectedOptionLine === "newline" ? '\n' : ';';
+
+    const lines = multipleInput.split(lineChoice).filter(line => line.trim());
+    const formattedPreview = lines.map(line => {
+        const parts = line.split(spaceChoice).map(part => part.trim());
+        return { question: parts[0], answer: parts[1] };
+    });
+    setPreview(formattedPreview);
+}, [multipleInput, selectedOptionSpace, selectedOptionLine]);
+
   const handleSubmitMultiple = (e) => {
     e.preventDefault();
     console.log(multipleInput)
@@ -206,7 +219,7 @@ function CreateCard() {
       lineChoice = ';';
     }
 
-    const lines = (multipleInput).trim().split(lineChoice);
+    const lines = (multipleInput).trim().split(lineChoice).filter(line => line.trim());
     
     const newCards = lines.map(line => {
       const parts = line.split(spaceChoice);
@@ -289,6 +302,18 @@ function CreateCard() {
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>
               Submit
             </button>
+           
+            <h3>Preview</h3>
+            {preview.map((item, index) => (
+                 <div className="grid grid-cols-2 gap-4 font-medium px-2" key={index}>  
+                    <div className="border bg-white text-black mt-2 px-2 py-2">
+                        <p>Question: {item.question}</p>
+                    </div>
+                    <div className="border bg-white text-black mt-2 px-2 py-2 relative">
+                        <p>Answer: {item.answer}</p>
+                    </div>
+                </div>
+            ))}
           </form>
         )}
         {multipleRequired == false && (
