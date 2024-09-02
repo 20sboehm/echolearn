@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, createContext, useContext } from "react";
 import { useMutation, useQuery } from 'react-query';
 import { Link, useParams } from "react-router-dom";
 import Sidebar from "./SideBar";
-import { useApi } from "../api";
+import { useApi } from "../hooks";
 import ReactPlayer from 'react-player';
 import { BlockMath } from 'react-katex';
 import sanitizeHtml from 'sanitize-html';

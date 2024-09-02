@@ -3,11 +3,12 @@ from flashcards.models import Folder, Deck
 from django.contrib.auth.models import User
 from typing import List
 import flashcards.schemas as sc
+from ninja_jwt.authentication import JWTAuth
 
 sidebar_router = Router(tags=["Sidebar"])
 
 # Right now it get all the folder without care who the user is
-@sidebar_router.get("", response=sc.GetSidebar)
+@sidebar_router.get("", response=sc.GetSidebar, auth=JWTAuth())
 def get_sidebar_info(request):
     sidebar_data = []
     folders = Folder.objects.filter(owner_id=1)

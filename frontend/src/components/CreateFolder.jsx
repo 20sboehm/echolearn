@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from 'react-query';
 import { useState } from 'react';
 import SideBar from './SideBar'
-import { useApi } from "../api";
+import { useApi } from "../hooks";
 
 function CreateFolder() {
   const api = useApi();
@@ -34,7 +34,7 @@ function CreateFolder() {
     // });
 
     if (!response.ok) {
-      throw new Error(`Network response was not ok: ${reponse.status_code}`);
+      throw new Error(`Network response was not ok: ${response.status_code}`);
     }
 
     return response.json();
