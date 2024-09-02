@@ -2,7 +2,10 @@ import { useState } from 'react'
 import { QueryClient, QueryClientProvider } from "react-query";
 import { BrowserRouter, Navigate, Routes, Route, useParams } from "react-router-dom";
 
-import LandingPage from "./components/LandingPage";
+import { useAuth } from "./hooks";
+import { AuthProvider } from "./context/auth";
+
+import LandingPage from "./components/LandingPage"
 import HomePage from "./components/UserPage";
 import CreateCard from "./components/CreateCard";
 import CreateDeck from "./components/CreateDeck";
@@ -29,24 +32,45 @@ function ErrorPage() {
   );
 }
 
+function AuthenticatedRoutes() {
+  return (
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/cards" element={<CreateCard />} />
+      <Route path="/decks" element={<CreateDeck />} />
+      <Route path="/folders" element={<CreateFolder />} />
+      <Route path="/review/:deckId" element={<ReviewPage />} />
+      <Route path="/help" element={<HelpPage />} />
+      <Route path="/edit/:cardId" element={<EditPage />} />
+      <Route path="/decks/:deckId" element={<DeckPage />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="*" element={<Navigate to="/error/404/Page%20Not%20Found" />} />
+    </Routes>
+  );
+}
+
+function UnauthenticatedRoutes() {
+  return (
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/help" element={<HelpPage />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="*" element={<Navigate to="/login" />} />
+    </Routes>
+  );
+}
+
 function Main() {
+  const { isLoggedIn, token } = useAuth();
+  console.log("isLoggedIn: " + isLoggedIn);
+  console.log("token: " + !!token);
+
   return (
     <main className="w-full h-full flex flex-col items-center">
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/home" element={<HomePage />} />
-        <Route path="/cards" element={<CreateCard />} />
-        <Route path="/decks" element={<CreateDeck />} />
-        <Route path="/folders" element={<CreateFolder />} />
-        <Route path="/review/:deckId" element={<ReviewPage />} />
-        <Route path="/help" element={<HelpPage />} />
-        <Route path="/edit/:cardId" element={<EditPage />} />
-        <Route path="/decks/:deckId" element={<DeckPage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/features" element={<FeaturePage />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="*" element={<Navigate to="/error/404/Page%20Not%20Found" />} />
-      </Routes>
+      {isLoggedIn ?
+        <AuthenticatedRoutes /> :
+        <UnauthenticatedRoutes />
+      }
     </main>
   );
 }
@@ -54,12 +78,14 @@ function Main() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <div className="w-screen h-screen flex flex-col text-[1.2em] font-medium bg-[#242424] text-gray-200">
-          <Header />
-          <Main />
-        </div>
-      </BrowserRouter>
+      <AuthProvider>
+        <BrowserRouter>
+          <div className="w-screen h-screen flex flex-col text-[1.2em] font-medium bg-[#242424] text-gray-200">
+            <Header />
+            <Main />
+          </div>
+        </BrowserRouter>
+      </AuthProvider>
     </QueryClientProvider>
   )
 }

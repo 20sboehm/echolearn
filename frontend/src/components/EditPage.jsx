@@ -2,7 +2,7 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "react-query";
 import { useState, useEffect, useRef } from "react";
 import Sidebar from "./SideBar";
-import { useApi } from "../api";
+import { useApi } from "../hooks";
 import sanitizeHtml from 'sanitize-html';
 import ReactPlayer from 'react-player';
 import { BlockMath } from 'react-katex';
@@ -225,7 +225,7 @@ function EditPage() {
     <>
       <Sidebar />
       <form onSubmit={handleSubmit} className='flex flex-col items-center mt-10' >
-        
+
         <div>
           <CustomButton onClick={() => handleQuestionRequirement('image')} text="Image" />
           <CustomButton onClick={() => handleQuestionRequirement('video')} text="Video" />

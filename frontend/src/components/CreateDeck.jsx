@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from 'react-query';
 import { useState } from 'react';
 import SideBar from './SideBar'
-import { useApi } from "../api";
+import { useApi } from "../hooks";
 
 function CreateDeck() {
   const api = useApi();
@@ -46,7 +46,7 @@ function CreateDeck() {
     const response = await api._post('/api/decks', formData);
 
     if (!response.ok) {
-      throw new Error(`Network response was not ok: ${reponse.status_code}`);
+      throw new Error(`Network response was not ok: ${response.status_code}`);
     }
 
     return response.json();
@@ -86,7 +86,7 @@ function CreateDeck() {
           />
           <textarea value={deckDescription} onChange={(e) => setDeckDescription(e.target.value)}
             placeholder='Deck description' className='mb-4 p-2 rounded-md h-40' style={{ width: '30vw' }} />
-          <button type='submit' class="rounded-lg border border-transparent px-4 py-2 
+          <button type='submit' className="rounded-lg border border-transparent px-4 py-2 
           font-semibold bg-[#111111] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>
             Submit
