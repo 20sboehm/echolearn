@@ -1,5 +1,6 @@
 from ninja import Router
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
+from flashcards.models import CustomUser
 from django.contrib.auth.hashers import make_password
 from django.http import JsonResponse
 import json
@@ -20,15 +21,15 @@ def sign_up(request):
             print("No username provided.")
             return JsonResponse({"detail": "Username is required."}, status=409)
 
-        if User.objects.filter(username=username).exists():
+        if CustomUser.objects.filter(username=username).exists():
             print("Username already exists.")
             return JsonResponse({"detail": "Username already exists."}, status=409)
         
-        if User.objects.filter(email=email).exists():
+        if CustomUser.objects.filter(email=email).exists():
             print("Email already exists.")
             return JsonResponse({"detail": "Email already exists."}, status=409)
 
-        user = User.objects.create_user(
+        user = CustomUser.objects.create_user(
             username=username,
             email=email,
             password=password
