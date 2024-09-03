@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import SideBar from './SideBar';
-import { useApi } from '../api';
+import { useApi, useApiWithoutToken } from '../hooks';
 
 function SignUp() {
   const [username, setUsername] = useState('');
@@ -13,17 +13,17 @@ function SignUp() {
   const [popupColor, setPopupColor] = useState('');
   const [popupOpacity, setPopupOpacity] = useState('opacity-100');
   const navigate = useNavigate();
-  const api = useApi();
+  const api = useApiWithoutToken();
 
   function popupDetails(popupMessage, popupColor) {
     setShowPopup(true);
     setPopupMessage(popupMessage);
     setPopupColor(popupColor);
-    setPopupOpacity('opacity-100'); 
+    setPopupOpacity('opacity-100');
     setTimeout(() => {
-      setPopupOpacity('opacity-0'); 
-      setTimeout(() => setShowPopup(false), 1000); 
-    }, 1000); 
+      setPopupOpacity('opacity-0');
+      setTimeout(() => setShowPopup(false), 1000);
+    }, 1000);
     setUsername('');
     setEmail('');
     setPassword('');
@@ -34,7 +34,7 @@ function SignUp() {
 
     const response = await api._post('/api/signup', formData);
 
-    if(response.status == 409){
+    if (response.status == 409) {
       const errorDetails = await response.json();
       console.log(errorDetails)
       throw new Error(`Conflict: ${errorDetails.detail}`);
@@ -63,7 +63,7 @@ function SignUp() {
         }, 2000);
       },
       onError: (error) => {
-        
+
         console.log("*error*:" + error.message)
         if (error.message.includes("Username")) {
           popupDetails('Registration failed: Username already exists.', 'red');
@@ -82,13 +82,13 @@ function SignUp() {
       <form onSubmit={handleSubmit} className='flex flex-col items-start mt-10'>
         <label className="text-base" htmlFor='username'>Username</label>
         <input className="mb-4 rounded-md text-xl px-2 py-2 border border-gray-500" value={username} id='username' name='username' type="text" onChange={e => setUsername(e.target.value)} placeholder="Username" required />
-        
+
         <label className="text-base" htmlFor='email'>Email</label>
         <input className="mb-4 rounded-md text-xl px-2 py-2 border border-gray-500" value={email} id='email' name='email' type="email" onChange={e => setEmail(e.target.value)} placeholder="Email" required />
-        
+
         <label className="text-base" htmlFor='password'>Password</label>
         <input className="mb-4 rounded-md text-xl px-2 py-2 border border-gray-500" value={password} id='password' name='password' type="password" onChange={e => setPassword(e.target.value)} placeholder="Password" required />
-        
+
         <button className="mt-4 w-full rounded-lg border border-transparent px-4 py-2 font-semibold bg-[#111111] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }} type='submit'>Register</button>
 
