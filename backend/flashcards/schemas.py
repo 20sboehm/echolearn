@@ -152,4 +152,4 @@ class FolderInfo(Schema):
     children: Optional[list['FolderInfo']] = []
 
 class GetSidebar(Schema):
-    Folders: list[FolderInfo]
+    folders: list[FolderInfo]

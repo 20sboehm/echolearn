@@ -7,15 +7,11 @@ from ninja_jwt.authentication import JWTAuth
 
 sidebar_router = Router(tags=["Sidebar"])
 
-# Right now it get all the folder without care who the user is
 @sidebar_router.get("", response=sc.GetSidebar, auth=JWTAuth())
 def get_sidebar_info(request):
     sidebar_data = []
-
-    user = request.user
-
-    folders = Folder.objects.filter(owner=user)
     
+    folders = Folder.objects.filter(owner_id=request.user.id)
     def get_folder_data(folder):
         folder_data = sc.FolderInfo(
             folder_id=folder.folder_id,
@@ -24,7 +20,7 @@ def get_sidebar_info(request):
             children=[]
         )
         
-        # Fetch decks belonging to this folder
+        # Getting all the decks of the current folder
         decks = Deck.objects.filter(folder=folder)
         for deck in decks:
             folder_data.decks.append(sc.DeckInfo(
@@ -33,16 +29,15 @@ def get_sidebar_info(request):
             ))
         
         # Fetch child folders
-        children = Folder.objects.filter(parent_folder=folder, owner=user)
+        children = Folder.objects.filter(parent=folder, owner_id=request.user.id)
         for child in children:
             folder_data.children.append(get_folder_data(child))
         
         return folder_data
     
-    # Iterate over the top-level folders
+    # Adding all the top-level folder
     for folder in folders:
-        if folder.parent_folder is None:  # Ensure it's a top-level folder
+        if folder.parent is None:
             sidebar_data.append(get_folder_data(folder))
-    
+
     return sc.GetSidebar(folders=sidebar_data)
-        
