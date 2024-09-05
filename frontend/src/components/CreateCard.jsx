@@ -85,7 +85,7 @@ function CreateCard() {
 
       return;
     }
-    setAnswerRequirement(value);
+    setAnswer_requirement(value);
   }
 
   const handleQuestionRequirement = (value) => {
@@ -100,7 +100,7 @@ function CreateCard() {
 
       return;
     }
-    setQuestionRequirement(value);
+    setQuestion_requirement(value);
   }
 
   const makeLink = () => {
