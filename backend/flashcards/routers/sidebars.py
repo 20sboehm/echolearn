@@ -25,7 +25,8 @@ def get_sidebar_info(request):
         for deck in decks:
             folder_data.decks.append(sc.DeckInfo(
                 deck_id=deck.deck_id,
-                name=deck.name
+                name=deck.name,
+                parent_folder_id=folder_data.folder_id,
             ))
         
         # Fetch child folders

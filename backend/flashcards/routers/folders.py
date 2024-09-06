@@ -28,11 +28,21 @@ def get_folder(request, folder_id: int):
 
 @folders_router.post("", response={201: sc.GetFolder, 404: str}, auth=JWTAuth())
 def create_folder(request, payload: sc.CreateFolder):
-    owner_ref = get_object_or_404(CustomUser, pk=payload.owner_id)
+
+    if payload.owner_id is None:
+        owner_ref = request.user  # Use the authenticated user as the owner
+    else:
+        owner_ref = get_object_or_404(CustomUser, pk=payload.owner_id)
+
+    parent_ref = None
+    if payload.parent_id is not None:
+        parent_ref = get_object_or_404(Folder, pk=payload.parent_id)
 
     folder = Folder.objects.create(
         name=payload.name,
-        owner=owner_ref
+        owner=owner_ref,
+        parent=parent_ref
+
     )
     return 201, folder
 

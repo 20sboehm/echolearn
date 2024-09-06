@@ -36,6 +36,7 @@ class GetFolder(Schema):
 class CreateFolder(Schema):
     name: str
     owner_id: int
+    parent_id: Optional[int] = None
 
 class UpdateFolder(Schema):
     name: Optional[str] = None
@@ -56,7 +57,7 @@ class GetDeck(Schema):
 
 class CreateDeck(Schema):
     folder_id: int
-    owner_id: int
+    owner_id: Optional[int] = None
     name: str
     description: Optional[str] = None
     
@@ -143,6 +144,7 @@ class EditCards(Schema):
 
 class DeckInfo(Schema):
     deck_id: int
+    parent_folder_id: int
     name: str
 
 class FolderInfo(Schema):
