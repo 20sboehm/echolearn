@@ -35,8 +35,8 @@ def create_folder(request, payload: sc.CreateFolder):
         owner_ref = get_object_or_404(CustomUser, pk=payload.owner_id)
 
     parent_ref = None
-    if payload.parent_id is not None:
-        parent_ref = get_object_or_404(Folder, pk=payload.parent_id)
+    if payload.folder_id is not None:
+        parent_ref = get_object_or_404(Folder, pk=payload.folder_id)
 
     folder = Folder.objects.create(
         name=payload.name,

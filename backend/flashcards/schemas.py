@@ -35,8 +35,8 @@ class GetFolder(Schema):
 
 class CreateFolder(Schema):
     name: str
-    owner_id: int
-    parent_id: Optional[int] = None
+    owner_id: Optional[int] = None
+    folder_id: Optional[int] = None
 
 class UpdateFolder(Schema):
     name: Optional[str] = None

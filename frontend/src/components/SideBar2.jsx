@@ -8,7 +8,7 @@ import decksImg from "../assets/decks.png";
 import { ResizableBox } from 'react-resizable';
 import 'react-resizable/css/styles.css';
 
-const Folder = ({ folder, onRightClick }) => {
+const Folder = ({ folder, onRightClick, onRename }) => {
   const [openFolder, setOpenFolder] = useState(false);
 
   const handleOpenFolder = () => {
@@ -49,9 +49,10 @@ const Sidebar = () => {
   const api = useApi();
   const [sidebarData, setSidebarData] = useState(null);
   const [contextMenu, setContextMenu] = useState(null); // For right-click menu
-  const [newDeckName, setNewDeckName] = useState('');
-  const [selectedFolder, setSelectedFolder] = useState(null);
-  const [selectedDeck, setSelectedDeck] = useState(null);
+  const [newName, setNewName] = useState('');
+  const [selected, setSelected] = useState(null);
+  const [createType, setCreateType] = useState('');
+  const [renaming, setRenaming] = useState(false);
 
   const fetchSidebarData = () => {
     api._get('/api/sidebar')
@@ -68,44 +69,94 @@ const Sidebar = () => {
     fetchSidebarData();
   }, []);
 
-  console.log("sidebar" + sidebarData);
-  const handleRightClick = (event, item) => {
+  // Right click event
+  const handleRightClick = (event, folder) => {
     event.preventDefault();
-    if (item.folder_id) {
-      // User right click on the folder
-      setSelectedFolder(item);
-      setSelectedDeck(null);
-    } else {
-      // User right click on the deck
-      setSelectedDeck(item);
-      setSelectedFolder(null);
-    }
+    setSelected(folder);
+    setNewName('');
     setContextMenu({ x: event.clientX, y: event.clientY });
+    setCreateType('');
+    setRenaming(false);
   };
 
-  const handleCreateDeck = async () => {
+  // Following are the logic for create both folder and deck
+  const handleCreate = async () => {
+    if (newName.trim() === '') {
+      alert("Name can't be empty")
+      return;
+    }
 
-    console.log(selectedDeck);
-
-    const newDeck = {
-      folder_id: selectedFolder ? selectedFolder.folder_id : selectedDeck.parent_folder_id,
-      name: newDeckName,
+    let newItem = {
+      name: newName,
+      folder_id: selected.parent_folder_id || selected.folder_id,
     };
+    const endpoint = createType === 'deck' ? "/api/decks" : "/api/folders";
 
     try {
-      const response = await api._post("/api/decks", newDeck);
+      const response = await api._post(endpoint, newItem);
       if (response.status === 201) {
         fetchSidebarData();
         setContextMenu(null);
       } else {
-        console.error("Failed to create deck", response);
+        console.error(`Failed to create ${createType}`, response);
       }
     } catch (error) {
-      console.error("Error creating deck", error);
+      console.error(`Error creating ${createType}`, error);
     }
-    setNewDeckName('');
   };
 
+
+  // Following are the logic for rename both folder and deck
+  const handleRename = async () => {
+    if (newName.trim() === '') {
+      alert("Name cannot be empty");
+      return;
+    }
+
+    let endpoint = '';
+    try {
+      if (selected.folder_id) {
+        endpoint = `/api/folders/${selected.folder_id}`;
+      } else if (selected.deck_id) {
+        endpoint = `/api/decks/${selected.deck_id}`;
+      }
+
+      const response = await api._patch(endpoint, { name: newName });
+      if (response.status === 200) {
+        fetchSidebarData();
+        setRenaming(false);
+        setContextMenu(null);
+      } else {
+        console.error("Failed to rename", response);
+      }
+    } catch (error) {
+      console.error("Error renaming", error);
+    }
+  };
+
+  // Following are the logic of deleting folder and deck
+  const handleDelete = async () => {
+    if (!selected) return;
+
+    let endpoint = '';
+    try {
+      if (selected.folder_id) {
+        endpoint = `/api/folders/${selected.folder_id}`;
+      } else if (selected.deck_id) {
+        endpoint = `/api/decks/${selected.deck_id}`;
+      }
+
+      const response = await api._delete(endpoint);
+      if (response.status === 204) {
+        fetchSidebarData();
+        setContextMenu(null);
+      } else {
+        alert("Cannot delete folder with items inside.");
+      }
+    } catch (error) {
+      console.error("Error deleting", error);
+    }
+  };
   return (
     <div>
       <ResizableBox
@@ -128,29 +179,116 @@ const Sidebar = () => {
           )}
         </div>
       </ResizableBox>
+
       {contextMenu && (
         <div
           style={{
             position: "absolute",
             top: `${contextMenu.y}px`,
             left: `${contextMenu.x}px`,
-            backgroundColor: "white",
-            color: "black",
-            border: "1px solid black",
+            backgroundColor: "black",
+            color: "white",
             padding: "10px",
             zIndex: 9999,
+            display: "flex",
+            flexDirection: "column",
+            borderRadius: "5px",
           }}
         >
-          <h3>Create New Deck</h3>
-          <input
-            type="text"
-            placeholder="Deck Name"
-            value={newDeckName}
-            onChange={(e) => setNewDeckName(e.target.value)}
-            style={{ color: 'white' }}
-          />
-          <button className="m-2" onClick={handleCreateDeck}>Create</button>
-          <button onClick={() => { setNewDeckName; setContextMenu(null); }}>Cancel</button>
+          <div
+            style={{
+              padding: "8px 12px",
+              cursor: "pointer",
+            }}
+            onClick={() => setCreateType('deck')}
+          >
+            Create Deck
+          </div>
+          <div
+            style={{
+              padding: "8px 12px",
+              cursor: "pointer",
+            }}
+            onClick={() => setCreateType('folder')}
+          >
+            Create Folder
+          </div>
+          <div
+            style={{
+              padding: "8px 12px",
+              cursor: "pointer",
+            }}
+            onClick={() => {
+              setRenaming(true);
+              setNewName(selected.name);
+            }}
+          >
+            Rename
+          </div>
+          <div
+            style={{
+              padding: "8px 12px",
+              cursor: "pointer",
+            }}
+            onClick={handleDelete}
+          >
+            Delete
+          </div>
+
+          {/* Input for creating new deck or folder */}
+          {createType && (
+            <div style={{ marginTop: '10px' }}>
+              <input
+                type="text"
+                placeholder={`Enter ${createType} name`}
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                style={{
+                  color: 'black', // Text color inside the input
+                  backgroundColor: 'white', // Input background color
+                  padding: '5px',
+                  borderRadius: '3px',
+                  width: '100%',
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleCreate();
+                  }
+                }}
+              />
+              <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'space-between' }}>
+                <button onClick={handleCreate}>Create</button>
+                <button onClick={() => { setNewName(''); setContextMenu(null); setCreateType('') }}>Cancel</button>
+              </div>
+            </div>
+          )}
+
+          {renaming && (
+            <div style={{ marginTop: '10px' }}>
+              <input
+                type="text"
+                placeholder="Enter new name"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                style={{
+                  color: 'black',
+                  backgroundColor: 'white',
+                  padding: '5px',
+                  borderRadius: '3px',
+                  width: '100%',
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleRename();
+                  }
+                }}
+              />
+              <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'space-between' }}>
+                <button onClick={handleRename}>Rename</button>
+                <button onClick={() => { setNewName(''); setContextMenu(null); setRenaming(false); }}>Cancel</button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
