@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import { Link, useParams, useLocation } from "react-router-dom";
 import echolearnLogoBlue from "../assets/echolearn-logo-blue.png"
 import echolearnLogoWhite from "../assets/echolearn-logo-white.png"
+import userPic from "../assets/defaltUser.png"
 import { useAuth } from "../hooks";
 
 function Header() {
@@ -52,6 +53,9 @@ function Header() {
             <button onClick={handleLogout} className="px-4 ml-2 mr-10 transition duration-100 hover:text-black py-2">
               Log Out
             </button>
+            <Link to="/profile" className="flex items-center">
+              <img src={userPic} alt="User profile picture" className="h-10 mr-10" />
+            </Link>
           </div>
         </div>
       </header>

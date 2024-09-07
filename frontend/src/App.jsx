@@ -19,6 +19,7 @@ import Login from './components/Login';
 import SignUp from './components/SignUp';
 import FeaturePage from './components/FeaturesPage';
 import AboutPage from './components/AboutPage';
+import ProfilePage from './components/ProfilePage';
 
 const queryClient = new QueryClient();
 
@@ -45,6 +46,7 @@ function AuthenticatedRoutes() {
       <Route path="/edit/:cardId" element={<EditPage />} />
       <Route path="/decks/:deckId" element={<DeckPage />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/profile" element={<ProfilePage />} />
       <Route path="*" element={<Navigate to="/error/404/Page%20Not%20Found" />} />
     </Routes>
   );
@@ -57,6 +59,7 @@ function UnauthenticatedRoutes() {
       <Route path="/about" element={<AboutPage />} />
       <Route path="/features" element={<FeaturePage />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<SignUp />} />
       <Route path="*" element={<Navigate to="/login" />} />
     </Routes>
   );
