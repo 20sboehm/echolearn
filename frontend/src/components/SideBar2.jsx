@@ -69,14 +69,20 @@ const Sidebar = () => {
     fetchSidebarData();
   }, []);
 
-  // Right click event
-  const handleRightClick = (event, folder) => {
+  const handleRightClick = (event, folder = null) => {
     event.preventDefault();
-    setSelected(folder);
+    event.stopPropagation();
+
     setNewName('');
     setContextMenu({ x: event.clientX, y: event.clientY });
     setCreateType('');
     setRenaming(false);
+
+    if (folder) {
+      setSelected(folder); // Right-click on folder/deck
+    } else {
+      setSelected(null); // Right-click on empty space
+    }
   };
 
   // Following are the logic for create both folder and deck
@@ -88,7 +94,8 @@ const Sidebar = () => {
 
     let newItem = {
       name: newName,
-      folder_id: selected.parent_folder_id || selected.folder_id,
+      // null should only happen if user is creating a top level folder
+      folder_id: selected?.parent_folder_id || selected?.folder_id || null,
     };
     const endpoint = createType === 'deck' ? "/api/decks" : "/api/folders";
 
@@ -157,8 +164,9 @@ const Sidebar = () => {
       console.error("Error deleting", error);
     }
   };
+  
   return (
-    <div>
+    <div onContextMenu={(e) => handleRightClick(e)}>
       <ResizableBox
         width={250}
         height={Infinity}
@@ -195,45 +203,46 @@ const Sidebar = () => {
             borderRadius: "5px",
           }}
         >
-          <div
-            style={{
-              padding: "8px 12px",
-              cursor: "pointer",
-            }}
-            onClick={() => setCreateType('deck')}
-          >
-            Create Deck
-          </div>
-          <div
-            style={{
-              padding: "8px 12px",
-              cursor: "pointer",
-            }}
-            onClick={() => setCreateType('folder')}
-          >
-            Create Folder
-          </div>
-          <div
-            style={{
-              padding: "8px 12px",
-              cursor: "pointer",
-            }}
-            onClick={() => {
-              setRenaming(true);
-              setNewName(selected.name);
-            }}
-          >
-            Rename
-          </div>
-          <div
-            style={{
-              padding: "8px 12px",
-              cursor: "pointer",
-            }}
-            onClick={handleDelete}
-          >
-            Delete
-          </div>
+          {selected && ( // Right-click on folder or deck
+            <>
+              <div
+                style={{ padding: "8px 12px", cursor: "pointer" }}
+                onClick={() => setCreateType('deck')}
+              >
+                Create Deck
+              </div>
+              <div
+                style={{ padding: "8px 12px", cursor: "pointer" }}
+                onClick={() => setCreateType('folder')}
+              >
+                Create Folder
+              </div>
+              <div
+                style={{ padding: "8px 12px", cursor: "pointer" }}
+                onClick={() => {
+                  setRenaming(true);
+                  setNewName(selected.name);
+                }}
+              >
+                Rename
+              </div>
+              <div
+                style={{ padding: "8px 12px", cursor: "pointer" }}
+                onClick={handleDelete}
+              >
+                Delete
+              </div>
+            </>
+          )}
+
+          {!selected && ( // Right-click on empty space
+            <div
+              style={{ padding: "8px 12px", cursor: "pointer" }}
+              onClick={() => setCreateType('folder')}
+            >
+              Create Folder
+            </div>
+          )}
 
           {/* Input for creating new deck or folder */}
           {createType && (
