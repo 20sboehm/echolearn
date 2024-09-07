@@ -11,6 +11,7 @@ Schemas are used to define the structure of the data that your API endpoints can
 # -----------------------------------------------
 
 class GetUser(Schema):
+    username: str
     age: Optional[int] = None
     country: Optional[str] = None
 

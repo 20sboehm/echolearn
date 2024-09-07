@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import api from '../utils/api'; // 修正导入路径为 api
+import api from '../utils/api';
 
 function ProfilePage() {
-  const { _get } = api(); // 使用 _get 方法
-  const [profile, setProfile] = useState({ age: '', country: '' });
-  const [error, setError] = useState(null); // 错误状态
+  const { _get } = api();
+  const [profile, setProfile] = useState({ username: '', age: '', country: '' }); // 添加 username
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     async function fetchProfile() {
@@ -27,6 +27,7 @@ function ProfilePage() {
   return (
     <div>
       <h1>User Profile</h1>
+      <p><strong>Username:</strong> {profile.username}</p>
       <p><strong>Age:</strong> {profile.age}</p>
       <p><strong>Country:</strong> {profile.country}</p>
     </div>
