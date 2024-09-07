@@ -37,10 +37,7 @@ def create_deck(request, payload: sc.CreateDeck):
 
     folder_ref = get_object_or_404(Folder, pk=payload.folder_id)
 
-    if payload.owner_id is None:
-        owner_ref = request.user  # Use the authenticated user as the owner
-    else:
-        owner_ref = get_object_or_404(CustomUser, pk=payload.owner_id)
+    owner_ref = request.user  # Use the authenticated user as the owner
         
     deck = Deck.objects.create(
         folder=folder_ref,

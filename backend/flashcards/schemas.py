@@ -35,7 +35,6 @@ class GetFolder(Schema):
 
 class CreateFolder(Schema):
     name: str
-    owner_id: Optional[int] = None
     folder_id: Optional[int] = None
 
 class UpdateFolder(Schema):
@@ -57,7 +56,6 @@ class GetDeck(Schema):
 
 class CreateDeck(Schema):
     folder_id: int
-    owner_id: Optional[int] = None
     name: str
     description: Optional[str] = None
     
