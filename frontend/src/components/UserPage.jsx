@@ -2,6 +2,7 @@ import { useQuery } from "react-query";
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import SideBar from "./SideBar";
+import SideBar2 from "./SideBar2";
 import ScrollContainer from "./ScrollContainer";
 import { useApi } from "../hooks";
 
@@ -71,10 +72,14 @@ function TaskList() {
 function HomePage() {
   return (
     <>
-      <div className="mt-10">
-        <SideBar />
-        <h1 className=" font-bold text-[3em] italic mb-4">TO DO</h1>
-        <TaskList />
+      <div className="flex">
+        <div>
+          <SideBar2 />
+        </div>
+        <div className="flex flex-col mt-10 ">
+          <h1 className=" font-bold text-[3em] italic mb-4">TO DO</h1>
+          <TaskList />
+        </div>
       </div>
     </>
   )
