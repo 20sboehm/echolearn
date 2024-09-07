@@ -8,7 +8,7 @@ import decksImg from "../assets/decks.png";
 import { ResizableBox } from 'react-resizable';
 import 'react-resizable/css/styles.css';
 
-const Folder = ({ folder, onRightClick, onRename }) => {
+const Folder = ({ folder, onRightClick }) => {
   const [openFolder, setOpenFolder] = useState(false);
 
   const handleOpenFolder = () => {
@@ -244,8 +244,8 @@ const Sidebar = () => {
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
                 style={{
-                  color: 'black', // Text color inside the input
-                  backgroundColor: 'white', // Input background color
+                  color: 'black',
+                  backgroundColor: 'white',
                   padding: '5px',
                   borderRadius: '3px',
                   width: '100%',
