@@ -183,7 +183,7 @@ const Sidebar = () => {
               <Folder key={index} folder={folder} onRightClick={handleRightClick} />
             ))
           ) : (
-            <div>Loading...</div>
+            <div className='text-black'>Loading...</div>
           )}
         </div>
       </ResizableBox>

@@ -264,9 +264,10 @@ function ReviewPage() {
       return time.toISOString();
     }
 
+    const today = new Date();
     api._patch(
       `/api/cards/${card.card_id}`,
-      { bucket: newBucket, next_review: formatTime(nextReviewTime) }
+      { bucket: newBucket, next_review: formatTime(nextReviewTime), last_reviewed: formatTime(today) }
     )
       .then(response => {
         if (response.ok) {
