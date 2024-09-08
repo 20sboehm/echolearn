@@ -26,7 +26,7 @@ def get_cards_from_deck(request, deck_id: int):
     deck = get_object_or_404(Deck, deck_id=deck_id)
     card_list = Card.objects.filter(deck_id=deck_id)
 
-    return {"deck_id": deck.deck_id, "deck_name": deck.name, "cards": card_list}
+    return {"deck_id": deck.deck_id,"isPublic": deck.isPublic, "deck_name": deck.name, "cards": card_list}
 
 # ---------------------------------------------
 # -------------------- POST -------------------
@@ -46,6 +46,15 @@ def create_deck(request, payload: sc.CreateDeck):
         description=payload.description or "No description provided"
     )
     return 201, deck
+
+@decks_router.post("/{deck_id}/updateStatus", response={200: sc.DeckCards, 404: str}, auth=JWTAuth())
+def update_deck_status(request, deck_id:int):
+
+    deck = get_object_or_404(Deck, deck_id=deck_id)
+    deck.isPublic = not deck.isPublic
+    deck.save()
+    card_list = Card.objects.filter(deck_id=deck_id)
+    return {"deck_id": deck.deck_id,"isPublic": deck.isPublic, "deck_name": deck.name, "cards": card_list}
 
 # ---------------------------------------------
 # -------------------- PATCH ------------------

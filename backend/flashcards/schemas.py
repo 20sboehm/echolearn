@@ -129,6 +129,7 @@ class ReviewCards(Schema):
 
 class DeckCards(Schema):
     deck_id: int
+    isPublic:bool
     deck_name: str
     cards: list[GetCard]
 

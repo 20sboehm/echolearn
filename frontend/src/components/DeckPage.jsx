@@ -13,6 +13,11 @@ function DeckPage() {
 
   const [deleteMode, setDeleteMode] = useState(false);
   const { deckId } = useParams();
+  
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupMessage, setPopupMessage] = useState('');
+  const [popupColor, setPopupColor] = useState('');
+  const [popupOpacity, setPopupOpacity] = useState('opacity-100');
 
   // Fetch reviews info
   const { data: deckCards, isLoading, error, refetch } = useQuery({
@@ -61,6 +66,34 @@ function DeckPage() {
   const changeMode = () => {
     setDeleteMode(!deleteMode);
   };
+
+  function popupDetails(popupMessage, popupColor) {
+    setShowPopup(true);
+    setPopupMessage(popupMessage)
+    setPopupColor(popupColor)
+    setPopupOpacity('opacity-100'); // Ensure it's fully visible initially
+    setTimeout(() => {
+      setPopupOpacity('opacity-0'); // Start fading out
+      setTimeout(() => setShowPopup(false), 1000); // Give it 1 second to fade
+    }, 1000); // Stay fully visible for 1 second
+  }
+
+
+  const setStatus = async () => {
+    try {
+        const response = await api._post(`/api/decks/${deckId}/updateStatus`);
+        if (!response.ok) {
+            throw new Error('Failed to update card');
+        }
+        else{
+          popupDetails('Deck privacy has been updated!.', 'green')
+          refetch();
+        } 
+    } catch (error) {
+     
+        console.error(error);
+    }
+};
 
   const handleCardClick = async (cardId) => {
     if (deleteMode) {
@@ -121,6 +154,13 @@ function DeckPage() {
 
         <div className="flex flex-row items-center justify-between mt-2 mb-4 border-t border-gray-500 pt-4">
           <h1>{deckCards.cards.length} Cards</h1>
+          <button 
+            className={`${deckCards.isPublic ? "bg-blue-500" : "bg-red-500"} rounded-lg border border-transparent px-2 py-1 
+              font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
+            style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={setStatus}>
+            {deckCards.isPublic ? "Public" : "Private"}
+          </button>
+
           <button className={`${deleteMode ? "bg-red-500" : "bg-blue-500"} rounded-lg border border-transparent px-2 py-1 
               font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
             style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={changeMode}>
