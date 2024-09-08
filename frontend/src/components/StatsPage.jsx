@@ -8,9 +8,6 @@ import { useApi } from "../hooks";
 // Register the chart components
 Chart.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const upcomingDays = Array(31).fill(0);
-const previousDays = Array(31).fill(0);
-
 // The following const functions is for the upcoming bar graph
 const upcomingDaysFromToday = (date) => {
   const today = new Date();
@@ -20,10 +17,10 @@ const upcomingDaysFromToday = (date) => {
   return diffDays;
 };
 const groupUpcomingCards = (cards) => {
-
+  const upcomingDays = Array(31).fill(0);
   cards.forEach((card) => {
     const daysFromToday = upcomingDaysFromToday(card.next_review);
-    
+
     if (daysFromToday >= 0 && daysFromToday <= 30) {
       upcomingDays[daysFromToday] += 1; // Increment the count for that day
     }
@@ -38,8 +35,9 @@ const upcomingChartOptions = {
     title: { display: true, text: 'Upcoming Reviews' },
   },
   scales: {
-    x: { title: { display: true }, ticks: {minRotation: 0, maxRotation: 0} },
-    y: { title: { display: true, text: 'Number of Cards' }, beginAtZero: true, min: 0, max: 50,
+    x: { title: { display: true }, ticks: { minRotation: 0, maxRotation: 0 } },
+    y: {
+      title: { display: true, text: 'Number of Cards' }, beginAtZero: true, min: 0, max: 50,
       ticks: { stepSize: 10, },
     },
   },
@@ -54,10 +52,10 @@ const previousReviewFromToday = (date) => {
   return diffDays;
 };
 const groupPreviousReviews = (cards) => {
-  
+  const previousDays = Array(31).fill(0);
   cards.forEach((card) => {
     const daysSinceLastReview = previousReviewFromToday(card.last_reviewed);
-    
+
     if (daysSinceLastReview >= 0 && daysSinceLastReview <= 30) {
       previousDays[daysSinceLastReview] += 1; // Increment the count for that day
     }
@@ -72,8 +70,9 @@ const previousChartOptions = {
     title: { display: true, text: 'Previous Reviews' },
   },
   scales: {
-    x: { title: { display: true }, ticks: {minRotation: 0, maxRotation: 0} },
-    y: { title: { display: true, text: 'Number of Cards' }, beginAtZero: true, min: 0, max: 50,
+    x: { title: { display: true }, ticks: { minRotation: 0, maxRotation: 0 } },
+    y: {
+      title: { display: true, text: 'Number of Cards' }, beginAtZero: true, min: 0, max: 50,
       ticks: { stepSize: 10, },
     },
   },
@@ -89,6 +88,12 @@ function StatsPage() {
   const { data: deckCards, isLoading, error } = useQuery({
     queryFn: () =>
       api._get(`/api/decks/${deckId}/cards`).then((response) => response.json()),
+    onSuccess: (data) => {
+      if (data && data.cards) {
+        const groupedData = groupCardsByDay(data.cards);
+        setDeckData(groupedData);
+      }
+    }
   });
 
   useEffect(() => {
@@ -135,10 +140,10 @@ function StatsPage() {
     <div>
       <div className="flex">
         <div style={{ background: 'white', width: '35vw', height: '35vh' }}>
-          <Bar data={chartData} options={upcomingChartOptions} style={{ width:'100%', height:'100%' }} />
+          <Bar data={chartData} options={upcomingChartOptions} style={{ width: '100%', height: '100%' }} />
         </div>
         <div style={{ background: 'white', width: '35vw', height: '35vh' }}>
-          <Bar data={chartDataPrevious} options={previousChartOptions} style={{ width:'100%', height:'100%' }} />
+          <Bar data={chartDataPrevious} options={previousChartOptions} style={{ width: '100%', height: '100%' }} />
         </div>
       </div>
     </div>
