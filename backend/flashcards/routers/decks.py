@@ -13,7 +13,11 @@ decks_router = Router(tags=["Decks"])
 
 @decks_router.get("", response={200: List[sc.GetDeck]}, auth=JWTAuth())
 def get_decks(request):
-    decks = Deck.objects.all()
+    decks = Deck.objects.filter(owner_id=request.user.id)
+    return decks
+@decks_router.get("/AllPublicDecks", response={200: List[sc.GetDeck]}, auth=JWTAuth())
+def get_ALL_decks(request):
+    decks = Deck.objects.filter(isPublic = True)
     return decks
 
 @decks_router.get("/{deck_id}", response={200: sc.GetDeck, 404: str}, auth=JWTAuth())

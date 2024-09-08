@@ -49,6 +49,7 @@ function Header() {
             <Link to="/folders" className="px-4 mx-2 transition duration-100 hover:text-black py-2">Create Folder</Link>
             <Link to="/help" className="px-4 mx-2 transition duration-100 hover:text-black py-2">Help</Link>
             <Link to="/home" className="px-4 ml-2 transition duration-100 hover:text-black py-2">Home</Link>
+            <Link to="/community" className="px-4 ml-2 transition duration-100 hover:text-black py-2">Community</Link>
             <button onClick={handleLogout} className="px-4 ml-2 mr-10 transition duration-100 hover:text-black py-2">
               Log Out
             </button>

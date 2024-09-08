@@ -53,6 +53,7 @@ class GetDeck(Schema):
     statistics: int
     created_at: datetime
     last_edited: datetime
+    isPublic:bool
 
 class CreateDeck(Schema):
     folder_id: int
