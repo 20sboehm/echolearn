@@ -96,7 +96,7 @@ def update_deck_status(request, deck_id:int):
 def generate_share_link(request, deck_id):
     deck = get_object_or_404(Deck, deck_id=deck_id)
     if deck:
-        link = request.build_absolute_uri(f'/decks/{deck_id}/accept_share_deck')
+        link = f'localhost:5173/decks/{deck_id}'
         print(link)
         return JsonResponse({
             "link": link
