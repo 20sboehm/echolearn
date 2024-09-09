@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Bar } from 'react-chartjs-2';
 import { Chart, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { useQuery } from "react-query";
@@ -88,12 +88,6 @@ function StatsPage() {
   const { data: deckCards, isLoading, error } = useQuery({
     queryFn: () =>
       api._get(`/api/decks/${deckId}/cards`).then((response) => response.json()),
-    onSuccess: (data) => {
-      if (data && data.cards) {
-        const groupedData = groupCardsByDay(data.cards);
-        setDeckData(groupedData);
-      }
-    }
   });
 
   useEffect(() => {
@@ -137,9 +131,21 @@ function StatsPage() {
   }
 
   return (
+    <>
     <div>
+      <div className="flex justify-between items-center mt-3 mb-3">
+        <Link to={`/decks/${deckId}`} className="rounded-lg border border-transparent px-12 py-2 text-center
+              font-semibold bg-white text-black hover:border-black active:scale-[0.97] active:bg-[#333] 
+              active:border-[#555]">back</Link>
+        <div className="absolute left-1/2 transform -translate-x-1/2">
+          <h1 className="font-bold text-center text-2xl">
+            {deckCards.deck_name}
+          </h1>
+        </div>
+      </div>
+
       <div className="flex">
-        <div style={{ background: 'white', width: '35vw', height: '35vh' }}>
+        <div style={{ background: 'white', width: '35vw', height: '35vh', marginRight: '2rem' }}>
           <Bar data={chartData} options={upcomingChartOptions} style={{ width: '100%', height: '100%' }} />
         </div>
         <div style={{ background: 'white', width: '35vw', height: '35vh' }}>
@@ -147,6 +153,7 @@ function StatsPage() {
         </div>
       </div>
     </div>
+    </>
   )
 }
 
