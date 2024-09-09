@@ -14,7 +14,7 @@ folders_router = Router(tags=["Folders"])
 
 @folders_router.get("", response={200: List[sc.GetFolder]}, auth=JWTAuth())
 def get_folders(request):
-    folders = Folder.objects.all()
+    folders = Folder.objects.filter(owner = request.user.id)
     return folders
 
 @folders_router.get("/{folder_id}", response={200: sc.GetFolder, 404: str}, auth=JWTAuth())

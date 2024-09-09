@@ -13,22 +13,29 @@ function DeckPage() {
 
   const [deleteMode, setDeleteMode] = useState(false);
   const { deckId } = useParams();
-  
+
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState('');
   const [popupColor, setPopupColor] = useState('');
   const [popupOpacity, setPopupOpacity] = useState('opacity-100');
 
+  const [link, setLink] = useState('');
+  const [inputShareLink, setinputShareLink] = useState('');
+  const [folders, setFolders] = useState([]);
+  const [newFolderName, setNewFolderName] = useState('');
+  const [isModalOpen, setModalOpen] = useState(false);
+
+
   // Fetch reviews info
-  const { data: deckCards, isLoading, error, refetch } = useQuery({
+  const { data: deckCards, isLoading, error, refetch: refetchDeckCards } = useQuery({
     queryFn: () =>
       api._get(`/api/decks/${deckId}/cards`).then((response) => response.json()),
   });
 
   // Refetch data whenever the deckId changes
   useEffect(() => {
-    refetch();
-  }, [deckId, refetch]);
+    refetchDeckCards();
+  }, [deckId, refetchDeckCards]);
 
   useEffect(() => {
     console.log("Deck Cards:", deckCards);
@@ -81,19 +88,19 @@ function DeckPage() {
 
   const setStatus = async () => {
     try {
-        const response = await api._post(`/api/decks/${deckId}/updateStatus`);
-        if (!response.ok) {
-            throw new Error('Failed to update card');
-        }
-        else{
-          popupDetails('Deck privacy has been updated!.', 'green')
-          refetch();
-        } 
+      const response = await api._post(`/api/decks/${deckId}/updateStatus`);
+      if (!response.ok) {
+        throw new Error('Failed to update card');
+      }
+      else {
+        popupDetails('Deck privacy has been updated!.', 'green')
+        refetch();
+      }
     } catch (error) {
-     
-        console.error(error);
+
+      console.error(error);
     }
-};
+  };
 
   const handleCardClick = async (cardId) => {
     if (deleteMode) {
@@ -118,6 +125,54 @@ function DeckPage() {
 
     return <div dangerouslySetInnerHTML={{ __html: html }} />;
   };
+
+  const handleGenerateLink = async () => {
+    const response = await api._post(`/api/decks/${deckId}/generate-share-link`)
+    try {
+      if (!response.ok) {
+        throw new Error('Failed to share deck');
+      }
+      const data = await response.json();
+      console.log("shared link:", data.link);
+      setLink(data.link)
+      prompt("Copy this link and share it:", data.link);
+    } catch (error) {
+      console.error('Error', error);
+    }
+  };
+  const handleTakeACopy =async () => {
+    setModalOpen(true); // Open the modal to select or create a folder
+    const userfolders = await api._get(`/api/folders`)
+    const folderData = await userfolders.json()
+    console.log(folderData)
+    setFolders(folderData)
+    if (userfolders !== null && userfolders.length !== 0) {
+      const response = await api._get(`/api/decks/${deckId}/take_copy`)
+      try {
+        if (!response.ok) {
+          throw new Error('Failed to share deck');
+        }
+      } catch (error) {
+        console.error('Error', error);
+      }
+    } else {
+      console.log("No input provided or user cancelled the prompt.");
+    }
+};
+
+const handleFolderSelection = async (folderId) => {
+  const response = await api._get(`/api/decks/${deckId}/take_copy/${folderId}`);
+  try {
+      if (!response.ok) {
+          throw new Error('Failed to copy deck to folder');
+      }
+      alert('Deck copied successfully!');
+      setModalOpen(false); // Close the modal after action
+  } catch (error) {
+      console.error('Error', error);
+  }
+};
+
 
   return (
     <>
@@ -154,13 +209,39 @@ function DeckPage() {
 
         <div className="flex flex-row items-center justify-between mt-2 mb-4 border-t border-gray-500 pt-4">
           <h1>{deckCards.cards.length} Cards</h1>
-          <button 
+          <button
             className={`${deckCards.isPublic ? "bg-blue-500" : "bg-red-500"} rounded-lg border border-transparent px-2 py-1 
               font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
             style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={setStatus}>
             {deckCards.isPublic ? "Public" : "Private"}
           </button>
 
+          <button className={`bg-blue-500  rounded-lg border border-transparent px-2 py-1 
+              font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
+            style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={handleGenerateLink}>Generate Share Link</button>
+
+          {/* <button className={`bg-blue-500  rounded-lg border border-transparent px-2 py-1 
+              font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
+            style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={handletakeacopy}>copy</button> */}
+         
+          <div>
+            <button onClick={handleTakeACopy}>Copy Deck</button>
+            {isModalOpen && (
+              <div className="modal">
+                <div className="modal-content">
+                  <h2>Select a folder </h2>
+                  {folders.map(folder => (
+                    <button className={`bg-blue-500  rounded-lg border border-transparent px-2 py-1 
+                      font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
+                       key={folder.folder_id} onClick={() => handleFolderSelection(folder.folder_id)}>
+                      {folder.name}
+                    </button>
+                  ))}
+                  <button onClick={() => setModalOpen(false)}>Close</button>
+                </div>
+              </div>
+            )}
+          </div>
           <button className={`${deleteMode ? "bg-red-500" : "bg-blue-500"} rounded-lg border border-transparent px-2 py-1 
               font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
             style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={changeMode}>
