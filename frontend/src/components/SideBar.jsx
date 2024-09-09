@@ -17,7 +17,7 @@ const Folder = ({ folder, onRightClick }) => {
 
   return (
     <div className="mt-2">
-      <div onClick={handleOpenFolder} onContextMenu={(e) => onRightClick(e, folder)} className="cursor-pointer text-black flex">
+      <div onClick={handleOpenFolder} onContextMenu={(e) => onRightClick(e, folder)} className="cursor-pointer text-black flex select-none">
         <img
           src={openFolder ? folderOpenImg : folderCloseImg}
           alt={openFolder ? "Open folder" : "Closed folder"}
@@ -27,7 +27,7 @@ const Folder = ({ folder, onRightClick }) => {
       {openFolder && (
         <div className="ml-4">
           {folder.decks.map((deck, index) => (
-            <div key={index} className="text-black flex items-center" onContextMenu={(e) => onRightClick(e, deck)}>
+            <div key={index} className="text-black flex items-center select-none" onContextMenu={(e) => onRightClick(e, deck)}>
               <Link to={`/decks/${deck.deck_id}`} style={{ display: "flex", alignItems: "center" }}>
                 <img src={decksImg} alt="Deck" className="w-10 h-10" />
                 <p className="overflow-x-auto whitespace-nowrap">{deck.name}</p>
@@ -164,7 +164,7 @@ const Sidebar = () => {
       console.error("Error deleting", error);
     }
   };
-  
+
   return (
     <div onContextMenu={(e) => handleRightClick(e)}>
       <ResizableBox
