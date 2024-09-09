@@ -71,10 +71,14 @@ function TaskList() {
 function HomePage() {
   return (
     <>
-      <div className="mt-10">
-        <SideBar />
-        <h1 className=" font-bold text-[3em] italic mb-4">TO DO</h1>
-        <TaskList />
+      <div className="flex">
+        <div>
+          <SideBar />
+        </div>
+        <div className="flex flex-col mt-10 ">
+          <h1 className=" font-bold text-[3em] italic mb-4">TO DO</h1>
+          <TaskList />
+        </div>
       </div>
     </>
   )

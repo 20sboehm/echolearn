@@ -12,9 +12,10 @@ def initial_data():
     joe = CustomUser.objects.create_user(username="joe", email="joe@cs.utah.edu", password="joe", age=30, country="USA")
 
     # Create folders
-    history_folder = Folder.objects.create(name="History", owner=admin)
-    math_folder = Folder.objects.create(name="Math", owner=admin)
-    misc_folder = Folder.objects.create(name="Misc", owner=admin)
+    library = Folder.objects.create(name="Library", owner=admin)
+    history_folder = Folder.objects.create(name="History", owner=admin, parent=library)
+    math_folder = Folder.objects.create(name="Math", owner=admin, parent=library)
+    misc_folder = Folder.objects.create(name="Misc", owner=admin, parent=library)
     spanish_folder = Folder.objects.create(name="Spanish", owner=admin)
 
     # Create decks
