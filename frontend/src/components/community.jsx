@@ -30,28 +30,30 @@ function CommunityPage() {
 
   if (allPublicDecks) {
     return (
-
       <>
         <Sidebar />
-        {allPublicDecks && allPublicDecks.length > 0 ? (
-          <div className="h-[50vh] overflow-y-auto border-t border-gray-500">
-            {allPublicDecks.map(deck => (
-              <div className="grid grid-cols-2 gap-4 font-medium px-2" key={deck.deck_id}>
-                <div className="border rounded-sm bg-white text-black mt-2 px-2 py-2 relative" style={{ minHeight: '100px' }}>
-                  <p>The author of the deck is: {deck.owner_id}</p>
-                  <p>The name of the deck is: {deck.name}</p>
-                  <p>The description of the deck is: {deck.description}</p>
-                  <Link to={`/decks/${deck.deck_id}`} className="absolute top-0 right-0">
-                    <img src={arrowIconImg} alt="Edit Icon" className="h-6 w-8" />
-                  </Link>
+        <div className="flex justify-center mt-4">
+          {allPublicDecks && allPublicDecks.length > 0 ? (
+            <div className="h-screen overflow-y-auto border-gray-500 w-full max-w-4xl">
+              {allPublicDecks.map(deck => (
+                <div className="grid font-medium px-2" key={deck.deck_id}>
+                  <div className="border rounded-sm bg-white text-black mt-2 px-2 py-2 relative" style={{ minHeight: '100px' }}>
+                    <p><strong>Author: </strong>{deck.owner_id}</p>
+                    <p><strong>Name: </strong>{deck.name}</p>
+                    <p><strong>Description: </strong>{deck.description}</p>
+                    <Link to={`/decks/${deck.deck_id}`} className="absolute top-0 right-0">
+                      <img src={arrowIconImg} alt="Edit Icon" className="h-6 w-8" />
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div>Loading...</div>
-        )}
+              ))}
+            </div>
+          ) : (
+            <div>Loading...</div>
+          )}
+        </div>
       </>
+
     )
   }
 }
