@@ -1,5 +1,4 @@
 import { useState, createContext } from "react";
-import { useNavigate } from "react-router-dom";
 
 // For auth we need global state that is shared accross the entire application, 
 // which is why we need the Context API

@@ -6,7 +6,7 @@ import { useAuth } from "./hooks";
 import { AuthProvider } from "./context/auth";
 
 import LandingPage from "./components/LandingPage"
-import HomePage from "./components/UserPage";
+import HomePage from "./components/HomePage";
 import CreateCard from "./components/CreateCard";
 import CreateDeck from "./components/CreateDeck";
 import CreateFolder from "./components/CreateFolder";
@@ -57,6 +57,7 @@ function UnauthenticatedRoutes() {
       <Route path="/about" element={<AboutPage />} />
       <Route path="/features" element={<FeaturePage />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<SignUp />} />
       <Route path="*" element={<Navigate to="/login" />} />
     </Routes>
   );
@@ -82,7 +83,8 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <BrowserRouter>
-          <div className="w-screen h-screen flex flex-col text-[1.2em] font-medium bg-[#242424] text-gray-200">
+          {/* bg-[#242424] */}
+          <div className="w-screen h-screen flex flex-col text-[1.2em] font-medium bg-[#2b2b2b] text-gray-200">
             <Header />
             <Main />
           </div>
