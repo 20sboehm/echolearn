@@ -105,7 +105,7 @@ function HelpPage() {
         <input
           type="text"
           placeholder="Search topics..."
-          className="w-full p-2 border rounded"
+          className="w-full p-2 border rounded bg-[#151515]"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />

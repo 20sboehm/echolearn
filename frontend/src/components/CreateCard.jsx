@@ -266,7 +266,7 @@ function CreateCard() {
         <h1 className='text-4xl mb-10 mt-10 font-medium'>New Card</h1>
         {multipleRequired == true && (
           <form onSubmit={handleSubmitMultiple} className='flex flex-col items-center'>
-            <select value={deckId} onChange={(e) => setDeckId(e.target.value)} className='mb-4 px-2 rounded-md h-10' style={{ width: '30vw' }} >
+            <select value={deckId} onChange={(e) => setDeckId(e.target.value)} className='mb-4 px-2 rounded-md h-10 bg-black' style={{ width: '30vw' }} >
               <option key='select-deck-key' value='' className=''>Select a deck</option>
               {decks.map((deck) => (
                 <option key={deck.deck_id} value={deck.deck_id}>{deck.name}</option>
