@@ -1,6 +1,63 @@
 import React, { useEffect, useState } from 'react';
 import api from '../utils/api';
 import { Link } from 'react-router-dom';
+import folderOpenImg from "../assets/folder-open.png";
+import folderCloseImg from "../assets/folder-close.png";
+import decksImg from "../assets/decks.png";
+
+// Folder component to handle folder and nested folders
+const Folder = ({ folder, onRightClick }) => {
+  const [openFolder, setOpenFolder] = useState(false);
+
+  const handleOpenFolder = () => {
+    setOpenFolder(!openFolder);
+  };
+
+  return (
+    <div className="mt-2">
+      <div 
+        onClick={handleOpenFolder} 
+        onContextMenu={(e) => onRightClick(e, folder)} 
+        className="cursor-pointer text-current flex"
+      >
+        <img
+          src={openFolder ? folderOpenImg : folderCloseImg}
+          alt={openFolder ? "Open folder" : "Closed folder"}
+          className="w-6 h-6 ml-2 mr-2"
+        />
+        <p className="overflow-x-auto">{folder.name}</p>
+      </div>
+
+      {openFolder && (
+        <div className="ml-4">
+
+          {/* Displays decks in the folder */}
+          {folder.decks.length > 0 ? (
+            folder.decks.map((deck) => (
+              <div key={deck.deck_id} className="text-current flex items-center" onContextMenu={(e) => onRightClick(e, deck)}>
+                <Link to={`/decks/${deck.deck_id}`} style={{ display: "flex", alignItems: "center" }}>
+                  <img src={decksImg} alt="Deck" className="w-10 h-10" />
+                  <p className="overflow-x-auto whitespace-nowrap">{deck.name}</p>
+                </Link>
+              </div>
+            ))
+          ) : (
+            <p>No decks in this folder</p>
+          )}
+
+          {/* Show subfolders */}
+          {folder.children && folder.children.length > 0 && (
+            <div className="ml-6">
+              {folder.children.map((childFolder) => (
+                <Folder key={childFolder.folder_id} folder={childFolder} onRightClick={onRightClick} />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
 
 function ProfilePage() {
   const { _get, _patch } = api();
@@ -124,41 +181,26 @@ function ProfilePage() {
       {/* Edit and Save button */}
       {isEditing ? (
         <button
-        onClick={handleSaveClick}
-        className="mt-2 border px-4 py-2 rounded bg-green-500 text-white hover:bg-green-600"
-      >
-        Save
-      </button>
-    ) : (
-      <button
-        onClick={handleEditClick}
-        className="mt-2 border px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600"
-      >
-        Edit
-      </button>
+          onClick={handleSaveClick}
+          className="mt-2 border px-4 py-2 rounded bg-green-500 text-white hover:bg-green-600"
+        >
+          Save
+        </button>
+      ) : (
+        <button
+          onClick={handleEditClick}
+          className="mt-2 border px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600"
+        >
+          Edit
+        </button>
       )}
 
       {/* Display Folders and Decks */}
       <div className="mt-8">
         <h2 className="text-xl font-bold">Folders and Decks</h2>
         {folders.length > 0 ? (
-          folders.map(folder => (
-            <div key={folder.folder_id} className="mt-2">
-              <p><strong>{folder.name}:</strong></p>
-              <ul className="ml-4">
-                {folder.decks.length > 0 ? (
-                  folder.decks.map(deck => (
-                    <li key={deck.deck_id}>
-                      <Link to={`/decks/${deck.deck_id}`} className="text-blue-500 hover:underline">
-                        {deck.name}
-                      </Link>
-                    </li>
-                  ))
-                ) : (
-                  <li>No deck in this folder</li>
-                )}
-              </ul>
-            </div>
+          folders.map((folder) => (
+            <Folder key={folder.folder_id} folder={folder} />
           ))
         ) : (
           <p>No folders or decks available</p>

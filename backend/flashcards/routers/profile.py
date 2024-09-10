@@ -31,15 +31,39 @@ def update_profile(request, data: UpdateUser):
     user.save()
     return user
 
+# Helper function to get folder data recursively
+def get_folder_data(folder, user):
+    folder_data = FolderInfo(
+        folder_id=folder.folder_id,
+        name=folder.name,
+        decks=[],
+        children=[]
+    )
+    
+    # Get current folder's decks
+    decks = Deck.objects.filter(folder=folder)
+    for deck in decks:
+        folder_data.decks.append(DeckInfo(
+            deck_id=deck.deck_id,
+            name=deck.name,
+            parent_folder_id=folder.folder_id
+        ))
+    
+    # Gets the subfolder and calls itself recursively
+    children = Folder.objects.filter(parent=folder, owner=user)
+    for child in children:
+        folder_data.children.append(get_folder_data(child, user))
+    
+    return folder_data
+
 @profile_router.get("/folders_decks", response=list[FolderInfo], auth=JWTAuth())
 def get_folders_and_decks(request):
     user = request.auth
-    folders = Folder.objects.filter(owner=user)
+    folders = Folder.objects.filter(owner=user, parent__isnull=True)
     folder_list = []
-    
+
+    # Call the get_folder_data function recursively for each top-level folder
     for folder in folders:
-        decks = Deck.objects.filter(folder=folder)
-        deck_list = [DeckInfo(deck_id=deck.deck_id, name=deck.name) for deck in decks]
-        folder_list.append(FolderInfo(folder_id=folder.folder_id, name=folder.name, decks=deck_list))
+        folder_list.append(get_folder_data(folder, user))
     
     return folder_list
