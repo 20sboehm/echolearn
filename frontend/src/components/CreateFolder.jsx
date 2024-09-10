@@ -62,11 +62,11 @@ function CreateFolder() {
           value={folderName}
           onChange={(e) => { setFolderName(e.target.value) }}
           placeholder='Folder Name'
-          className='mb-4 p-2 rounded-md'
+          className='mb-4 p-2 rounded-md bg-[#151515]'
           style={{ width: '30vw' }}
         />
         <button type='submit' className="rounded-lg border border-transparent px-4 py-2 
-          font-semibold bg-[#111111] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+          font-semibold bg-black hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>
           Submit
         </button>

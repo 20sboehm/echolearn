@@ -2,11 +2,35 @@ import React, { useState, useEffect } from 'react';
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 import { useApi } from "../hooks";
-import folderOpenImg from "../assets/folder-open.png";
-import folderCloseImg from "../assets/folder-close.png";
-import decksImg from "../assets/decks.png";
+// import folderOpenImg from "../assets/folder-open.png";
+// import folderCloseImg from "../assets/folder-close.png";
+// import decksImg from "../assets/decks.png";
 import { ResizableBox } from 'react-resizable';
 import 'react-resizable/css/styles.css';
+
+const ChevronIcon = ({ isOpen }) => {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      style={{
+        transform: isOpen ? "rotate(90deg)" : "rotate(0deg)", // Point right when closed, down when open
+        transition: "transform 0.3s ease",
+        width: "18px",
+        height: "18px",
+      }}
+    >
+      <path
+        d="M9 6L15 12L9 18"
+        stroke="#FFFFFF" // Change stroke to white
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+};
 
 const Folder = ({ folder, onRightClick }) => {
   const [openFolder, setOpenFolder] = useState(false);
@@ -16,21 +40,23 @@ const Folder = ({ folder, onRightClick }) => {
   };
 
   return (
-    <div className="mt-2 ml-2">
-      <div onClick={handleOpenFolder} onContextMenu={(e) => onRightClick(e, folder)} className="cursor-pointer text-black flex items-center">
-        <img
+    <div className="mt-2">
+      <div onClick={handleOpenFolder} onContextMenu={(e) => onRightClick(e, folder)} className="cursor-pointer text-base text-eWhite flex items-center select-none">
+        {/* <img
           src={openFolder ? folderOpenImg : folderCloseImg}
           alt={openFolder ? "Open folder" : "Closed folder"}
-          className="w-4 h-4 ml-2 mr-2" />
-        <p className="text-base overflow-x-auto">{folder.name}</p>
+          className="w-6 h-6 ml-2 mr-2" /> */}
+        <ChevronIcon isOpen={openFolder} />
+        <p className="overflow-x-auto">{folder.name}</p>
       </div>
       {openFolder && (
-        <div className="ml-4">
+        <div className="ml-2 pl-2 border-l border-eGray">
           {folder.decks.map((deck, index) => (
-            <div key={index} className="text-black flex items-center" onContextMenu={(e) => onRightClick(e, deck)}>
-              <Link to={`/decks/${deck.deck_id}`} style={{ display: "flex", alignItems: "center" }}>
-                <img src={decksImg} alt="Deck" className="w-6 h-6" />
-                <p className="text-base overflow-x-auto whitespace-nowrap">{deck.name}</p>
+            <div key={index} className="text-eWhite flex items-center select-none text-base ml-2 mt-2 hover:text-eBlue" onContextMenu={(e) => onRightClick(e, deck)}>
+              {/* <Link to={`/decks/${deck.deck_id}`} style={{ display: "flex", alignItems: "center" }}> */}
+              <Link to={`/decks/${deck.deck_id}`}>
+                {/* <img src={decksImg} alt="Deck" className="w-10 h-10" /> */}
+                <p className="overflow-x-auto whitespace-nowrap">{deck.name}</p>
               </Link>
             </div>
           ))}
@@ -164,7 +190,7 @@ const Sidebar = () => {
       console.error("Error deleting", error);
     }
   };
-  
+
   return (
     <div onContextMenu={(e) => handleRightClick(e)}>
       <ResizableBox
@@ -174,7 +200,7 @@ const Sidebar = () => {
         resizeHandles={['e']}
         minConstraints={[50, Infinity]} // Minimum width
         maxConstraints={[600, Infinity]} // Maximum width
-        className="bg-white h-[92vh]"
+        className="bg-eDark h-[calc(100%-4rem)] border-r border-eDarkGray"
         style={{ overflow: 'hidden', position: 'absolute', left: '0', zIndex: '1' }}
       >
         <div className="h-[92vh] overflow-y-auto">

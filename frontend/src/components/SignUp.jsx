@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
-import SideBar from './SideBar';
 import { useApi, useApiWithoutToken } from '../hooks';
+import { FormInputButton, FormInputBox, FormInputLabel } from './FormInput';
 
 function SignUp() {
   const [username, setUsername] = useState('');
@@ -76,23 +76,25 @@ function SignUp() {
     });
   };
 
+
+
   return (
     <>
-      <form onSubmit={handleSubmit} className='flex flex-col items-start mt-10'>
-        <label className="text-base" htmlFor='username'>Username</label>
-        <input className="mb-4 rounded-md text-xl px-2 py-2 border border-gray-500" value={username} id='username' name='username' type="text" onChange={e => setUsername(e.target.value)} placeholder="Username" required />
+      <form onSubmit={handleSubmit} className='flex flex-col items-start mt-10 p-10 rounded-md bg-gradient-to-r bg-eBlue'>
+        {/* <form onSubmit={handleSubmit} className='flex flex-col items-start mt-10 p-10 rounded-md bg-gradient-to-r from-[#9fcece] via-[#7fd8d8] to-[#42dcdc]'> */}
+        <h1 className='text-black mb-5 text-3xl font-bold self-center'>Sign up</h1>
 
-        <label className="text-base" htmlFor='email'>Email</label>
-        <input className="mb-4 rounded-md text-xl px-2 py-2 border border-gray-500" value={email} id='email' name='email' type="email" onChange={e => setEmail(e.target.value)} placeholder="Email" required />
+        <FormInputLabel htmlFor="email">Email</FormInputLabel>
+        <FormInputBox idAndName="email" value={email} onChange={e => setEmail(e.target.value)} autoFocus={true}></FormInputBox>
 
-        <label className="text-base" htmlFor='password'>Password</label>
-        <input className="mb-4 rounded-md text-xl px-2 py-2 border border-gray-500" value={password} id='password' name='password' type="password" onChange={e => setPassword(e.target.value)} placeholder="Password" required />
+        <FormInputLabel htmlFor="username">Username</FormInputLabel>
+        <FormInputBox idAndName="username" value={username} onChange={e => setUsername(e.target.value)}></FormInputBox>
 
-        <button className="mt-4 w-full rounded-lg border border-transparent px-4 py-2 font-semibold bg-[#111111] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-          active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }} type='submit'>Register</button>
+        <FormInputLabel htmlFor="password">Password</FormInputLabel>
+        <FormInputBox idAndName="password" value={password} onChange={e => setPassword(e.target.value)}></FormInputBox>
 
-        <button className="mt-4 w-full rounded-lg border border-transparent px-4 py-2 font-semibold bg-[#111111] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-          active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }} type='button' onClick={() => navigate('/login')}>Log In</button>
+        <FormInputButton isPrimaryButton={true}>Register</FormInputButton>
+        <FormInputButton navigateTo="/login">Log in</FormInputButton>
       </form>
       {showPopup && (
         <div className={`fixed bottom-20 left-1/2 -translate-x-1/2 transform p-4 bg-${popupColor}-500 rounded-md transition-opacity duration-1000 ${popupOpacity}`}>

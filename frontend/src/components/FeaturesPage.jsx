@@ -6,8 +6,8 @@ const cardCSS = "flex flex-col items-center justify-center bg-white text-black r
 const featureCards = [
   {
     picture: "📝",
-    title: "Space repetition",
-    description: "Space repetition is a technique where you review information at increasing intervals to retain knowledge in long-term memory."
+    title: "Spaced repetition",
+    description: "Spaced repetition is a technique where you review information at increasing intervals to retain knowledge in long-term memory."
     // "Space repetition is effective memorize algorithm that Echolearn use to help you gain long-term recall",
   },
   {
@@ -27,7 +27,7 @@ const featureCards = [
   },
   {
     picture: "📁",
-    title: "Hierarchy folder",
+    title: "Folder hierarchy",
     description: "Echolearn provided sidebar for user to easily organize their folders and decks",
   },
   {
@@ -46,10 +46,10 @@ function FeaturePage() {
 
   return (
     <>
-      <div className="flex flex-col items-center w-full h-screen bg-featureBackground text-white">
+      <div className="flex flex-col items-center w-full h-full bg-featureBackground text-white">
         <div className="text-center py-10">
           <h1 className="text-4xl font-bold">FEATURES</h1>
-          <p className="text-xl mt-2">Overview of our key features, make Echolearn your next memory.</p>
+          <p className="text-xl mt-2">Overview of our key features. Make Echolearn your next memory.</p>
         </div>
 
         <div className="w-4/5 text-gray-800 rounded-lg mt-5">
