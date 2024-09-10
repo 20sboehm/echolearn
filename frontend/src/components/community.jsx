@@ -27,10 +27,12 @@ function CommunityPage() {
         console.log("Decks in State After Update:", allPublicDecks);
     }, [allPublicDecks]);
 
+
     if (allPublicDecks) {
         return (
 
             <>
+            <Sidebar />
                 {allPublicDecks && allPublicDecks.length > 0 ? (
                     <div className="h-[50vh] overflow-y-auto border-t border-gray-500">
                         {allPublicDecks.map(deck => (

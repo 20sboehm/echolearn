@@ -31,7 +31,6 @@ def get_deck(request, deck_id: int):
 def get_cards_from_deck(request, deck_id: int):
     deck = get_object_or_404(Deck, deck_id=deck_id)
     card_list = Card.objects.filter(deck_id=deck_id)
-
     return {"deck_id": deck.deck_id,"isPublic": deck.isPublic, "deck_name": deck.name, "cards": card_list}
 
 @decks_router.get("/{deck_id}/take_copy/{folder_id}", response={201: sc.GetDeck, 404: str}, auth=JWTAuth())

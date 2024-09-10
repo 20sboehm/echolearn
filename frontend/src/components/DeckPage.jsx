@@ -26,16 +26,14 @@ function DeckPage() {
   const [isModalOpen, setModalOpen] = useState(false);
 
 
-  // Fetch reviews info
-  const { data: deckCards, isLoading, error, refetch: refetchDeckCards } = useQuery({
-    queryFn: () =>
-      api._get(`/api/decks/${deckId}/cards`).then((response) => response.json()),
-  });
-
-  // Refetch data whenever the deckId changes
-  useEffect(() => {
-    refetchDeckCards();
-  }, [deckId, refetchDeckCards]);
+// Fetch reviews info
+const { data: deckCards, isLoading, error, refetch: refetchDeckCards } = useQuery(
+  ['deckCards', deckId], // Unique key based on deckId
+  () => api._get(`/api/decks/${deckId}/cards`).then((response) => response.json()),
+  {
+    enabled: !!deckId // Only run the query if deckId is truthy
+  }
+);
 
   useEffect(() => {
     console.log("Deck Cards:", deckCards);
@@ -50,7 +48,7 @@ function DeckPage() {
   if (deckCards.cards && Array.isArray(deckCards.cards)) {
     reviewedCardsCount = deckCards.cards.filter(card => card.next_review && Date.parse(card.next_review) >= Date.now()).length;
   }
-
+  
   const totalCardsCount = deckCards.cards.length; // Total number of cards in the deck
 
   // Calculate the percentage of cards that don't need review
