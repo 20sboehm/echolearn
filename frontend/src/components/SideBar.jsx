@@ -178,6 +178,7 @@ const Sidebar = () => {
         style={{ overflow: 'hidden', position: 'absolute', left: '0', zIndex: '1' }}
       >
         <div className="h-[92vh] overflow-y-auto">
+          <h2 className='font-bold text-2xl text-black'>Sidebar:</h2>
           {sidebarData && sidebarData.folders ? (
             sidebarData.folders.map((folder, index) => (
               <Folder key={index} folder={folder} onRightClick={handleRightClick} />
