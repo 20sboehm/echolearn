@@ -170,7 +170,7 @@ function ShowAnswerButtons({ card, showAnswer, setShowAnswer, updateReviewedCard
             <button className="rounded-md w-24 px-4 mr-4 text-black bg-red-600 hover:bg-red-700" onClick={() => updateReviewedCard(0, getNextReviewTime(1), card, setFlip, false)}>Again <br />
               {formatTimeDifference(now.getTime(), getNextReviewTime(1))}</button>
 
-            <button className="rounded-md w-24 px-4 mr-4 text-black bg-yellow-400 hover:bg-yellow-500" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(2), card, setFlip, false)}>Hard <br />
+            <button className="rounded-md w-24 px-4 mr-4 text-black bg-yellow-400 hover:bg-yellow-500" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(2), card, setFlip, true)}>Hard <br />
               {formatTimeDifference(now.getTime(), getNextReviewTime(2))}</button>
 
             <button className="rounded-md w-24 px-4 mr-4 text-black bg-green-700 hover:bg-green-800" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(3), card, setFlip, true)}>Good <br />

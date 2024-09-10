@@ -1,12 +1,13 @@
 import { Link, useParams } from "react-router-dom";
 import { Bar } from 'react-chartjs-2';
 import { Chart, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { useQuery } from "react-query";
 import { useState, useEffect } from "react";
 import { useApi } from "../hooks";
 
 // Register the chart components
-Chart.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+Chart.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ChartDataLabels);
 
 // The following const functions is for the upcoming bar graph
 const upcomingDaysFromToday = (date) => {
@@ -32,7 +33,8 @@ const upcomingChartOptions = {
   maintainAspectRatio: false,
   plugins: {
     legend: { display: true },
-    title: { display: true, text: 'Upcoming Reviews' },
+    title: { display: true, text: 'Upcoming Reviews', font: { size: 16 } },
+    datalabels: {display: false},
   },
   scales: {
     x: { title: { display: true }, ticks: { minRotation: 0, maxRotation: 0 } },
@@ -67,7 +69,8 @@ const previousChartOptions = {
   maintainAspectRatio: false,
   plugins: {
     legend: { display: true },
-    title: { display: true, text: 'Previous Reviews' },
+    title: { display: true, text: 'Previous Reviews', font: { size: 16 } },
+    datalabels: {display: false},
   },
   scales: {
     x: { title: { display: true }, ticks: { minRotation: 0, maxRotation: 0 } },
@@ -84,33 +87,62 @@ const totalChartOptions = {
   maintainAspectRatio: false,
   plugins: {
     legend: { display: true },
-    title: { display: true, text: 'Correct vs. Incorrect' },
-    tooltip: {
-      callbacks: {
-        label: function (context) {
-          let correctValue = Math.abs(context.chart.data.datasets[0].data[0]);
-          let incorrectValue = Math.abs(context.chart.data.datasets[1].data[0]);
-
-          let total = correctValue + incorrectValue;
-          let value = Math.abs(context.raw);
-          let percentage = ((value / total) * 100).toFixed(2);
-
-          return `${context.dataset.label}: ${percentage}%`;
-        },
+    title: { display: true, text: 'Correct vs. Incorrect Percentage', font: { size: 18 } },
+    tooltip: { enabled: false },
+    datalabels: { display: true, align: 'center', color: '#fff', // White
+      formatter: (value, context) => {
+        // Calculate percentage label
+        const total = context.chart.data.datasets[0].data[0] + context.chart.data.datasets[1].data[0];
+        const percentage = ((value / total) * 100).toFixed(2);
+        return percentage + '%';
       },
+      font: { weight: 'bold', size: 14 },
     },
   },
   scales: {
-    x: { beginAtZero: true,
+    x: { beginAtZero: true, stacked: true, display: false,
       ticks: {
         callback: function(value) {
-          return Math.abs(value) + "%";
+          return value + "%";
         },
       },
     },
-    y: { stacked: true },
+    y: { stacked: true, display: false },
   },
 };
+
+function Card({ card }) {
+  return (
+    <div className="w-92 h-52 border p-4 rounded-lg bg-white shadow-sm flex flex-col justify-between text-black">
+      <h2 className="truncate font-bold text-xl">Question:{card.question}</h2>
+      <p className="truncate"><strong>Next Review:</strong> {new Date(card.next_review).toLocaleDateString()}</p>
+      <p className="truncate"><strong>Last Reviewed:</strong> {new Date(card.last_reviewed).toLocaleDateString()}</p>
+      <p className="truncate"><strong>Group:</strong>{card.bucket}</p>
+      <p className="truncate"><strong>Correct Count:</strong> {card.correct_count}</p>
+      <p className="truncate"><strong>Incorrect Count:</strong> {card.incorrect_count}</p>
+    </div>
+  );
+}
+
+
+function BucketFilter({ selectedBucket, onChange }) {
+  const buckets = [0, 1, 2, 3, 4, 5];
+  return (
+    <select
+      value={selectedBucket}
+      onChange={(e) => onChange(e.target.value)}
+      className="p-2 border rounded"
+    >
+      <option value="">All Cards</option>
+      {buckets.map((bucket) => (
+        <option key={bucket} value={bucket}>
+          Bucket {bucket}
+        </option>
+      ))}
+    </select>
+  );
+}
+
 
 function StatsPage() {
   const api = useApi();
@@ -119,30 +151,35 @@ function StatsPage() {
   const [upcomingReviewData, setupcomingReviewData] = useState({});
   const [previousReviewData, setPreviousReviewData] = useState({});
   const [totalCounts, setTotalCounts] = useState({ correct: 0, incorrect: 0 });
+  const [selectedBucket, setSelectedBucket] = useState('');
 
   const { data: deckCards, isLoading, error } = useQuery({
+    queryKey:['cards', deckId],
     queryFn: () =>
       api._get(`/api/decks/${deckId}/cards`).then((response) => response.json()),
   });
 
   useEffect(() => {
     if (deckCards && deckCards.cards) {
+      const filteredCards = selectedBucket
+        ? deckCards.cards.filter(card => card.bucket == selectedBucket)
+        : deckCards.cards;
+
       const groupedData = groupUpcomingCards(deckCards.cards);
       setupcomingReviewData(groupedData);
 
       const previousReviewGroupedData = groupPreviousReviews(deckCards.cards);
       setPreviousReviewData(previousReviewGroupedData);
 
-      const totalCorrect = deckCards.cards.reduce((sum, card) => sum + card.correct_count, 0);
-      const totalIncorrect = deckCards.cards.reduce((sum, card) => sum + card.incorrect_count, 0);
+      const totalCorrect = filteredCards.reduce((sum, card) => sum + card.correct_count, 0);
+      const totalIncorrect = filteredCards.reduce((sum, card) => sum + card.incorrect_count, 0);
 
       setTotalCounts({
         correct: totalCorrect,
         incorrect: totalIncorrect,
       });
-
     }
-  }, [deckCards]);
+  }, [deckCards, selectedBucket]);
 
   const chartData = {
     labels: Array.from({ length: 31 }, (_, i) => `${i} days`), // X-axis: 0 to 30 days
@@ -179,7 +216,7 @@ function StatsPage() {
     datasets: [
       {
         label: 'Correct',
-        data: [-correctPercentage],
+        data: [correctPercentage],  // Positive value
         backgroundColor: 'rgba(75, 192, 192, 0.6)',
         borderColor: 'rgba(75, 192, 192, 1)',
         borderWidth: 1,
@@ -187,7 +224,7 @@ function StatsPage() {
       },
       {
         label: 'Incorrect',
-        data: [incorrectPercentage],
+        data: [incorrectPercentage],  // Positive value
         backgroundColor: 'rgba(255, 99, 132, 0.6)',
         borderColor: 'rgba(255, 99, 132, 1)',
         borderWidth: 1,
@@ -217,18 +254,33 @@ function StatsPage() {
       <div className="flex flex-col">
         {/* The two bar graph is the upcoming and previous review graph */}
         <div className="flex justify-between">
-          <div className="rounded-lg" style={{ background: 'white', width: '25vw', height: '30vh' }}>
-            <Bar data={chartData} options={upcomingChartOptions} style={{ width: '100%', height: '100%' }} />
+          <div className="rounded-lg bg-white w-[25vw] h-[30vh]">
+            <Bar data={chartData} options={upcomingChartOptions} />
           </div>
-          <div className="rounded-lg" style={{ background: 'white', width: '25vw', height: '30vh' }}>
-            <Bar data={chartDataPrevious} options={previousChartOptions} style={{ width: '100%', height: '100%' }} />
+          <div className="rounded-lg bg-white w-[25vw] h-[30vh]">
+            <Bar data={chartDataPrevious} options={previousChartOptions}/>
           </div>
         </div>
         {/* The bar graph is the correct vs incorrect percentage graph */}
-        <div className="flex justify-center mt-4">
-          <div style={{ background: 'white', width: '80vw', height: '15vh' }}>
-              <Bar data={totalChartData} options={totalChartOptions} style={{ width: '100%', height: '100%' }} />
+        <div className="flex flex-col justify-center mt-4">
+          <div className="bg-white w-[80vw] h-[15vh]">
+              <Bar data={totalChartData} options={totalChartOptions} />
           </div>
+
+          <div className="mt-4 mb-4">
+              <BucketFilter
+                selectedBucket={selectedBucket}
+                onChange={setSelectedBucket}
+              />
+            </div>
+
+            <div className="overflow-x-auto w-[80vw]">
+              <div className="flex space-x-4 p-4">
+                {deckCards.cards.filter(card => !selectedBucket || card.bucket == selectedBucket).map((card) => (
+                  <Card key={card.id} card={card} />
+                ))}
+              </div>
+            </div>
         </div>
       </div>
     </div>
