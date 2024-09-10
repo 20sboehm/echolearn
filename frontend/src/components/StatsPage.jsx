@@ -119,7 +119,7 @@ function Card({ card }) {
       <h2 className="truncate font-bold text-xl">Question:{card.question}</h2>
       <p className="truncate"><strong>Next Review:</strong> {new Date(card.next_review).toLocaleDateString()}</p>
       <p className="truncate"><strong>Last Reviewed:</strong> {new Date(card.last_reviewed).toLocaleDateString()}</p>
-      <p className="truncate"><strong>Group:</strong>{card.bucket}</p>
+      <p className="truncate"><strong>Bucket: </strong>{card.bucket}</p>
       <p className="truncate"><strong>Correct Count:</strong> {card.correct_count}</p>
       <p className="truncate"><strong>Incorrect Count:</strong> {card.incorrect_count}</p>
     </div>
