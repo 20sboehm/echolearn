@@ -18,7 +18,7 @@ const Folder = ({ folder, onRightClick }) => {
       <div 
         onClick={handleOpenFolder} 
         onContextMenu={(e) => onRightClick(e, folder)} 
-        className="cursor-pointer text-current flex"
+        className="cursor-pointer eWhite flex"
       >
         <img
           src={openFolder ? folderOpenImg : folderCloseImg}
@@ -34,7 +34,7 @@ const Folder = ({ folder, onRightClick }) => {
           {/* Displays decks in the folder */}
           {folder.decks.length > 0 ? (
             folder.decks.map((deck) => (
-              <div key={deck.deck_id} className="text-current flex items-center" onContextMenu={(e) => onRightClick(e, deck)}>
+              <div key={deck.deck_id} className="eWhite flex items-center" onContextMenu={(e) => onRightClick(e, deck)}>
                 <Link to={`/decks/${deck.deck_id}`} style={{ display: "flex", alignItems: "center" }}>
                   <img src={decksImg} alt="Deck" className="w-10 h-10" />
                   <p className="overflow-x-auto whitespace-nowrap">{deck.name}</p>
@@ -42,7 +42,7 @@ const Folder = ({ folder, onRightClick }) => {
               </div>
             ))
           ) : (
-            <p>No decks in this folder</p>
+            <p className='eWhite'>No decks in this folder</p>
           )}
 
           {/* Show subfolders */}
@@ -141,17 +141,18 @@ function ProfilePage() {
   return (
     <div className="ml-0 w-3/4 text-left">
       <h1 className="text-2xl font-bold">User Profile</h1>
-      <p><strong>Username:</strong> {profile.username}</p>
-      <p><strong>Email:</strong> {profile.email}</p>
+      <p className='eWhite'><strong>Username:</strong> {profile.username}</p>
+      <p className='eWhite'><strong>Email:</strong> {profile.email}</p>
 
       {/* Age */}
-      <p>
+      <p className='eWhite'>
         <strong>Age:</strong>
         {isEditing ? (
           <input
             type="number"
             value={editableAge}
             onChange={(e) => setEditableAge(Number(e.target.value))}
+            className="border rounded bg-eBlack"
           />
         ) : (
           profile.age
@@ -159,13 +160,13 @@ function ProfilePage() {
       </p>
 
       {/* Country */}
-      <p>
+      <p className='eWhite'>
         <strong>Country:</strong>
         {isEditing ? (
           <select
             value={editableCountry}
             onChange={(e) => setEditableCountry(e.target.value)}
-            className="border p-2 rounded"
+            className="border rounded bg-eBlack"
           >
             {countries.map((country, index) => (
               <option key={index} value={country}>
@@ -203,7 +204,7 @@ function ProfilePage() {
             <Folder key={folder.folder_id} folder={folder} />
           ))
         ) : (
-          <p>No folders or decks available</p>
+          <p className='eWhite'>No folders or decks available</p>
         )}
       </div>
     </div>

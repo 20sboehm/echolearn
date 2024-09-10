@@ -80,9 +80,9 @@ function SignUp() {
 
   return (
     <>
-      <form onSubmit={handleSubmit} className='flex flex-col items-start mt-10 p-10 rounded-md bg-gradient-to-r bg-eBlue'>
+      <form onSubmit={handleSubmit} className='flex flex-col items-start mt-20 p-10 bg-eBlack'>
         {/* <form onSubmit={handleSubmit} className='flex flex-col items-start mt-10 p-10 rounded-md bg-gradient-to-r from-[#9fcece] via-[#7fd8d8] to-[#42dcdc]'> */}
-        <h1 className='text-black mb-5 text-3xl font-bold self-center'>Sign up</h1>
+        <h1 className=' mb-5 text-3xl font-bold self-center'>Sign up</h1>
 
         <FormInputLabel htmlFor="email">Email</FormInputLabel>
         <FormInputBox idAndName="email" value={email} onChange={e => setEmail(e.target.value)} autoFocus={true}></FormInputBox>
@@ -94,6 +94,11 @@ function SignUp() {
         <FormInputBox idAndName="password" value={password} onChange={e => setPassword(e.target.value)}></FormInputBox>
 
         <FormInputButton isPrimaryButton={true}>Register</FormInputButton>
+        <div className='flex flex-row justify-center items-center mt-4 w-full'>
+          <span className='flex-grow border-b border-eGray h-1'></span>
+          <p className='self-center text-eGray mx-2'>or</p>
+          <span className='flex-grow border-b border-eGray h-1'></span>
+        </div>
         <FormInputButton navigateTo="/login">Log in</FormInputButton>
       </form>
       {showPopup && (
