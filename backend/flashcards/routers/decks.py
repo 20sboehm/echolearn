@@ -1,9 +1,11 @@
+import datetime
 from ninja import Router
 from flashcards.models import Deck, Folder, Card, CustomUser
 from typing import List
 import flashcards.schemas as sc
 from django.shortcuts import get_object_or_404
 from ninja_jwt.authentication import JWTAuth
+from django.http import JsonResponse
 
 decks_router = Router(tags=["Decks"])
 
@@ -13,7 +15,11 @@ decks_router = Router(tags=["Decks"])
 
 @decks_router.get("", response={200: List[sc.GetDeck]}, auth=JWTAuth())
 def get_decks(request):
-    decks = Deck.objects.all()
+    decks = Deck.objects.filter(owner_id=request.user.id)
+    return decks
+@decks_router.get("/AllPublicDecks", response={200: List[sc.GetDeck]}, auth=JWTAuth())
+def get_ALL_decks(request):
+    decks = Deck.objects.filter(isPublic = True)
     return decks
 
 @decks_router.get("/{deck_id}", response={200: sc.GetDeck, 404: str}, auth=JWTAuth())
@@ -25,8 +31,37 @@ def get_deck(request, deck_id: int):
 def get_cards_from_deck(request, deck_id: int):
     deck = get_object_or_404(Deck, deck_id=deck_id)
     card_list = Card.objects.filter(deck_id=deck_id)
+    return {"deck_id": deck.deck_id,"isPublic": deck.isPublic, "deck_name": deck.name, "cards": card_list}
 
-    return {"deck_id": deck.deck_id, "deck_name": deck.name, "cards": card_list}
+@decks_router.get("/{deck_id}/take_copy/{folder_id}", response={201: sc.GetDeck, 404: str}, auth=JWTAuth())
+def copy_deck(request, deck_id:int,folder_id:int):
+    deck = get_object_or_404(Deck, deck_id=deck_id)
+    owner_ref = request.user
+    folder_ref = get_object_or_404(Folder,folder_id=folder_id)
+    # if(len(folderList) != 0):
+    #     folder_ref = folderList[0]
+    # else:
+    #     folder_ref = Folder.objects.create(
+    #         name = 'default',
+    #         owner=owner_ref,
+    #         description=deck.description)
+   
+    newdeck = Deck.objects.create(
+        folder=folder_ref,
+        owner=owner_ref,
+        name=deck.name,
+        description=deck.description, 
+    )
+    old_cards = Card.objects.filter(deck = deck.deck_id)
+    for oldcard in old_cards:
+        newcard = oldcard
+        newcard.pk = None
+        newcard.deck = newdeck
+        newcard.created_at = datetime.datetime.now
+        newcard.last_edited = datetime.datetime.now
+        newcard.save()
+    print(1)
+    return 201, deck
 
 # ---------------------------------------------
 # -------------------- POST -------------------
@@ -47,6 +82,26 @@ def create_deck(request, payload: sc.CreateDeck):
     )
     return 201, deck
 
+@decks_router.post("/{deck_id}/updateStatus", response={200: sc.DeckCards, 404: str}, auth=JWTAuth())
+def update_deck_status(request, deck_id:int):
+
+    deck = get_object_or_404(Deck, deck_id=deck_id)
+    deck.isPublic = not deck.isPublic
+    deck.save()
+    card_list = Card.objects.filter(deck_id=deck_id)
+    return {"deck_id": deck.deck_id,"isPublic": deck.isPublic, "deck_name": deck.name, "cards": card_list}
+
+@decks_router.post("/{deck_id}/generate-share-link", response={200:None, 404: str}, auth=JWTAuth())
+def generate_share_link(request, deck_id):
+    deck = get_object_or_404(Deck, deck_id=deck_id)
+    if deck:
+        link = f'localhost:5173/decks/{deck_id}'
+        print(link)
+        return JsonResponse({
+            "link": link
+        }, status=200)
+    else:
+        return 404
 # ---------------------------------------------
 # -------------------- PATCH ------------------
 # ---------------------------------------------

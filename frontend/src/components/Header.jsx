@@ -44,12 +44,13 @@ function Header() {
             </Link>
           </div>
           <div className="flex ml-auto items-center">
-            <Link to="/cards" className="px-4 mx-2 hover:text-eBlue py-2">Create Card</Link>
-            <Link to="/decks" className="px-4 mx-2 hover:text-eBlue py-2">Create Deck</Link>
-            <Link to="/folders" className="px-4 mx-2 hover:text-eBlue py-2">Create Folder</Link>
-            <Link to="/help" className="px-4 mx-2 hover:text-eBlue py-2">Help</Link>
-            {/* <Link to="/" className="px-4 ml-2 transition duration-100 hover:text-eBlue py-2">Home</Link> */}
-            <button onClick={handleLogout} className="px-4 ml-2 mr-10 hover:text-eBlue py-2">
+            <Link to="/cards" className="px-4 mx-2 transition duration-100 hover:text-black py-2">Create Card</Link>
+            <Link to="/decks" className="px-4 mx-2 transition duration-100 hover:text-black py-2">Create Deck</Link>
+            <Link to="/folders" className="px-4 mx-2 transition duration-100 hover:text-black py-2">Create Folder</Link>
+            <Link to="/help" className="px-4 mx-2 transition duration-100 hover:text-black py-2">Help</Link>
+            <Link to="/home" className="px-4 ml-2 transition duration-100 hover:text-black py-2">Home</Link>
+            <Link to="/community" className="px-4 ml-2 transition duration-100 hover:text-black py-2">Community</Link>
+            <button onClick={handleLogout} className="px-4 ml-2 mr-10 transition duration-100 hover:text-black py-2">
               Log Out
             </button>
           </div>

@@ -198,18 +198,19 @@ const Sidebar = () => {
         height={Infinity}
         axis="x"
         resizeHandles={['e']}
-        minConstraints={[100, Infinity]} // Minimum width
+        minConstraints={[50, Infinity]} // Minimum width
         maxConstraints={[600, Infinity]} // Maximum width
         className="bg-eDark h-[calc(100%-4rem)] border-r border-eDarkGray"
         style={{ overflow: 'hidden', position: 'absolute', left: '0', zIndex: '1' }}
       >
         <div className="h-[92vh] overflow-y-auto">
+          <h2 className='font-bold text-2xl text-black'>Sidebar:</h2>
           {sidebarData && sidebarData.folders ? (
             sidebarData.folders.map((folder, index) => (
               <Folder key={index} folder={folder} onRightClick={handleRightClick} />
             ))
           ) : (
-            <div>Loading...</div>
+            <div className='text-black'>Loading...</div>
           )}
         </div>
       </ResizableBox>

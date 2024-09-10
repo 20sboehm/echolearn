@@ -33,6 +33,7 @@ class Deck(models.Model):
     statistics = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     last_edited = models.DateTimeField(auto_now_add=True)
+    isPublic = models.BooleanField(default=False)
     
     def __str__(self):
         return f"{self.name} (id={self.deck_id})"
@@ -54,6 +55,8 @@ class Card(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     last_edited = models.DateTimeField(auto_now_add=True)
     is_new = models.BooleanField(default=True)
+    correct_count = models.IntegerField(default=0)
+    incorrect_count = models.IntegerField(default=0)
 
     def __str__(self):
         return f"{self.question} (id={self.card_id})"
