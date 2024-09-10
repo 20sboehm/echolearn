@@ -80,7 +80,7 @@ function SignUp() {
 
   return (
     <>
-      <form onSubmit={handleSubmit} className='flex flex-col items-start mt-10 p-10 rounded-md bg-gradient-to-r bg-[#44b3db]'>
+      <form onSubmit={handleSubmit} className='flex flex-col items-start mt-10 p-10 rounded-md bg-gradient-to-r bg-eBlue'>
         {/* <form onSubmit={handleSubmit} className='flex flex-col items-start mt-10 p-10 rounded-md bg-gradient-to-r from-[#9fcece] via-[#7fd8d8] to-[#42dcdc]'> */}
         <h1 className='text-black mb-5 text-3xl font-bold self-center'>Sign up</h1>
 

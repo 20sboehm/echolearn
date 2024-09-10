@@ -64,21 +64,26 @@ function Login() {
 
   return (
     <>
-      <form onSubmit={handleSubmit} className='flex flex-col items-start mt-10 p-10 rounded-md bg-[#44b3db]'>
+      <form onSubmit={handleSubmit} className='flex flex-col items-start mt-20 p-10 bg-eBlack'>
         {/* <form onSubmit={handleSubmit} className='flex flex-col items-start mt-10 p-10 rounded-md bg-gradient-to-r from-[#98d3e9] via-[#64bcdb] to-[#45b2da]'> */}
         {/* <form onSubmit={handleSubmit} className='flex flex-col items-start mt-10 p-10 rounded-md bg-gradient-to-r from-[#9fcece] via-[#7fd8d8] to-[#42dcdc]'> */}
         {/* <form onSubmit={handleSubmit} className='flex flex-col items-start mt-10 p-10 rounded-md bg-gradient-to-r from-[#9fc3ce] via-[#7fb0d8] to-[#42dcdc]'> */}
         {/* <form onSubmit={handleSubmit} className='flex flex-col items-start mt-10 p-10 rounded-md bg-gradient-to-r from-[#3facd3] via-[#63bbdb] to-[#86c5db]'> */}
         {/* <form onSubmit={handleSubmit} className='flex flex-col items-start mt-10 p-10 rounded-md bg-[#82deff]'> */}
-        <h1 className='text-black mb-5 text-3xl font-bold self-center'>Login</h1>
+        <h1 className=' mb-5 text-3xl font-bold self-center'>Login</h1>
 
         <FormInputLabel htmlFor="username">Username</FormInputLabel>
-        <FormInputBox idAndName="username" value={username} onChange={e => setUsername(e.target.value)} autoFocus={true} />
+        <FormInputBox idAndName="username" value={username} onChange={e => setUsername(e.target.value)} autoFocus={true} placeholder="Username" />
 
         <FormInputLabel htmlFor="userpassword">Password</FormInputLabel>
-        <FormInputBox idAndName="userpassword" value={userpassword} onChange={e => setUserpassword(e.target.value)}></FormInputBox>
+        <FormInputBox idAndName="userpassword" value={userpassword} onChange={e => setUserpassword(e.target.value)} placeholder="Password"></FormInputBox>
 
         <FormInputButton isPrimaryButton={true}>Log in</FormInputButton>
+        <div className='flex flex-row justify-center items-center mt-4 w-full'>
+          <span className='flex-grow border-b border-eGray h-1'></span>
+          <p className='self-center text-eGray mx-2'>or</p>
+          <span className='flex-grow border-b border-eGray h-1'></span>
+        </div>
         <FormInputButton navigateTo="/signup">Sign up</FormInputButton>
       </form >
 

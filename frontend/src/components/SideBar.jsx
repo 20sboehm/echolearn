@@ -174,7 +174,7 @@ const Sidebar = () => {
         resizeHandles={['e']}
         minConstraints={[100, Infinity]} // Minimum width
         maxConstraints={[600, Infinity]} // Maximum width
-        className="bg-white h-[92vh]"
+        className="bg-eDark h-[92vh]"
         style={{ overflow: 'hidden', position: 'absolute', left: '0', zIndex: '1' }}
       >
         <div className="h-[92vh] overflow-y-auto">
