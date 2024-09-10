@@ -78,7 +78,6 @@ function SignUp() {
 
   return (
     <>
-      <SideBar />
       <form onSubmit={handleSubmit} className='flex flex-col items-start mt-10'>
         <label className="text-base" htmlFor='username'>Username</label>
         <input className="mb-4 rounded-md text-xl px-2 py-2 border border-gray-500" value={username} id='username' name='username' type="text" onChange={e => setUsername(e.target.value)} placeholder="Username" required />

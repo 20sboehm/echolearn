@@ -86,18 +86,23 @@ class GetCard(Schema):
     created_at: datetime
     last_edited: datetime
     is_new: bool
+    correct_count: int
+    incorrect_count: int
 
 class UpdateCard(Schema):
     question: Optional[str] = None
     answer: Optional[str] = None
     bucket: Optional[int] = None
     next_review: Optional[datetime] = None
-    questionvideolink:Optional[str] = None
-    answervideolink:Optional[str] = None
-    questionimagelink:Optional[str] = None
-    answerimagelink:Optional[str] = None
-    questionlatex:Optional[str] = None
-    answerlatex:Optional[str] = None
+    last_reviewed: Optional[datetime] = None
+    questionvideolink: Optional[str] = None
+    answervideolink: Optional[str] = None
+    questionimagelink: Optional[str] = None
+    answerimagelink: Optional[str] = None
+    questionlatex: Optional[str] = None
+    answerlatex: Optional[str] = None
+    correct_count: Optional[int] = None
+    incorrect_count: Optional[int] = None
 
 class CreateCard(Schema):
     deck_id: int

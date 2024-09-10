@@ -199,10 +199,12 @@ const handleFolderSelection = async (folderId) => {
                 {percentage}%
               </text>
             </svg>
-            <button className="rounded-lg border border-transparent px-4 py-2 
-              font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-              active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>
-              More Statistics</button>
+            <Link to={`/stats/${deckId}`}>
+              <button className="rounded-lg border border-transparent px-4 py-2 
+                font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+                active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>
+                More Statistics</button>
+            </Link>
           </div>
         </div>
 
