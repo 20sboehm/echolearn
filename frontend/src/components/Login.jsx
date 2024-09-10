@@ -64,7 +64,12 @@ function Login() {
 
   return (
     <>
-      <form onSubmit={handleSubmit} className='flex flex-col items-start mt-10 p-10 rounded-md bg-gradient-to-r from-[#9fcece] via-[#7fd8d8] to-[#42dcdc]'>
+      <form onSubmit={handleSubmit} className='flex flex-col items-start mt-10 p-10 rounded-md bg-[#44b3db]'>
+        {/* <form onSubmit={handleSubmit} className='flex flex-col items-start mt-10 p-10 rounded-md bg-gradient-to-r from-[#98d3e9] via-[#64bcdb] to-[#45b2da]'> */}
+        {/* <form onSubmit={handleSubmit} className='flex flex-col items-start mt-10 p-10 rounded-md bg-gradient-to-r from-[#9fcece] via-[#7fd8d8] to-[#42dcdc]'> */}
+        {/* <form onSubmit={handleSubmit} className='flex flex-col items-start mt-10 p-10 rounded-md bg-gradient-to-r from-[#9fc3ce] via-[#7fb0d8] to-[#42dcdc]'> */}
+        {/* <form onSubmit={handleSubmit} className='flex flex-col items-start mt-10 p-10 rounded-md bg-gradient-to-r from-[#3facd3] via-[#63bbdb] to-[#86c5db]'> */}
+        {/* <form onSubmit={handleSubmit} className='flex flex-col items-start mt-10 p-10 rounded-md bg-[#82deff]'> */}
         <h1 className='text-black mb-5 text-3xl font-bold self-center'>Login</h1>
 
         <FormInputLabel htmlFor="username">Username</FormInputLabel>
@@ -75,13 +80,14 @@ function Login() {
 
         <FormInputButton isPrimaryButton={true}>Log in</FormInputButton>
         <FormInputButton navigateTo="/signup">Sign up</FormInputButton>
-      </form>
+      </form >
 
       {showPopup && (
         <div className={`fixed bottom-20 left-1/2 -translate-x-1/2 transform p-4 bg-${popupColor}-500 rounded-md transition-opacity duration-1000 ${popupOpacity}`}>
           {popupMessage}
         </div>
-      )}
+      )
+      }
     </>
   );
 }
