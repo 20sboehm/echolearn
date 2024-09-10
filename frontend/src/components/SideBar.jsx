@@ -1,303 +1,308 @@
-import { useState, useRef, useEffect } from "react";
-import { useQuery, useMutation } from 'react-query';
-import { Link, useParams } from "react-router-dom";
-import "./SideBar.css";
+import React, { useState, useEffect } from 'react';
+import { useQuery } from "react-query";
+import { Link } from "react-router-dom";
 import { useApi } from "../hooks";
-import folderOpenImg from "../assets/folder-open.png"
-import folderCloseImg from "../assets/folder-close.png"
-import decksImg from "../assets/decks.png"
+import folderOpenImg from "../assets/folder-open.png";
+import folderCloseImg from "../assets/folder-close.png";
+import decksImg from "../assets/decks.png";
+import { ResizableBox } from 'react-resizable';
+import 'react-resizable/css/styles.css';
 
-function SidebarContent({ isOpen, sidebarRef }) {
+const Folder = ({ folder, onRightClick }) => {
+  const [openFolder, setOpenFolder] = useState(false);
+
+  const handleOpenFolder = () => {
+    setOpenFolder(!openFolder);
+  };
+
+  return (
+    <div className="mt-2">
+      <div onClick={handleOpenFolder} onContextMenu={(e) => onRightClick(e, folder)} className="cursor-pointer text-black flex">
+        <img
+          src={openFolder ? folderOpenImg : folderCloseImg}
+          alt={openFolder ? "Open folder" : "Closed folder"}
+          className="w-6 h-6 ml-2 mr-2" />
+        <p className="overflow-x-auto">{folder.name}</p>
+      </div>
+      {openFolder && (
+        <div className="ml-4">
+          {folder.decks.map((deck, index) => (
+            <div key={index} className="text-black flex items-center" onContextMenu={(e) => onRightClick(e, deck)}>
+              <Link to={`/decks/${deck.deck_id}`} style={{ display: "flex", alignItems: "center" }}>
+                <img src={decksImg} alt="Deck" className="w-10 h-10" />
+                <p className="overflow-x-auto whitespace-nowrap">{deck.name}</p>
+              </Link>
+            </div>
+          ))}
+          {folder.children &&
+            folder.children.map((child, index) => (
+              <Folder key={index} folder={child} className="mt-2" onRightClick={onRightClick} />
+            ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+
+const Sidebar = () => {
   const api = useApi();
-
-  const [folderCreated, setFolderCreated] = useState(false);
-  const [openFolderIds, setOpenFolderIds] = useState([]);
   const [sidebarData, setSidebarData] = useState(null);
-  const [contextMenu, setContextMenu] = useState(null);
-  const [newFolderName, setNewFolderName] = useState('');
-  const [showNewFolderInput, setShowNewFolderInput] = useState(false);
-  const [folderEdit, setFolderEdit] = useState(0);
-
-  // Fetch sidebar info when the sidebar is opened for the first time
-  useEffect(() => {
-    if (isOpen) {
-      fetchSidebarData();
-    }
-
-  }, [isOpen]);
-
-  useEffect(() => {
-    const handleOutsideClick = (event) => {
-      if (contextMenu && (!sidebarRef.current || !sidebarRef.current.contains(event.target))) {
-        setContextMenu(null); // Close the context menu
-      }
-    };
-
-    const handleEscKey = (event) => {
-      if (event.key === "Escape") {
-        setContextMenu(null); // Close on ESC key
-      }
-    };
-
-    document.addEventListener('mousedown', handleOutsideClick);
-    document.addEventListener('keydown', handleEscKey);
-
-    return () => {
-      document.removeEventListener('mousedown', handleOutsideClick);
-      document.removeEventListener('keydown', handleEscKey);
-    };
-  }, [contextMenu]);
+  const [contextMenu, setContextMenu] = useState(null); // For right-click menu
+  const [newName, setNewName] = useState('');
+  const [selected, setSelected] = useState(null);
+  const [createType, setCreateType] = useState('');
+  const [renaming, setRenaming] = useState(false);
 
   const fetchSidebarData = () => {
     api._get('/api/sidebar')
       .then((response) => response.json())
       .then((data) => {
         setSidebarData(data);
-        setFolderCreated(true);
       })
       .catch((error) => {
         console.log('An error occurred fetching sidebar:', error);
       });
   };
 
-  const handleCreateFolder = () => {
-    setNewFolderName('');
-    setContextMenu(null);
-    setShowNewFolderInput(!showNewFolderInput);
+  useEffect(() => {
     fetchSidebarData();
-  };
+  }, []);
 
-  /**
-   *  Following is the post request when user trying to create a folder with the context-menu
-   */
-  const sendPostRequest = () => {
-    if (newFolderName.trim() === '') {
-      setShowNewFolderInput(false);
-      return;
-    }
-    createFolderMutation.mutate({ name: newFolderName, owner_id: 1 });
-  }
-
-  const createFolderMutation = useMutation(async (formData) => {
-    const response = await api._post('/api/folders', formData);
-
-    if (!response.ok) {
-      throw new Error(`Network response was not ok: ${response.status}`);
-    }
-
-    return response.json();
-  },
-    {
-      onSuccess: () => {
-        setShowNewFolderInput(false);
-        fetchSidebarData();
-      },
-    });
-
-  /**
-   *  Following is the Patch request when user trying to edit a folder name with the context-menu
-   */
-  const handleEditFolder = (folder_id, name) => {
-    setNewFolderName(name)
-    setFolderEdit(folder_id)
-    setContextMenu(null);
-  }
-
-  const sendPatchRequest = () => {
-    if (newFolderName.trim() === '') {
-      alert("Detect blank folder name, please rename")
-      return;
-    }
-    // depending how the backend is this will change
-    editFolderMutation.mutate({ folder_id: folderEdit, name: newFolderName });
-  }
-
-  const editFolderMutation = useMutation(async (formData) => {
-
-    const response = await api._patch(`/api/folders/${formData.folder_id}`, formData);
-    // const response = await fetch('Waiting on backend', {
-    //   method: 'PATCH',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify(formData),
-    // });
-
-    if (!response.ok) {
-      throw new Error(`Network response was not ok: ${response.status}`);
-    }
-
-    return response.json();
-  },
-    {
-      onSuccess: () => {
-        setFolderEdit(0);
-        fetchSidebarData();
-      },
-    });
-
-  /**
-   *  Following is the delete request when user trying to delete a folder with the context-menu
-   */
-  const sendDeleteRequest = async (folder_id) => {
-    const response = await api._delete(`/api/folders/${folder_id}`);
-    console.log("STATUS: " + response.status);
-    if (response.status === 204) {
-      setContextMenu(null);
-      fetchSidebarData();
-    } else {
-      alert("Fail to delete folder, please make sure there isn't decks inside the folder to delete");
-    }
-  }
-
-
-  const createDefaultFolder = () => {
-    setFolderCreated(true);
-  };
-
-  const openFolder = (folderId) => {
-    if (openFolderIds.includes(folderId)) {
-      setOpenFolderIds(openFolderIds.filter(id => id !== folderId));
-    } else {
-      setOpenFolderIds(openFolderIds.concat(folderId));
-    }
-  };
-
-  const handleContextMenu = (event, folderId, name) => {
+  const handleRightClick = (event, folder = null) => {
     event.preventDefault();
-    var x = event.nativeEvent.pageX
-    var y = event.nativeEvent.pageY
-    if (x > 230) {
-      x = 200;
+    event.stopPropagation();
+
+    setNewName('');
+    setContextMenu({ x: event.clientX, y: event.clientY });
+    setCreateType('');
+    setRenaming(false);
+
+    if (folder) {
+      setSelected(folder); // Right-click on folder/deck
+    } else {
+      setSelected(null); // Right-click on empty space
     }
-    if (y > 650) {
-      y = 550;
-    }
-    setContextMenu({
-      x: x,
-      y: y - event.nativeEvent.offsetY,
-      folderId: folderId,
-      name: name
-    });
   };
 
-  if (!folderCreated) {
-    return (
-      <div className="sidebar" ref={sidebarRef}>
-        <button onClick={createDefaultFolder}>Create</button>
-      </div>
-    );
-  }
+  // Following are the logic for create both folder and deck
+  const handleCreate = async () => {
+    if (newName.trim() === '') {
+      alert("Name can't be empty")
+      return;
+    }
 
+    let newItem = {
+      name: newName,
+      // null should only happen if user is creating a top level folder
+      folder_id: selected?.parent_folder_id || selected?.folder_id || null,
+    };
+    const endpoint = createType === 'deck' ? "/api/decks" : "/api/folders";
+
+    try {
+      const response = await api._post(endpoint, newItem);
+      if (response.status === 201) {
+        fetchSidebarData();
+        setContextMenu(null);
+      } else {
+        console.error(`Failed to create ${createType}`, response);
+      }
+    } catch (error) {
+      console.error(`Error creating ${createType}`, error);
+    }
+  };
+
+
+  // Following are the logic for rename both folder and deck
+  const handleRename = async () => {
+    if (newName.trim() === '') {
+      alert("Name cannot be empty");
+      return;
+    }
+
+    let endpoint = '';
+    try {
+      if (selected.folder_id) {
+        endpoint = `/api/folders/${selected.folder_id}`;
+      } else if (selected.deck_id) {
+        endpoint = `/api/decks/${selected.deck_id}`;
+      }
+
+      const response = await api._patch(endpoint, { name: newName });
+      if (response.status === 200) {
+        fetchSidebarData();
+        setRenaming(false);
+        setContextMenu(null);
+      } else {
+        console.error("Failed to rename", response);
+      }
+    } catch (error) {
+      console.error("Error renaming", error);
+    }
+  };
+
+  // Following are the logic of deleting folder and deck
+  const handleDelete = async () => {
+    if (!selected) return;
+
+    let endpoint = '';
+    try {
+      if (selected.folder_id) {
+        endpoint = `/api/folders/${selected.folder_id}`;
+      } else if (selected.deck_id) {
+        endpoint = `/api/decks/${selected.deck_id}`;
+      }
+
+      const response = await api._delete(endpoint);
+      if (response.status === 204) {
+        fetchSidebarData();
+        setContextMenu(null);
+      } else {
+        alert("Cannot delete folder with items inside.");
+      }
+    } catch (error) {
+      console.error("Error deleting", error);
+    }
+  };
+  
   return (
-    <div className={`sidebar ${isOpen ? "open" : ""}`} ref={sidebarRef} style={{ overflowY: "auto" }}>
-      <div className="Folders">
-        <ul>
-          {sidebarData.Folders.map(folder => (
-            <li key={folder.folder_id} onClick={() => openFolder(folder.folder_id)} onContextMenu={(e) => handleContextMenu(e, folder.folder_id, folder.name)} className="mb-4 select-none">
-              <div className="cursor-pointer" style={{ display: "flex", alignItems: "center" }}>
-                {
-                  folderEdit === folder.folder_id ? (
-                    <textarea
-                      value={newFolderName}
-                      onChange={(e) => setNewFolderName(e.target.value)}
-                      onClick={(e) => e.stopPropagation()} // Stop event propagation
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          sendPatchRequest();
-                        }
-                      }}
-                      style={{ width: '100%', height: '50px', background: 'white', color: 'black' }}
-                    />
-                  ) : (
-                    <>
-                      <div className="folderContainer">
-                        <img src={openFolderIds.includes(folder.folder_id) ? folderOpenImg : folderCloseImg}
-                          style={{ width: openFolderIds.includes(folder.folder_id) ? "15%" : "12%", marginRight: "8px" }} />
-                        <span>{folder.name}</span>
-                      </div>
-                      <div className="tripleDotContainer" onClick={(e) => handleContextMenu(e, folder.folder_id, folder.name)}>
-                        <div className="tripleDot">⋮</div>
-                      </div>
-                    </>
-                  )
-                }
+    <div onContextMenu={(e) => handleRightClick(e)}>
+      <ResizableBox
+        width={250}
+        height={Infinity}
+        axis="x"
+        resizeHandles={['e']}
+        minConstraints={[100, Infinity]} // Minimum width
+        maxConstraints={[600, Infinity]} // Maximum width
+        className="bg-white h-[92vh]"
+        style={{ overflow: 'hidden', position: 'absolute', left: '0', zIndex: '1' }}
+      >
+        <div className="h-[92vh] overflow-y-auto">
+          {sidebarData && sidebarData.folders ? (
+            sidebarData.folders.map((folder, index) => (
+              <Folder key={index} folder={folder} onRightClick={handleRightClick} />
+            ))
+          ) : (
+            <div>Loading...</div>
+          )}
+        </div>
+      </ResizableBox>
+
+      {contextMenu && (
+        <div
+          style={{
+            position: "absolute",
+            top: `${contextMenu.y}px`,
+            left: `${contextMenu.x}px`,
+            backgroundColor: "black",
+            color: "white",
+            padding: "10px",
+            zIndex: 9999,
+            display: "flex",
+            flexDirection: "column",
+            borderRadius: "5px",
+          }}
+        >
+          {selected && ( // Right-click on folder or deck
+            <>
+              <div
+                style={{ padding: "8px 12px", cursor: "pointer" }}
+                onClick={() => setCreateType('deck')}
+              >
+                Create Deck
               </div>
-              {openFolderIds.includes(folder.folder_id) && (
-                <ul>
-                  {folder.decks.map(deck => (
-                    <li key={deck.deck_id} className="select-none">
-                      <Link to={`/decks/${deck.deck_id}`} style={{ display: "flex", alignItems: "center" }}>
-                        <img src={decksImg} style={{ width: "25%" }} />
-                        {deck.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </li>
-          ))}
-        </ul>
-      </div>
-      {showNewFolderInput && (
-        <div>
-          <textarea
-            value={newFolderName}
-            onChange={(e) => setNewFolderName(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                sendPostRequest();
-              }
-            }}
-            placeholder="Enter folder name"
-            style={{ width: '100%', height: '50px', background: 'white', color: 'black' }}
-          />
+              <div
+                style={{ padding: "8px 12px", cursor: "pointer" }}
+                onClick={() => setCreateType('folder')}
+              >
+                Create Folder
+              </div>
+              <div
+                style={{ padding: "8px 12px", cursor: "pointer" }}
+                onClick={() => {
+                  setRenaming(true);
+                  setNewName(selected.name);
+                }}
+              >
+                Rename
+              </div>
+              <div
+                style={{ padding: "8px 12px", cursor: "pointer" }}
+                onClick={handleDelete}
+              >
+                Delete
+              </div>
+            </>
+          )}
+
+          {!selected && ( // Right-click on empty space
+            <div
+              style={{ padding: "8px 12px", cursor: "pointer" }}
+              onClick={() => setCreateType('folder')}
+            >
+              Create Folder
+            </div>
+          )}
+
+          {/* Input for creating new deck or folder */}
+          {createType && (
+            <div style={{ marginTop: '10px' }}>
+              <input
+                type="text"
+                placeholder={`Enter ${createType} name`}
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                style={{
+                  color: 'black',
+                  backgroundColor: 'white',
+                  padding: '5px',
+                  borderRadius: '3px',
+                  width: '100%',
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleCreate();
+                  }
+                }}
+              />
+              <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'space-between' }}>
+                <button onClick={handleCreate}>Create</button>
+                <button onClick={() => { setNewName(''); setContextMenu(null); setCreateType('') }}>Cancel</button>
+              </div>
+            </div>
+          )}
+
+          {renaming && (
+            <div style={{ marginTop: '10px' }}>
+              <input
+                type="text"
+                placeholder="Enter new name"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                style={{
+                  color: 'black',
+                  backgroundColor: 'white',
+                  padding: '5px',
+                  borderRadius: '3px',
+                  width: '100%',
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleRename();
+                  }
+                }}
+              />
+              <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'space-between' }}>
+                <button onClick={handleRename}>Rename</button>
+                <button onClick={() => { setNewName(''); setContextMenu(null); setRenaming(false); }}>Cancel</button>
+              </div>
+            </div>
+          )}
         </div>
       )}
-      {contextMenu && <ContextMenu x={contextMenu.x} y={contextMenu.y}
-        onClose={() => setContextMenu(null)}
-        folderId={contextMenu.folderId}
-        name={contextMenu.name}
-        createFolder={handleCreateFolder}
-        folderEdit={handleEditFolder}
-        folderDelete={sendDeleteRequest} />}
     </div>
   );
-}
+};
 
-
-function SidebarButton({ isOpen, toggleSidebar, sidebarRef }) {
-  return (
-    <button className={`sidebarButton p-2 py-1 rounded-md bg-[#383838] ${isOpen ? "open" : ""}`} onClick={toggleSidebar}>
-      {isOpen ? "←" : "→"}
-    </button>
-  );
-}
-
-function ContextMenu({ x, y, folderId, name, createFolder, folderEdit, folderDelete }) {
-  return (
-    <ul className="context-menu" style={{ top: y - 30, left: x, position: 'absolute', backgroundColor: 'black', border: '1px solid #ccc' }}>
-      <li onClick={createFolder} style={{ padding: '5px 15px', cursor: 'pointer' }}>Create</li>
-      <li onClick={() => folderEdit(folderId, name)} style={{ padding: '5px 15px', cursor: 'pointer' }}>Rename</li>
-      <li onClick={() => folderDelete(folderId)} style={{ padding: '5px 15px', cursor: 'pointer' }}>Delete</li>
-    </ul>
-  );
-}
-
-function Sidebar() {
-  const [isOpen, setIsOpen] = useState(false);
-  const sidebarRef = useRef(null);
-
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen);
-  };
-
-  return (
-    <div>
-      <SidebarContent isOpen={isOpen} sidebarRef={sidebarRef} />
-      <SidebarButton isOpen={isOpen} toggleSidebar={toggleSidebar} sidebarRef={sidebarRef} />
-    </div>
-  );
-}
 
 export default Sidebar;

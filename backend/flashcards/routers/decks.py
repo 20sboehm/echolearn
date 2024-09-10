@@ -34,14 +34,16 @@ def get_cards_from_deck(request, deck_id: int):
 
 @decks_router.post("", response={201: sc.GetDeck, 404: str}, auth=JWTAuth())
 def create_deck(request, payload: sc.CreateDeck):
-    folder_ref = get_object_or_404(Folder, pk=payload.folder_id)
-    owner_ref = get_object_or_404(CustomUser, pk=payload.owner_id)
 
+    folder_ref = get_object_or_404(Folder, pk=payload.folder_id)
+
+    owner_ref = request.user  # Use the authenticated user as the owner
+        
     deck = Deck.objects.create(
         folder=folder_ref,
         owner=owner_ref,
         name=payload.name,
-        description=payload.description
+        description=payload.description or "No description provided"
     )
     return 201, deck
 
