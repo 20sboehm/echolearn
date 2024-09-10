@@ -14,7 +14,7 @@ function Header() {
 
   if (isGuestPage) {
     return (
-      <header className="h-16 w-full flex justify-between items-center top-0 left-0 bg-eBlack text-eWhite font-semibold">
+      <header className="h-16 w-full flex justify-between items-center top-0 left-0 bg-eBlack text-eWhite font-semibold border-b border-eDarkGray">
         <div className="w-screen flex flex-row justify-between">
           <div className="flex items-center justify-start mr-auto ml-10">
             <Link to="/" className="flex items-center">
@@ -35,7 +35,7 @@ function Header() {
     );
   } else {
     return (
-      <header className="h-16 flex justify-center top-0 left-0 w-full bg-eBlack font-semibold">
+      <header className="h-16 flex justify-center top-0 left-0 w-full bg-eBlack font-semibold border-b border-eDarkGray">
         <div className="w-screen flex flex-row justify-around">
           <div className="flex mr-auto ml-10">
             <Link to="/" className="flex items-center">

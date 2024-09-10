@@ -22,7 +22,7 @@ export function FormInputButton({ isPrimaryButton = false, navigateTo, children 
     return (
       <button
         className="mt-4 w-full border-2 border-transparent px-4 py-2 font-semibold bg-eBlue
-        hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] active:border-[#555]"
+        hover:border-white hover:text-white active:scale-[0.97] active:border-[#555]"
         // style={{ transition: "border-color 0.10s, color 0.10s" }}
         type="submit"
       >
@@ -32,7 +32,7 @@ export function FormInputButton({ isPrimaryButton = false, navigateTo, children 
   } else {
     return (
       <button
-        className="mt-4 w-full border border-eWhite px-4 py-2 font-semibold 
+        className="mt-4 w-full border-2 border-eGray px-4 py-2 font-semibold 
           bg-[#00000000] hover:border-eBlue hover:text-eBlue"
         // style={{ transition: "background 0.2s, color 0.2s" }}
         type="button"

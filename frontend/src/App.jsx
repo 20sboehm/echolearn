@@ -84,7 +84,7 @@ function App() {
       <AuthProvider>
         <BrowserRouter>
           {/* bg-[#242424] */}
-          <div className="w-screen h-screen flex flex-col text-[1.2em] font-base bg-eBase text-eWhite">
+          <div className="w-screen h-screen flex flex-col text-[1.2em] font-base text-eWhite bg-eBase">
             <Header />
             <Main />
           </div>

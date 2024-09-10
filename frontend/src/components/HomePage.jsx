@@ -28,9 +28,9 @@ function TaskList() {
 
   if (decks && cards) {
     return (
-      <div className="text-3xl text-left border border-eWhite rounded-lg">
+      <div className="text-3xl text-left border border-eGray rounded-lg">
         <ul className="w-[50vw] p-2">
-          <li className="grid grid-cols-9 gap-4 mb-2 text-eWhite border-b border-eWhite p-2">
+          <li className="grid grid-cols-9 gap-4 mb-2 text-eWhite border-b border-eGray p-2">
             <div className="col-span-3">Deck</div>
             <div className="col-span-2">New</div>
             <div className="col-span-2">Review</div>
@@ -45,15 +45,15 @@ function TaskList() {
               }
 
               return (
-                <li key={deck.deck_id} className="grid grid-cols-9 gap-4 font-medium text-eWhite text-2xl px-2 py-5">
+                <li key={deck.deck_id} className="grid grid-cols-9 gap-4 font-medium text-eWhite text-2xl px-2 py-5 hover:bg-eHighlight">
                   <div className="col-span-3"> {/* Make the highlight only show up when hovering over the text itself, not the grid cell */}
-                    <Link to={`/decks/${deck.deck_id}`} className="hover:text-eBlue">{deck.name}</Link>
+                    <Link to={`/decks/${deck.deck_id}`} className="hover:text-eBlue hover:border-eBlue border p-2 rounded-md">{deck.name}</Link>
                   </div>
                   <div className="col-span-2">{newCardsCount}</div>
                   <div className="col-span-2">{reviewCardsCount}</div>
                   <div className="col-span-2">
-                    <Link to={`/review/${deck.deck_id}`} className="rounded-lg border-2 border-eGray px-4 py-2 
-                     font-semibold bg-eBlack hover:border-eBlue hover:text-eBlue active:scale-[0.97] active:bg-[#333] 
+                    <Link to={`/review/${deck.deck_id}`} className="rounded-lg border-2 px-4 py-2 border-eBlue text-eBlue
+                     font-semibold bg-eBlack hover:border-eWhite hover:text-eWhite active:scale-[0.97] active:bg-[#333] 
                      active:border-[#555]"
                     //  style={{ transition: "border-color 0.10s, color 0.10s" }}
                     >
