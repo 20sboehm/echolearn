@@ -71,7 +71,7 @@ const Folder = ({ folder, onRightClick }) => {
 };
 
 
-const Sidebar = () => {
+const Sidebar =  ({ refetchTrigger }) => {
   const api = useApi();
   const [sidebarData, setSidebarData] = useState(null);
   const [contextMenu, setContextMenu] = useState(null); // For right-click menu
@@ -93,7 +93,7 @@ const Sidebar = () => {
 
   useEffect(() => {
     fetchSidebarData();
-  }, []);
+  }, [refetchTrigger]);
 
   const handleRightClick = (event, folder = null) => {
     event.preventDefault();

@@ -12,7 +12,8 @@ function CreateFolder() {
   const [popupOpacity, setPopupOpacity] = useState('opacity-100');
 
   const [folderName, setFolderName] = useState('');
-
+  const [refetchTrigger, setRefetchTrigger] = useState(false);
+  
   function popupDetails(popupMessage, popupColor) {
     setShowPopup(true);
     setPopupMessage(popupMessage)
@@ -45,6 +46,7 @@ function CreateFolder() {
     formSubmissionMutation.mutate({ name: folderName, owner_id: 1 }, {
       onSuccess: () => {
         popupDetails('Folder created successfully!', 'green')
+        setRefetchTrigger(prev => !prev);
       },
       onError: () => {
         popupDetails('Something went wrong...', 'red')
@@ -54,7 +56,7 @@ function CreateFolder() {
 
   return (
     <>
-      <SideBar />
+      <SideBar refetchTrigger={refetchTrigger} />
       <h1 className='text-4xl mb-10 mt-10 font-medium'>New Folder</h1>
       <form onSubmit={handleSubmit} className='flex flex-col items-center'>
         <input

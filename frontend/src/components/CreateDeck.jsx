@@ -14,6 +14,7 @@ function CreateDeck() {
   const [folderId, setFolderId] = useState('');
   const [deckName, setDeckName] = useState('');
   const [deckDescription, setDeckDescription] = useState('');
+  const [refetchTrigger, setRefetchTrigger] = useState(false);
 
   function popupDetails(popupMessage, popupColor) {
     setShowPopup(true);
@@ -57,6 +58,7 @@ function CreateDeck() {
     formSubmissionMutation.mutate({ folder_id: folderId, owner_id: 1, name: deckName, description: deckDescription }, {
       onSuccess: () => {
         popupDetails('Deck created successfully!', 'green')
+        setRefetchTrigger(prev => !prev);
       },
       onError: () => {
         popupDetails('Something went wrong...', 'red')
@@ -67,7 +69,7 @@ function CreateDeck() {
   if (folders) {
     return (
       <>
-        <SideBar />
+        <SideBar refetchTrigger={refetchTrigger} />
         <h1 className='text-4xl mb-10 mt-10 font-medium'>New Deck</h1>
         <form onSubmit={handleSubmit} className='flex flex-col items-center'>
           <select value={folderId} onChange={(e) => setFolderId(e.target.value)} className='mb-4 px-2 rounded-md h-10 bg-black' style={{ width: '30vw' }} >

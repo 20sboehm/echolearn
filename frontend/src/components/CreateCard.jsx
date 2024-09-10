@@ -25,6 +25,7 @@ function CreateCard() {
   const [popupMessage, setPopupMessage] = useState('');
   const [popupColor, setPopupColor] = useState('');
   const [popupOpacity, setPopupOpacity] = useState('opacity-100');
+  const [refetchTrigger, setRefetchTrigger] = useState(false);
 
   const [deckId, setDeckId] = useState('');
   const [question, setQuestion] = useState('');
@@ -236,6 +237,7 @@ function CreateCard() {
       formSubmissionMutation.mutate({ deck_id: deckId, question, answer, questionvideolink, answervideolink, questionimagelink, answerimagelink, questionlatex, answerlatex }, {
         onSuccess: () => {
           popupDetails('Card created successfully!', 'green')
+          setRefetchTrigger(prev => !prev);
         },
         onError: () => {
           popupDetails('Something went wrong...', 'red')
@@ -262,7 +264,7 @@ function CreateCard() {
   if (decks) {
     return (
       <>
-        <SideBar />
+        <SideBar refetchTrigger={refetchTrigger} />
         <h1 className='text-4xl mb-10 mt-10 font-medium'>New Card</h1>
         {multipleRequired == true && (
           <form onSubmit={handleSubmitMultiple} className='flex flex-col items-center'>
