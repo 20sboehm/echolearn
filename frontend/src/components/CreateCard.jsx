@@ -25,6 +25,7 @@ function CreateCard() {
   const [popupMessage, setPopupMessage] = useState('');
   const [popupColor, setPopupColor] = useState('');
   const [popupOpacity, setPopupOpacity] = useState('opacity-100');
+  const [refetchTrigger, setRefetchTrigger] = useState(false);
 
   const [deckId, setDeckId] = useState('');
   const [question, setQuestion] = useState('');
@@ -202,11 +203,11 @@ function CreateCard() {
 
     const lines = multipleInput.split(lineChoice).filter(line => line.trim());
     const formattedPreview = lines.map(line => {
-        const parts = line.split(spaceChoice).map(part => part.trim());
-        return { question: parts[0], answer: parts[1] };
+      const parts = line.split(spaceChoice).map(part => part.trim());
+      return { question: parts[0], answer: parts[1] };
     });
     setPreview(formattedPreview);
-}, [multipleInput, selectedOptionSpace, selectedOptionLine]);
+  }, [multipleInput, selectedOptionSpace, selectedOptionLine]);
 
   const handleSubmitMultiple = (e) => {
     e.preventDefault();
@@ -227,15 +228,16 @@ function CreateCard() {
     }
 
     const lines = (multipleInput).trim().split(lineChoice).filter(line => line.trim());
-    
+
     const newCards = lines.map(line => {
       const parts = line.split(spaceChoice);
-      console.log(parts[0],parts[1])
+      console.log(parts[0], parts[1])
       const question = parts[0]
       const answer = parts[1]
       formSubmissionMutation.mutate({ deck_id: deckId, question, answer, questionvideolink, answervideolink, questionimagelink, answerimagelink, questionlatex, answerlatex }, {
         onSuccess: () => {
           popupDetails('Card created successfully!', 'green')
+          setRefetchTrigger(prev => !prev);
         },
         onError: () => {
           popupDetails('Something went wrong...', 'red')
@@ -262,12 +264,12 @@ function CreateCard() {
   if (decks) {
     return (
       <>
-        <SideBar />
+        <SideBar refetchTrigger={refetchTrigger} />
         <h1 className='text-4xl mb-10 mt-10 font-medium'>New Card</h1>
         {multipleRequired == true && (
           <form onSubmit={handleSubmitMultiple} className='flex flex-col items-center'>
-            <select value={deckId} onChange={(e) => setDeckId(e.target.value)} className='mb-4 px-2 rounded-md h-10' style={{ width: '30vw' }} >
-              <option key='select-deck-key' value='' className='text-gray-400'>Select a deck</option>
+            <select value={deckId} onChange={(e) => setDeckId(e.target.value)} className='mb-4 px-2 rounded-md h-10 bg-black' style={{ width: '30vw' }} >
+              <option key='select-deck-key' value='' className=''>Select a deck</option>
               {decks.map((deck) => (
                 <option key={deck.deck_id} value={deck.deck_id}>{deck.name}</option>
               ))}
@@ -309,26 +311,26 @@ function CreateCard() {
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>
               Submit
             </button>
-           
+
             <h3>Preview</h3>
             <div className="h-[50vh] overflow-y-auto">
-            {preview.map((item, index) => (
-                 <div className="grid grid-cols-2 gap-4 font-medium px-2" key={index}>  
-                    <div className="border bg-white text-black mt-2 px-2 py-2">
-                        <p>Question: {item.question}</p>
-                    </div>
-                    <div className="border bg-white text-black mt-2 px-2 py-2 relative">
-                        <p>Answer: {item.answer}</p>
-                    </div>
+              {preview.map((item, index) => (
+                <div className="grid grid-cols-2 gap-4 font-medium px-2" key={index}>
+                  <div className="border bg-white text-black mt-2 px-2 py-2">
+                    <p>Question: {item.question}</p>
+                  </div>
+                  <div className="border bg-white text-black mt-2 px-2 py-2 relative">
+                    <p>Answer: {item.answer}</p>
+                  </div>
                 </div>
-            ))}
+              ))}
             </div>
           </form>
         )}
         {multipleRequired == false && (
           <form onSubmit={handleSubmit} className='flex flex-col items-center'>
-            <select value={deckId} onChange={(e) => setDeckId(e.target.value)} className='mb-4 px-2 rounded-md h-10' style={{ width: '30vw' }} >
-              <option key='select-deck-key' value='' className='text-gray-400'>Select a deck</option>
+            <select value={deckId} onChange={(e) => setDeckId(e.target.value)} className='mb-4 px-2 rounded-md h-10 bg-black' style={{ width: '30vw' }} >
+              <option key='select-deck-key' value='' className=''>Select a deck</option>
               {decks.map((deck) => (
                 <option key={deck.deck_id} value={deck.deck_id}>{deck.name}</option>
               ))}

@@ -6,7 +6,7 @@ import { useAuth } from "./hooks";
 import { AuthProvider } from "./context/auth";
 
 import LandingPage from "./components/LandingPage"
-import HomePage from "./components/UserPage";
+import HomePage from "./components/HomePage";
 import CreateCard from "./components/CreateCard";
 import CreateDeck from "./components/CreateDeck";
 import CreateFolder from "./components/CreateFolder";
@@ -20,6 +20,8 @@ import SignUp from './components/SignUp';
 import FeaturePage from './components/FeaturesPage';
 import AboutPage from './components/AboutPage';
 import ProfilePage from './components/ProfilePage';
+import StatsPage from './components/StatsPage';
+import CommunityPage from './components/community'
 
 const queryClient = new QueryClient();
 
@@ -47,6 +49,8 @@ function AuthenticatedRoutes() {
       <Route path="/decks/:deckId" element={<DeckPage />} />
       <Route path="/login" element={<Login />} />
       <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/stats/:deckId" element={<StatsPage />} />
+      <Route path="/community" element={<CommunityPage />} />
       <Route path="*" element={<Navigate to="/error/404/Page%20Not%20Found" />} />
     </Routes>
   );
@@ -85,7 +89,8 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <BrowserRouter>
-          <div className="w-screen h-screen flex flex-col text-[1.2em] font-medium bg-[#242424] text-gray-200">
+          {/* bg-[#242424] */}
+          <div className="w-screen h-screen flex flex-col text-[1.2em] font-base text-eWhite bg-eBase">
             <Header />
             <Main />
           </div>

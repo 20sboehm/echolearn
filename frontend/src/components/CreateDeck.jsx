@@ -14,6 +14,7 @@ function CreateDeck() {
   const [folderId, setFolderId] = useState('');
   const [deckName, setDeckName] = useState('');
   const [deckDescription, setDeckDescription] = useState('');
+  const [refetchTrigger, setRefetchTrigger] = useState(false);
 
   function popupDetails(popupMessage, popupColor) {
     setShowPopup(true);
@@ -57,6 +58,7 @@ function CreateDeck() {
     formSubmissionMutation.mutate({ folder_id: folderId, owner_id: 1, name: deckName, description: deckDescription }, {
       onSuccess: () => {
         popupDetails('Deck created successfully!', 'green')
+        setRefetchTrigger(prev => !prev);
       },
       onError: () => {
         popupDetails('Something went wrong...', 'red')
@@ -67,11 +69,11 @@ function CreateDeck() {
   if (folders) {
     return (
       <>
-        <SideBar />
+        <SideBar refetchTrigger={refetchTrigger} />
         <h1 className='text-4xl mb-10 mt-10 font-medium'>New Deck</h1>
         <form onSubmit={handleSubmit} className='flex flex-col items-center'>
-          <select value={folderId} onChange={(e) => setFolderId(e.target.value)} className='mb-4 px-2 rounded-md h-10' style={{ width: '30vw' }} >
-            <option key='select-folder-key' value='' className='text-gray-400'>Select a folder</option>
+          <select value={folderId} onChange={(e) => setFolderId(e.target.value)} className='mb-4 px-2 rounded-md h-10 bg-black' style={{ width: '30vw' }} >
+            <option key='select-folder-key' value='' className='bg'>Select a folder</option>
             {folders.map((folder) => (
               <option key={folder.folder_id} value={folder.folder_id}>{folder.name}</option>
             ))}
@@ -81,11 +83,11 @@ function CreateDeck() {
             value={deckName}
             onChange={(e) => { setDeckName(e.target.value) }}
             placeholder='Deck name'
-            className='mb-4 p-2 rounded-md'
+            className='mb-4 p-2 rounded-md bg-[#151515]'
             style={{ width: '30vw' }}
           />
           <textarea value={deckDescription} onChange={(e) => setDeckDescription(e.target.value)}
-            placeholder='Deck description' className='mb-4 p-2 rounded-md h-40' style={{ width: '30vw' }} />
+            placeholder='Deck description' className='mb-4 p-2 rounded-md h-40 bg-[#151515]' style={{ width: '30vw' }} />
           <button type='submit' className="rounded-lg border border-transparent px-4 py-2 
           font-semibold bg-[#111111] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>

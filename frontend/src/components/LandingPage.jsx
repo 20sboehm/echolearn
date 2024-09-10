@@ -9,6 +9,7 @@ function LandingBody() {
   return (
     <>
       <div className="flex justify-between w-full">
+        {/* bg-gradient-to-r from-[#9fcece] via-[#7fd8d8] to-[#42dcdc]    82deff */}
         <div className="h-[50vh] w-2/3 bg-customBlue text-black p-8 flex flex-col">
           <h3 className="ml-28 text-4xl font-bold mb-4 mt-8">Learn Efficiently, Remember Forever</h3>
           <p className="ml-28 text-2xl">Unlock your learning potential with EchoLearn. Our smart flashcard system makes remembering information easy and fun.</p>

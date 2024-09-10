@@ -19,11 +19,11 @@ def initial_data():
     spanish_folder = Folder.objects.create(name="Spanish", owner=admin)
 
     # Create decks
-    us_pres_deck = Deck.objects.create(folder=history_folder, owner=admin, name="US Presidents", description="A deck for United States presidents.")
-    addition_deck = Deck.objects.create(folder=math_folder, owner=admin, name="Addition", description="A deck for addition practice.")
-    subtraction_deck = Deck.objects.create(folder=math_folder, owner=admin, name="Subtraction", description="A deck for subtraction practice.")
-    phones = Deck.objects.create(folder=misc_folder, owner=admin, name="Phones", description="A deck for remembering people's phone numbers.")
-    spanish_nouns = Deck.objects.create(folder=spanish_folder, owner=admin, name="Common Spanish Nouns", description="A deck for Spanish nouns.")
+    us_pres_deck = Deck.objects.create(folder=history_folder, owner=admin, name="US Presidents", description="A deck for United States presidents.",isPublic = True)
+    addition_deck = Deck.objects.create(folder=math_folder, owner=admin, name="Addition", description="A deck for addition practice.",isPublic = True)
+    subtraction_deck = Deck.objects.create(folder=math_folder, owner=admin, name="Subtraction", description="A deck for subtraction practice.",isPublic = True)
+    phones = Deck.objects.create(folder=misc_folder, owner=admin, name="Phones", description="A deck for remembering people's phone numbers.",isPublic = True)
+    spanish_nouns = Deck.objects.create(folder=spanish_folder, owner=admin, name="Common Spanish Nouns", description="A deck for Spanish nouns.",isPublic = True)
 
     # Create cards
     Card.objects.create(deck=us_pres_deck, question="1st president", answer="George Washington")
