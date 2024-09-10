@@ -167,16 +167,16 @@ function ShowAnswerButtons({ card, showAnswer, setShowAnswer, updateReviewedCard
       {
         showAnswer && (
           <div className="flex justify-center mt-28 flex-wrap">
-            <button className="rounded-md w-24 px-4 mr-4 text-black bg-red-600 hover:bg-red-700" onClick={() => updateReviewedCard(0, getNextReviewTime(1), card, setFlip)}>Again <br />
+            <button className="rounded-md w-24 px-4 mr-4 text-black bg-red-600 hover:bg-red-700" onClick={() => updateReviewedCard(0, getNextReviewTime(1), card, setFlip, false)}>Again <br />
               {formatTimeDifference(now.getTime(), getNextReviewTime(1))}</button>
 
-            <button className="rounded-md w-24 px-4 mr-4 text-black bg-yellow-400 hover:bg-yellow-500" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(2), card, setFlip)}>Hard <br />
+            <button className="rounded-md w-24 px-4 mr-4 text-black bg-yellow-400 hover:bg-yellow-500" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(2), card, setFlip, false)}>Hard <br />
               {formatTimeDifference(now.getTime(), getNextReviewTime(2))}</button>
 
-            <button className="rounded-md w-24 px-4 mr-4 text-black bg-green-700 hover:bg-green-800" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(3), card, setFlip)}>Good <br />
+            <button className="rounded-md w-24 px-4 mr-4 text-black bg-green-700 hover:bg-green-800" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(3), card, setFlip, true)}>Good <br />
               {formatTimeDifference(now.getTime(), getNextReviewTime(3))}</button>
 
-            <button className="rounded-md w-24 px-4 text-black bg-green-400 hover:bg-green-500" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(4), card, setFlip)}>Easy <br />
+            <button className="rounded-md w-24 px-4 text-black bg-green-400 hover:bg-green-500" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(4), card, setFlip, true)}>Easy <br />
               {formatTimeDifference(now.getTime(), getNextReviewTime(4))}</button>
           </div>
         )
@@ -257,18 +257,26 @@ function ReviewPage() {
       api._get(`/api/reviews/${deckId}`).then((response) => response.json()),
   });
 
-  const updateReviewedCard = (newBucket, nextReviewTime, card, setFlip) => {
+  const updateReviewedCard = (newBucket, nextReviewTime, card, setFlip, wasCorrect) => {
     setFlip(false);
 
+    const today = new Date();
     const formatTime = (time) => {
       return time.toISOString();
     }
+    const updatedCardData = {
+      bucket: newBucket,
+      next_review: formatTime(nextReviewTime),
+      last_reviewed: formatTime(today)
+    };
 
-    const today = new Date();
+    if (wasCorrect) {
+      updatedCardData.correct_count = (card.correct_count || 0) + 1;
+    } else {
+      updatedCardData.incorrect_count = (card.incorrect_count || 0) + 1;
+    }
     api._patch(
-      `/api/cards/${card.card_id}`,
-      { bucket: newBucket, next_review: formatTime(nextReviewTime), last_reviewed: formatTime(today) }
-    )
+      `/api/cards/${card.card_id}`, updatedCardData)
       .then(response => {
         if (response.ok) {
           if (cardIndex < reviews.cards.length - 1) {

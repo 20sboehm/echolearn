@@ -29,7 +29,7 @@ const groupUpcomingCards = (cards) => {
   return upcomingDays;
 };
 const upcomingChartOptions = {
-  responsive: true,
+  maintainAspectRatio: false,
   plugins: {
     legend: { display: true },
     title: { display: true, text: 'Upcoming Reviews' },
@@ -57,14 +57,14 @@ const groupPreviousReviews = (cards) => {
     const daysSinceLastReview = previousReviewFromToday(card.last_reviewed);
 
     if (daysSinceLastReview >= 0 && daysSinceLastReview <= 30) {
-      previousDays[daysSinceLastReview] += 1; // Increment the count for that day
+      if(card.is_new == false)
+        previousDays[daysSinceLastReview] += 1; // Increment the count for that day
     }
   });
-
   return previousDays;
 };
 const previousChartOptions = {
-  responsive: true,
+  maintainAspectRatio: false,
   plugins: {
     legend: { display: true },
     title: { display: true, text: 'Previous Reviews' },
@@ -78,12 +78,47 @@ const previousChartOptions = {
   },
 };
 
+// For the directional bar chart graph 
+const totalChartOptions = {
+  indexAxis: 'y',
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { display: true },
+    title: { display: true, text: 'Correct vs. Incorrect' },
+    tooltip: {
+      callbacks: {
+        label: function (context) {
+          let correctValue = Math.abs(context.chart.data.datasets[0].data[0]);
+          let incorrectValue = Math.abs(context.chart.data.datasets[1].data[0]);
+
+          let total = correctValue + incorrectValue;
+          let value = Math.abs(context.raw);
+          let percentage = ((value / total) * 100).toFixed(2);
+
+          return `${context.dataset.label}: ${percentage}%`;
+        },
+      },
+    },
+  },
+  scales: {
+    x: { beginAtZero: true,
+      ticks: {
+        callback: function(value) {
+          return Math.abs(value) + "%";
+        },
+      },
+    },
+    y: { stacked: true },
+  },
+};
+
 function StatsPage() {
   const api = useApi();
 
   const { deckId } = useParams();
   const [upcomingReviewData, setupcomingReviewData] = useState({});
   const [previousReviewData, setPreviousReviewData] = useState({});
+  const [totalCounts, setTotalCounts] = useState({ correct: 0, incorrect: 0 });
 
   const { data: deckCards, isLoading, error } = useQuery({
     queryFn: () =>
@@ -97,6 +132,15 @@ function StatsPage() {
 
       const previousReviewGroupedData = groupPreviousReviews(deckCards.cards);
       setPreviousReviewData(previousReviewGroupedData);
+
+      const totalCorrect = deckCards.cards.reduce((sum, card) => sum + card.correct_count, 0);
+      const totalIncorrect = deckCards.cards.reduce((sum, card) => sum + card.incorrect_count, 0);
+
+      setTotalCounts({
+        correct: totalCorrect,
+        incorrect: totalIncorrect,
+      });
+
     }
   }, [deckCards]);
 
@@ -126,6 +170,32 @@ function StatsPage() {
     ],
   };
 
+  const total = totalCounts.correct + totalCounts.incorrect;
+  const correctPercentage = (totalCounts.correct / total) * 100;
+  const incorrectPercentage = (totalCounts.incorrect / total) * 100;
+
+  const totalChartData = {
+    labels: ['Total'],
+    datasets: [
+      {
+        label: 'Correct',
+        data: [-correctPercentage],
+        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1,
+        barThickness: 30,
+      },
+      {
+        label: 'Incorrect',
+        data: [incorrectPercentage],
+        backgroundColor: 'rgba(255, 99, 132, 0.6)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 1,
+        barThickness: 30,
+      },
+    ],
+  };
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -144,12 +214,21 @@ function StatsPage() {
         </div>
       </div>
 
-      <div className="flex">
-        <div style={{ background: 'white', width: '35vw', height: '35vh', marginRight: '2rem' }}>
-          <Bar data={chartData} options={upcomingChartOptions} style={{ width: '100%', height: '100%' }} />
+      <div className="flex flex-col">
+        {/* The two bar graph is the upcoming and previous review graph */}
+        <div className="flex justify-between">
+          <div className="rounded-lg" style={{ background: 'white', width: '25vw', height: '30vh' }}>
+            <Bar data={chartData} options={upcomingChartOptions} style={{ width: '100%', height: '100%' }} />
+          </div>
+          <div className="rounded-lg" style={{ background: 'white', width: '25vw', height: '30vh' }}>
+            <Bar data={chartDataPrevious} options={previousChartOptions} style={{ width: '100%', height: '100%' }} />
+          </div>
         </div>
-        <div style={{ background: 'white', width: '35vw', height: '35vh' }}>
-          <Bar data={chartDataPrevious} options={previousChartOptions} style={{ width: '100%', height: '100%' }} />
+        {/* The bar graph is the correct vs incorrect percentage graph */}
+        <div className="flex justify-center mt-4">
+          <div style={{ background: 'white', width: '80vw', height: '15vh' }}>
+              <Bar data={totalChartData} options={totalChartOptions} style={{ width: '100%', height: '100%' }} />
+          </div>
         </div>
       </div>
     </div>
