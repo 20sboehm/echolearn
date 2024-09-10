@@ -34,7 +34,7 @@ const upcomingChartOptions = {
   plugins: {
     legend: { display: true },
     title: { display: true, text: 'Upcoming Reviews', font: { size: 16 } },
-    datalabels: {display: false},
+    datalabels: { display: false },
   },
   scales: {
     x: { title: { display: true }, ticks: { minRotation: 0, maxRotation: 0 } },
@@ -59,7 +59,7 @@ const groupPreviousReviews = (cards) => {
     const daysSinceLastReview = previousReviewFromToday(card.last_reviewed);
 
     if (daysSinceLastReview >= 0 && daysSinceLastReview <= 30) {
-      if(card.is_new == false)
+      if (card.is_new == false)
         previousDays[daysSinceLastReview] += 1; // Increment the count for that day
     }
   });
@@ -70,7 +70,7 @@ const previousChartOptions = {
   plugins: {
     legend: { display: true },
     title: { display: true, text: 'Previous Reviews', font: { size: 16 } },
-    datalabels: {display: false},
+    datalabels: { display: false },
   },
   scales: {
     x: { title: { display: true }, ticks: { minRotation: 0, maxRotation: 0 } },
@@ -89,7 +89,8 @@ const totalChartOptions = {
     legend: { display: true },
     title: { display: true, text: 'Correct vs. Incorrect Percentage', font: { size: 18 } },
     tooltip: { enabled: false },
-    datalabels: { display: true, align: 'center', color: '#fff', // White
+    datalabels: {
+      display: true, align: 'center', color: '#fff', // White
       formatter: (value, context) => {
         // Calculate percentage label
         const total = context.chart.data.datasets[0].data[0] + context.chart.data.datasets[1].data[0];
@@ -100,9 +101,10 @@ const totalChartOptions = {
     },
   },
   scales: {
-    x: { beginAtZero: true, stacked: true, display: false,
+    x: {
+      beginAtZero: true, stacked: true, display: false,
       ticks: {
-        callback: function(value) {
+        callback: function (value) {
           return value + "%";
         },
       },
@@ -154,7 +156,7 @@ function StatsPage() {
   const [selectedBucket, setSelectedBucket] = useState('');
 
   const { data: deckCards, isLoading, error } = useQuery({
-    queryKey:['cards', deckId],
+    queryKey: ['cards', deckId],
     queryFn: () =>
       api._get(`/api/decks/${deckId}/cards`).then((response) => response.json()),
   });
@@ -216,7 +218,7 @@ function StatsPage() {
     datasets: [
       {
         label: 'Correct',
-        data: [correctPercentage],  // Positive value
+        data: [correctPercentage],
         backgroundColor: 'rgba(75, 192, 192, 0.6)',
         borderColor: 'rgba(75, 192, 192, 1)',
         borderWidth: 1,
@@ -224,7 +226,7 @@ function StatsPage() {
       },
       {
         label: 'Incorrect',
-        data: [incorrectPercentage],  // Positive value
+        data: [incorrectPercentage],
         backgroundColor: 'rgba(255, 99, 132, 0.6)',
         borderColor: 'rgba(255, 99, 132, 1)',
         borderWidth: 1,
@@ -239,41 +241,41 @@ function StatsPage() {
 
   return (
     <>
-    <div>
-      <div className="flex justify-between items-center mt-3 mb-3">
-        <Link to={`/decks/${deckId}`} className="rounded-lg border border-transparent px-12 py-2 text-center
+      <div>
+        <div className="flex justify-between items-center mt-3 mb-3">
+          <Link to={`/decks/${deckId}`} className="rounded-lg border border-transparent px-12 py-2 text-center
               font-semibold bg-white text-black hover:border-black active:scale-[0.97] active:bg-[#333] 
               active:border-[#555]">back</Link>
-        <div className="absolute left-1/2 transform -translate-x-1/2">
-          <h1 className="font-bold text-center text-2xl">
-            {deckCards.deck_name}
-          </h1>
+          <div className="absolute left-1/2 transform -translate-x-1/2">
+            <h1 className="font-bold text-center text-2xl">
+              {deckCards.deck_name}
+            </h1>
+          </div>
         </div>
-      </div>
 
-      <div className="flex flex-col">
-        {/* The two bar graph is the upcoming and previous review graph */}
-        <div className="flex justify-between">
-          <div className="rounded-lg bg-white w-[25vw] h-[30vh]">
-            <Bar data={chartData} options={upcomingChartOptions} />
+        <div className="flex flex-col">
+          {/* The two bar graph is the upcoming and previous review graph */}
+          <div className="flex justify-between">
+            <div className="rounded-lg bg-white w-[25vw] h-[30vh]">
+              <Bar data={chartData} options={upcomingChartOptions} />
+            </div>
+            <div className="rounded-lg bg-white w-[25vw] h-[30vh]">
+              <Bar data={chartDataPrevious} options={previousChartOptions} />
+            </div>
           </div>
-          <div className="rounded-lg bg-white w-[25vw] h-[30vh]">
-            <Bar data={chartDataPrevious} options={previousChartOptions}/>
-          </div>
-        </div>
-        {/* The bar graph is the correct vs incorrect percentage graph */}
-        <div className="flex flex-col justify-center mt-4">
-          <div className="bg-white w-[80vw] h-[15vh]">
+          {/* The bar graph is the correct vs incorrect percentage graph */}
+          <div className="flex flex-col justify-center mt-4">
+            <div className="bg-white w-[80vw] h-[15vh]">
               <Bar data={totalChartData} options={totalChartOptions} />
-          </div>
+            </div>
 
-          <div className="mt-4 mb-4">
+            {/* The following two is the individual card filter and data */}
+            <div className="mt-4 mb-4">
               <BucketFilter
                 selectedBucket={selectedBucket}
                 onChange={setSelectedBucket}
               />
             </div>
-
             <div className="overflow-x-auto w-[80vw]">
               <div className="flex space-x-4 p-4">
                 {deckCards.cards.filter(card => !selectedBucket || card.bucket == selectedBucket).map((card) => (
@@ -281,9 +283,9 @@ function StatsPage() {
                 ))}
               </div>
             </div>
+          </div>
         </div>
       </div>
-    </div>
     </>
   )
 }
