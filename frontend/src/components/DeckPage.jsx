@@ -27,13 +27,14 @@ function DeckPage() {
 
 
 // Fetch reviews info
-const { data: deckCards, isLoading, error, refetch: refetchDeckCards } = useQuery(
+const { data: deckCards, isLoading, error, refetch } = useQuery(
   ['deckCards', deckId], // Unique key based on deckId
   () => api._get(`/api/decks/${deckId}/cards`).then((response) => response.json()),
   {
     enabled: !!deckId // Only run the query if deckId is truthy
   }
 );
+
 
   useEffect(() => {
     console.log("Deck Cards:", deckCards);
@@ -214,13 +215,9 @@ const handleFolderSelection = async (folderId) => {
             {deckCards.isPublic ? "Public" : "Private"}
           </button>
 
-          <button className={`bg-blue-500  rounded-lg border border-transparent px-2 py-1 
-              font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
-            style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={handleGenerateLink}>Generate Share Link</button>
-
           {/* <button className={`bg-blue-500  rounded-lg border border-transparent px-2 py-1 
               font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
-            style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={handletakeacopy}>copy</button> */}
+            style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={handleGenerateLink}>Generate Share Link</button> */}
          
           <div>
             <button onClick={handleTakeACopy}>Copy Deck</button>
