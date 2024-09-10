@@ -19,6 +19,7 @@ import Login from './components/Login';
 import SignUp from './components/SignUp';
 import FeaturePage from './components/FeaturesPage';
 import AboutPage from './components/AboutPage';
+import ProfilePage from './components/ProfilePage';
 import StatsPage from './components/StatsPage';
 import CommunityPage from './components/community'
 
@@ -47,6 +48,7 @@ function AuthenticatedRoutes() {
       <Route path="/edit/:cardId" element={<EditPage />} />
       <Route path="/decks/:deckId" element={<DeckPage />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/profile" element={<ProfilePage />} />
       <Route path="/stats/:deckId" element={<StatsPage />} />
       <Route path="/community" element={<CommunityPage />} />
       <Route path="*" element={<Navigate to="/error/404/Page%20Not%20Found" />} />
