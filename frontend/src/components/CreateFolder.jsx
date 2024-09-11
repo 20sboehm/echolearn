@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from 'react-query';
 import { useState } from 'react';
 import SideBar from './SideBar'
-import { useApi } from "../api";
+import { useApi } from "../hooks";
 
 function CreateFolder() {
   const api = useApi();
@@ -12,7 +12,8 @@ function CreateFolder() {
   const [popupOpacity, setPopupOpacity] = useState('opacity-100');
 
   const [folderName, setFolderName] = useState('');
-
+  const [refetchTrigger, setRefetchTrigger] = useState(false);
+  
   function popupDetails(popupMessage, popupColor) {
     setShowPopup(true);
     setPopupMessage(popupMessage)
@@ -34,7 +35,7 @@ function CreateFolder() {
     // });
 
     if (!response.ok) {
-      throw new Error(`Network response was not ok: ${reponse.status_code}`);
+      throw new Error(`Network response was not ok: ${response.status_code}`);
     }
 
     return response.json();
@@ -45,6 +46,7 @@ function CreateFolder() {
     formSubmissionMutation.mutate({ name: folderName, owner_id: 1 }, {
       onSuccess: () => {
         popupDetails('Folder created successfully!', 'green')
+        setRefetchTrigger(prev => !prev);
       },
       onError: () => {
         popupDetails('Something went wrong...', 'red')
@@ -54,7 +56,7 @@ function CreateFolder() {
 
   return (
     <>
-      <SideBar />
+      <SideBar refetchTrigger={refetchTrigger} />
       <h1 className='text-4xl mb-10 mt-10 font-medium'>New Folder</h1>
       <form onSubmit={handleSubmit} className='flex flex-col items-center'>
         <input
@@ -62,11 +64,11 @@ function CreateFolder() {
           value={folderName}
           onChange={(e) => { setFolderName(e.target.value) }}
           placeholder='Folder Name'
-          className='mb-4 p-2 rounded-md'
+          className='mb-4 p-2 rounded-md bg-[#151515]'
           style={{ width: '30vw' }}
         />
         <button type='submit' className="rounded-lg border border-transparent px-4 py-2 
-          font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+          font-semibold bg-black hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>
           Submit
         </button>
