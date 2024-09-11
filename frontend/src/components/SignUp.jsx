@@ -49,13 +49,19 @@ function SignUp() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
-    console.log(formData);
-    setUsername(formData.get("username"));
-    setEmail(formData.get("email"));
-    setPassword(formData.get("password"));
+    // const formData = new FormData(e.target);
+    // console.log(formData);
+    // setUsername(formData.get("username"));
+    // setEmail(formData.get("email"));
+    // setPassword(formData.get("password"));
 
-    formSubmissionMutation.mutate({ username, email, password }, {
+    const formData = {
+      username,
+      email,
+      password
+    }
+
+    formSubmissionMutation.mutate(formData, {
       onSuccess: () => {
         popupDetails('Registration successful!', 'green');
         setTimeout(() => {
@@ -81,17 +87,16 @@ function SignUp() {
   return (
     <>
       <form onSubmit={handleSubmit} className='flex flex-col items-start mt-20 p-10 bg-eBlack'>
-        {/* <form onSubmit={handleSubmit} className='flex flex-col items-start mt-10 p-10 rounded-md bg-gradient-to-r from-[#9fcece] via-[#7fd8d8] to-[#42dcdc]'> */}
         <h1 className=' mb-5 text-3xl font-bold self-center'>Sign up</h1>
 
         <FormInputLabel htmlFor="email">Email</FormInputLabel>
-        <FormInputBox idAndName="email" value={email} onChange={e => setEmail(e.target.value)} autoFocus={true}></FormInputBox>
+        <FormInputBox idAndName="email" value={email} onChange={e => setEmail(e.target.value)} autoFocus={true} placeholder="Email"></FormInputBox>
 
         <FormInputLabel htmlFor="username">Username</FormInputLabel>
-        <FormInputBox idAndName="username" value={username} onChange={e => setUsername(e.target.value)}></FormInputBox>
+        <FormInputBox idAndName="username" value={username} onChange={e => setUsername(e.target.value)} placeholder="Username"></FormInputBox>
 
         <FormInputLabel htmlFor="password">Password</FormInputLabel>
-        <FormInputBox idAndName="password" value={password} onChange={e => setPassword(e.target.value)}></FormInputBox>
+        <FormInputBox idAndName="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password"></FormInputBox>
 
         <FormInputButton isPrimaryButton={true}>Register</FormInputButton>
         <div className='flex flex-row justify-center items-center mt-4 w-full'>

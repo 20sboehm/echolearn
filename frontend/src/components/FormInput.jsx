@@ -4,8 +4,7 @@ export function FormInputBox({ type = "text", idAndName, value, onChange, autoFo
   return (
     <input
       autoFocus={autoFocus}
-      className={`bg-transparent text-eWhite mb-4 text-lg px-2 py-2 border border-eBase placeholder-eGray rounded-lg w-[15vw] min-w-[16rem]
-        `}
+      className={`bg-transparent text-eWhite mb-4 text-lg px-2 py-2 border border-eBase placeholder-eGray rounded-lg w-[15vw] min-w-[16rem]`}
       value={value}
       id={idAndName}
       type={type}

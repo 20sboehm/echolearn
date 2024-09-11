@@ -28,7 +28,7 @@ const AuthProvider = ({ children }) => {
     const _login = (tokenData) => {
         console.log("Logging in.");
         setToken(tokenData.access);
-        setRefreshToken(tokenData.refreshToken);
+        setRefreshToken(tokenData.refresh);
         storeTokens(tokenData.access, tokenData.refresh);
     };
 

@@ -99,7 +99,7 @@ function HelpPage() {
   };
 
   return (
-    <div className="flex w-full h-full">
+    <div className="flex w-screen h-[calc(100vh-4rem)]">
 
       <div className="w-1/3 p-4 overflow-y-auto">
         <input
