@@ -1,5 +1,7 @@
 from django.contrib import admin
-from flashcards.models import Deck, Card, Folder, SharedDeck
+from django.contrib.auth.admin import UserAdmin
+from flashcards.models import Deck, Card, Folder, SharedDeck, CustomUser
+from flashcards.forms import CustomUserCreationForm, CustomUserChangeForm
 
 class CardAdmin(admin.ModelAdmin):
     list_display = ('card_id', 'deck', 'question', 'answer', 'bucket', 'last_reviewed', 'next_review', 'created_at', 'last_edited')
@@ -13,7 +15,14 @@ class FolderAdmin(admin.ModelAdmin):
 class SharedDeckAdmin(admin.ModelAdmin):
     list_display = ('share_id', 'deck', 'shared_with')
 
+class CustomUserAdmin(UserAdmin):
+    add_form = CustomUserCreationForm
+    form = CustomUserChangeForm
+    model = CustomUser
+    list_display = ["email", "username", "age", "country"]
+
 admin.site.register(Card, CardAdmin)
 admin.site.register(Deck, DeckAdmin)
 admin.site.register(Folder, FolderAdmin)
 admin.site.register(SharedDeck)
+admin.site.register(CustomUser, CustomUserAdmin)

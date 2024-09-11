@@ -35,6 +35,12 @@ Run these commands:
 
 ## --- Backend ---
 
+Add dependencies to requirements.txt so that other people can easily download them
+`pip freeze > requirements.txt`
+
+Install dependencies from requirements.txt
+`pip install -r requirements.txt`
+
 Generate migration files based on models:
 `python manage.py makemigrations`
 
@@ -50,32 +56,23 @@ Install cors headers:
 Install django ninja:
 `pip install django-ninja`
 
+If you run into an error like "django.db.utils.OperationalError: no such table: ...", run this command:
+`python manage.py migrate --run-syncdb`
+
 Reset the database:
 ```
-// generates migration files based on changes you've made to your models. It does not actually affect the database; it just prepares the instructions needed to update the database schema
 python manage.py makemigrations
-
-// deletes the SQLite database file - all data will be removed
 rm db.sqlite3
-
-// applies the migrations to the database - since we've deleted db.sqlite3, it will create a new database file from scratch based off current migration files
 python manage.py migrate
-
-// populate database with data from custom script
 python makedata.py
 ```
 
-
-// ONLY RUN THIS COMMAND IF YOU HAVE CHANGED SOMETHING IN THE DATABASE - otherwise it is not necessary
 python manage.py makemigrations
-
 rm db.sqlite3
 python manage.py migrate
 python makedata.py
 
-// Run just these 3 commands to reset your data ^
-
-
+// Run just the bottom 3 commands to reset your data ^
 
 
 ^^^ IF THIS GIVES YOU THE ERROR ALONG THE LINES OF: "It is impossible to add the field 'created_at' with 'auto_now_add=True' to card without providing a default. This is because the database needs something to populate existing rows."
@@ -86,18 +83,18 @@ python makedata.py
 
 Reset the database (use as a backup if the above does not work - FIRST MAKE SURE YOU AREN'T GETTING THE ERROR DIRECTLY ABOVE THIS ^^^):
 ```
-// generate migration files
 python manage.py makemigrations
-
-// applies migration files to database
 python manage.py migrate
-
-// remove database file
 rm db.sqlite3
-
-// not sure how this works? migrate should do everything that this does without --run-syncdb. maybe just try migrate by itself first.
 python manage.py migrate --run-syncdb
-
-// run custom script to add data
 python makedata.py
+```
+
+On EC2
+```
+python3 manage.py makemigrations
+python3 manage.py migrate
+rm db.sqlite3
+python3 manage.py migrate --run-syncdb
+python3 makedata.py
 ```

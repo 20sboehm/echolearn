@@ -18,7 +18,6 @@ from django.contrib import admin
 from django.urls import path
 from django.shortcuts import redirect
 from backend.api import api
-# from flashcards.routers import cards
 def redirect_to_docs(request):
     return redirect('/api/docs')
 
@@ -26,6 +25,4 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', api.urls),
     path("", redirect_to_docs),
-    # path('api/item/', cards.get_post, name='item-create'),
-    # path('api/csrf/', cards.get_csrf, name='get_csrf'),
 ]

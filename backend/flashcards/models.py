@@ -1,12 +1,25 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 from django.db import models
+
+"""
+Models define the structure of your application's data. Each model corresponds to a table in the database.
+Each attribute of the model corresponds to a column in that table.
+"""
+
+class CustomUser(AbstractUser):
+    age = models.IntegerField(null=True, blank=True)
+    country = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return self.username
 
 class Folder(models.Model):
     folder_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE) 
+    owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE) 
     created_at= models.DateTimeField(auto_now_add=True)
     last_edited = models.DateTimeField(auto_now_add=True)
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
 
     def __str__(self):
         return f"{self.name} (id={self.folder_id})"
@@ -14,12 +27,13 @@ class Folder(models.Model):
 class Deck(models.Model):
     deck_id = models.AutoField(primary_key=True)
     folder = models.ForeignKey(Folder, on_delete=models.PROTECT) # Cannot delete folder with decks in it
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True) # blank=True allows this to be an empty string
     statistics = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     last_edited = models.DateTimeField(auto_now_add=True)
+    isPublic = models.BooleanField(default=False)
     
     def __str__(self):
         return f"{self.name} (id={self.deck_id})"
@@ -41,6 +55,8 @@ class Card(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     last_edited = models.DateTimeField(auto_now_add=True)
     is_new = models.BooleanField(default=True)
+    correct_count = models.IntegerField(default=0)
+    incorrect_count = models.IntegerField(default=0)
 
     def __str__(self):
         return f"{self.question} (id={self.card_id})"
@@ -48,7 +64,7 @@ class Card(models.Model):
 class SharedDeck(models.Model):
     share_id = models.AutoField(primary_key=True)
     deck = models.ForeignKey(Deck, on_delete=models.CASCADE)
-    shared_with = models.ForeignKey(User, on_delete=models.CASCADE)
+    shared_with = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 
     class Meta:
         unique_together = ("deck_id", "shared_with")
