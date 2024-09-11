@@ -50,7 +50,7 @@ const Folder = ({ folder, onRightClick }) => {
         <p className="overflow-x-auto">{folder.name}</p>
       </div>
       {openFolder && (
-        <div className="ml-2 pl-2 border-l border-eGray">
+        <div className="ml-2 border-l border-eGray">
           {folder.decks.map((deck, index) => (
             <div key={index} className="text-eWhite flex items-center select-none text-base ml-2 mt-2 hover:text-eBlue" onContextMenu={(e) => onRightClick(e, deck)}>
               {/* <Link to={`/decks/${deck.deck_id}`} style={{ display: "flex", alignItems: "center" }}> */}
@@ -71,7 +71,7 @@ const Folder = ({ folder, onRightClick }) => {
 };
 
 
-const Sidebar =  ({ refetchTrigger }) => {
+const Sidebar = ({ refetchTrigger }) => {
   const api = useApi();
   const [sidebarData, setSidebarData] = useState(null);
   const [contextMenu, setContextMenu] = useState(null); // For right-click menu
@@ -200,15 +200,20 @@ const Sidebar =  ({ refetchTrigger }) => {
         resizeHandles={['e']}
         minConstraints={[50, Infinity]} // Minimum width
         maxConstraints={[600, Infinity]} // Maximum width
-        className="bg-eDark h-[calc(100%-4rem)] border-r border-eDarkGray"
+        className="bg-eDark h-[calc(100%-4rem)] border-r border-eDarkGray p-2"
         style={{ overflow: 'hidden', position: 'absolute', left: '0', zIndex: '1' }}
       >
         <div className="h-[92vh] overflow-y-auto">
-          <h2 className='font-bold text-2xl text-white'>Sidebar:</h2>
+          <h2 className='font-bold text-1xl text-eWhite border-b border-eGray'>Deck Library</h2>
           {sidebarData && sidebarData.folders ? (
-            sidebarData.folders.map((folder, index) => (
-              <Folder key={index} folder={folder} onRightClick={handleRightClick} />
-            ))
+            sidebarData.folders.length > 0 ? (
+              sidebarData.folders.map((folder, index) => (
+                <Folder key={index} folder={folder} onRightClick={handleRightClick} />
+              ))
+            ) : (
+              <p>You have no decks!</p>
+            )
+
           ) : (
             <div className='text-black'>Loading...</div>
           )}

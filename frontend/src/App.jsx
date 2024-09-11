@@ -9,7 +9,6 @@ import LandingPage from "./components/LandingPage"
 import HomePage from "./components/HomePage";
 import CreateCard from "./components/CreateCard";
 import CreateDeck from "./components/CreateDeck";
-import CreateFolder from "./components/CreateFolder";
 import ReviewPage from "./components/ReviewPage";
 import HelpPage from "./components/HelpPage";
 import DeckPage from './components/DeckPage';
@@ -25,13 +24,11 @@ import CommunityPage from './components/community'
 
 const queryClient = new QueryClient();
 
-function ErrorPage() {
-  const { statusCode, errorMessage } = useParams();
-
+function ErrorPage({ statusCode, errorMessage }) {
   return (
     <>
-      <h1>{statusCode} Error</h1>
-      <p>{errorMessage}</p>
+      <h1 className='font-bold text-[4em]'>{statusCode}</h1>
+      <p className='font-bold text-[2em]'>{errorMessage}</p>
     </>
   );
 }
@@ -42,16 +39,15 @@ function AuthenticatedRoutes() {
       <Route path="/" element={<HomePage />} />
       <Route path="/cards" element={<CreateCard />} />
       <Route path="/decks" element={<CreateDeck />} />
-      <Route path="/folders" element={<CreateFolder />} />
       <Route path="/review/:deckId" element={<ReviewPage />} />
       <Route path="/help" element={<HelpPage />} />
       <Route path="/edit/:cardId" element={<EditPage />} />
       <Route path="/decks/:deckId" element={<DeckPage />} />
-      <Route path="/login" element={<Login />} />
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/stats/:deckId" element={<StatsPage />} />
       <Route path="/community" element={<CommunityPage />} />
-      <Route path="*" element={<Navigate to="/error/404/Page%20Not%20Found" />} />
+      {/* <Route path="*" element={<Navigate to="/error/404/Page%20Not%20Found" />} /> */}
+      <Route path="*" element={<ErrorPage statusCode="404" errorMessage="Page not found" />} />
     </Routes>
   );
 }

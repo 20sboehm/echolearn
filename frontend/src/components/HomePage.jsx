@@ -41,7 +41,7 @@ function TaskList() {
               const reviewCardsCount = cards.filter(card => card.deck_id === deck.deck_id && card.is_new === false && Date.parse(card.next_review) < Date.now()).length;
 
               if (newCardsCount === 0 && reviewCardsCount === 0) {
-                return null;
+                return <p>You have no cards to review!</p>;
               }
 
               return (
