@@ -25,7 +25,7 @@ function DeckPage() {
   const [folders, setFolders] = useState([]);
   const [newFolderName, setNewFolderName] = useState('');
   const [isModalOpen, setModalOpen] = useState(false);
-
+  const [refetchTrigger, setRefetchTrigger] = useState(false);
 
   // Fetch reviews info
   const { data: deckCards, isLoading, error, refetch } = useQuery(
@@ -168,6 +168,7 @@ function DeckPage() {
       }
       alert('Deck copied successfully!');
       setModalOpen(false); // Close the modal after action
+      setRefetchTrigger(prev => !prev);
     } catch (error) {
       console.error('Error', error);
     }
@@ -236,7 +237,7 @@ function DeckPage() {
                 <div className="modal-content">
                   <h2>Select a folder </h2>
                   {folders.map(folder => (
-                    <button className={`bg-blue-500  rounded-lg border border-transparent px-2 py-1 
+                    <button className={`bg-eBlue rounded-lg border border-transparent px-2 py-1 
                       font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
                       key={folder.folder_id} onClick={() => handleFolderSelection(folder.folder_id)}>
                       {folder.name}
@@ -257,7 +258,7 @@ function DeckPage() {
           {deckCards.cards.map(card => (
             <div className="grid grid-cols-2 gap-4 font-medium px-2" key={card.card_id}>
 
-              <div className="border rounded-sm bg-white text-eBlack mt-2 px-2 py-2" onClick={() => handleCardClick(card.card_id)}>
+              <div className="border rounded-sm bg-eWhite text-eBlack mt-2 px-2 py-2 relative" onClick={() => handleCardClick(card.card_id)}>
                 <div dangerouslySetInnerHTML={{ __html: card.question }} />
 
                 {ReactPlayer.canPlay(card.questionvideolink) && (
@@ -272,12 +273,12 @@ function DeckPage() {
                 {card.questionimagelink && <img src={card.questionimagelink} style={{ maxWidth: '250px', maxHeight: '250px' }} />}
                 {card.questionlatex && <KatexOutput latex={card.questionlatex} />}
                 <Link onClick={() => speakText(card.question)}>
-                  <img src={voiceIconImg} alt="Voice_Icon" className="  top-45 left-20 right-1 h-6 w-8" />
+                  <img src={voiceIconImg} alt="Voice_Icon" className="absolute top-1 right-1 h-[19px] w-[19px]" />
                 </Link>
               </div>
 
 
-              <div className="border rounded-sm bg-white text-black mt-2 px-2 py-4 relative" onClick={() => handleCardClick(card.card_id)}>
+              <div className="rounded-sm bg-eWhite text-eBlack mt-2 p-2 relative" onClick={() => handleCardClick(card.card_id)}>
                 <div dangerouslySetInnerHTML={{ __html: card.answer }} />
 
                 {ReactPlayer.canPlay(card.answervideolink) && (
@@ -292,10 +293,10 @@ function DeckPage() {
                 {card.answerimagelink && <img src={card.answerimagelink} style={{ maxWidth: '250px', maxHeight: '250px' }} />}
                 {card.answerlatex && <KatexOutput latex={card.answerlatex} />}
                 <Link to={`/edit/${card.card_id}`}>
-                  <img src={editIconImg} alt="Edit_Icon" className="absolute top-0 right-0 h-6 w-8" />
+                  <img src={editIconImg} alt="Edit_Icon" className="absolute top-1 right-8 h-[21px] w-[28px]" />
                 </Link>
                 <Link onClick={() => speakText(card.answer)}>
-                  <img src={voiceIconImg} alt="Voice_Icon" className="absolute top-8 right-0 h-6 w-8" />
+                  <img src={voiceIconImg} alt="Voice_Icon" className="absolute top-1 right-1 h-[19px] w-[19px]" />
                 </Link>
               </div>
             </div>
