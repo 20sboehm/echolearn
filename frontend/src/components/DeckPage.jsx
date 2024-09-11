@@ -7,6 +7,7 @@ import katex from 'katex';
 import 'katex/dist/katex.min.css';
 import { useApi } from "../hooks";
 import editIconImg from "../assets/edit-icon.png"
+import voiceIconImg from "../assets/voice.png"
 
 function DeckPage() {
   const api = useApi();
@@ -171,6 +172,13 @@ const handleFolderSelection = async (folderId) => {
       console.error('Error', error);
   }
 };
+const speakText = (question) => {
+  // setQuestion(e.card.question);
+  console.log('what')
+  const outputVoice = new SpeechSynthesisUtterance(question);
+  outputVoice.lang = "en";
+  speechSynthesis.speak(outputVoice);
+};
 
 
   return (
@@ -264,7 +272,7 @@ const handleFolderSelection = async (folderId) => {
                 {card.questionimagelink && <img src={card.questionimagelink} style={{ maxWidth: '250px', maxHeight: '250px' }} />}
                 {card.questionlatex && <KatexOutput latex={card.questionlatex} />}
                   <Link onClick={()=>speakText(card.question)}>
-                    <img src="../voice.png" alt="Voice_Icon" className="  top-45 left-20 right-1 h-6 w-8" />
+                    <img src={voiceIconImg} alt="Voice_Icon" className="  top-45 left-20 right-1 h-6 w-8" />
                   </Link>
               </div>
 
@@ -284,10 +292,10 @@ const handleFolderSelection = async (folderId) => {
                 {card.answerimagelink && <img src={card.answerimagelink} style={{ maxWidth: '250px', maxHeight: '250px' }} />}
                 {card.answerlatex && <KatexOutput latex={card.answerlatex} />}
                 <Link to={`/edit/${card.card_id}`}>
-                  <img src="../Edit_icon.png" alt="Edit_Icon" className="absolute top-0 right-0 h-6 w-8" />
+                  <img src={editIconImg} alt="Edit_Icon" className="absolute top-0 right-0 h-6 w-8" />
                 </Link>
                 <Link onClick={()=>speakText(card.answer)}>
-                  <img src="../voice.png" alt="Voice_Icon" className="absolute top-8 right-0 h-6 w-8" />
+                  <img src={voiceIconImg} alt="Voice_Icon" className="absolute top-8 right-0 h-6 w-8" />
                 </Link>
               </div>
             </div>
