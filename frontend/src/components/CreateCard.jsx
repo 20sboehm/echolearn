@@ -268,7 +268,7 @@ function CreateCard() {
         <h1 className='text-4xl mb-10 mt-10 font-medium'>New Card</h1>
         {multipleRequired == true && (
           <form onSubmit={handleSubmitMultiple} className='flex flex-col items-center'>
-            <select value={deckId} onChange={(e) => setDeckId(e.target.value)} className='mb-4 px-2 rounded-md h-10 bg-black' style={{ width: '30vw' }} >
+            <select value={deckId} onChange={(e) => setDeckId(e.target.value)} className='mb-4 px-2 rounded-md h-10 bg-eBlack border border-eGray' style={{ width: '30vw' }} >
               <option key='select-deck-key' value='' className=''>Select a deck</option>
               {decks.map((deck) => (
                 <option key={deck.deck_id} value={deck.deck_id}>{deck.name}</option>
@@ -329,17 +329,19 @@ function CreateCard() {
         )}
         {multipleRequired == false && (
           <form onSubmit={handleSubmit} className='flex flex-col items-center'>
-            <select value={deckId} onChange={(e) => setDeckId(e.target.value)} className='mb-4 px-2 rounded-md h-10 bg-black' style={{ width: '30vw' }} >
+            <select value={deckId} onChange={(e) => setDeckId(e.target.value)} className='mb-4 px-2 h-10 bg-eBlack border border-eGray' style={{ width: '30vw' }} >
               <option key='select-deck-key' value='' className=''>Select a deck</option>
               {decks.map((deck) => (
                 <option key={deck.deck_id} value={deck.deck_id}>{deck.name}</option>
               ))}
             </select>
-            <button type="button" onClick={() => handleMultipleInput('MultipleInput')} class="rounded-lg border border-transparent px-4 py-2 
+            <h1 className='text-2xl mt-6 mb-2 w-[90%] border-b p-1 text-center'>Question</h1>
+            {/* <span className='h-1 w-[90%] border-b border-eGray m-4'></span> */}
+            {/* <button type="button" onClick={() => handleMultipleInput('MultipleInput')} class="rounded-lg border border-transparent px-4 py-2 
           font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-          active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }} >Multiple input</button>
+          active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }} >Multiple input</button> */}
 
-            <div>
+            <div className='m-2'>
               <button type="button" onClick={() => handleQuestionRequirement('image')} class="rounded-lg border border-transparent px-4 py-2 
           font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>Image</button>
@@ -363,8 +365,8 @@ function CreateCard() {
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>URL</button>
             </div>
 
-            <div id="QuestionDiv" onInput={handleQuestionInput} contentEditable
-              style={{ border: '1px solid black', textAlign: 'left', minHeight: '180px', width: '500px', padding: '10px', marginTop: '10px', backgroundColor: 'grey' }}>
+            <div id="QuestionDiv" onInput={handleQuestionInput} contentEditable className='bg-eBlack rounded-md border 
+            border-eGray w-[90%] h-[15vh] text-left p-2'>
               <htmlcontent html={question}></htmlcontent>
             </div>
 
@@ -395,14 +397,20 @@ function CreateCard() {
             )}
 
             {Question_requirement === 'image' && (
-              <div>
-                <label htmlFor='QuestionimageInput'>Put your image here:</label>
-                <input name='QuestionimageInput' value={questionimagelink} type="text" onChange={(e) => setQuestion_ImageUrl(e.target.value)}></input>
-                <img src={questionimagelink} style={{ maxWidth: '250px', maxHeight: '250px' }} />
-              </div>
+              <>
+                <div className='m-2'>
+                  <label htmlFor='QuestionimageInput' className='font-bold mr-2'>Image Link:</label>
+                  <input name='QuestionimageInput' value={questionimagelink} type="text" onChange={(e) => setQuestion_ImageUrl(e.target.value)}
+                    className='bg-eBlack mb-2'></input>
+                  {/* <img src={questionimagelink} className='max-w-[250px] max-h-[250px]' /> */}
+                </div>
+                <img src={questionimagelink} className='max-w-[250px] max-h-[250px]' />
+              </>
             )}
 
-            <div>
+            <h1 className='text-2xl mt-6 mb-2 w-[90%] border-b p-1 text-center'>Answer</h1>
+
+            <div className='m-2'>
               <button type="button" onClick={() => handleAnswerRequirement('image')} class="rounded-lg border border-transparent px-4 py-2 
             font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
             active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>Image</button>
@@ -426,8 +434,8 @@ function CreateCard() {
             active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>URL</button>
             </div>
 
-            <div id="AnswerDiv" onInput={handleAnswerInput} contentEditable
-              style={{ border: '1px solid black', minHeight: '180px', width: '500px', padding: '10px', backgroundColor: 'grey' }}>
+            <div id="AnswerDiv" onInput={handleAnswerInput} contentEditable className='bg-eBlack rounded-md border 
+            border-eGray w-[90%] h-[15vh] text-left p-2'>
               <htmlcontent html={answer}></htmlcontent>
             </div>
 
@@ -466,14 +474,14 @@ function CreateCard() {
 
             <button type='submit' class="rounded-lg border border-transparent px-4 py-2 
           font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-          active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>
+          active:border-[#555] mt-4" style={{ transition: "border-color 0.10s, color 0.10s" }}>
               Submit
             </button>
 
           </form>
         )}
         {showPopup && (
-          <div className={`fixed bottom-20 left-1/2 -translate-x-1/2 transform p-4 bg-${popupColor}-500 rounded-md transition-opacity duration-1000 ${popupOpacity}`}>
+          <div className={`fixed font-bold text-eBlack bottom-5 left-1/2 -translate-x-1/2 transform p-4 bg-${popupColor}-500 rounded-md transition-opacity duration-1000 ${popupOpacity}`}>
             {popupMessage}
           </div>
         )}

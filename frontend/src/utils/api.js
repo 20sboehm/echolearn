@@ -28,14 +28,12 @@ const api = () => {
 
     const getNewToken = async () => {
         console.log("Access token is expired. Retrieving new access token.");
-        // const navigate = useNavigate();
         const response = await fetch(`${baseUrl}/api/token/refresh`, { method: "POST", headers, body: JSON.stringify({ refresh: refreshToken }) });
 
         // If refresh token expired, log user out and redirect them to login page
         if (!response.ok) {
             console.log("'Refresh' token is invalid or expired. Please sign in again.");
             _logout();
-            // navigate('/login');
             return;
         }
 

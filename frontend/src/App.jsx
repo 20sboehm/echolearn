@@ -85,8 +85,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <BrowserRouter>
-          {/* bg-[#242424] */}
-          <div className="w-screen h-screen flex flex-col text-[1.2em] font-base text-eWhite bg-eBase">
+          <div className="min-w-screen min-h-screen flex flex-col text-[1.2em] font-base text-eWhite bg-eBase">
             <Header />
             <Main />
           </div>

@@ -27,14 +27,14 @@ function DeckPage() {
   const [isModalOpen, setModalOpen] = useState(false);
 
 
-// Fetch reviews info
-const { data: deckCards, isLoading, error, refetch } = useQuery(
-  ['deckCards', deckId], // Unique key based on deckId
-  () => api._get(`/api/decks/${deckId}/cards`).then((response) => response.json()),
-  {
-    enabled: !!deckId // Only run the query if deckId is truthy
-  }
-);
+  // Fetch reviews info
+  const { data: deckCards, isLoading, error, refetch } = useQuery(
+    ['deckCards', deckId], // Unique key based on deckId
+    () => api._get(`/api/decks/${deckId}/cards`).then((response) => response.json()),
+    {
+      enabled: !!deckId // Only run the query if deckId is truthy
+    }
+  );
 
 
   useEffect(() => {
@@ -50,7 +50,7 @@ const { data: deckCards, isLoading, error, refetch } = useQuery(
   if (deckCards.cards && Array.isArray(deckCards.cards)) {
     reviewedCardsCount = deckCards.cards.filter(card => card.next_review && Date.parse(card.next_review) >= Date.now()).length;
   }
-  
+
   const totalCardsCount = deckCards.cards.length; // Total number of cards in the deck
 
   // Calculate the percentage of cards that don't need review
@@ -140,7 +140,7 @@ const { data: deckCards, isLoading, error, refetch } = useQuery(
       console.error('Error', error);
     }
   };
-  const handleTakeACopy =async () => {
+  const handleTakeACopy = async () => {
     setModalOpen(true); // Open the modal to select or create a folder
     const userfolders = await api._get(`/api/folders`)
     const folderData = await userfolders.json()
@@ -158,27 +158,27 @@ const { data: deckCards, isLoading, error, refetch } = useQuery(
     } else {
       console.log("No input provided or user cancelled the prompt.");
     }
-};
+  };
 
-const handleFolderSelection = async (folderId) => {
-  const response = await api._get(`/api/decks/${deckId}/take_copy/${folderId}`);
-  try {
+  const handleFolderSelection = async (folderId) => {
+    const response = await api._get(`/api/decks/${deckId}/take_copy/${folderId}`);
+    try {
       if (!response.ok) {
-          throw new Error('Failed to copy deck to folder');
+        throw new Error('Failed to copy deck to folder');
       }
       alert('Deck copied successfully!');
       setModalOpen(false); // Close the modal after action
-  } catch (error) {
+    } catch (error) {
       console.error('Error', error);
-  }
-};
-const speakText = (question) => {
-  // setQuestion(e.card.question);
-  console.log('what')
-  const outputVoice = new SpeechSynthesisUtterance(question);
-  outputVoice.lang = "en";
-  speechSynthesis.speak(outputVoice);
-};
+    }
+  };
+  const speakText = (question) => {
+    // setQuestion(e.card.question);
+    console.log('what')
+    const outputVoice = new SpeechSynthesisUtterance(question);
+    outputVoice.lang = "en";
+    speechSynthesis.speak(outputVoice);
+  };
 
 
   return (
@@ -228,7 +228,7 @@ const speakText = (question) => {
           {/* <button className={`bg-blue-500  rounded-lg border border-transparent px-2 py-1 
               font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
             style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={handleGenerateLink}>Generate Share Link</button> */}
-         
+
           <div>
             <button onClick={handleTakeACopy}>Copy Deck</button>
             {isModalOpen && (
@@ -238,7 +238,7 @@ const speakText = (question) => {
                   {folders.map(folder => (
                     <button className={`bg-blue-500  rounded-lg border border-transparent px-2 py-1 
                       font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
-                       key={folder.folder_id} onClick={() => handleFolderSelection(folder.folder_id)}>
+                      key={folder.folder_id} onClick={() => handleFolderSelection(folder.folder_id)}>
                       {folder.name}
                     </button>
                   ))}
@@ -257,9 +257,9 @@ const speakText = (question) => {
           {deckCards.cards.map(card => (
             <div className="grid grid-cols-2 gap-4 font-medium px-2" key={card.card_id}>
 
-              <div className="border rounded-sm bg-white text-black mt-2 px-2 py-2" onClick={() => handleCardClick(card.card_id)}>
+              <div className="border rounded-sm bg-white text-eBlack mt-2 px-2 py-2" onClick={() => handleCardClick(card.card_id)}>
                 <div dangerouslySetInnerHTML={{ __html: card.question }} />
-                  
+
                 {ReactPlayer.canPlay(card.questionvideolink) && (
                   <>
                     <ReactPlayer
@@ -271,15 +271,15 @@ const speakText = (question) => {
                 )}
                 {card.questionimagelink && <img src={card.questionimagelink} style={{ maxWidth: '250px', maxHeight: '250px' }} />}
                 {card.questionlatex && <KatexOutput latex={card.questionlatex} />}
-                  <Link onClick={()=>speakText(card.question)}>
-                    <img src={voiceIconImg} alt="Voice_Icon" className="  top-45 left-20 right-1 h-6 w-8" />
-                  </Link>
+                <Link onClick={() => speakText(card.question)}>
+                  <img src={voiceIconImg} alt="Voice_Icon" className="  top-45 left-20 right-1 h-6 w-8" />
+                </Link>
               </div>
 
 
               <div className="border rounded-sm bg-white text-black mt-2 px-2 py-4 relative" onClick={() => handleCardClick(card.card_id)}>
                 <div dangerouslySetInnerHTML={{ __html: card.answer }} />
-               
+
                 {ReactPlayer.canPlay(card.answervideolink) && (
                   <>
                     <ReactPlayer
@@ -294,7 +294,7 @@ const speakText = (question) => {
                 <Link to={`/edit/${card.card_id}`}>
                   <img src={editIconImg} alt="Edit_Icon" className="absolute top-0 right-0 h-6 w-8" />
                 </Link>
-                <Link onClick={()=>speakText(card.answer)}>
+                <Link onClick={() => speakText(card.answer)}>
                   <img src={voiceIconImg} alt="Voice_Icon" className="absolute top-8 right-0 h-6 w-8" />
                 </Link>
               </div>
