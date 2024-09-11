@@ -6,6 +6,32 @@ import { BlockMath } from 'react-katex';
 import sanitizeHtml from 'sanitize-html';
 import { useApi } from '../hooks';
 
+function LatexDisplay({ value, onChange, blockMathInput }) {
+  return (
+    <div className='w-full flex flex-col items-center mt-2'>
+      <textarea value={value} onChange={onChange} className='bg-eBlack rounded-md border 
+            border-eGray w-[40%] h-20 p-2 text-center'></textarea>
+      <h2>Preview</h2>
+      <div className='px-4 border min-w-16 min-h-12'>
+        <BlockMath math={blockMathInput} errorColor={'#cc0000'} />
+      </div>
+    </div>
+  )
+}
+
+function ImageDisplay({ htmlFor, name, value, onChange, imgSrc }) {
+  return (
+    <>
+      <div className='m-2'>
+        <label htmlFor={htmlFor} className='font-bold mr-2'>Image Link:</label>
+        <input name={name} value={value} type="text" onChange={onChange}
+          className='bg-eBlack mb-2'></input>
+      </div>
+      <img src={imgSrc} className='max-w-[250px] max-h-[250px]' />
+    </>
+  )
+}
+
 const CustomButton = ({ onClick, text }) => (
   <button
     type="button"
@@ -74,11 +100,11 @@ function CreateCard() {
     }
   }
   const handleAnswerRequirement = (value) => {
-    setQuestionVideoLink('');
+    // setQuestionVideoLink('');
     setAnswerVideoLink('');
     setAnswer_ImageUrl('');
-    setQuestion_ImageUrl('');
-    setQuestionLatexInput('');
+    // setQuestion_ImageUrl('');
+    // setQuestionLatexInput('');
     setAnswerLatexInput('');
 
     if (Answer_requirement === value) {
@@ -91,11 +117,11 @@ function CreateCard() {
 
   const handleQuestionRequirement = (value) => {
     setQuestionVideoLink('');
-    setAnswerVideoLink('');
-    setAnswer_ImageUrl('');
+    // setAnswerVideoLink('');
+    // setAnswer_ImageUrl('');
     setQuestion_ImageUrl('');
     setQuestionLatexInput('');
-    setAnswerLatexInput('');
+    // setAnswerLatexInput('');
     if (Question_requirement === value) {
       setQuestion_requirement("");
 
@@ -371,14 +397,7 @@ function CreateCard() {
             </div>
 
             {Question_requirement === 'latex' && (
-              <div>
-                <textarea value={questionlatex} onChange={(e) => setQuestionLatexInput(e.target.value)} style={{ border: '1px solid black', textAlign: 'left', minHeight: '180px', width: '500px', padding: '10px', marginTop: '10px', backgroundColor: 'grey' }}></textarea>
-                <h2>Preview</h2>
-                <div style={{ border: '1px solid #ccc', padding: '10px', minHeight: '180px', width: '500px' }}>
-
-                  <BlockMath math={questionlatex} errorColor={'#cc0000'} />
-                </div>
-              </div>
+              <LatexDisplay value={questionlatex} onChange={(e) => setQuestionLatexInput(e.target.value)} blockMathInput={questionlatex}></LatexDisplay>
             )}
 
             {Question_requirement === 'video' && (
@@ -397,15 +416,8 @@ function CreateCard() {
             )}
 
             {Question_requirement === 'image' && (
-              <>
-                <div className='m-2'>
-                  <label htmlFor='QuestionimageInput' className='font-bold mr-2'>Image Link:</label>
-                  <input name='QuestionimageInput' value={questionimagelink} type="text" onChange={(e) => setQuestion_ImageUrl(e.target.value)}
-                    className='bg-eBlack mb-2'></input>
-                  {/* <img src={questionimagelink} className='max-w-[250px] max-h-[250px]' /> */}
-                </div>
-                <img src={questionimagelink} className='max-w-[250px] max-h-[250px]' />
-              </>
+              <ImageDisplay htmlFor='QuestionimageInput' name='QuestionimageInput' value={questionimagelink}
+                onChange={(e) => setQuestion_ImageUrl(e.target.value)} imgSrc={questionimagelink} />
             )}
 
             <h1 className='text-2xl mt-6 mb-2 w-[90%] border-b p-1 text-center'>Answer</h1>
@@ -440,13 +452,7 @@ function CreateCard() {
             </div>
 
             {Answer_requirement === 'latex' && (
-              <div>
-                <textarea value={answerlatex} onChange={(e) => setAnswerLatexInput(e.target.value)} style={{ border: '1px solid black', textAlign: 'left', minHeight: '180px', width: '500px', padding: '10px', marginTop: '10px', backgroundColor: 'grey' }}></textarea>
-                <h2>Preview</h2>
-                <div style={{ border: '1px solid #ccc', padding: '10px', minHeight: '180px', width: '500px' }}>
-                  <BlockMath math={answerlatex} errorColor={'#cc0000'} />
-                </div>
-              </div>
+              <LatexDisplay value={answerlatex} onChange={(e) => setAnswerLatexInput(e.target.value)} blockMathInput={answerlatex}></LatexDisplay>
             )}
 
             {Answer_requirement === 'video' && (
@@ -465,11 +471,8 @@ function CreateCard() {
             )}
 
             {Answer_requirement === 'image' && (
-              <div>
-                <label htmlFor='AnswerimageInput'>Put your image here:</label>
-                <input name='AnswerimageInput' value={answerimagelink} type="text" onChange={(e) => setAnswer_ImageUrl(e.target.value)}></input>
-                <img src={answerimagelink} style={{ maxWidth: '250px', maxHeight: '250px' }} />
-              </div>
+              <ImageDisplay htmlFor='AnswerimageInput' name='AnswerimageInput' value={answerimagelink}
+                onChange={(e) => setAnswer_ImageUrl(e.target.value)} imgSrc={answerimagelink} />
             )}
 
             <button type='submit' class="rounded-lg border border-transparent px-4 py-2 
