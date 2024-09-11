@@ -1,7 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { useQuery, useMutation } from "react-query";
 import { useState, useEffect } from "react";
-import Sidebar from "./SideBar";
+import SideBar from "./SideBar";
 import ReactPlayer from 'react-player';
 import katex from 'katex';
 import 'katex/dist/katex.min.css';
@@ -27,14 +27,14 @@ function DeckPage() {
   const [isModalOpen, setModalOpen] = useState(false);
   const [refetchTrigger, setRefetchTrigger] = useState(false);
 
-  // Fetch reviews info
-  const { data: deckCards, isLoading, error, refetch } = useQuery(
-    ['deckCards', deckId], // Unique key based on deckId
-    () => api._get(`/api/decks/${deckId}/cards`).then((response) => response.json()),
-    {
-      enabled: !!deckId // Only run the query if deckId is truthy
-    }
-  );
+// Fetch reviews info
+const { data: deckCards, isLoading, error, refetch } = useQuery(
+  ['deckCards', deckId], // Unique key based on deckId
+  () => api._get(`/api/decks/${deckId}/cards`).then((response) => response.json()),
+  {
+    enabled: !!deckId // Only run the query if deckId is truthy
+  }
+);
 
 
   useEffect(() => {
@@ -169,7 +169,7 @@ function DeckPage() {
       alert('Deck copied successfully!');
       setModalOpen(false); // Close the modal after action
       setRefetchTrigger(prev => !prev);
-    } catch (error) {
+  } catch (error) {
       console.error('Error', error);
     }
   };
@@ -184,7 +184,7 @@ function DeckPage() {
 
   return (
     <>
-      <Sidebar />
+      <SideBar refetchTrigger={refetchTrigger} />
       <div className="w-[65vw]">
         <div className="flex flex-row">
           <div className="flex flex-col items-start">
