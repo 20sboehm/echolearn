@@ -1,7 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { useQuery, useMutation } from "react-query";
 import { useState, useEffect } from "react";
-import Sidebar from "./SideBar";
+import SideBar from "./SideBar";
 import ReactPlayer from 'react-player';
 import katex from 'katex';
 import 'katex/dist/katex.min.css';
@@ -25,7 +25,7 @@ function DeckPage() {
   const [folders, setFolders] = useState([]);
   const [newFolderName, setNewFolderName] = useState('');
   const [isModalOpen, setModalOpen] = useState(false);
-
+  const [refetchTrigger, setRefetchTrigger] = useState(false);
 
 // Fetch reviews info
 const { data: deckCards, isLoading, error, refetch } = useQuery(
@@ -168,6 +168,7 @@ const handleFolderSelection = async (folderId) => {
       }
       alert('Deck copied successfully!');
       setModalOpen(false); // Close the modal after action
+      setRefetchTrigger(prev => !prev);
   } catch (error) {
       console.error('Error', error);
   }
@@ -183,7 +184,7 @@ const speakText = (question) => {
 
   return (
     <>
-      <Sidebar />
+      <SideBar refetchTrigger={refetchTrigger} />
       <div className="w-[65vw]">
         <div className="flex flex-row">
           <div className="flex flex-col items-start">

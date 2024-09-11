@@ -1,6 +1,6 @@
 from ninja import Router
 # from django.contrib.auth.models import User
-from flashcards.models import CustomUser
+from flashcards.models import CustomUser, Folder, Deck, Card
 from django.contrib.auth.hashers import make_password
 from django.http import JsonResponse
 import json
@@ -33,6 +33,29 @@ def sign_up(request):
             username=username,
             email=email,
             password=password
+        )
+
+        default_foler = Folder.objects.create(
+            name="Library",
+            owner=user
+        )
+
+        default_deck = Deck.objects.create(
+            name="Default deck",
+            owner=user,
+            folder=default_foler
+        )
+
+        Card.objects.create(
+            deck=default_deck,
+            question="question1",
+            answer="answer1"
+        )
+
+        Card.objects.create(
+            deck=default_deck,
+            question="question2",
+            answer="answer2"
         )
 
         print(f"**User created successfully: {user.username}")
