@@ -361,11 +361,11 @@ function CreateCard() {
                 <option key={deck.deck_id} value={deck.deck_id}>{deck.name}</option>
               ))}
             </select>
-            <h1 className='text-2xl mt-6 mb-2 w-[90%] border-b p-1 text-center'>Question</h1>
-            {/* <span className='h-1 w-[90%] border-b border-eGray m-4'></span> */}
-            {/* <button type="button" onClick={() => handleMultipleInput('MultipleInput')} class="rounded-lg border border-transparent px-4 py-2 
+            <button type="button" onClick={() => handleMultipleInput('MultipleInput')} class="rounded-lg border border-transparent px-4 py-2 
           font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-          active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }} >Multiple input</button> */}
+          active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }} >Multiple input</button>
+
+            <h1 className='text-2xl mt-6 mb-2 w-[90%] border-b p-1 text-center'>Question</h1>
 
             <div className='m-2'>
               <button type="button" onClick={() => handleQuestionRequirement('image')} class="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
