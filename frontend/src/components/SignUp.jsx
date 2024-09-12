@@ -90,13 +90,13 @@ function SignUp() {
         <h1 className=' mb-5 text-3xl font-bold self-center'>Sign up</h1>
 
         <FormInputLabel htmlFor="email">Email</FormInputLabel>
-        <FormInputBox idAndName="email" value={email} onChange={e => setEmail(e.target.value)} autoFocus={true} placeholder="Email"></FormInputBox>
+        <FormInputBox idAndName="email" value={email} type="email" onChange={e => setEmail(e.target.value)} autoFocus={true} placeholder="Email" required ></FormInputBox>
 
         <FormInputLabel htmlFor="username">Username</FormInputLabel>
-        <FormInputBox idAndName="username" value={username} onChange={e => setUsername(e.target.value)} placeholder="Username"></FormInputBox>
+        <FormInputBox idAndName="username" value={username} type="text" onChange={e => setUsername(e.target.value)} placeholder="Username" required ></FormInputBox>
 
         <FormInputLabel htmlFor="password">Password</FormInputLabel>
-        <FormInputBox idAndName="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password"></FormInputBox>
+        <FormInputBox idAndName="password" value={password} type="password" onChange={e => setPassword(e.target.value)} placeholder="Password" required ></FormInputBox>
 
         <FormInputButton isPrimaryButton={true}>Register</FormInputButton>
         <div className='flex flex-row justify-center items-center mt-4 w-full'>
