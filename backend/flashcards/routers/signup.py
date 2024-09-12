@@ -19,7 +19,15 @@ def sign_up(request):
 
         if not username:
             print("No username provided.")
-            return JsonResponse({"detail": "Username is required."}, status=409)
+            return JsonResponse({"detail": "No name."}, status=409)
+        
+        if not email:
+            print("No email provided")
+            return JsonResponse({"detail": "Empty email."}, status=409)
+        
+        if not password:
+            print("No password provid")
+            return JsonResponse({"detail": "Require password."}, status=409)
 
         if CustomUser.objects.filter(username=username).exists():
             print("Username already exists.")

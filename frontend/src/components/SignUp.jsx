@@ -72,9 +72,15 @@ function SignUp() {
 
         console.log("*error*:" + error.message)
         if (error.message.includes("Username")) {
-          popupDetails('Registration failed: Username already exists.', 'red');
-        } else if (error.message.includes("Email")) {
-          popupDetails('Registration failed: Email already exists.', 'red');
+          popupDetails('Username already exists.', 'red');
+        } else if (error.message.includes("Email already exists")) {
+          popupDetails('Email already exists.', 'red');
+        } else if (error.message.includes("No")) {
+          popupDetails('Please provid username.', 'red');
+        } else if (error.message.includes("Empty")) {
+          popupDetails('Please provid email.', 'red');
+        } else if (error.message.includes("password")) {
+          popupDetails('Please provid password.', 'red');
         } else {
           popupDetails('Registration failed: An unknown error occurred.', 'red');
         }
