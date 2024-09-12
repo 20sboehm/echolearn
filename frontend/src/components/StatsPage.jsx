@@ -39,7 +39,7 @@ const upcomingChartOptions = {
   scales: {
     x: { title: { display: true }, ticks: { minRotation: 0, maxRotation: 0 } },
     y: {
-      title: { display: true, text: 'Number of Cards' }, beginAtZero: true, min: 0, max: 50,
+      title: { display: true, text: 'Number of Cards' }, beginAtZero: true, min: 0, max: 30,
       ticks: { stepSize: 10, },
     },
   },
@@ -75,7 +75,7 @@ const previousChartOptions = {
   scales: {
     x: { title: { display: true }, ticks: { minRotation: 0, maxRotation: 0 } },
     y: {
-      title: { display: true, text: 'Number of Cards' }, beginAtZero: true, min: 0, max: 50,
+      title: { display: true, text: 'Number of Cards' }, beginAtZero: true, min: 0, max: 30,
       ticks: { stepSize: 10, },
     },
   },
