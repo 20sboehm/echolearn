@@ -1,6 +1,6 @@
 import datetime
 from ninja import Router
-from flashcards.models import Deck, Folder, Card, CustomUser
+from flashcards.models import Deck, Folder, Card, CustomUser,Rating
 from typing import List
 import flashcards.schemas as sc
 from django.shortcuts import get_object_or_404
@@ -31,7 +31,19 @@ def get_deck(request, deck_id: int):
 def get_cards_from_deck(request, deck_id: int):
     deck = get_object_or_404(Deck, deck_id=deck_id)
     card_list = Card.objects.filter(deck_id=deck_id)
-    return {"deck_id": deck.deck_id,"isPublic": deck.isPublic, "deck_name": deck.name, "cards": card_list}
+    return {"deck_id": deck.deck_id,"isPublic": deck.isPublic, "deck_name": deck.name, "cards": card_list, "stars":deck.stars}
+
+@decks_router.get("/{deck_id}/ratedOrnot", response={200: bool, 404: str}, auth=JWTAuth())
+def checkRatedresult(request, deck_id: int):
+    
+    deck = get_object_or_404(Deck, deck_id=deck_id)
+    user = request.user
+    try:
+        result = Rating.objects.get(deck = deck,user = user)
+        return {"rated": True}
+    except Rating.DoesNotExist:     
+        return {"rated": False}
+
 
 @decks_router.get("/{deck_id}/take_copy/{folder_id}", response={201: sc.GetDeck, 404: str}, auth=JWTAuth())
 def copy_deck(request, deck_id:int,folder_id:int):
@@ -60,9 +72,18 @@ def copy_deck(request, deck_id:int,folder_id:int):
         newcard.created_at = datetime.datetime.now
         newcard.last_edited = datetime.datetime.now
         newcard.save()
-    print(1)
     return 201, deck
 
+@decks_router.get("/ALLRatedDecks", response={200: List[dict], 404: str}, auth=JWTAuth())
+def ALL_rated_deck(request):
+    user = request.user
+    rate_existed = Rating.objects.filter(user=user)
+    rated_decks = [
+    {
+        "deck_id": rating.deck.id,  
+        "user": user.id,  
+    } for rating in rate_existed]
+    return rated_decks,200
 # ---------------------------------------------
 # -------------------- POST -------------------
 # ---------------------------------------------
@@ -90,6 +111,34 @@ def update_deck_status(request, deck_id:int):
     deck.save()
     card_list = Card.objects.filter(deck_id=deck_id)
     return {"deck_id": deck.deck_id,"isPublic": deck.isPublic, "deck_name": deck.name, "cards": card_list}
+
+@decks_router.post("/{deck_id}/ratings", response={200: dict, 404: str}, auth=JWTAuth())
+def rate_deck(request, deck_id: int):
+    deck = get_object_or_404(Deck, deck_id=deck_id)
+    user = request.user
+    try:
+        rate_existed = Rating.objects.get(deck=deck, user=user)
+        if(not deck.stars < 0):
+            deck.stars -=1
+            deck.save()
+            
+        rate_existed.delete()
+        
+        return {
+            "deck_id": deck.deck_id,
+            "user": user.id,  
+            "status":'removed'
+        }
+    except Rating.DoesNotExist:
+        rate = Rating.objects.create(deck=deck, user=user, stars=1) 
+        deck.stars +=1
+        deck.save()
+        return {
+            "deck_id": deck.deck_id,
+            "user": user.id,  # or user.id
+            "status":'updated'
+        }
+
 
 @decks_router.post("/{deck_id}/generate-share-link", response={200:None, 404: str}, auth=JWTAuth())
 def generate_share_link(request, deck_id):

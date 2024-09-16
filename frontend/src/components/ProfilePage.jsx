@@ -69,7 +69,7 @@ function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [editableAge, setEditableAge] = useState('');
   const [editableCountry, setEditableCountry] = useState('');
-
+  const [RatedDeck, setRatedDeck] = useState([]);
   const countries = [
     "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia",
     "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin",
@@ -106,6 +106,10 @@ function ProfilePage() {
         const foldersResponse = await _get('/api/profile/folders_decks');
         const foldersData = await foldersResponse.json();
         setFolders(foldersData);
+        const RatedResponse = await _get('/api/decks/ALLRatedDecks');
+        const RatedDeck = await RatedResponse.json();
+        console.log(RatedDeck)
+        setRatedDeck(RatedDeck);
       } catch (error) {
         setError('Failed to fetch profile data');
       }
@@ -207,6 +211,18 @@ function ProfilePage() {
           ))
         ) : (
           <p className='eWhite'>No folders or decks available</p>
+        )}
+      </div>
+
+      {/* Display Rated Decks */}
+      <div className="mt-8">
+        <h2 className="text-xl font-bold">Rated decks</h2>
+        {RatedDeck.length > 0 ? (
+          RatedDeck.map((rDeck) => (
+            <li key={rDeck.deck_id}>Deck ID: {rDeck.deck_id}</li>
+          ))
+        ) : (
+          <p className='eWhite'>No Rated decks available</p>
         )}
       </div>
     </div>

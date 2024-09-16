@@ -34,10 +34,15 @@ class Deck(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     last_edited = models.DateTimeField(auto_now_add=True)
     isPublic = models.BooleanField(default=False)
-    
+    stars =  models.IntegerField(default=0)
     def __str__(self):
         return f"{self.name} (id={self.deck_id})"
 
+class Rating(models.Model):
+    deck = models.ForeignKey(Deck,on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    stars = models.IntegerField(default=0)
+    
 class Card(models.Model):
     card_id = models.AutoField(primary_key=True)
     deck = models.ForeignKey(Deck, on_delete=models.CASCADE)

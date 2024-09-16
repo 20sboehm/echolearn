@@ -72,6 +72,9 @@ class UpdateDeck(Schema):
     description: Optional[str] = None
     folder_id: Optional[int] = None
 
+
+
+
 # -----------------------------------------------
 # -------------------- Cards --------------------
 # -----------------------------------------------
@@ -145,7 +148,8 @@ class DeckCards(Schema):
     isPublic:bool
     deck_name: str
     cards: list[GetCard]
-
+    stars:int
+    
 class EditCards(Schema):
     question: Optional[str] = None
     answer: Optional[str] = None

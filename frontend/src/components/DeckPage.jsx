@@ -26,20 +26,21 @@ function DeckPage() {
   const [newFolderName, setNewFolderName] = useState('');
   const [isModalOpen, setModalOpen] = useState(false);
   const [refetchTrigger, setRefetchTrigger] = useState(false);
-
-// Fetch reviews info
-const { data: deckCards, isLoading, error, refetch } = useQuery(
-  ['deckCards', deckId], // Unique key based on deckId
-  () => api._get(`/api/decks/${deckId}/cards`).then((response) => response.json()),
-  {
-    enabled: !!deckId // Only run the query if deckId is truthy
-  }
-);
-
+  const [Ratesult, setRateresult] = useState(false);
+  // Fetch reviews info
+  const { data: deckCards, isLoading, error, refetch } = useQuery(
+    ['deckCards', deckId], // Unique key based on deckId
+    () => api._get(`/api/decks/${deckId}/cards`).then((response) => response.json()),
+    {
+      enabled: !!deckId // Only run the query if deckId is truthy
+    }
+  );
 
   useEffect(() => {
     console.log("Deck Cards:", deckCards);
   }, [deckCards]);
+
+
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -169,7 +170,7 @@ const { data: deckCards, isLoading, error, refetch } = useQuery(
       alert('Deck copied successfully!');
       setModalOpen(false); // Close the modal after action
       setRefetchTrigger(prev => !prev);
-  } catch (error) {
+    } catch (error) {
       console.error('Error', error);
     }
   };
@@ -181,6 +182,16 @@ const { data: deckCards, isLoading, error, refetch } = useQuery(
     speechSynthesis.speak(outputVoice);
   };
 
+  const submitRating = async () => {
+    const response = await api._post(`/api/decks/${deckId}/ratings`);
+    const data = await response.json();
+    if (data.status == "removed")
+      setRateresult(false)
+    else if (data.status == "updated")
+      setRateresult(true)
+    
+      refetch();
+  };
 
   return (
     <>
@@ -226,10 +237,19 @@ const { data: deckCards, isLoading, error, refetch } = useQuery(
             {deckCards.isPublic ? "Public" : "Private"}
           </button>
 
-          {/* <button className={`bg-blue-500  rounded-lg border border-transparent px-2 py-1 
-              font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
-            style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={handleGenerateLink}>Generate Share Link</button> */}
+          <button onClick={submitRating} id="button-preview" aria-labelledby="tooltip-1f7d89ff-668b-406b-9c3f-e3e313ecdc97" type="button" data-view-component="true" class="Button Button--iconOnly Button--secondary Button--medium">
+            {Ratesult ? (
+              <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-star-filled Button-visual">
+                <path fill="gold" d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z"></path>
+              </svg>
+            ) : (
+              <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-star Button-visual">
+                <path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Zm0 2.445L6.615 5.5a.75.75 0 0 1-.564.41l-3.097.45 2.24 2.184a.75.75 0 0 1 .216.664l-.528 3.084 2.769-1.456a.75.75 0 0 1 .698 0l2.77 1.456-.53-3.084a.75.75 0 0 1 .216-.664l2.24-2.183-3.096-.45a.75.75 0 0 1-.564-.41L8 2.694Z"></path>
+              </svg>
 
+            )}
+            {deckCards.stars}
+          </button>
           <div>
             <button onClick={handleTakeACopy}>Copy Deck</button>
             {isModalOpen && (
