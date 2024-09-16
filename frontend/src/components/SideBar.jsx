@@ -8,6 +8,36 @@ import { useApi } from "../hooks";
 import { ResizableBox } from 'react-resizable';
 import 'react-resizable/css/styles.css';
 
+const ExpandContractIcon = ({ isExpanded }) => {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      style={{
+        transform: isExpanded ? "rotate(270deg)" : "rotate(90deg)", // Rotates 180 degrees when expanded
+        transition: "transform 0.3s ease",
+        width: "18px",
+        height: "18px",
+      }}
+    >
+      <path
+        d="M11 6L18 12L11 18"
+        stroke="#FFFFFF"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <line
+        x1="2" y1="12" x2="18" y2="12"
+        stroke="#FFFFFF"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+};
+
 const ChevronIcon = ({ isOpen }) => {
   return (
     <svg
@@ -32,12 +62,16 @@ const ChevronIcon = ({ isOpen }) => {
   );
 };
 
-const Folder = ({ folder, onRightClick }) => {
+const Folder = ({ folder, onRightClick, allExpanded }) => {
   const [openFolder, setOpenFolder] = useState(false);
 
   const handleOpenFolder = () => {
     setOpenFolder(!openFolder);
   };
+
+  useEffect(() => {
+    setOpenFolder(allExpanded);
+  }, [allExpanded]);
 
   return (
     <div className="mt-2">
@@ -62,7 +96,7 @@ const Folder = ({ folder, onRightClick }) => {
           ))}
           {folder.children &&
             folder.children.map((child, index) => (
-              <Folder key={index} folder={child} className="mt-2" onRightClick={onRightClick} />
+              <Folder key={index} folder={child} className="mt-2" onRightClick={onRightClick} allExpanded={allExpanded}/>
             ))}
         </div>
       )}
@@ -79,6 +113,7 @@ const Sidebar = ({ refetchTrigger }) => {
   const [selected, setSelected] = useState(null);
   const [createType, setCreateType] = useState('');
   const [renaming, setRenaming] = useState(false);
+  const [allExpanded, setAllExpanded] = useState(false);
 
   const fetchSidebarData = () => {
     api._get('/api/sidebar')
@@ -204,11 +239,16 @@ const Sidebar = ({ refetchTrigger }) => {
         style={{ overflow: 'hidden', position: 'absolute', left: '0', zIndex: '1' }}
       >
         <div className="h-[92vh] overflow-y-auto">
-          <h2 className='font-bold text-1xl text-eWhite border-b border-eGray'>Deck Library</h2>
+          <div className='flex justify-between border-b border-eGray'>
+            <h2 className='font-bold text-1xl text-eWhite whitespace-nowrap'>Deck Library</h2>
+            <button onClick={() => setAllExpanded((prev) => !prev)}>
+              <ExpandContractIcon isExpanded={allExpanded} />
+            </button>
+          </div>
           {sidebarData && sidebarData.folders ? (
             sidebarData.folders.length > 0 ? (
               sidebarData.folders.map((folder, index) => (
-                <Folder key={index} folder={folder} onRightClick={handleRightClick} />
+                <Folder key={index} folder={folder} onRightClick={handleRightClick} allExpanded={allExpanded}/>
               ))
             ) : (
               <p>You have no decks!</p>
