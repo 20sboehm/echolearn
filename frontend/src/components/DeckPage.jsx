@@ -27,22 +27,38 @@ function DeckPage() {
   const [isModalOpen, setModalOpen] = useState(false);
   const [refetchTrigger, setRefetchTrigger] = useState(false);
 
-// Fetch reviews info
-const { data: deckCards, isLoading, error, refetch } = useQuery(
-  ['deckCards', deckId], // Unique key based on deckId
-  () => api._get(`/api/decks/${deckId}/cards`).then((response) => response.json()),
-  {
-    enabled: !!deckId // Only run the query if deckId is truthy
-  }
-);
+  // Fetch reviews info
+  const { data: deckCards, isLoading, error, refetch } = useQuery(
+    ['deckCards', deckId], // Unique key based on deckId
+    async () => {
+      const response = await api._get(`/api/decks/${deckId}/cards`);
 
+      if (!response.ok) {
+        const errorData = await response.json();
+        const message = errorData.detail || 'An error occurred';
+        throw new Error(`${response.status}: ${message}`);
+      }
 
-  useEffect(() => {
-    console.log("Deck Cards:", deckCards);
-  }, [deckCards]);
+      return response.json();
+    },
+    {
+      retry: false // Disable automatic retry
+    }
+  );
 
   if (isLoading) {
     return <div>Loading...</div>;
+  }
+
+  if (error) {
+    const [status, message] = error.message.split(': ');
+
+    return (
+      <>
+        <h1 className="mt-20 text-[3rem] font-bold">{status}</h1>
+        <p className="mt-2 text-[1.5rem]">{message}</p>
+      </>
+    );
   }
 
   let reviewedCardsCount = 0;
@@ -169,7 +185,7 @@ const { data: deckCards, isLoading, error, refetch } = useQuery(
       alert('Deck copied successfully!');
       setModalOpen(false); // Close the modal after action
       setRefetchTrigger(prev => !prev);
-  } catch (error) {
+    } catch (error) {
       console.error('Error', error);
     }
   };

@@ -6,6 +6,7 @@ import flashcards.schemas as sc
 from django.shortcuts import get_object_or_404
 from ninja_jwt.authentication import JWTAuth
 from django.http import JsonResponse
+from ninja.errors import HttpError
 
 decks_router = Router(tags=["Decks"])
 
@@ -30,8 +31,12 @@ def get_deck(request, deck_id: int):
 @decks_router.get("/{deck_id}/cards", response={200: sc.DeckCards, 404: str}, auth=JWTAuth())
 def get_cards_from_deck(request, deck_id: int):
     deck = get_object_or_404(Deck, deck_id=deck_id)
+
+    if deck.owner != request.user and 1 == 1:
+        raise HttpError(403, "You are not authorized to access this deck")
+
     card_list = Card.objects.filter(deck_id=deck_id)
-    return {"deck_id": deck.deck_id,"isPublic": deck.isPublic, "deck_name": deck.name, "cards": card_list}
+    return {"deck_id": deck.deck_id, "isPublic": deck.isPublic, "deck_name": deck.name, "cards": card_list}
 
 @decks_router.get("/{deck_id}/take_copy/{folder_id}", response={201: sc.GetDeck, 404: str}, auth=JWTAuth())
 def copy_deck(request, deck_id:int,folder_id:int):
