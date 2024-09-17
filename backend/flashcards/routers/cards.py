@@ -11,10 +11,6 @@ cards_router = Router(tags=["Cards"])
 # -------------------- GET --------------------
 # ---------------------------------------------
 
-# @cards_router.get("/secure-data", auth=JWTAuth())
-# def secure_data(request):
-#     return {"data": "This is secured data"}
-
 @cards_router.get("", response={200: List[sc.GetCard]}, auth=JWTAuth())
 def get_cards(request):
     cards = Card.objects.all()

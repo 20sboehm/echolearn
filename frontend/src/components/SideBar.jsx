@@ -198,6 +198,8 @@ const Sidebar = ({ refetchTrigger }) => {
         height={Infinity}
         axis="x"
         resizeHandles={['e']}
+        // handleSize={[10, 10]}
+        handle={<div className="absolute top-0 right-0 h-full w-4 cursor-ew-resize" />}
         minConstraints={[50, Infinity]} // Minimum width
         maxConstraints={[600, Infinity]} // Maximum width
         className="bg-eDark h-[calc(100%-4rem)] border-r border-eDarkGray p-2"

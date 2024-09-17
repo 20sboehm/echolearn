@@ -41,7 +41,7 @@ function CommunityPage() {
                     <p><strong>Author: </strong>{deck.owner_id}</p>
                     <p><strong>Name: </strong>{deck.name}</p>
                     <p><strong>Description: </strong>{deck.description}</p>
-                    <Link to={`/decks/${deck.deck_id}`} className="absolute top-0 right-0">
+                    <Link to={`/decks/public/${deck.deck_id}`} className="absolute top-0 right-0">
                       <img src={arrowIconImg} alt="Edit Icon" className="h-6 w-8" />
                     </Link>
                   </div>

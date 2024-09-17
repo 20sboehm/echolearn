@@ -9,7 +9,7 @@ import { useApi } from "../hooks";
 import editIconImg from "../assets/edit-icon.png"
 import voiceIconImg from "../assets/voice.png"
 
-function DeckPage() {
+function DeckPage({ publicAccess = false }) {
   const api = useApi();
 
   const [deleteMode, setDeleteMode] = useState(false);
@@ -31,7 +31,13 @@ function DeckPage() {
   const { data: deckCards, isLoading, error, refetch } = useQuery(
     ['deckCards', deckId], // Unique key based on deckId
     async () => {
-      const response = await api._get(`/api/decks/${deckId}/cards`);
+      let response = null;
+      if (publicAccess) {
+        response = await api._get(`/api/decks/public/${deckId}/cards`);
+      }
+      else {
+        response = await api._get(`/api/decks/${deckId}/cards`);
+      }
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -205,39 +211,54 @@ function DeckPage() {
         <div className="flex flex-row">
           <div className="flex flex-col items-start">
             <h1 className="text-4xl font-bold my-4">{deckCards.deck_name}</h1>
-            <Link to={`/review/${deckId}`} className="rounded-lg border border-transparent px-12 py-2 text-center
+            {publicAccess ? (
+              null
+            ) : (
+              <Link to={`/review/${deckId}`} className={` rounded-lg border border-transparent px-12 py-2 text-center
               font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-              active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>
+              active:border-[#555]`} style={{ transition: "border-color 0.10s, color 0.10s" }}>
+                Study
+              </Link>
+            )}
+            {/* <Link to={`/review/${deckId}`} className={` rounded-lg border border-transparent px-12 py-2 text-center
+              font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+              active:border-[#555]`} style={{ transition: "border-color 0.10s, color 0.10s" }}>
               Study
-            </Link>
+            </Link> */}
           </div>
 
-          <div className="flex flex-col ml-auto justify-center items-center mb-4">
-            {/* JavaScript code to draw the graph */}
-            <svg width="200" height="200" viewBox="0 20 200 150">
-              <circle cx="100" cy="100" r={radius} fill="none" stroke="#ECEFF1" strokeWidth="7.5" />
-              <circle cx="100" cy="100" r={radius} fill="none" stroke="#29A5DC" strokeWidth="7.5" strokeLinecap="round"
-                strokeDasharray={`${dashLength},${gapLength}`} strokeDashoffset={strokeDashoffset}>
-                <title>Progress</title>
-              </circle>
-              <text x="100" y="100" textAnchor="middle" dominantBaseline="middle" fill="white" fontSize="16">
-                {percentage}%
-              </text>
-            </svg>
-            <Link to={`/stats/${deckId}`}>
-              <button className="rounded-lg border border-transparent px-4 py-2 
+          {publicAccess ? (
+            null
+          ) : (
+            <div className="flex flex-col ml-auto justify-center items-center mb-4">
+              {/* JavaScript code to draw the graph */}
+              <svg width="200" height="200" viewBox="0 20 200 150">
+                <circle cx="100" cy="100" r={radius} fill="none" stroke="#ECEFF1" strokeWidth="7.5" />
+                <circle cx="100" cy="100" r={radius} fill="none" stroke="#29A5DC" strokeWidth="7.5" strokeLinecap="round"
+                  strokeDasharray={`${dashLength},${gapLength}`} strokeDashoffset={strokeDashoffset}>
+                  <title>Progress</title>
+                </circle>
+                <text x="100" y="100" textAnchor="middle" dominantBaseline="middle" fill="white" fontSize="16">
+                  {percentage}%
+                </text>
+              </svg>
+              <Link to={`/stats/${deckId}`}>
+                <button className="rounded-lg border border-transparent px-4 py-2 
                 font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
                 active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>
-                More Statistics</button>
-            </Link>
-          </div>
+                  More Statistics</button>
+              </Link>
+            </div>
+          )}
         </div>
 
         <div className="flex flex-row items-center justify-between mt-2 mb-4 border-t border-gray-500 pt-4">
           <h1>{deckCards.cards.length} Cards</h1>
           <button
-            className={`${deckCards.isPublic ? "bg-blue-500" : "bg-red-500"} rounded-lg border border-transparent px-2 py-1 
-              font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
+            disabled={publicAccess}
+            className={`${deckCards.isPublic ? "bg-green-600" : "bg-red-600"}
+              ${publicAccess ? "" : "active:scale-[0.97] hover:border-white hover:text-white"}
+              rounded-lg border border-transparent px-2 py-1 disabled:bg-gray-500 font-semibold`}
             style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={setStatus}>
             {deckCards.isPublic ? "Public" : "Private"}
           </button>
@@ -264,10 +285,15 @@ function DeckPage() {
               </div>
             )}
           </div>
-          <button className={`${deleteMode ? "bg-red-500" : "bg-blue-500"} rounded-lg border border-transparent px-2 py-1 
+          {publicAccess ? (
+            null
+          ) : (
+            <button className={`${deleteMode ? "bg-red-500" : "bg-blue-500"} rounded-lg border border-transparent px-2 py-1 
               font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
-            style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={changeMode}>
-            {deleteMode ? "Cancel" : "Delete"}</button>
+              style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={changeMode}>
+              {deleteMode ? "Cancel" : "Delete"}
+            </button>
+          )}
         </div>
 
         <div className="h-[50vh] overflow-y-auto border-t border-gray-500">

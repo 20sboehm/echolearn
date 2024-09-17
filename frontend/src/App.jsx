@@ -27,8 +27,8 @@ const queryClient = new QueryClient();
 function ErrorPage({ statusCode, errorMessage }) {
   return (
     <>
-      <h1 className='font-bold text-[4em]'>{statusCode}</h1>
-      <p className='font-bold text-[2em]'>{errorMessage}</p>
+      <h1 className="mt-20 text-[3rem] font-bold">{statusCode}</h1>
+      <p className="mt-2 text-[1.5rem]">{errorMessage}</p>
     </>
   );
 }
@@ -43,6 +43,7 @@ function AuthenticatedRoutes() {
       <Route path="/help" element={<HelpPage />} />
       <Route path="/edit/:cardId" element={<EditPage />} />
       <Route path="/decks/:deckId" element={<DeckPage />} />
+      <Route path="/decks/public/:deckId" element={<DeckPage publicAccess={true} />} />
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/stats/:deckId" element={<StatsPage />} />
       <Route path="/community" element={<CommunityPage />} />
