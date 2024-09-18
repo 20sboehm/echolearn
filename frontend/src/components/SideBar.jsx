@@ -3,10 +3,11 @@ import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 import { useApi } from "../hooks";
 // import folderOpenImg from "../assets/folder-open.png";
-// import folderCloseImg from "../assets/folder-close.png";
-// import decksImg from "../assets/decks.png";
+import folderImg from "../assets/Folder.png";
+import decksImg from "../assets/Deck.png";
 import { ResizableBox } from 'react-resizable';
 import 'react-resizable/css/styles.css';
+import './SideBar.css';
 
 const ExpandContractIcon = ({ isExpanded }) => {
   return (
@@ -62,11 +63,20 @@ const ChevronIcon = ({ isOpen }) => {
   );
 };
 
-const Folder = ({ folder, onRightClick, allExpanded }) => {
+const Folder = ({ folder, onRightClick, allExpanded, setContextMenu, selected, setSelected }) => {
   const [openFolder, setOpenFolder] = useState(false);
 
   const handleOpenFolder = () => {
     setOpenFolder(!openFolder);
+    setContextMenu(null);
+  };
+
+  const handleLeftClick = (event, folder) => {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    setSelected(folder);
+    handleOpenFolder();
   };
 
   useEffect(() => {
@@ -75,7 +85,7 @@ const Folder = ({ folder, onRightClick, allExpanded }) => {
 
   return (
     <div className="mt-2">
-      <div onClick={handleOpenFolder} onContextMenu={(e) => onRightClick(e, folder)} className="cursor-pointer text-base text-eWhite flex items-center select-none">
+      <div onClick={(e) => handleLeftClick(e, folder)} onContextMenu={(e) => onRightClick(e, folder)} className={`cursor-pointer text-base text-eWhite flex items-center select-none ${selected === folder ? 'bg-blue-500' : ''}`}>
         {/* <img
           src={openFolder ? folderOpenImg : folderCloseImg}
           alt={openFolder ? "Open folder" : "Closed folder"}
@@ -96,7 +106,7 @@ const Folder = ({ folder, onRightClick, allExpanded }) => {
           ))}
           {folder.children &&
             folder.children.map((child, index) => (
-              <Folder key={index} folder={child} className="mt-2" onRightClick={onRightClick} allExpanded={allExpanded}/>
+              <Folder key={index} folder={child} className="mt-2" onRightClick={onRightClick} allExpanded={allExpanded} setContextMenu={setContextMenu} selected={selected} setSelected={setSelected}/>
             ))}
         </div>
       )}
@@ -226,6 +236,8 @@ const Sidebar = ({ refetchTrigger }) => {
     }
   };
 
+  // console.log(selected);
+
   return (
     <div onContextMenu={(e) => handleRightClick(e)}>
       <ResizableBox
@@ -237,18 +249,23 @@ const Sidebar = ({ refetchTrigger }) => {
         maxConstraints={[600, Infinity]} // Maximum width
         className="bg-eDark h-[calc(100%-4rem)] border-r border-eDarkGray p-2"
         style={{ overflow: 'hidden', position: 'absolute', left: '0', zIndex: '1' }}
+        handle={<span className="sizehandle" />}
       >
         <div className="h-[92vh] overflow-y-auto">
           <div className='flex justify-between border-b border-eGray'>
             <h2 className='font-bold text-1xl text-eWhite whitespace-nowrap'>Deck Library</h2>
-            <button onClick={() => setAllExpanded((prev) => !prev)}>
-              <ExpandContractIcon isExpanded={allExpanded} />
-            </button>
+            <div className='flex items-center'>
+              <button><img src={folderImg} className='w-6 h-6' alt="Folder"></img></button>
+              <button><img src={decksImg} className='w-6 h-6' alt="Decks"></img></button>
+              <button onClick={() => setAllExpanded((prev) => !prev)}>
+                <ExpandContractIcon isExpanded={allExpanded} />
+              </button>
+            </div>
           </div>
           {sidebarData && sidebarData.folders ? (
             sidebarData.folders.length > 0 ? (
               sidebarData.folders.map((folder, index) => (
-                <Folder key={index} folder={folder} onRightClick={handleRightClick} allExpanded={allExpanded}/>
+                <Folder key={index} folder={folder} onRightClick={handleRightClick} allExpanded={allExpanded} setContextMenu={setContextMenu} selected={selected} setSelected={setSelected}/>
               ))
             ) : (
               <p>You have no decks!</p>
