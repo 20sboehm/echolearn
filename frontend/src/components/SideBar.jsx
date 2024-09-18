@@ -74,7 +74,7 @@ const Folder = ({ folder, onRightClick, allExpanded, setContextMenu, selected, s
   const handleLeftClick = (event, folder) => {
     event.preventDefault();
     event.stopPropagation();
-    
+
     setSelected(folder);
     handleOpenFolder();
   };
@@ -106,7 +106,7 @@ const Folder = ({ folder, onRightClick, allExpanded, setContextMenu, selected, s
           ))}
           {folder.children &&
             folder.children.map((child, index) => (
-              <Folder key={index} folder={child} className="mt-2" onRightClick={onRightClick} allExpanded={allExpanded} setContextMenu={setContextMenu} selected={selected} setSelected={setSelected}/>
+              <Folder key={index} folder={child} className="mt-2" onRightClick={onRightClick} allExpanded={allExpanded} setContextMenu={setContextMenu} selected={selected} setSelected={setSelected} />
             ))}
         </div>
       )}
@@ -124,6 +124,7 @@ const Sidebar = ({ refetchTrigger }) => {
   const [createType, setCreateType] = useState('');
   const [renaming, setRenaming] = useState(false);
   const [allExpanded, setAllExpanded] = useState(false);
+  const [showInput, setShowInput] = useState(false);
 
   const fetchSidebarData = () => {
     api._get('/api/sidebar')
@@ -156,6 +157,16 @@ const Sidebar = ({ refetchTrigger }) => {
     }
   };
 
+  const buttonCreate = (type) => {
+    if(type == "deck" && selected == null) {
+      alert("Please select a folder to create deck");
+      return;
+    }
+    setCreateType(type);
+    setShowInput(true);
+    setContextMenu(null);
+  };
+
   // Following are the logic for create both folder and deck
   const handleCreate = async () => {
     if (newName.trim() === '') {
@@ -173,8 +184,11 @@ const Sidebar = ({ refetchTrigger }) => {
     try {
       const response = await api._post(endpoint, newItem);
       if (response.status === 201) {
+        setNewName('');
         fetchSidebarData();
         setContextMenu(null);
+        setShowInput(false);
+        setCreateType('');
       } else {
         console.error(`Failed to create ${createType}`, response);
       }
@@ -255,8 +269,8 @@ const Sidebar = ({ refetchTrigger }) => {
           <div className='flex justify-between border-b border-eGray'>
             <h2 className='font-bold text-1xl text-eWhite whitespace-nowrap'>Deck Library</h2>
             <div className='flex items-center'>
-              <button><img src={folderImg} className='w-6 h-6' alt="Folder"></img></button>
-              <button><img src={decksImg} className='w-6 h-6' alt="Decks"></img></button>
+              <button onClick={() => buttonCreate('folder')}><img src={folderImg} className='w-6 h-6' alt="Folder"></img></button>
+              <button onClick={() => buttonCreate('deck')}><img src={decksImg} className='w-6 h-6' alt="Decks"></img></button>
               <button onClick={() => setAllExpanded((prev) => !prev)}>
                 <ExpandContractIcon isExpanded={allExpanded} />
               </button>
@@ -265,7 +279,7 @@ const Sidebar = ({ refetchTrigger }) => {
           {sidebarData && sidebarData.folders ? (
             sidebarData.folders.length > 0 ? (
               sidebarData.folders.map((folder, index) => (
-                <Folder key={index} folder={folder} onRightClick={handleRightClick} allExpanded={allExpanded} setContextMenu={setContextMenu} selected={selected} setSelected={setSelected}/>
+                <Folder key={index} folder={folder} onRightClick={handleRightClick} allExpanded={allExpanded} setContextMenu={setContextMenu} selected={selected} setSelected={setSelected} />
               ))
             ) : (
               <p>You have no decks!</p>
@@ -387,6 +401,27 @@ const Sidebar = ({ refetchTrigger }) => {
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {showInput && (
+        <div style={{ position: 'absolute', top: '50px', left: '50px', background: 'black', padding: '10px', border: '1px solid #ddd', borderRadius: '5px', zIndex: 9999, color: 'white' }}>
+          <input
+            type="text"
+            placeholder={`Enter ${createType} name`}
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+            style={{ padding: '5px', borderRadius: '3px', width: '100%', color: 'black' }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleCreate();
+              }
+            }}
+          />
+          <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'space-between' }}>
+            <button onClick={handleCreate}>Create</button>
+            <button onClick={() => { setNewName(''); setShowInput(false); setCreateType(''); }}>Cancel</button>
+          </div>
         </div>
       )}
     </div>
