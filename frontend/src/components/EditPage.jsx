@@ -109,8 +109,19 @@ function EditPage() {
   // Fetch the card data
   const { data: card, isLoading, error } = useQuery({
     queryKey: ["cards", cardId],
-    queryFn: () =>
-      api._get(`/api/cards/${cardId}`).then((response) => response.json()),
+    queryFn: async () => {
+      let response = await api._get(`/api/cards/${cardId}`);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        const message = errorData.detail || 'An error occurred';
+        throw new Error(`${response.status}: ${message}`);
+      }
+
+      return response.json();
+    },
+    retry: false
+    // api._get(`/api/cards/${cardId}`).then((response) => response.json()),
   });
 
   const formSubmissionMutation = useMutation(async (formData) => {
@@ -170,8 +181,27 @@ function EditPage() {
     }
   }, [card]);
 
+  // if (isLoading) {
+  //   return <div>Loading...</div>;
+  // }
+
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="mt-20 animate-spin inline-block size-12 border-[3px] border-current 
+      border-t-transparent text-eBlue rounded-full">
+      </div>
+    );
+  }
+
+  if (error) {
+    const [status, message] = error.message.split(': ');
+
+    return (
+      <>
+        <h1 className="mt-20 text-[3rem] font-bold">{status}</h1>
+        <p className="mt-2 text-[1.5rem]">{message}</p>
+      </>
+    );
   }
 
   const handleSubmit = (e) => {

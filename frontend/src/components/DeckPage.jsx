@@ -28,9 +28,9 @@ function DeckPage({ publicAccess = false }) {
   const [refetchTrigger, setRefetchTrigger] = useState(false);
 
   // Fetch reviews info
-  const { data: deckCards, isLoading, error, refetch } = useQuery(
-    ['deckCards', deckId], // Unique key based on deckId
-    async () => {
+  const { data: deckCards, isLoading, error, refetch } = useQuery({
+    queryKey: ['deckCards', deckId], // Unique key based on deckId
+    queryFn: async () => {
       let response = null;
       if (publicAccess) {
         response = await api._get(`/api/decks/public/${deckId}/cards`);
@@ -47,13 +47,15 @@ function DeckPage({ publicAccess = false }) {
 
       return response.json();
     },
-    {
-      retry: false // Disable automatic retry
-    }
-  );
+    retry: false // Disable automatic retry
+  });
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="mt-20 animate-spin inline-block size-12 border-[3px] border-current 
+      border-t-transparent text-eBlue rounded-full">
+      </div>
+    );
   }
 
   if (error) {
@@ -162,6 +164,7 @@ function DeckPage({ publicAccess = false }) {
       console.error('Error', error);
     }
   };
+
   const handleTakeACopy = async () => {
     setModalOpen(true); // Open the modal to select or create a folder
     const userfolders = await api._get(`/api/folders`)
@@ -195,6 +198,7 @@ function DeckPage({ publicAccess = false }) {
       console.error('Error', error);
     }
   };
+
   const speakText = (question) => {
     // setQuestion(e.card.question);
     console.log('what')

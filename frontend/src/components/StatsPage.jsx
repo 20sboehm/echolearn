@@ -157,8 +157,19 @@ function StatsPage() {
 
   const { data: deckCards, isLoading, error } = useQuery({
     queryKey: ['cards', deckId],
-    queryFn: () =>
-      api._get(`/api/decks/${deckId}/cards`).then((response) => response.json()),
+    queryFn: async () => {
+      let response = await api._get(`/api/decks/${deckId}/cards`);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        const message = errorData.detail || 'An error occurred';
+        throw new Error(`${response.status}: ${message}`);
+      }
+
+      return response.json();
+    },
+    retry: false
+    // api._get(`/api/decks/${deckId}/cards`).then((response) => response.json()),
   });
 
   useEffect(() => {
@@ -182,6 +193,25 @@ function StatsPage() {
       });
     }
   }, [deckCards, selectedBucket]);
+
+  if (isLoading) {
+    return (
+      <div className="mt-20 animate-spin inline-block size-12 border-[3px] border-current 
+      border-t-transparent text-eBlue rounded-full">
+      </div>
+    );
+  }
+
+  if (error) {
+    const [status, message] = error.message.split(': ');
+
+    return (
+      <>
+        <h1 className="mt-20 text-[3rem] font-bold">{status}</h1>
+        <p className="mt-2 text-[1.5rem]">{message}</p>
+      </>
+    );
+  }
 
   const chartData = {
     labels: Array.from({ length: 31 }, (_, i) => `${i} days`), // X-axis: 0 to 30 days
@@ -235,9 +265,9 @@ function StatsPage() {
     ],
   };
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  // if (isLoading) {
+  //   return <div>Loading...</div>;
+  // }
 
   return (
     <>

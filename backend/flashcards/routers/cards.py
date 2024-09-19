@@ -4,6 +4,7 @@ from typing import List
 import flashcards.schemas as sc
 from django.shortcuts import get_object_or_404
 from ninja_jwt.authentication import JWTAuth
+from ninja.errors import HttpError
 
 cards_router = Router(tags=["Cards"])
 
@@ -19,6 +20,10 @@ def get_cards(request):
 @cards_router.get("/{card_id}", response={200: sc.GetCard, 404: str}, auth=JWTAuth())
 def get_card(request, card_id: int):
     card = get_object_or_404(Card, card_id=card_id)
+
+    if card.deck.owner != request.user:
+        raise HttpError(403, "You are not authorized to access this deck")
+
     return card
 
 # ---------------------------------------------

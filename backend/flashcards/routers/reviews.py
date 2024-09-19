@@ -3,12 +3,19 @@ from flashcards.models import Deck, Card
 from datetime import datetime, timedelta, timezone
 import flashcards.schemas as sc
 from ninja_jwt.authentication import JWTAuth
+from ninja.errors import HttpError
+import time
 
 review_router = Router(tags=["Review"])
 
 @review_router.get("/{deck_id}", response=sc.ReviewCards, auth=JWTAuth())
 def get_reviews(request, deck_id: int):
     deck = Deck.objects.get(deck_id=deck_id)
+
+    # time.sleep(1)
+
+    if deck.owner != request.user:
+        raise HttpError(403, "You are not authorized to access this deck")
 
     cards = Card.objects.filter(deck=deck)
     today = datetime.now(timezone.utc)
