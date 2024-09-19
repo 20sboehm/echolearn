@@ -1,5 +1,5 @@
 from ninja import Router
-from flashcards.models import CustomUser, Folder, Deck
+from flashcards.models import CustomUser, Folder, Deck, Rating
 from flashcards.schemas import GetUser, UpdateUser, FolderInfo, DeckInfo
 from ninja_jwt.authentication import JWTAuth
 
@@ -67,3 +67,18 @@ def get_folders_and_decks(request):
         folder_list.append(get_folder_data(folder, user))
     
     return folder_list
+
+@profile_router.get("/ALLRatedDecks", response=list[dict], auth=JWTAuth())
+def ALL_rated_deck(request):
+    user = request.user
+    rate_existed = Rating.objects.filter(user=user)
+    rated_decks = []
+    for rating in rate_existed:
+        deck = Deck.objects.get(deck_id = rating.deck.deck_id)
+        rated_decks.append({
+            "deck_id":deck.deck_id,
+            "Owner":deck.owner_id,
+            "Description":deck.description,
+            "name":deck.name
+        })
+    return 200,rated_decks

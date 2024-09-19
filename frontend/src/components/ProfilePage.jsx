@@ -106,7 +106,7 @@ function ProfilePage() {
         const foldersResponse = await _get('/api/profile/folders_decks');
         const foldersData = await foldersResponse.json();
         setFolders(foldersData);
-        const RatedResponse = await _get('/api/decks/ALLRatedDecks');
+        const RatedResponse = await _get('/api/profile/ALLRatedDecks');
         const RatedDeck = await RatedResponse.json();
         console.log(RatedDeck)
         setRatedDeck(RatedDeck);
@@ -219,7 +219,10 @@ function ProfilePage() {
         <h2 className="text-xl font-bold">Rated decks</h2>
         {RatedDeck.length > 0 ? (
           RatedDeck.map((rDeck) => (
-            <li key={rDeck.deck_id}>Deck ID: {rDeck.deck_id}</li>
+            <Link to={`/decks/${rDeck.deck_id}`} style={{ display: "flex", alignItems: "center" }}>
+            <span className="mr-2">📚</span>
+            <p className="overflow-x-auto whitespace-nowrap">{rDeck.name}</p>
+            </Link>
           ))
         ) : (
           <p className='eWhite'>No Rated decks available</p>

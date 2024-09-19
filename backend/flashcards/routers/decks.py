@@ -40,9 +40,9 @@ def checkRatedresult(request, deck_id: int):
     user = request.user
     try:
         result = Rating.objects.get(deck = deck,user = user)
-        return {"rated": True}
+        return True
     except Rating.DoesNotExist:     
-        return {"rated": False}
+        return False
 
 
 @decks_router.get("/{deck_id}/take_copy/{folder_id}", response={201: sc.GetDeck, 404: str}, auth=JWTAuth())
@@ -74,16 +74,8 @@ def copy_deck(request, deck_id:int,folder_id:int):
         newcard.save()
     return 201, deck
 
-@decks_router.get("/ALLRatedDecks", response={200: List[dict], 404: str}, auth=JWTAuth())
-def ALL_rated_deck(request):
-    user = request.user
-    rate_existed = Rating.objects.filter(user=user)
-    rated_decks = [
-    {
-        "deck_id": rating.deck.id,  
-        "user": user.id,  
-    } for rating in rate_existed]
-    return rated_decks,200
+
+
 # ---------------------------------------------
 # -------------------- POST -------------------
 # ---------------------------------------------

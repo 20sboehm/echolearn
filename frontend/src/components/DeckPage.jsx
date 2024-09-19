@@ -36,6 +36,28 @@ function DeckPage() {
     }
   );
 
+
+  useEffect(() => {
+    const fetchRatingData = async () => {
+      try {
+        const response = await api._get(`/api/decks/${deckId}/ratedOrnot`);
+        const json = await response.json();
+        console.log(json)
+        if(json === true){
+          setRateresult(true)
+        }
+        else{
+          setRateresult(false)
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    // Call the fetchData function
+    fetchRatingData();
+  }, []);
+
   useEffect(() => {
     console.log("Deck Cards:", deckCards);
   }, [deckCards]);
@@ -189,8 +211,8 @@ function DeckPage() {
       setRateresult(false)
     else if (data.status == "updated")
       setRateresult(true)
-    
-      refetch();
+
+    refetch();
   };
 
   return (
