@@ -199,7 +199,6 @@ const Sidebar = ({ refetchTrigger }) => {
         axis="x"
         resizeHandles={['e']}
         // handleSize={[10, 10]}
-        // hover:bg-[#328afd7c]
         handle={<div className="absolute top-0 right-0 h-full w-1 cursor-default hover:cursor-ew-resize bg-transparent hover:bg-eBlue z-10 transition duration-200" />}
         minConstraints={[50, Infinity]} // Minimum width
         maxConstraints={[600, Infinity]} // Maximum width
@@ -207,7 +206,6 @@ const Sidebar = ({ refetchTrigger }) => {
         style={{ overflow: 'hidden', position: 'absolute', left: '0', zIndex: '1' }}
       >
         <div className="h-[92vh] overflow-y-auto">
-          {/* <span className="absolute top-0 right-0 h-full w-4 bg-transparent hover:bg-[#328afd7c] z-10" /> */}
           <h2 className='font-bold text-1xl text-eWhite border-b border-eGray'>Deck Library</h2>
           {sidebarData && sidebarData.folders ? (
             sidebarData.folders.length > 0 ? (

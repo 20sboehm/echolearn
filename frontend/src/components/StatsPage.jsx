@@ -5,6 +5,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { useQuery } from "react-query";
 import { useState, useEffect } from "react";
 import { useApi } from "../hooks";
+import LoadingSpinner from "./LoadingSpinner";
 
 // Register the chart components
 Chart.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ChartDataLabels);
@@ -169,7 +170,6 @@ function StatsPage() {
       return response.json();
     },
     retry: false
-    // api._get(`/api/decks/${deckId}/cards`).then((response) => response.json()),
   });
 
   useEffect(() => {
@@ -195,11 +195,7 @@ function StatsPage() {
   }, [deckCards, selectedBucket]);
 
   if (isLoading) {
-    return (
-      <div className="mt-20 animate-spin inline-block size-12 border-[3px] border-current 
-      border-t-transparent text-eBlue rounded-full">
-      </div>
-    );
+    return <LoadingSpinner />
   }
 
   if (error) {
@@ -264,10 +260,6 @@ function StatsPage() {
       },
     ],
   };
-
-  // if (isLoading) {
-  //   return <div>Loading...</div>;
-  // }
 
   return (
     <>

@@ -1,6 +1,6 @@
 import { Link, useParams } from "react-router-dom";
-import { useQuery, useMutation } from "react-query";
-import { useState, useEffect } from "react";
+import { useQuery } from "react-query";
+import { useState } from "react";
 import SideBar from "./SideBar";
 import ReactPlayer from 'react-player';
 import katex from 'katex';
@@ -8,6 +8,7 @@ import 'katex/dist/katex.min.css';
 import { useApi } from "../hooks";
 import editIconImg from "../assets/edit-icon.png"
 import voiceIconImg from "../assets/voice.png"
+import LoadingSpinner from "./LoadingSpinner";
 
 function DeckPage({ publicAccess = false }) {
   const api = useApi();
@@ -51,11 +52,7 @@ function DeckPage({ publicAccess = false }) {
   });
 
   if (isLoading) {
-    return (
-      <div className="mt-20 animate-spin inline-block size-12 border-[3px] border-current 
-      border-t-transparent text-eBlue rounded-full">
-      </div>
-    );
+    return <LoadingSpinner />
   }
 
   if (error) {

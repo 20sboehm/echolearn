@@ -1,11 +1,12 @@
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "react-query";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "./SideBar";
 import { useApi } from "../hooks";
 import sanitizeHtml from 'sanitize-html';
 import ReactPlayer from 'react-player';
 import { BlockMath } from 'react-katex';
+import LoadingSpinner from "./LoadingSpinner";
 
 const CustomButton = ({ onClick, text }) => (
   <button
@@ -121,7 +122,6 @@ function EditPage() {
       return response.json();
     },
     retry: false
-    // api._get(`/api/cards/${cardId}`).then((response) => response.json()),
   });
 
   const formSubmissionMutation = useMutation(async (formData) => {
@@ -181,16 +181,8 @@ function EditPage() {
     }
   }, [card]);
 
-  // if (isLoading) {
-  //   return <div>Loading...</div>;
-  // }
-
   if (isLoading) {
-    return (
-      <div className="mt-20 animate-spin inline-block size-12 border-[3px] border-current 
-      border-t-transparent text-eBlue rounded-full">
-      </div>
-    );
+    return <LoadingSpinner />
   }
 
   if (error) {

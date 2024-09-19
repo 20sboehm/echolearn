@@ -1,17 +1,18 @@
-import { useState, useEffect, useRef, createContext, useContext } from "react";
-import { useMutation, useQuery } from 'react-query';
+import { useState, useEffect } from "react";
+import { useQuery } from 'react-query';
 import { Link, useParams } from "react-router-dom";
 import Sidebar from "./SideBar";
 import { useApi } from "../hooks";
 import ReactPlayer from 'react-player';
-import { BlockMath } from 'react-katex';
-import sanitizeHtml from 'sanitize-html';
+import { BlockMath } from 'react-katex'; // we might need this here
+import sanitizeHtml from 'sanitize-html'; // we might need this here
 import katex from 'katex';
 import partyPopperImg from '../assets/party-popper.png';
 import partyPopperFlipImg from '../assets/party-popper-flip.png';
 import set from '../assets/reviewSwitch2.png';
 import card from '../assets/reviewSwitch.png';
 import "./ReviewPage.css";
+import LoadingSpinner from "./LoadingSpinner";
 
 // Two layers in order to maintain border rounding with active scrollbar
 const cardOuterCSS = "bg-white rounded-md overflow-hidden"
@@ -265,7 +266,6 @@ function ReviewPage() {
       }
 
       return response.json()
-      // api._get(`/api/reviews/${deckId}`).then((response) => response.json()),
     },
     {
       retry: false
@@ -273,11 +273,7 @@ function ReviewPage() {
   );
 
   if (isLoading) {
-    return (
-      <div className="mt-20 animate-spin inline-block size-12 border-[3px] border-current 
-      border-t-transparent text-eBlue rounded-full">
-      </div>
-    );
+    return <LoadingSpinner />
   }
 
   if (error) {
@@ -290,10 +286,6 @@ function ReviewPage() {
       </>
     );
   }
-
-  // if (error) {
-  //   return <div>Error: {error.message}</div>;
-  // }
 
   const updateReviewedCard = (newBucket, nextReviewTime, card, setFlip, wasCorrect) => {
     setFlip(false);
@@ -331,14 +323,6 @@ function ReviewPage() {
         console.error('Error updating next_review:', error);
       });
   };
-
-  // if (isLoading) {
-  //   return <div>Loading...</div>;
-  // }
-
-  // if (error) {
-  //   return <div>Error: {error.message}</div>;
-  // }
 
   // Check if reviews data is available
   if (!reviews || !reviews.cards || reviews.cards.length === 0) {
