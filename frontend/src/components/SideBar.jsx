@@ -2,12 +2,41 @@ import React, { useState, useEffect } from 'react';
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 import { useApi } from "../hooks";
-// import folderOpenImg from "../assets/folder-open.png";
 import folderImg from "../assets/Folder.png";
 import decksImg from "../assets/Deck.png";
 import { ResizableBox } from 'react-resizable';
 import 'react-resizable/css/styles.css';
 import './SideBar.css';
+
+const SidebarOpenClose = ({ sidebarOpen, sidebarWidth }) => {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      style={{
+        transform: (sidebarOpen && sidebarWidth !== 0) ? "rotate(180deg)" : "rotate(0deg)",
+        transition: "transform 0.3s ease",
+        width: "18px",
+        height: "18px",
+      }}
+    >
+      <path
+        d="M11 6L18 12L11 18"
+        stroke="#FFFFFF"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <line
+        x1="2" y1="12" x2="18" y2="12"
+        stroke="#FFFFFF"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+};
 
 const ExpandContractIcon = ({ isExpanded }) => {
   return (
@@ -109,6 +138,8 @@ const Sidebar = ({ refetchTrigger }) => {
   const [renaming, setRenaming] = useState(false);
   const [showInput, setShowInput] = useState(false);
   const [folderStates, setFolderStates] = useState({});
+  const [sidebarWidth, setSidebarWidth] = useState(250);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const fetchSidebarData = () => {
     api._get('/api/sidebar')
@@ -137,7 +168,14 @@ const Sidebar = ({ refetchTrigger }) => {
     fetchSidebarData();
   }, [refetchTrigger]);
 
-  console.log(folderStates);
+  const sidebarShow = () => {
+    if (sidebarOpen) {
+      setSidebarWidth(0);
+    } else {
+      setSidebarWidth(250);
+    }
+    setSidebarOpen(!sidebarOpen);
+  };
 
   // Handle folder open/close state
   const toggleFolder = (folderId) => {
@@ -273,19 +311,25 @@ const Sidebar = ({ refetchTrigger }) => {
     }
   };
 
-  // console.log(selected);
-
   return (
     <div onContextMenu={(e) => handleRightClick(e)}>
+      <button
+        onClick={sidebarShow}
+        style={{ left: `${sidebarWidth}px` }}
+        className={`text-eWhite px-2 py-1 absolute top-[4rem] z-50`}
+      >
+      <SidebarOpenClose sidebarOpen={sidebarOpen} sidebarWidth={sidebarWidth} />
+      </button>
       <ResizableBox
-        width={250}
+        width={sidebarWidth}
         height={Infinity}
         axis="x"
         resizeHandles={['e']}
-        minConstraints={[50, Infinity]} // Minimum width
+        minConstraints={[0, Infinity]} // Minimum width
         maxConstraints={[600, Infinity]} // Maximum width
         className="bg-eDark h-[calc(100%-4rem)] border-r border-eDarkGray p-2"
         style={{ overflow: 'hidden', position: 'absolute', left: '0', zIndex: '1' }}
+        onResize={(e, { size }) => setSidebarWidth(size.width)}
         handle={<span className="sizehandle" />}
       >
         <div className="h-[92vh] overflow-y-auto">
