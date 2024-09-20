@@ -63,50 +63,34 @@ const ChevronIcon = ({ isOpen }) => {
   );
 };
 
-const Folder = ({ folder, onRightClick, allExpanded, setContextMenu, selected, setSelected }) => {
-  const [openFolder, setOpenFolder] = useState(false);
+const Folder = ({ folder, onRightClick, folderStates, toggleFolder, setContextMenu, selected, setSelected }) => {
 
-  const handleOpenFolder = () => {
-    setOpenFolder(!openFolder);
-    setContextMenu(null);
-  };
-
-  const handleLeftClick = (event, folder) => {
+  const handleLeftClick = (event) => {
     event.preventDefault();
     event.stopPropagation();
 
     setSelected(folder);
-    handleOpenFolder();
+    toggleFolder(folder.folder_id);
   };
-
-  useEffect(() => {
-    setOpenFolder(allExpanded);
-  }, [allExpanded]);
 
   return (
     <div className="mt-2">
-      <div onClick={(e) => handleLeftClick(e, folder)} onContextMenu={(e) => onRightClick(e, folder)} className={`cursor-pointer text-base text-eWhite flex items-center select-none ${selected === folder ? 'bg-blue-500' : ''}`}>
-        {/* <img
-          src={openFolder ? folderOpenImg : folderCloseImg}
-          alt={openFolder ? "Open folder" : "Closed folder"}
-          className="w-6 h-6 ml-2 mr-2" /> */}
-        <ChevronIcon isOpen={openFolder} />
+      <div onClick={handleLeftClick} onContextMenu={(e) => onRightClick(e, folder)} className={`cursor-pointer text-base text-eWhite flex items-center select-none ${selected === folder ? 'bg-blue-500' : ''}`}>
+        <ChevronIcon isOpen={folderStates[folder.folder_id]} />
         <p className="overflow-x-auto">{folder.name}</p>
       </div>
-      {openFolder && (
+      {folderStates[folder.folder_id] && (
         <div className="ml-2 border-l border-eGray">
           {folder.decks.map((deck, index) => (
             <div key={index} className="text-eWhite flex items-center select-none text-base ml-2 mt-2 hover:text-eBlue" onContextMenu={(e) => onRightClick(e, deck)}>
-              {/* <Link to={`/decks/${deck.deck_id}`} style={{ display: "flex", alignItems: "center" }}> */}
               <Link to={`/decks/${deck.deck_id}`}>
-                {/* <img src={decksImg} alt="Deck" className="w-10 h-10" /> */}
                 <p className="overflow-x-auto whitespace-nowrap">{deck.name}</p>
               </Link>
             </div>
           ))}
           {folder.children &&
             folder.children.map((child, index) => (
-              <Folder key={index} folder={child} className="mt-2" onRightClick={onRightClick} allExpanded={allExpanded} setContextMenu={setContextMenu} selected={selected} setSelected={setSelected} />
+              <Folder key={index} folder={child} className="mt-2" onRightClick={onRightClick} folderStates={folderStates} toggleFolder={toggleFolder} setContextMenu={setContextMenu} selected={selected} setSelected={setSelected} />
             ))}
         </div>
       )}
@@ -123,14 +107,26 @@ const Sidebar = ({ refetchTrigger }) => {
   const [selected, setSelected] = useState(null);
   const [createType, setCreateType] = useState('');
   const [renaming, setRenaming] = useState(false);
-  const [allExpanded, setAllExpanded] = useState(false);
   const [showInput, setShowInput] = useState(false);
+  const [folderStates, setFolderStates] = useState({});
 
   const fetchSidebarData = () => {
     api._get('/api/sidebar')
       .then((response) => response.json())
       .then((data) => {
         setSidebarData(data);
+
+        const initialFolderStates = {};
+        const initializeFolderStates = (folders) => {
+          folders.forEach((folder) => {
+            initialFolderStates[folder.folder_id] = false; // All folders are initially closed
+            if (folder.children) {
+              initializeFolderStates(folder.children); // Recursively initialize nested folders
+            }
+          });
+        };
+        initializeFolderStates(data.folders);
+        setFolderStates(initialFolderStates);
       })
       .catch((error) => {
         console.log('An error occurred fetching sidebar:', error);
@@ -140,6 +136,33 @@ const Sidebar = ({ refetchTrigger }) => {
   useEffect(() => {
     fetchSidebarData();
   }, [refetchTrigger]);
+
+  console.log(folderStates);
+
+  // Handle folder open/close state
+  const toggleFolder = (folderId) => {
+    setFolderStates((prevState) => ({
+      ...prevState,
+      [folderId]: !prevState[folderId],
+    }));
+  };
+
+  const isAnyFolderOpen = Object.values(folderStates).some((isOpen) => isOpen);
+
+  const handleExpandCollapseAll = () => {
+    const newState = !isAnyFolderOpen; // Collapse all if any folder is open, else expand all
+    const updatedFolderStates = {};
+    const updateAllFolderStates = (folders) => {
+      folders.forEach((folder) => {
+        updatedFolderStates[folder.folder_id] = newState; // Set all folders (root and nested) to the new expanded/collapsed state
+        if (folder.children) {
+          updateAllFolderStates(folder.children); // Recursively update nested folders
+        }
+      });
+    };
+    updateAllFolderStates(sidebarData.folders);
+    setFolderStates(updatedFolderStates);
+  };
 
   const handleRightClick = (event, folder = null) => {
     event.preventDefault();
@@ -271,15 +294,15 @@ const Sidebar = ({ refetchTrigger }) => {
             <div className='flex items-center'>
               <button onClick={() => buttonCreate('folder')}><img src={folderImg} className='w-6 h-6' alt="Folder"></img></button>
               <button onClick={() => buttonCreate('deck')}><img src={decksImg} className='w-6 h-6' alt="Decks"></img></button>
-              <button onClick={() => setAllExpanded((prev) => !prev)}>
-                <ExpandContractIcon isExpanded={allExpanded} />
+              <button onClick={handleExpandCollapseAll}>
+                <ExpandContractIcon isExpanded={isAnyFolderOpen}/> 
               </button>
             </div>
           </div>
           {sidebarData && sidebarData.folders ? (
             sidebarData.folders.length > 0 ? (
               sidebarData.folders.map((folder, index) => (
-                <Folder key={index} folder={folder} onRightClick={handleRightClick} allExpanded={allExpanded} setContextMenu={setContextMenu} selected={selected} setSelected={setSelected} />
+                <Folder key={index} folder={folder} onRightClick={handleRightClick} folderStates={folderStates} toggleFolder={toggleFolder} setContextMenu={setContextMenu} selected={selected} setSelected={setSelected} />
               ))
             ) : (
               <p>You have no decks!</p>
