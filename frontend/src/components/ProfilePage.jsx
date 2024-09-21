@@ -154,10 +154,10 @@ function ProfilePage() {
             type="number"
             value={editableAge}
             onChange={(e) => setEditableAge(Number(e.target.value))}
-            className="border rounded bg-eBlack"
+            className="border rounded bg-eBlack ml-1"
           />
         ) : (
-          profile.age
+          ` ${profile.age}`
         )}
       </p>
 
@@ -168,7 +168,7 @@ function ProfilePage() {
           <select
             value={editableCountry}
             onChange={(e) => setEditableCountry(e.target.value)}
-            className="border rounded bg-eBlack"
+            className="border rounded bg-eBlack ml-1"
           >
             {countries.map((country, index) => (
               <option key={index} value={country}>
@@ -177,7 +177,7 @@ function ProfilePage() {
             ))}
           </select>
         ) : (
-          profile.country
+          ` ${profile.country}`
         )}
       </p>
 

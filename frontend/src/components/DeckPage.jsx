@@ -1,6 +1,6 @@
 import { Link, useParams } from "react-router-dom";
-import { useQuery, useMutation } from "react-query";
-import { useState, useEffect } from "react";
+import { useQuery } from "react-query";
+import { useState } from "react";
 import SideBar from "./SideBar";
 import ReactPlayer from 'react-player';
 import katex from 'katex';
@@ -8,8 +8,9 @@ import 'katex/dist/katex.min.css';
 import { useApi } from "../hooks";
 import editIconImg from "../assets/edit-icon.png"
 import voiceIconImg from "../assets/voice.png"
+import LoadingSpinner from "./LoadingSpinner";
 
-function DeckPage() {
+function DeckPage({ publicAccess = false }) {
   const api = useApi();
 
   const [deleteMode, setDeleteMode] = useState(false);
@@ -27,22 +28,42 @@ function DeckPage() {
   const [isModalOpen, setModalOpen] = useState(false);
   const [refetchTrigger, setRefetchTrigger] = useState(false);
 
-// Fetch reviews info
-const { data: deckCards, isLoading, error, refetch } = useQuery(
-  ['deckCards', deckId], // Unique key based on deckId
-  () => api._get(`/api/decks/${deckId}/cards`).then((response) => response.json()),
-  {
-    enabled: !!deckId // Only run the query if deckId is truthy
-  }
-);
+  // Fetch reviews info
+  const { data: deckCards, isLoading, error, refetch } = useQuery({
+    queryKey: ['deckCards', deckId], // Unique key based on deckId
+    queryFn: async () => {
+      let response = null;
+      if (publicAccess) {
+        response = await api._get(`/api/decks/public/${deckId}/cards`);
+      }
+      else {
+        response = await api._get(`/api/decks/${deckId}/cards`);
+      }
 
+      if (!response.ok) {
+        const errorData = await response.json();
+        const message = errorData.detail || 'An error occurred';
+        throw new Error(`${response.status}: ${message}`);
+      }
 
-  useEffect(() => {
-    console.log("Deck Cards:", deckCards);
-  }, [deckCards]);
+      return response.json();
+    },
+    retry: false // Disable automatic retry
+  });
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner />
+  }
+
+  if (error) {
+    const [status, message] = error.message.split(': ');
+
+    return (
+      <>
+        <h1 className="mt-20 text-[3rem] font-bold">{status}</h1>
+        <p className="mt-2 text-[1.5rem]">{message}</p>
+      </>
+    );
   }
 
   let reviewedCardsCount = 0;
@@ -140,6 +161,7 @@ const { data: deckCards, isLoading, error, refetch } = useQuery(
       console.error('Error', error);
     }
   };
+
   const handleTakeACopy = async () => {
     setModalOpen(true); // Open the modal to select or create a folder
     const userfolders = await api._get(`/api/folders`)
@@ -169,10 +191,11 @@ const { data: deckCards, isLoading, error, refetch } = useQuery(
       alert('Deck copied successfully!');
       setModalOpen(false); // Close the modal after action
       setRefetchTrigger(prev => !prev);
-  } catch (error) {
+    } catch (error) {
       console.error('Error', error);
     }
   };
+
   const speakText = (question) => {
     // setQuestion(e.card.question);
     console.log('what')
@@ -189,39 +212,54 @@ const { data: deckCards, isLoading, error, refetch } = useQuery(
         <div className="flex flex-row">
           <div className="flex flex-col items-start">
             <h1 className="text-4xl font-bold my-4">{deckCards.deck_name}</h1>
-            <Link to={`/review/${deckId}`} className="rounded-lg border border-transparent px-12 py-2 text-center
+            {publicAccess ? (
+              null
+            ) : (
+              <Link to={`/review/${deckId}`} className={` rounded-lg border border-transparent px-12 py-2 text-center
               font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-              active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>
+              active:border-[#555]`} style={{ transition: "border-color 0.10s, color 0.10s" }}>
+                Study
+              </Link>
+            )}
+            {/* <Link to={`/review/${deckId}`} className={` rounded-lg border border-transparent px-12 py-2 text-center
+              font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+              active:border-[#555]`} style={{ transition: "border-color 0.10s, color 0.10s" }}>
               Study
-            </Link>
+            </Link> */}
           </div>
 
-          <div className="flex flex-col ml-auto justify-center items-center mb-4">
-            {/* JavaScript code to draw the graph */}
-            <svg width="200" height="200" viewBox="0 20 200 150">
-              <circle cx="100" cy="100" r={radius} fill="none" stroke="#ECEFF1" strokeWidth="7.5" />
-              <circle cx="100" cy="100" r={radius} fill="none" stroke="#29A5DC" strokeWidth="7.5" strokeLinecap="round"
-                strokeDasharray={`${dashLength},${gapLength}`} strokeDashoffset={strokeDashoffset}>
-                <title>Progress</title>
-              </circle>
-              <text x="100" y="100" textAnchor="middle" dominantBaseline="middle" fill="white" fontSize="16">
-                {percentage}%
-              </text>
-            </svg>
-            <Link to={`/stats/${deckId}`}>
-              <button className="rounded-lg border border-transparent px-4 py-2 
+          {publicAccess ? (
+            null
+          ) : (
+            <div className="flex flex-col ml-auto justify-center items-center mb-4">
+              {/* JavaScript code to draw the graph */}
+              <svg width="200" height="200" viewBox="0 20 200 150">
+                <circle cx="100" cy="100" r={radius} fill="none" stroke="#ECEFF1" strokeWidth="7.5" />
+                <circle cx="100" cy="100" r={radius} fill="none" stroke="#29A5DC" strokeWidth="7.5" strokeLinecap="round"
+                  strokeDasharray={`${dashLength},${gapLength}`} strokeDashoffset={strokeDashoffset}>
+                  <title>Progress</title>
+                </circle>
+                <text x="100" y="100" textAnchor="middle" dominantBaseline="middle" fill="white" fontSize="16">
+                  {percentage}%
+                </text>
+              </svg>
+              <Link to={`/stats/${deckId}`}>
+                <button className="rounded-lg border border-transparent px-4 py-2 
                 font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
                 active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>
-                More Statistics</button>
-            </Link>
-          </div>
+                  More Statistics</button>
+              </Link>
+            </div>
+          )}
         </div>
 
         <div className="flex flex-row items-center justify-between mt-2 mb-4 border-t border-gray-500 pt-4">
           <h1>{deckCards.cards.length} Cards</h1>
           <button
-            className={`${deckCards.isPublic ? "bg-blue-500" : "bg-red-500"} rounded-lg border border-transparent px-2 py-1 
-              font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
+            disabled={publicAccess}
+            className={`${deckCards.isPublic ? "bg-green-600" : "bg-red-600"}
+              ${publicAccess ? "" : "active:scale-[0.97] hover:border-white hover:text-white"}
+              rounded-lg border border-transparent px-2 py-1 disabled:bg-gray-500 font-semibold`}
             style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={setStatus}>
             {deckCards.isPublic ? "Public" : "Private"}
           </button>
@@ -248,10 +286,15 @@ const { data: deckCards, isLoading, error, refetch } = useQuery(
               </div>
             )}
           </div>
-          <button className={`${deleteMode ? "bg-red-500" : "bg-blue-500"} rounded-lg border border-transparent px-2 py-1 
+          {publicAccess ? (
+            null
+          ) : (
+            <button className={`${deleteMode ? "bg-red-500" : "bg-blue-500"} rounded-lg border border-transparent px-2 py-1 
               font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
-            style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={changeMode}>
-            {deleteMode ? "Cancel" : "Delete"}</button>
+              style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={changeMode}>
+              {deleteMode ? "Cancel" : "Delete"}
+            </button>
+          )}
         </div>
 
         <div className="h-[50vh] overflow-y-auto border-t border-gray-500">

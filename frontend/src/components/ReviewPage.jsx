@@ -1,17 +1,18 @@
-import { useState, useEffect, useRef, createContext, useContext } from "react";
-import { useMutation, useQuery } from 'react-query';
+import { useState, useEffect } from "react";
+import { useQuery } from 'react-query';
 import { Link, useParams } from "react-router-dom";
 import Sidebar from "./SideBar";
 import { useApi } from "../hooks";
 import ReactPlayer from 'react-player';
-import { BlockMath } from 'react-katex';
-import sanitizeHtml from 'sanitize-html';
+import { BlockMath } from 'react-katex'; // we might need this here
+import sanitizeHtml from 'sanitize-html'; // we might need this here
 import katex from 'katex';
 import partyPopperImg from '../assets/party-popper.png';
 import partyPopperFlipImg from '../assets/party-popper-flip.png';
 import set from '../assets/reviewSwitch2.png';
 import card from '../assets/reviewSwitch.png';
 import "./ReviewPage.css";
+import LoadingSpinner from "./LoadingSpinner";
 
 // Two layers in order to maintain border rounding with active scrollbar
 const cardOuterCSS = "bg-white rounded-md overflow-hidden"
@@ -78,40 +79,40 @@ function FlashCard({ card, setShowAnswer, flip, setFlip }) {
     <div className={`flashCard ${flip ? 'flip' : ''}`}>
       <div className={`mt-8 ${cardOuterCSS}`} onClick={toggleFlip}>
         <div className="h-[60vh] px-4 py-2 text-black flex flex-col justify-center items-center overflow-x-hidden overflow-y-auto text-[2em]" style={{ scrollbarGutter: 'stable both-edges' }}>
-        {!flip ? (
-          <>
-            <div dangerouslySetInnerHTML={{ __html: card.question }}></div>
-            {ReactPlayer.canPlay(card.questionvideolink) && (
-              <ReactPlayer
-                url={card.questionvideolink}
-                controls={true}
-                style={{ maxWidth: '80%', maxHeight: '80%' }} // ReactPlayer is likely incompatible with Tailwind
-              />
-            )}
-            {card.questionimagelink && <img src={card.questionimagelink} className="max-w-[80%] max-h-[80%]" />}
-            {card.questionlatex && <KatexOutput latex={card.questionlatex} />}
-          </>
+          {!flip ? (
+            <>
+              <div dangerouslySetInnerHTML={{ __html: card.question }}></div>
+              {ReactPlayer.canPlay(card.questionvideolink) && (
+                <ReactPlayer
+                  url={card.questionvideolink}
+                  controls={true}
+                  style={{ maxWidth: '80%', maxHeight: '80%' }} // ReactPlayer is likely incompatible with Tailwind
+                />
+              )}
+              {card.questionimagelink && <img src={card.questionimagelink} className="max-w-[80%] max-h-[80%]" />}
+              {card.questionlatex && <KatexOutput latex={card.questionlatex} />}
+            </>
           ) : (
-          <div className="flashCardBack">
-            <div dangerouslySetInnerHTML={{ __html: card.answer }}></div>
-            {ReactPlayer.canPlay(card.answervideolink) && (
-              <ReactPlayer
-                url={card.answervideolink}
-                controls={true}
-                style={{ maxWidth: '80%', maxHeight: '80%' }} // ReactPlayer is likely incompatible with Tailwind
-              />
-            )}
-            {card.answerimagelink && <img src={card.answerimagelink} className="max-w-[80%] max-h-[80%]" />}
-            {card.answerlatex && <KatexOutput latex={card.answerlatex} />}
-          </div>
-        )}
+            <div className="flashCardBack">
+              <div dangerouslySetInnerHTML={{ __html: card.answer }}></div>
+              {ReactPlayer.canPlay(card.answervideolink) && (
+                <ReactPlayer
+                  url={card.answervideolink}
+                  controls={true}
+                  style={{ maxWidth: '80%', maxHeight: '80%' }} // ReactPlayer is likely incompatible with Tailwind
+                />
+              )}
+              {card.answerimagelink && <img src={card.answerimagelink} className="max-w-[80%] max-h-[80%]" />}
+              {card.answerlatex && <KatexOutput latex={card.answerlatex} />}
+            </div>
+          )}
         </div>
       </div>
     </div>
   )
 }
 
-function ShowAnswerButtons({ card, showAnswer, setShowAnswer, updateReviewedCard, flip, setFlip}) {
+function ShowAnswerButtons({ card, showAnswer, setShowAnswer, updateReviewedCard, flip, setFlip }) {
   const changeShowAnswer = () => {
     setShowAnswer(true);
     setFlip(!flip);
@@ -244,18 +245,47 @@ function ReviewPage() {
   const [flip, setFlip] = useState(false);
 
   const switchAnimation = () => {
-    setCurrImage((prev) => 
+    setCurrImage((prev) =>
       prev === set ? card : set
     );
     setAnimation(!changeAnimation);
     setShowAnswer(false);
     setFlip(false);
   }
+
   // Fetch reviews info
-  const { data: reviews, isLoading, error } = useQuery({
-    queryFn: () =>
-      api._get(`/api/reviews/${deckId}`).then((response) => response.json()),
-  });
+  const { data: reviews, isLoading, error } = useQuery(
+    ['reviews', deckId],
+    async () => {
+      let response = await api._get(`/api/reviews/${deckId}`);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        const message = errorData.detail || 'An error occurred';
+        throw new Error(`${response.status}: ${message}`);
+      }
+
+      return response.json()
+    },
+    {
+      retry: false
+    }
+  );
+
+  if (isLoading) {
+    return <LoadingSpinner />
+  }
+
+  if (error) {
+    const [status, message] = error.message.split(': ');
+
+    return (
+      <>
+        <h1 className="mt-20 text-[3rem] font-bold">{status}</h1>
+        <p className="mt-2 text-[1.5rem]">{message}</p>
+      </>
+    );
+  }
 
   const updateReviewedCard = (newBucket, nextReviewTime, card, setFlip, wasCorrect) => {
     setFlip(false);
@@ -294,14 +324,6 @@ function ReviewPage() {
       });
   };
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error.message}</div>;
-  }
-
   // Check if reviews data is available
   if (!reviews || !reviews.cards || reviews.cards.length === 0) {
     return <div>No cards found for review.</div>;
@@ -311,12 +333,12 @@ function ReviewPage() {
     <>
       <Sidebar />
       <div className="rounded-lg mt-[2%] h-[60vh] w-[40vw] flex flex-col min-w-[16rem]">
-      <div className="flex items-center border-b pb-[1rem]">
-        <h2 className="text-[2em] absolute left-1/2 transform -translate-x-1/2">{reviews.deck_name}</h2>
-        <button className="border w-[12%] ml-auto" onClick={switchAnimation}>
-          <img src={currImage}></img>
-        </button>
-      </div>
+        <div className="flex items-center border-b pb-[1rem]">
+          <h2 className="text-[2em] absolute left-1/2 transform -translate-x-1/2">{reviews.deck_name}</h2>
+          <button className="border w-[12%] ml-auto" onClick={switchAnimation}>
+            <img src={currImage}></img>
+          </button>
+        </div>
         {!finish && (
           <ReviewCard
             card={reviews.cards[cardIndex]}

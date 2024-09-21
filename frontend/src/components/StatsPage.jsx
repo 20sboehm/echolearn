@@ -5,6 +5,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { useQuery } from "react-query";
 import { useState, useEffect } from "react";
 import { useApi } from "../hooks";
+import LoadingSpinner from "./LoadingSpinner";
 
 // Register the chart components
 Chart.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ChartDataLabels);
@@ -157,8 +158,18 @@ function StatsPage() {
 
   const { data: deckCards, isLoading, error } = useQuery({
     queryKey: ['cards', deckId],
-    queryFn: () =>
-      api._get(`/api/decks/${deckId}/cards`).then((response) => response.json()),
+    queryFn: async () => {
+      let response = await api._get(`/api/decks/${deckId}/cards`);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        const message = errorData.detail || 'An error occurred';
+        throw new Error(`${response.status}: ${message}`);
+      }
+
+      return response.json();
+    },
+    retry: false
   });
 
   useEffect(() => {
@@ -182,6 +193,21 @@ function StatsPage() {
       });
     }
   }, [deckCards, selectedBucket]);
+
+  if (isLoading) {
+    return <LoadingSpinner />
+  }
+
+  if (error) {
+    const [status, message] = error.message.split(': ');
+
+    return (
+      <>
+        <h1 className="mt-20 text-[3rem] font-bold">{status}</h1>
+        <p className="mt-2 text-[1.5rem]">{message}</p>
+      </>
+    );
+  }
 
   const chartData = {
     labels: Array.from({ length: 31 }, (_, i) => `${i} days`), // X-axis: 0 to 30 days
@@ -234,10 +260,6 @@ function StatsPage() {
       },
     ],
   };
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <>
