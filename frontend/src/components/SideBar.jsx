@@ -214,7 +214,7 @@ const Sidebar = ({ refetchTrigger }) => {
 
   const sidebarShow = () => {
     if (sidebarOpen) {
-      setSidebarWidth(0);
+      setSidebarWidth(10);
       setSidebarOpen(true);
     } else {
       setSidebarWidth(250);
@@ -225,9 +225,9 @@ const Sidebar = ({ refetchTrigger }) => {
 
   const handleResize = (e, { size }) => {
     setSidebarWidth(size.width);
-    if (size.width === 0) {
+    if (size.width === 10) {
       setSidebarOpen(false);
-    } else if (size.width > 0 && !sidebarOpen) {
+    } else if (size.width > 10 && !sidebarOpen) {
       setSidebarOpen(true);
     }
   };
@@ -380,7 +380,7 @@ const Sidebar = ({ refetchTrigger }) => {
         height={Infinity}
         axis="x"
         resizeHandles={['e']}
-        minConstraints={[0, Infinity]} // Minimum width
+        minConstraints={[10, Infinity]} // Minimum width
         maxConstraints={[600, Infinity]} // Maximum width
         className="bg-eDark h-[calc(100%-4rem)] border-r border-eDarkGray p-2 group"
         style={{ overflow: 'hidden', position: 'absolute', left: '0', zIndex: '1' }}
