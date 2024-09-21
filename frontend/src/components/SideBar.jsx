@@ -219,7 +219,7 @@ const Sidebar = ({ refetchTrigger }) => {
   };
 
   const buttonCreate = (type) => {
-    if(type == "deck" && selected == null) {
+    if (type == "deck" && selected == null) {
       alert("Please select a folder to create deck");
       return;
     }
@@ -318,7 +318,7 @@ const Sidebar = ({ refetchTrigger }) => {
         style={{ left: `${sidebarWidth}px` }}
         className={`text-eWhite px-2 py-1 absolute top-[4rem] z-50`}
       >
-      <SidebarOpenClose sidebarOpen={sidebarOpen} sidebarWidth={sidebarWidth} />
+        <SidebarOpenClose sidebarOpen={sidebarOpen} sidebarWidth={sidebarWidth} />
       </button>
       <ResizableBox
         width={sidebarWidth}
@@ -339,7 +339,7 @@ const Sidebar = ({ refetchTrigger }) => {
               <button onClick={() => buttonCreate('folder')}><img src={folderImg} className='w-6 h-6' alt="Folder"></img></button>
               <button onClick={() => buttonCreate('deck')}><img src={decksImg} className='w-6 h-6' alt="Decks"></img></button>
               <button onClick={handleExpandCollapseAll}>
-                <ExpandContractIcon isExpanded={isAnyFolderOpen}/> 
+                <ExpandContractIcon isExpanded={isAnyFolderOpen} />
               </button>
             </div>
           </div>
