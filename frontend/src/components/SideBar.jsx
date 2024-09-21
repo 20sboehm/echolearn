@@ -104,7 +104,7 @@ const Folder = ({ folder, onRightClick, folderStates, toggleFolder, setContextMe
 
   return (
     <div className="mt-2">
-      <div onClick={handleLeftClick} onContextMenu={(e) => onRightClick(e, folder)} className={`cursor-pointer text-base text-eWhite flex items-center select-none ${selected === folder ? 'bg-blue-500' : ''}`}>
+      <div onClick={handleLeftClick} onContextMenu={(e) => onRightClick(e, folder)} className={`cursor-pointer text-base text-eWhite flex items-center select-none ${selected === folder ? 'bg-gray-500' : ''}`}>
         <ChevronIcon isOpen={folderStates[folder.folder_id]} />
         <p className="overflow-x-auto">{folder.name}</p>
       </div>
