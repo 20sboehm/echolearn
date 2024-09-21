@@ -2,11 +2,49 @@ import React, { useState, useEffect } from 'react';
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 import { useApi } from "../hooks";
-import folderImg from "../assets/Folder.png";
-import decksImg from "../assets/Deck.png";
 import { ResizableBox } from 'react-resizable';
 import 'react-resizable/css/styles.css';
 import './SideBar.css';
+
+const DeckCreateIcon = () => {
+  return (
+    <svg
+      width="26px"
+      height="26px"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M10 15H14M12 13V17M13 3H8.2C7.0799 3 6.51984 3 6.09202 3.21799C5.71569 3.40973 5.40973 3.71569 5.21799 4.09202C5 4.51984 5 5.0799 5 6.2V17.8C5 18.9201 5 19.4802 5.21799 19.908C5.40973 20.2843 5.71569 20.5903 6.09202 20.782C6.51984 21 7.0799 21 8.2 21H15.8C16.9201 21 17.4802 21 17.908 20.782C18.2843 20.5903 18.5903 20.2843 18.782 19.908C19 19.4802 19 18.9201 19 17.8V9M13 3L19 9M13 3V7.4C13 7.96005 13 8.24008 13.109 8.45399C13.2049 8.64215 13.3578 8.79513 13.546 8.89101C13.7599 9 14.0399 9 14.6 9H19"
+        stroke="white"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+};
+
+const FolderCreateIcon = () => {
+  return (
+    <svg
+      width="26px"
+      height="26px"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M9 13H15M12 10V16M12.0627 6.06274L11.9373 5.93726C11.5914 5.59135 11.4184 5.4184 11.2166 5.29472C11.0376 5.18506 10.8425 5.10425 10.6385 5.05526C10.4083 5 10.1637 5 9.67452 5H6.2C5.0799 5 4.51984 5 4.09202 5.21799C3.71569 5.40973 3.40973 5.71569 3.21799 6.09202C3 6.51984 3 7.07989 3 8.2V15.8C3 16.9201 3 17.4802 3.21799 17.908C3.40973 18.2843 3.71569 18.5903 4.09202 18.782C4.51984 19 5.07989 19 6.2 19H17.8C18.9201 19 19.4802 19 19.908 18.782C20.2843 18.5903 20.5903 18.2843 20.782 17.908C21 17.4802 21 16.9201 21 15.8V10.2C21 9.0799 21 8.51984 20.782 8.09202C20.5903 7.71569 20.2843 7.40973 19.908 7.21799C19.4802 7 18.9201 7 17.8 7H14.3255C13.8363 7 13.5917 7 13.3615 6.94474C13.1575 6.89575 12.9624 6.81494 12.7834 6.70528C12.5816 6.5816 12.4086 6.40865 12.0627 6.06274Z"
+        stroke="white"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+};
 
 const SidebarOpenClose = ({ sidebarOpen, sidebarWidth }) => {
   return (
@@ -147,17 +185,23 @@ const Sidebar = ({ refetchTrigger }) => {
       .then((data) => {
         setSidebarData(data);
 
-        const initialFolderStates = {};
-        const initializeFolderStates = (folders) => {
-          folders.forEach((folder) => {
-            initialFolderStates[folder.folder_id] = false; // All folders are initially closed
-            if (folder.children) {
-              initializeFolderStates(folder.children); // Recursively initialize nested folders
-            }
-          });
-        };
-        initializeFolderStates(data.folders);
-        setFolderStates(initialFolderStates);
+        setFolderStates((prevFolderStates) => {
+          const newFolderStates = { ...prevFolderStates }; // Start with existing folder states
+
+          const initializeFolderStates = (folders) => {
+            folders.forEach((folder) => {
+              // Only initialize folders that don't have a state yet
+              if (!(folder.folder_id in newFolderStates)) {
+                newFolderStates[folder.folder_id] = false; // Default is closed
+              }
+              if (folder.children) {
+                initializeFolderStates(folder.children); // Recursively initialize nested folders
+              }
+            });
+          };
+          initializeFolderStates(data.folders);
+          return newFolderStates;
+        });
       })
       .catch((error) => {
         console.log('An error occurred fetching sidebar:', error);
@@ -171,10 +215,21 @@ const Sidebar = ({ refetchTrigger }) => {
   const sidebarShow = () => {
     if (sidebarOpen) {
       setSidebarWidth(0);
+      setSidebarOpen(true);
     } else {
       setSidebarWidth(250);
+      setSidebarOpen(false);
     }
     setSidebarOpen(!sidebarOpen);
+  };
+
+  const handleResize = (e, { size }) => {
+    setSidebarWidth(size.width);
+    if (size.width === 0) {
+      setSidebarOpen(false);
+    } else if (size.width > 0 && !sidebarOpen) {
+      setSidebarOpen(true);
+    }
   };
 
   // Handle folder open/close state
@@ -329,15 +384,15 @@ const Sidebar = ({ refetchTrigger }) => {
         maxConstraints={[600, Infinity]} // Maximum width
         className="bg-eDark h-[calc(100%-4rem)] border-r border-eDarkGray p-2"
         style={{ overflow: 'hidden', position: 'absolute', left: '0', zIndex: '1' }}
-        onResize={(e, { size }) => setSidebarWidth(size.width)}
+        onResize={handleResize}
         handle={<span className="sizehandle" />}
       >
         <div className="h-[92vh] overflow-y-auto">
           <div className='flex justify-between border-b border-eGray'>
             <h2 className='font-bold text-1xl text-eWhite whitespace-nowrap'>Deck Library</h2>
             <div className='flex items-center'>
-              <button onClick={() => buttonCreate('folder')}><img src={folderImg} className='w-6 h-6' alt="Folder"></img></button>
-              <button onClick={() => buttonCreate('deck')}><img src={decksImg} className='w-6 h-6' alt="Decks"></img></button>
+              <button onClick={() => buttonCreate('folder')}><FolderCreateIcon /></button>
+              <button onClick={() => buttonCreate('deck')}><DeckCreateIcon /></button>
               <button onClick={handleExpandCollapseAll}>
                 <ExpandContractIcon isExpanded={isAnyFolderOpen} />
               </button>
