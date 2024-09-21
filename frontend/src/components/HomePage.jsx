@@ -1,9 +1,9 @@
 import { useQuery } from "react-query";
-import { useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import SideBar from "./SideBar";
 import ScrollContainer from "./ScrollContainer";
 import { useApi } from "../hooks";
+import LoadingSpinner from "./LoadingSpinner";
 
 function TaskList() {
   const api = useApi();
@@ -25,6 +25,10 @@ function TaskList() {
       console.log(`An error occurred fetching cards ${errorCards.text}`)
     }
   })
+
+  if (isLoadingDecks || isLoadingCards) {
+    return <LoadingSpinner />
+  }
 
   if (decks && cards) {
     return (

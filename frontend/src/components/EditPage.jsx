@@ -1,11 +1,12 @@
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "react-query";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "./SideBar";
 import { useApi } from "../hooks";
 import sanitizeHtml from 'sanitize-html';
 import ReactPlayer from 'react-player';
 import { BlockMath } from 'react-katex';
+import LoadingSpinner from "./LoadingSpinner";
 
 const CustomButton = ({ onClick, text }) => (
   <button
@@ -109,8 +110,18 @@ function EditPage() {
   // Fetch the card data
   const { data: card, isLoading, error } = useQuery({
     queryKey: ["cards", cardId],
-    queryFn: () =>
-      api._get(`/api/cards/${cardId}`).then((response) => response.json()),
+    queryFn: async () => {
+      let response = await api._get(`/api/cards/${cardId}`);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        const message = errorData.detail || 'An error occurred';
+        throw new Error(`${response.status}: ${message}`);
+      }
+
+      return response.json();
+    },
+    retry: false
   });
 
   const formSubmissionMutation = useMutation(async (formData) => {
@@ -171,7 +182,18 @@ function EditPage() {
   }, [card]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner />
+  }
+
+  if (error) {
+    const [status, message] = error.message.split(': ');
+
+    return (
+      <>
+        <h1 className="mt-20 text-[3rem] font-bold">{status}</h1>
+        <p className="mt-2 text-[1.5rem]">{message}</p>
+      </>
+    );
   }
 
   const handleSubmit = (e) => {
