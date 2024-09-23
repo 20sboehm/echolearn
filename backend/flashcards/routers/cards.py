@@ -55,10 +55,16 @@ def create_card(request, payload: sc.CreateCard):
 def update_card(request, card_id: int, payload: sc.UpdateCard): 
     card = get_object_or_404(Card, card_id=card_id)
     
+    if 'last_reviewed' in payload.dict(exclude_unset=True):
+        review_time = payload.last_reviewed.isoformat()
+        if not card.review_history:
+            card.review_history = []
+        card.review_history.append(review_time)
+    
     for attribute, value in payload.dict(exclude_unset=True).items():
         if (attribute == "bucket" or attribute == "next_review") and card.is_new == True:
             card.is_new = False
-        setattr(card, attribute, value)  
+        setattr(card, attribute, value)
     card.save()
     
     return card

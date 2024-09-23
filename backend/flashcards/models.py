@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractUser
+from django.contrib.postgres.fields import JSONField
 from django.db import models
 
 """
@@ -57,7 +58,8 @@ class Card(models.Model):
     is_new = models.BooleanField(default=True)
     correct_count = models.IntegerField(default=0)
     incorrect_count = models.IntegerField(default=0)
-
+    review_history = models.JSONField(default=list, blank=True)
+    
     def __str__(self):
         return f"{self.question} (id={self.card_id})"
 
