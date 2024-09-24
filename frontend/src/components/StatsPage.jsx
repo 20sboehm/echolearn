@@ -75,7 +75,7 @@ const groupUpcomingCards = (cards, selectTimeFrame) => {
     default:
       upcomingDays = Array(31).fill(0);
   }
-
+  console.log('Upcoming Days Data:', upcomingDays);
   return upcomingDays;
 };
 const upcomingChartOptions = {
@@ -369,11 +369,6 @@ function StatsPage() {
   const filteredCards = deckCards.cards.filter(card => !selectedBucket || card.bucket == selectedBucket);
   const cardCount = filteredCards.length;
 
-  // console.log("Labels:", getChartLabels(selectTimeFrame));
-  // console.log("Upcoming Review Data:", upcomingReviewData);
-  console.log('Labels:', chartData.labels);
-  console.log('Data:', chartData.datasets[0].data);
-
   return (
     <>
       <div>
@@ -382,14 +377,14 @@ function StatsPage() {
               font-semibold bg-white text-black hover:border-black active:scale-[0.97] active:bg-[#333] 
               active:border-[#555]">back</Link>
           <div className="absolute left-1/2 mt-10 transform -translate-x-1/2">
-            <h1 className="font-bold text-center text-2xl">
+            <h1 className="font-bold text-center text-3xl">
               {deckCards.deck_name}
             </h1>
             <div className="flex space-x-4 mt-2">
               {timeFrames.map((timeFrame) => (
                 <button
                   key={timeFrame.value}
-                  className={`rounded-full py-2 px-4 ${selectTimeFrame === timeFrame.value
+                  className={`text-sm rounded-full py-2 px-2 ${selectTimeFrame === timeFrame.value
                       ? 'bg-blue-500 text-white'
                       : 'bg-gray-200 text-black'
                     }`}
@@ -405,10 +400,10 @@ function StatsPage() {
         <div className="flex flex-col">
           {/* The two bar graph is the upcoming and previous review graph */}
           <div className="flex justify-between">
-            <div className="rounded-lg bg-white w-[25vw] h-[30vh]">
+            <div className="rounded-lg bg-white w-[30vw] h-[30vh]">
               <Bar data={chartData} options={upcomingChartOptions} />
             </div>
-            <div className="rounded-lg bg-white w-[25vw] h-[30vh]">
+            <div className="rounded-lg bg-white w-[30vw] h-[30vh]">
               <Bar data={chartDataPrevious} options={previousChartOptions} />
             </div>
           </div>
