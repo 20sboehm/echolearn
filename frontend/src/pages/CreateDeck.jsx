@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from 'react-query';
 import { useState } from 'react';
-import SideBar from './SideBar'
+import SideBar from '../components/SideBar'
 import { useApi } from "../hooks";
 
 function CreateDeck() {

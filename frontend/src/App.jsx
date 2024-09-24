@@ -5,22 +5,22 @@ import { BrowserRouter, Navigate, Routes, Route, useParams } from "react-router-
 import { useAuth } from "./hooks";
 import { AuthProvider } from "./context/auth";
 
-import LandingPage from "./components/LandingPage"
-import HomePage from "./components/HomePage";
-import CreateCard from "./components/CreateCard";
-import CreateDeck from "./components/CreateDeck";
-import ReviewPage from "./components/ReviewPage";
-import HelpPage from "./components/HelpPage";
-import DeckPage from './components/DeckPage';
-import EditPage from './components/EditPage';
 import Header from "./components/Header";
-import Login from './components/Login';
-import SignUp from './components/SignUp';
-import FeaturePage from './components/FeaturesPage';
-import AboutPage from './components/AboutPage';
-import ProfilePage from './components/ProfilePage';
-import StatsPage from './components/StatsPage';
-import CommunityPage from './components/community'
+import LandingPage from "./pages/LandingPage"
+import HomePage from "./pages/HomePage";
+import CreateCard from "./pages/CreateCard";
+import CreateDeck from "./pages/CreateDeck";
+import ReviewPage from "./pages/ReviewPage";
+import HelpPage from "./pages/HelpPage";
+import DeckPage from './pages/DeckPage';
+import EditPage from './pages/EditPage';
+import Login from './pages/Login';
+import SignUp from './pages/SignUp';
+import FeaturePage from './pages/FeaturesPage';
+import AboutPage from './pages/AboutPage';
+import ProfilePage from './pages/ProfilePage';
+import StatsPage from './pages/StatsPage';
+import CommunityPage from './pages/community'
 
 const queryClient = new QueryClient();
 

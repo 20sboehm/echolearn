@@ -5,7 +5,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { useQuery } from "react-query";
 import { useState, useEffect } from "react";
 import { useApi } from "../hooks";
-import LoadingSpinner from "./LoadingSpinner";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 // Register the chart components
 Chart.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ChartDataLabels);

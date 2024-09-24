@@ -1,12 +1,12 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "react-query";
 import { useState, useEffect } from "react";
-import Sidebar from "./SideBar";
+import Sidebar from "../components/SideBar";
 import { useApi } from "../hooks";
 import sanitizeHtml from 'sanitize-html';
 import ReactPlayer from 'react-player';
 import { BlockMath } from 'react-katex';
-import LoadingSpinner from "./LoadingSpinner";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const CustomButton = ({ onClick, text }) => (
   <button

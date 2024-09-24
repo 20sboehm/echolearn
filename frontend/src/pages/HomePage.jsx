@@ -1,9 +1,9 @@
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
-import SideBar from "./SideBar";
-import ScrollContainer from "./ScrollContainer";
+import SideBar from "../components/SideBar";
+import ScrollContainer from "../components/ScrollContainer";
 import { useApi } from "../hooks";
-import LoadingSpinner from "./LoadingSpinner";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 function TaskList() {
   const api = useApi();
@@ -49,7 +49,7 @@ function TaskList() {
               }
 
               return (
-                <li key={deck.deck_id} className="grid grid-cols-9 gap-4 font-medium text-eWhite text-2xl px-2 py-5 hover:bg-eHighlight">
+                <li key={deck.deck_id} className="grid grid-cols-9 gap-4 font-medium text-eWhite text-2xl px-2 py-5 hover:bg-eHLT">
                   <div className="col-span-3"> {/* Make the highlight only show up when hovering over the text itself, not the grid cell */}
                     <Link to={`/decks/${deck.deck_id}`} className="hover:text-eBlue hover:border-eBlue border p-2 rounded-md">{deck.name}</Link>
                   </div>
@@ -57,7 +57,7 @@ function TaskList() {
                   <div className="col-span-2">{reviewCardsCount}</div>
                   <div className="col-span-2">
                     <Link to={`/review/${deck.deck_id}`} className="rounded-lg border-2 px-4 py-2 border-eBlue text-eBlue
-                     font-semibold bg-eBlack hover:border-eWhite hover:text-eWhite active:scale-[0.97] active:bg-[#333] 
+                     font-semibold bg-eDarker hover:border-eWhite hover:text-eWhite active:scale-[0.97] active:bg-[#333] 
                      active:border-[#555]"
                     //  style={{ transition: "border-color 0.10s, color 0.10s" }}
                     >

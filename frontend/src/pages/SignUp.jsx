@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { useApi, useApiWithoutToken } from '../hooks';
-import { FormInputButton, FormInputBox, FormInputLabel } from './FormInput';
+import { FormInputButton, FormInputBox, FormInputLabel } from '../components/FormInput';
 
 function SignUp() {
   const [username, setUsername] = useState('');
@@ -92,7 +92,7 @@ function SignUp() {
 
   return (
     <>
-      <form onSubmit={handleSubmit} className='flex flex-col items-start mt-20 p-10 bg-eBlack'>
+      <form onSubmit={handleSubmit} className='flex flex-col items-start mt-20 p-10 bg-eDarker'>
         <h1 className=' mb-5 text-3xl font-bold self-center'>Sign up</h1>
 
         <FormInputLabel htmlFor="email">Email</FormInputLabel>

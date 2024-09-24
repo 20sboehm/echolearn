@@ -10,14 +10,18 @@ export default {
 				userHeaderColor: '#0D79A1',
 				customBlue: '#82DEFF',
 				featureBackground: '#33A1FD',
-				eBlack: '#1a1a1a',
 				eDark: '#1f1f1f',
+				// eDarker: '#1a1a1a',
+				eDarker: '#151515',
+				// eBlack: '#050505',
 				eBase: '#242424',
 				eGray: '#999',
 				eDarkGray: '#333',
 				eBlue: '#0078d4',
 				eWhite: '#ccc',
-				eHighlight: '#ffffff10'
+				eRed: '#D2042D',
+				eHLT: '#ffffff10', // Highlight
+				eStrongHLT: '#ffffff20' // Strong highlight
 			},
 		},
 	},

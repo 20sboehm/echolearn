@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery } from 'react-query';
 import { Link, useParams } from "react-router-dom";
-import Sidebar from "./SideBar";
+import Sidebar from "../components/SideBar";
 import { useApi } from "../hooks";
 import ReactPlayer from 'react-player';
 import { BlockMath } from 'react-katex'; // we might need this here
@@ -12,7 +12,7 @@ import partyPopperFlipImg from '../assets/party-popper-flip.png';
 import set from '../assets/reviewSwitch2.png';
 import card from '../assets/reviewSwitch.png';
 import "./ReviewPage.css";
-import LoadingSpinner from "./LoadingSpinner";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 // Two layers in order to maintain border rounding with active scrollbar
 const cardOuterCSS = "bg-white rounded-md overflow-hidden"

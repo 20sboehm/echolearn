@@ -1,14 +1,14 @@
 import { Link, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import { useState } from "react";
-import SideBar from "./SideBar";
+import SideBar from "../components/SideBar";
 import ReactPlayer from 'react-player';
 import katex from 'katex';
 import 'katex/dist/katex.min.css';
 import { useApi } from "../hooks";
 import editIconImg from "../assets/edit-icon.png"
 import voiceIconImg from "../assets/voice.png"
-import LoadingSpinner from "./LoadingSpinner";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 function DeckPage({ publicAccess = false }) {
   const api = useApi();
@@ -301,7 +301,7 @@ function DeckPage({ publicAccess = false }) {
           {deckCards.cards.map(card => (
             <div className="grid grid-cols-2 gap-4 font-medium px-2" key={card.card_id}>
 
-              <div className="border rounded-sm bg-eWhite text-eBlack mt-2 px-2 py-2 relative" onClick={() => handleCardClick(card.card_id)}>
+              <div className="border rounded-sm bg-eWhite text-eDarker mt-2 px-2 py-2 relative" onClick={() => handleCardClick(card.card_id)}>
                 <div dangerouslySetInnerHTML={{ __html: card.question }} />
 
                 {ReactPlayer.canPlay(card.questionvideolink) && (
@@ -321,7 +321,7 @@ function DeckPage({ publicAccess = false }) {
               </div>
 
 
-              <div className="rounded-sm bg-eWhite text-eBlack mt-2 p-2 relative" onClick={() => handleCardClick(card.card_id)}>
+              <div className="rounded-sm bg-eWhite text-eDarker mt-2 p-2 relative" onClick={() => handleCardClick(card.card_id)}>
                 <div dangerouslySetInnerHTML={{ __html: card.answer }} />
 
                 {ReactPlayer.canPlay(card.answervideolink) && (
