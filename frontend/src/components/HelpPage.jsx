@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TODOImg from "../assets/TO-DOList.png"
 import CCardImg from "../assets/CreateCard.png"
 import CDeckImg from "../assets/CreateDeck.png"
@@ -7,6 +7,7 @@ import SidebarImg from "../assets/Sidebar.png"
 import DeckViewImg from "../assets/DeckPage.png"
 import ReviewViewImg from "../assets/ReviewPage.png"
 import SpaceRepeImg from "../assets/growth.png"
+
 const topics = [
   {
     title: "TO DO list",
@@ -60,47 +61,83 @@ const topics = [
   },
 ];
 
-const cardsData = [
-  { top: "10vh", left: "10vw", width: "15%", height: "15%" }, // "TO DO"
-  { top: "33vh", left: "3vw", width: "12%", height: "12%" }, // "Create Folder"
-  { top: "70vh", left: "0vw", width: "18%", height: "18%" },  // "Create Deck"
-  { top: "65vh", left: "27vw", width: "20%", height: "20%" }, // "Create Card"
-  { top: "5vh", left: "48vw", width: "20%", height: "20%" }, // "Multi Card Creation"
-  { top: "13vh", left: "32vw", width: "15%", height: "15%" }, // "sidebar"
-  { top: "48vh", left: "40vw", width: "12%", height: "12%" }, // "Deck Page"
-  { top: "70vh", left: "47vw", width: "22%", height: "22%" }, // "Study Page"
-  { top: "37vh", left: "18vw", width: "25%", height: "25%" }, // "Space reptition"
-  { top: "33vh", left: "54vw", width: "17%", height: "17%" }, // "Import Quizlet or Anki"
-];
-
 function HelpPage() {
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const [selectedTopic, setSelectedTopic] = useState(null);
+  const [currentIndex, setCurrentIndex] = useState(2); // Index for focused card
+  const [scrollThreshold, setScrollThreshold] = useState(0);
+  const [scale, setScale] = useState(1);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const filteredTopics = topics.filter((topic) =>
     topic.title.toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleCardClick = (topic) => {
-    if (selectedTopic === topic) {
+  const SCROLL_SENSITIVITY = 30; // How much scroll distance is needed to trigger index change
+  const SPACE_BETWEEN_CARDS = 90; // Adjust this value to space out cards more
+  const VISIBLE_CARDS = 5;
+
+  const handleWheel = (e) => {
+    // Prevent scrolling if a card is expanded
+    if (isExpanded) {
+      e.preventDefault(); // Prevent the default page scroll
+      return;
+    }
+
+    setScrollThreshold((prevThreshold) => {
+      const newThreshold = prevThreshold + e.deltaY;
+      if (newThreshold > SCROLL_SENSITIVITY) {
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % topics.length); // Wrap around to the first card
+        return 0;
+      }
+
+      if (newThreshold < -SCROLL_SENSITIVITY) {
+        setCurrentIndex((prevIndex) => (prevIndex - 1 + topics.length) % topics.length); // Wrap around to the last card
+        return 0;
+      }
+      return newThreshold; // Update threshold without changing the index
+    });
+    e.preventDefault();
+  };
+
+  const handleCardClick = (index) => {
+    if (selectedTopic === topics[index]) {
+      setScale(1);
       setSelectedTopic(null);
+      setIsExpanded(false);
     } else {
-      setSelectedTopic(topic);
+      setCurrentIndex(index);
+      setSelectedTopic(topics[index]);
+      setScale(1.1);
+      setIsExpanded(true);
+      setTimeout(() => { setScale(1); }, 200);
     }
   };
 
-  const calculateTransform = (index) => {
-    const card = cardsData[index];
-    // Calculate the percentage-based translation
-    const translateX = `calc(0vw - ${card.left})`;
-    const translateY = `calc(0vh - ${card.top})`;
+  const calculateCardStyle = (positionFromCenter, isSelected) => {
+    const baseScale = 1 - Math.abs(positionFromCenter) * 0.12; // Base scale based on position from center
+    const zoomInScale = isSelected ? scale : baseScale * 0.8; // Use the scale state for the selected card
+    const translateY = positionFromCenter * SPACE_BETWEEN_CARDS; // Control space between cards
 
-    return `translate(${translateX}, ${translateY})`;
+    return {
+      transform: `translateY(${translateY}px) scale(${zoomInScale})`,
+      opacity: zoomInScale > 0.6 ? zoomInScale : 0.6,
+      transition: "transform 0.5s ease, opacity 0.5s ease",
+      zIndex: Math.round(zoomInScale * 10),
+    };
   };
 
-  return (
-    <div className="flex w-screen h-[calc(100vh-4rem)]">
+  useEffect(() => {
+    // Attach the wheel event to allow scrolling between cards
+    window.addEventListener("wheel", handleWheel, { passive: false });
+    return () => {
+      window.removeEventListener("wheel", handleWheel);
+    };
+  }, [currentIndex, isExpanded]);
 
+  return (
+    <div className="flex w-screen h-[calc(100vh-4rem)] relative">
+      {/* Search Input */}
       <div className="w-1/3 p-4 overflow-y-auto">
         <input
           type="text"
@@ -111,40 +148,50 @@ function HelpPage() {
         />
         <ul className="mt-4">
           {filteredTopics.map((topic, index) => (
-            <li key={index} className={`p-2 border-b ${selectedTopic === topic ? 'bg-gray-600' : ''
-              }`}
-              onClick={() => setSelectedTopic(topic)}>
+            <li
+              key={index}
+              className={`p-2 border-b ${selectedTopic === topic ? "bg-gray-600" : ""}`}
+              onClick={() => handleCardClick(index)}
+            >
               {topic.title}
             </li>
           ))}
         </ul>
       </div>
 
-      <div className="w-2/3 p-4 relative overflow-hidden">
-        {topics.map((topic, index) => (
-          <div
-            key={index}
-            style={{
-              top: cardsData[index].top,
-              left: cardsData[index].left,
-              transform: selectedTopic === topic ? calculateTransform(index) : 'none',
-              transition: 'transform .8s ease, width .8s ease, height .8s ease',
-              zIndex: selectedTopic === topic ? 10 : 1,
-              width: selectedTopic === topic ? '100%' : cardsData[index].width,
-              height: selectedTopic === topic ? '100%' : cardsData[index].height,
-            }}
-            className={`bg-white text-black absolute p-4 border rounded transition-transform duration-300 ease-in-out ${selectedTopic === topic ? 'shadow-xl' : ''
-              } ${cardsData[index].width} flex flex-col items-center`}
-            onClick={() => handleCardClick(topic)}
-          >
-            <h2 className="text-2xl font-bold mb-4">{topic.title}</h2>
-            {selectedTopic === topic && <p className="mt-2">{topic.guide}</p>}
-            {selectedTopic === topic && <img src={topic.image} alt={topic.title} className="mt-4 mx-auto max-w-full h-auto overflow-y-auto" />}
-          </div>
-        ))}
+      {/* Vertical 3D Card Stack */}
+      <div className="w-2/3 h-[calc(100vh-4rem)] p-4 flex items-center justify-center relative overflow-hidden">
+        {Array.from({ length: VISIBLE_CARDS * 2 + 1 }).map((_, i) => {
+          const index = (currentIndex + i - VISIBLE_CARDS + topics.length) % topics.length;
+          const positionFromCenter = i - VISIBLE_CARDS;
+          const isSelected = selectedTopic === topics[index];
+
+          return (
+            <div
+              key={index}
+              style={calculateCardStyle(positionFromCenter, isSelected)} // Pass isSelected to calculate card style
+              className={`absolute w-full p-4 bg-white text-black border rounded flex flex-col items-center ${isSelected ? "shadow-xl h-[90vh]" : ""}`}
+              onClick={() => handleCardClick(index)}
+            >
+              <h2 className="text-2xl font-bold mb-4">{topics[index].title}</h2>
+              <p className="mt-2">
+                {isSelected
+                  ? topics[index].guide
+                  : `${topics[index].guide.substring(0, 80)}...`}
+              </p>
+              {isSelected && (
+                <img
+                  src={topics[index].image}
+                  alt={topics[index].title}
+                  className="mt-4 mx-auto max-w-full h-auto overflow-y-auto"
+                />
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
 }
 
-export default HelpPage
+export default HelpPage;
