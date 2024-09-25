@@ -15,6 +15,17 @@ function StatsPage() {
   const [previousReviewData, setPreviousReviewData] = useState({});
   const [totalCounts, setTotalCounts] = useState({ correct: 0, incorrect: 0 });
   const [selectedBucket, setSelectedBucket] = useState('');
+  const [selectTimeFrame, setSelectTimeFrame] = useState('30_days');
+
+  const handleTimeFrameChange = (value) => {
+    setSelectTimeFrame(value);
+  };
+
+  const timeFrames = [
+    { value: '30_days', label: '30 Days' },
+    { value: '3_months', label: '3 Months' },
+    { value: '1_year', label: '1 Year' },
+  ];
 
   const { data: deckCards, isLoading, error } = useQuery({
     queryKey: ['cards', deckId],
@@ -38,10 +49,10 @@ function StatsPage() {
         ? deckCards.cards.filter(card => card.bucket == selectedBucket)
         : deckCards.cards;
 
-      const groupedData = groupUpcomingCards(deckCards.cards);
+      const groupedData = groupUpcomingCards(deckCards.cards, selectTimeFrame);
       setupcomingReviewData(groupedData);
 
-      const previousReviewGroupedData = groupPreviousReviews(deckCards.cards);
+      const previousReviewGroupedData = groupPreviousReviews(deckCards.cards, selectTimeFrame);
       setPreviousReviewData(previousReviewGroupedData);
 
       const totalCorrect = filteredCards.reduce((sum, card) => sum + card.correct_count, 0);
@@ -52,7 +63,7 @@ function StatsPage() {
         incorrect: totalIncorrect,
       });
     }
-  }, [deckCards, selectedBucket]);
+  }, [deckCards, selectedBucket, selectTimeFrame]);
 
   if (isLoading) {
     return <LoadingSpinner />
@@ -70,7 +81,7 @@ function StatsPage() {
   }
 
   const chartData = {
-    labels: Array.from({ length: 31 }, (_, i) => `${i} days`), // X-axis: 0 to 30 days
+    labels: getChartLabels(selectTimeFrame),
     datasets: [
       {
         label: 'Upcoming Reviews',
@@ -81,9 +92,8 @@ function StatsPage() {
       },
     ],
   };
-
   const chartDataPrevious = {
-    labels: Array.from({ length: 31 }, (_, i) => `${i} days`), // X-axis: 0 to 30 days
+    labels: getChartLabels(selectTimeFrame),
     datasets: [
       {
         label: 'Previous Reviews',
@@ -121,6 +131,9 @@ function StatsPage() {
     ],
   };
 
+  const filteredCards = deckCards.cards.filter(card => !selectedBucket || card.bucket == selectedBucket);
+  const cardCount = filteredCards.length;
+
   return (
     <>
       <div>
@@ -128,20 +141,34 @@ function StatsPage() {
           <Link to={`/decks/${deckId}`} className="rounded-lg border border-transparent px-12 py-2 text-center
               font-semibold bg-white text-black hover:border-black active:scale-[0.97] active:bg-[#333] 
               active:border-[#555]">back</Link>
-          <div className="absolute left-1/2 transform -translate-x-1/2">
-            <h1 className="font-bold text-center text-2xl">
+          <div className="absolute left-1/2 mt-10 transform -translate-x-1/2">
+            <h1 className="font-bold text-center text-3xl">
               {deckCards.deck_name}
             </h1>
+            <div className="flex space-x-4 mt-2">
+              {timeFrames.map((timeFrame) => (
+                <button
+                  key={timeFrame.value}
+                  className={`text-sm rounded-full py-2 px-2 ${selectTimeFrame === timeFrame.value
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-200 text-black'
+                    }`}
+                  onClick={() => handleTimeFrameChange(timeFrame.value)}
+                >
+                  {timeFrame.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
         <div className="flex flex-col">
           {/* The two bar graph is the upcoming and previous review graph */}
           <div className="flex justify-between">
-            <div className="rounded-lg bg-white w-[25vw] h-[30vh]">
+            <div className="rounded-lg bg-white w-[30vw] h-[30vh]">
               <Bar data={chartData} options={upcomingChartOptions} />
             </div>
-            <div className="rounded-lg bg-white w-[25vw] h-[30vh]">
+            <div className="rounded-lg bg-white w-[30vw] h-[30vh]">
               <Bar data={chartDataPrevious} options={previousChartOptions} />
             </div>
           </div>
@@ -152,16 +179,17 @@ function StatsPage() {
             </div>
 
             {/* The following two is the individual card filter and data */}
-            <div className="mt-4 mb-4">
+            <div className="mt-4 mb-4 text-black">
               <BucketFilter
                 selectedBucket={selectedBucket}
                 onChange={setSelectedBucket}
               />
+              <span className="ml-4 text-white">{cardCount} cards</span>
             </div>
             <div className="overflow-x-auto w-[80vw]">
               <div className="flex space-x-4 p-4">
-                {deckCards.cards.filter(card => !selectedBucket || card.bucket == selectedBucket).map((card) => (
-                  <Card key={card.id} card={card} />
+                {filteredCards.map((card) => (
+                  <Card key={card.card_id} card={card} />
                 ))}
               </div>
             </div>
@@ -175,6 +203,19 @@ function StatsPage() {
 // Register the chart components
 Chart.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ChartDataLabels);
 
+const getChartLabels = (selectTimeFrame) => {
+  switch (selectTimeFrame) {
+    case '30_days':
+      return Array.from({ length: 31 }, (_, i) => `${i} days`); // X-axis: 0 to 30 days
+    case '3_months':
+      return Array.from({ length: 10 }, (_, i) => `Days ${i * 10 + 1}-${(i + 1) * 10}`); // 3 months divided into 10 days
+    case '1_year':
+      return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']; // 1 year divided into months
+    default:
+      return Array.from({ length: 31 }, (_, i) => `${i} days`); // Fallback
+  }
+};
+
 // The following const functions is for the upcoming bar graph
 const upcomingDaysFromToday = (date) => {
   const today = new Date();
@@ -183,16 +224,51 @@ const upcomingDaysFromToday = (date) => {
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
   return diffDays;
 };
-const groupUpcomingCards = (cards) => {
-  const upcomingDays = Array(31).fill(0);
-  cards.forEach((card) => {
-    const daysFromToday = upcomingDaysFromToday(card.next_review);
+const groupUpcomingCards = (cards, selectTimeFrame) => {
+  let upcomingDays;
 
-    if (daysFromToday >= 0 && daysFromToday <= 30) {
-      upcomingDays[daysFromToday] += 1; // Increment the count for that day
-    }
-  });
+  switch (selectTimeFrame) {
+    case '30_days':
+      upcomingDays = Array(31).fill(0);
+      cards.forEach((card) => {
+        const daysFromToday = upcomingDaysFromToday(card.next_review);
+        if (daysFromToday >= 0 && daysFromToday < 31) {
+          upcomingDays[daysFromToday] += 1; // Increment the count for that day
+        }
+      });
+      break;
 
+    case '3_months':
+      upcomingDays = Array(10).fill(0); // 3 months divided into 10 days
+      cards.forEach((card) => {
+        const daysFromToday = upcomingDaysFromToday(card.next_review);
+        const bucketIndex = Math.floor(daysFromToday / 10);
+        if (daysFromToday >= 0 && bucketIndex < 10) {
+          upcomingDays[bucketIndex] += 1; // Increment the count for that 10-day bucket
+        }
+      });
+      break;
+
+    case '1_year':
+      upcomingDays = Array(12).fill(0); // 1 year divided into months
+      cards.forEach((card) => {
+        const reviewDate = new Date(card.next_review);
+        const today = new Date();
+        
+        // Only count upcoming reviews within the same year or the next year
+        if (reviewDate >= today || card.is_new) {
+          const monthDiff = reviewDate.getFullYear() - today.getFullYear();
+          const monthIndex = monthDiff == 0 ? reviewDate.getMonth() : reviewDate.getMonth() + 12;
+
+          upcomingDays[monthIndex] += 1; // Increment the count for that month
+        }
+      });
+      break;
+
+    default:
+      upcomingDays = Array(31).fill(0);
+  }
+  console.log('Upcoming Days Data:', upcomingDays);
   return upcomingDays;
 };
 const upcomingChartOptions = {
@@ -211,6 +287,7 @@ const upcomingChartOptions = {
   },
 };
 
+
 // The following const functions is for the previous review bar graph
 const previousReviewFromToday = (date) => {
   const today = new Date();
@@ -219,18 +296,65 @@ const previousReviewFromToday = (date) => {
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
   return diffDays;
 };
-const groupPreviousReviews = (cards) => {
-  const previousDays = Array(31).fill(0);
-  cards.forEach((card) => {
-    const daysSinceLastReview = previousReviewFromToday(card.last_reviewed);
+const groupPreviousReviews = (cards, selectTimeFrame) => {
+  let previousDays;
 
-    if (daysSinceLastReview >= 0 && daysSinceLastReview <= 30) {
-      if (card.is_new == false)
-        previousDays[daysSinceLastReview] += 1; // Increment the count for that day
-    }
-  });
+  switch (selectTimeFrame) {
+    case '30_days':
+      previousDays = Array(31).fill(0);
+      cards.forEach((card) => {
+        card.review_history.forEach((previousTime) => {
+          const daysSinceLastReview = previousReviewFromToday(previousTime);
+          if (daysSinceLastReview >= 0 && daysSinceLastReview < 31) {
+            if (!card.is_new) {
+              previousDays[daysSinceLastReview] += 1; // Increment the count for that day
+            }
+          }
+        });
+      });
+      break;
+
+    case '3_months':
+      previousDays = Array(10).fill(0); // 3 months divided into 10-day buckets
+      cards.forEach((card) => {
+        card.review_history.forEach((previousTime) => {
+          const daysSinceLastReview = previousReviewFromToday(previousTime);
+          const bucketIndex = Math.floor(daysSinceLastReview / 10);
+          if (daysSinceLastReview >= 0 && bucketIndex < 10) {
+            if (!card.is_new) {
+              previousDays[bucketIndex] += 1; // Increment the count for that bucket
+            }
+          }
+        });
+      });
+      break;
+
+    case '1_year':
+      previousDays = Array(12).fill(0); // 1 year divided into months
+      cards.forEach((card) => {
+        card.review_history.forEach((previousTime) => {
+          const reviewDate = new Date(previousTime);
+          const today = new Date();
+          const monthDiff = today.getFullYear() - reviewDate.getFullYear();
+          const monthIndex = monthDiff === 0 ? reviewDate.getMonth() : reviewDate.getMonth() + 12;
+          
+          // Only count reviews within the last year
+          if (reviewDate <= today) {
+            if (!card.is_new) {
+              previousDays[monthIndex] += 1; // Increment the count for that month
+            }
+          }
+        });
+      });
+      break;
+
+    default:
+      previousDays = Array(31).fill(0);
+  }
+
   return previousDays;
 };
+
 const previousChartOptions = {
   maintainAspectRatio: false,
   plugins: {
@@ -246,6 +370,7 @@ const previousChartOptions = {
     },
   },
 };
+
 
 // For the directional bar chart graph 
 const totalChartOptions = {

@@ -5,7 +5,6 @@ import { useApi } from "../hooks";
 import { ResizableBox } from 'react-resizable';
 import { DeckCreateIcon, FolderCreateIcon, ExpandContractAllIcon, SidebarOpenClose, ChevronIcon } from './SideBarIcons';
 import 'react-resizable/css/styles.css';
-import './SideBar.css';
 
 const Sidebar = ({ refetchTrigger }) => {
   const api = useApi();

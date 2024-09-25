@@ -95,6 +95,7 @@ class GetCard(Schema):
     is_new: bool
     correct_count: int
     incorrect_count: int
+    review_history: list[datetime]
 
 class UpdateCard(Schema):
     question: Optional[str] = None
@@ -110,6 +111,7 @@ class UpdateCard(Schema):
     answerlatex: Optional[str] = None
     correct_count: Optional[int] = None
     incorrect_count: Optional[int] = None
+    review_history: Optional[list[datetime]] = None
 
 class CreateCard(Schema):
     deck_id: int
