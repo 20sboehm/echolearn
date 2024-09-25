@@ -5,62 +5,6 @@ import folderOpenImg from "../assets/folder-open.png";
 import folderCloseImg from "../assets/folder-close.png";
 import decksImg from "../assets/decks.png";
 
-// Folder component to handle folder and nested folders
-const Folder = ({ folder, onRightClick }) => {
-  const [openFolder, setOpenFolder] = useState(false);
-
-  const handleOpenFolder = () => {
-    setOpenFolder(!openFolder);
-  };
-
-  return (
-    <div className="mt-2">
-      <div
-        onClick={handleOpenFolder}
-        onContextMenu={(e) => onRightClick(e, folder)}
-        className="cursor-pointer eWhite flex"
-      >
-        {/* <img
-          src={openFolder ? folderOpenImg : folderCloseImg}
-          alt={openFolder ? "Open folder" : "Closed folder"}
-          className="w-6 h-6 ml-2 mr-2"
-        /> */}
-        <span className="w-6 h-6 ml-2 mr-2">{openFolder ? "📂" : "📁"}</span>
-        <p className="overflow-x-auto">{folder.name}</p>
-      </div>
-
-      {openFolder && (
-        <div className="ml-4">
-
-          {/* Displays decks in the folder */}
-          {folder.decks.length > 0 ? (
-            folder.decks.map((deck) => (
-              <div key={deck.deck_id} className="eWhite flex items-center" onContextMenu={(e) => onRightClick(e, deck)}>
-                <Link to={`/decks/${deck.deck_id}`} style={{ display: "flex", alignItems: "center" }}>
-                  {/* <img src={decksImg} alt="Deck" className="w-10 h-10" /> */}
-                  <span className="mr-2">📚</span>
-                  <p className="overflow-x-auto whitespace-nowrap">{deck.name}</p>
-                </Link>
-              </div>
-            ))
-          ) : (
-            <p className='eWhite'>No decks in this folder</p>
-          )}
-
-          {/* Show subfolders */}
-          {folder.children && folder.children.length > 0 && (
-            <div className="ml-6">
-              {folder.children.map((childFolder) => (
-                <Folder key={childFolder.folder_id} folder={childFolder} onRightClick={onRightClick} />
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-};
-
 function ProfilePage() {
   const { _get, _patch } = api();
   const [profile, setProfile] = useState({ username: '', age: '', country: '', email: '' });
@@ -212,5 +156,61 @@ function ProfilePage() {
     </div>
   );
 }
+
+// Folder component to handle folder and nested folders
+const Folder = ({ folder, onRightClick }) => {
+  const [openFolder, setOpenFolder] = useState(false);
+
+  const handleOpenFolder = () => {
+    setOpenFolder(!openFolder);
+  };
+
+  return (
+    <div className="mt-2">
+      <div
+        onClick={handleOpenFolder}
+        onContextMenu={(e) => onRightClick(e, folder)}
+        className="cursor-pointer eWhite flex"
+      >
+        {/* <img
+          src={openFolder ? folderOpenImg : folderCloseImg}
+          alt={openFolder ? "Open folder" : "Closed folder"}
+          className="w-6 h-6 ml-2 mr-2"
+        /> */}
+        <span className="w-6 h-6 ml-2 mr-2">{openFolder ? "📂" : "📁"}</span>
+        <p className="overflow-x-auto">{folder.name}</p>
+      </div>
+
+      {openFolder && (
+        <div className="ml-4">
+
+          {/* Displays decks in the folder */}
+          {folder.decks.length > 0 ? (
+            folder.decks.map((deck) => (
+              <div key={deck.deck_id} className="eWhite flex items-center" onContextMenu={(e) => onRightClick(e, deck)}>
+                <Link to={`/decks/${deck.deck_id}`} style={{ display: "flex", alignItems: "center" }}>
+                  {/* <img src={decksImg} alt="Deck" className="w-10 h-10" /> */}
+                  <span className="mr-2">📚</span>
+                  <p className="overflow-x-auto whitespace-nowrap">{deck.name}</p>
+                </Link>
+              </div>
+            ))
+          ) : (
+            <p className='eWhite'>No decks in this folder</p>
+          )}
+
+          {/* Show subfolders */}
+          {folder.children && folder.children.length > 0 && (
+            <div className="ml-6">
+              {folder.children.map((childFolder) => (
+                <Folder key={childFolder.folder_id} folder={childFolder} onRightClick={onRightClick} />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
 
 export default ProfilePage;

@@ -6,44 +6,6 @@ import { BlockMath } from 'react-katex';
 import sanitizeHtml from 'sanitize-html';
 import { useApi } from '../hooks';
 
-function LatexDisplay({ value, onChange, blockMathInput }) {
-  return (
-    <div className='w-full flex flex-col items-center mt-2'>
-      <textarea value={value} onChange={onChange} className='bg-eDarker rounded-md border 
-            border-eGray w-[40%] h-20 p-2 text-center'></textarea>
-      <h2>Preview</h2>
-      <div className='px-4 border min-w-16 min-h-12'>
-        <BlockMath math={blockMathInput} errorColor={'#cc0000'} />
-      </div>
-    </div>
-  )
-}
-
-function ImageDisplay({ htmlFor, name, value, onChange, imgSrc }) {
-  return (
-    <>
-      <div className='m-2'>
-        <label htmlFor={htmlFor} className='font-bold mr-2'>Image Link:</label>
-        <input name={name} value={value} type="text" onChange={onChange}
-          className='bg-eDarker mb-2'></input>
-      </div>
-      <img src={imgSrc} className='max-w-[250px] max-h-[250px]' />
-    </>
-  )
-}
-
-const CustomButton = ({ onClick, text }) => (
-  <button
-    type="button"
-    onClick={onClick}
-    className="rounded-lg border border-transparent px-2 py-1 mx-1 mt-8 font-normal bg-[#111111] 
-    hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] active:border-[#555]"
-    style={{ transition: "border-color 0.10s, color 0.10s" }}
-  >
-    {text}
-  </button>
-);
-
 function CreateCard() {
   const api = useApi();
 
@@ -492,5 +454,43 @@ function CreateCard() {
     );
   }
 }
+
+function LatexDisplay({ value, onChange, blockMathInput }) {
+  return (
+    <div className='w-full flex flex-col items-center mt-2'>
+      <textarea value={value} onChange={onChange} className='bg-eDarker rounded-md border 
+            border-eGray w-[40%] h-20 p-2 text-center'></textarea>
+      <h2>Preview</h2>
+      <div className='px-4 border min-w-16 min-h-12'>
+        <BlockMath math={blockMathInput} errorColor={'#cc0000'} />
+      </div>
+    </div>
+  )
+}
+
+function ImageDisplay({ htmlFor, name, value, onChange, imgSrc }) {
+  return (
+    <>
+      <div className='m-2'>
+        <label htmlFor={htmlFor} className='font-bold mr-2'>Image Link:</label>
+        <input name={name} value={value} type="text" onChange={onChange}
+          className='bg-eDarker mb-2'></input>
+      </div>
+      <img src={imgSrc} className='max-w-[250px] max-h-[250px]' />
+    </>
+  )
+}
+
+const CustomButton = ({ onClick, text }) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className="rounded-lg border border-transparent px-2 py-1 mx-1 mt-8 font-normal bg-[#111111] 
+    hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] active:border-[#555]"
+    style={{ transition: "border-color 0.10s, color 0.10s" }}
+  >
+    {text}
+  </button>
+);
 
 export default CreateCard

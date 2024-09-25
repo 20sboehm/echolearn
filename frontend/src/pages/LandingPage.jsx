@@ -5,6 +5,14 @@ import growthImg from "../assets/growth.png"
 import ideaImg from "../assets/idea.png"
 import userImg from "../assets/user.png"
 
+function Landing() {
+  return (
+    <>
+      <LandingBody />
+    </>
+  )
+}
+
 function LandingBody() {
   return (
     <>
@@ -33,14 +41,6 @@ function LandingBody() {
           <p className="mt-2 font-normal text-center max-w-md mx-auto">Our team has a commitment  to making learning accessible; this means all of your favorite flashcard app features at no cost.</p>
         </div>
       </div>
-    </>
-  )
-}
-
-function Landing() {
-  return (
-    <>
-      <LandingBody />
     </>
   )
 }
