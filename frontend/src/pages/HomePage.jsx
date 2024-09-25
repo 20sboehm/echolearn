@@ -13,7 +13,7 @@ function HomePage() {
           <SideBar />
         </div>
         <div className="flex flex-col mt-10 ">
-          <h1 className="font-bold text-[2rem] mb-6 border-b border-eMedGray">Today</h1>
+          <h1 className="font-bold text-[2rem] mb-6 border-b border-edMedGray">Today</h1>
           <TaskList />
         </div>
       </div>
@@ -48,9 +48,9 @@ function TaskList() {
 
   if (decks && cards) {
     return (
-      <div className="text-2xl text-left border border-eMedGray rounded-md">
+      <div className="text-2xl text-left border border-edMedGray rounded-md">
         <ul className="w-[80vw] sm:[75vw] md:w-[50vw] text-xs sm:text-sm lg:text-xl">
-          <li className="flex text-eWhite font-semibold border-eGray px-2 py-3 rounded-t-lg bg-eDark">
+          <li className="flex font-semibold border-edGray px-2 py-3 rounded-t-lg bg-elCloudWhite dark:bg-edDark">
             <div className="w-[55%]">Deck</div>
             <div className="w-[15%]">New</div>
             <div className="w-[15%]">Review</div>
@@ -75,15 +75,15 @@ function DeckRow({ deck, cards }) {
   }
 
   return (
-    <li className="flex text-eWhite px-2 py-2 hover:bg-eHLT border-eMedGray border-t">
+    <li className="flex px-2 py-2 hover:bg-edHLT border-edMedGray border-t">
       <div className="flex items-center w-[55%]">
-        <Link to={`/decks/${deck.deck_id}`} className="hover:text-eBlue hover:border-eBlue">{deck.name}</Link>
+        <Link to={`/decks/${deck.deck_id}`} className="hover:text-edBlue hover:border-edBlue">{deck.name}</Link>
       </div>
       <div className="flex items-center w-[15%]">{newCardsCount}</div>
       <div className="flex items-center w-[15%]">{reviewCardsCount}</div>
       <div className="flex justify-center items-center w-[15%]">
         <Link to={`/review/${deck.deck_id}`} className="block rounded-sm sm:rounded-lg border-2 px-1 py-0.5 sm:px-3 sm:py-1 text-center font-medium active:scale-[0.97]
-                  bg-eDarker text-eBlue border-eBlue hover:border-eWhite hover:text-eWhite"
+                  bg-elBlue dark:bg-edDarker text-elBase dark:text-edBlue border-edBlue hover:bg-elHLT dark:hover:border-edWhite hover:text-elBlack dark:hover:text-edWhite"
         >
           Review
         </Link>

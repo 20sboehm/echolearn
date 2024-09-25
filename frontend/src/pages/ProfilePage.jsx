@@ -87,18 +87,18 @@ function ProfilePage() {
   return (
     <div className="ml-0 w-3/4 text-left">
       <h1 className="text-2xl font-bold">User Profile</h1>
-      <p className='eWhite'><strong>Username:</strong> {profile.username}</p>
-      <p className='eWhite'><strong>Email:</strong> {profile.email}</p>
+      <p className='edWhite'><strong>Username:</strong> {profile.username}</p>
+      <p className='edWhite'><strong>Email:</strong> {profile.email}</p>
 
       {/* Age */}
-      <p className='eWhite'>
+      <p className='edWhite'>
         <strong>Age:</strong>
         {isEditing ? (
           <input
             type="number"
             value={editableAge}
             onChange={(e) => setEditableAge(Number(e.target.value))}
-            className="border rounded bg-eDarker ml-1"
+            className="border rounded bg-elBase dark:bg-edDarker ml-1"
           />
         ) : (
           ` ${profile.age}`
@@ -106,13 +106,13 @@ function ProfilePage() {
       </p>
 
       {/* Country */}
-      <p className='eWhite'>
+      <p className='edWhite'>
         <strong>Country:</strong>
         {isEditing ? (
           <select
             value={editableCountry}
             onChange={(e) => setEditableCountry(e.target.value)}
-            className="border rounded bg-eDarker ml-1"
+            className="border rounded bg-elBase dark:bg-edDarker ml-1"
           >
             {countries.map((country, index) => (
               <option key={index} value={country}>
@@ -150,7 +150,7 @@ function ProfilePage() {
             <Folder key={folder.folder_id} folder={folder} />
           ))
         ) : (
-          <p className='eWhite'>No folders or decks available</p>
+          <p className='edWhite'>No folders or decks available</p>
         )}
       </div>
     </div>
@@ -170,7 +170,7 @@ const Folder = ({ folder, onRightClick }) => {
       <div
         onClick={handleOpenFolder}
         onContextMenu={(e) => onRightClick(e, folder)}
-        className="cursor-pointer eWhite flex"
+        className="cursor-pointer edWhite flex"
       >
         {/* <img
           src={openFolder ? folderOpenImg : folderCloseImg}
@@ -187,7 +187,7 @@ const Folder = ({ folder, onRightClick }) => {
           {/* Displays decks in the folder */}
           {folder.decks.length > 0 ? (
             folder.decks.map((deck) => (
-              <div key={deck.deck_id} className="eWhite flex items-center" onContextMenu={(e) => onRightClick(e, deck)}>
+              <div key={deck.deck_id} className="edWhite flex items-center" onContextMenu={(e) => onRightClick(e, deck)}>
                 <Link to={`/decks/${deck.deck_id}`} style={{ display: "flex", alignItems: "center" }}>
                   {/* <img src={decksImg} alt="Deck" className="w-10 h-10" /> */}
                   <span className="mr-2">📚</span>
@@ -196,7 +196,7 @@ const Folder = ({ folder, onRightClick }) => {
               </div>
             ))
           ) : (
-            <p className='eWhite'>No decks in this folder</p>
+            <p className='edWhite'>No decks in this folder</p>
           )}
 
           {/* Show subfolders */}

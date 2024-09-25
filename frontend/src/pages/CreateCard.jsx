@@ -256,7 +256,7 @@ function CreateCard() {
         <h1 className='text-4xl mb-10 mt-10 font-medium'>New Card</h1>
         {multipleRequired == true && (
           <form onSubmit={handleSubmitMultiple} className='flex flex-col items-center'>
-            <select value={deckId} onChange={(e) => setDeckId(e.target.value)} className='mb-4 px-2 rounded-md h-10 bg-eDarker border border-eGray' style={{ width: '30vw' }} >
+            <select value={deckId} onChange={(e) => setDeckId(e.target.value)} className='mb-4 px-2 rounded-md h-10 bg-elBlue dark:bg-edDarker border border-edGray' style={{ width: '30vw' }} >
               <option key='select-deck-key' value='' className=''>Select a deck</option>
               {decks.map((deck) => (
                 <option key={deck.deck_id} value={deck.deck_id}>{deck.name}</option>
@@ -317,7 +317,7 @@ function CreateCard() {
         )}
         {multipleRequired == false && (
           <form onSubmit={handleSubmit} className='flex flex-col items-center'>
-            <select value={deckId} onChange={(e) => setDeckId(e.target.value)} className='mb-4 px-2 h-10 bg-eDarker border border-eGray' style={{ width: '30vw' }} >
+            <select value={deckId} onChange={(e) => setDeckId(e.target.value)} className='mb-4 px-2 h-10 bg-elBlue dark:bg-edDarker border border-edGray' style={{ width: '30vw' }} >
               <option key='select-deck-key' value='' className=''>Select a deck</option>
               {decks.map((deck) => (
                 <option key={deck.deck_id} value={deck.deck_id}>{deck.name}</option>
@@ -330,31 +330,31 @@ function CreateCard() {
             <h1 className='text-2xl mt-6 mb-2 w-[90%] border-b p-1 text-center'>Question</h1>
 
             <div className='m-2'>
-              <button type="button" onClick={() => handleQuestionRequirement('image')} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
-          font-semibold bg-eDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-eBlue
+              <button type="button" onClick={() => handleQuestionRequirement('image')} className="rounded-lg border-2 border-edBlue px-4 py-2 mx-1
+          font-semibold bg-elBlue dark:bg-edDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-edBlue
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>Image</button>
-              <button type="button" onClick={() => handleQuestionRequirement('video')} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
-          font-semibold bg-eDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-eBlue
+              <button type="button" onClick={() => handleQuestionRequirement('video')} className="rounded-lg border-2 border-edBlue px-4 py-2 mx-1
+          font-semibold bg-elBlue dark:bg-edDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-edBlue
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>video</button>
-              <button type="button" onClick={() => formatText('bold')} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
-          font-semibold bg-eDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-eBlue
+              <button type="button" onClick={() => formatText('bold')} className="rounded-lg border-2 border-edBlue px-4 py-2 mx-1
+          font-semibold bg-elBlue dark:bg-edDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-edBlue
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>bold</button>
-              <button type="button" onClick={() => formatText('italic')} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
-          font-semibold bg-eDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-eBlue
+              <button type="button" onClick={() => formatText('italic')} className="rounded-lg border-2 border-edBlue px-4 py-2 mx-1
+          font-semibold bg-elBlue dark:bg-edDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-edBlue
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>italic</button>
-              <button type="button" onClick={() => formatText('underline')} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
-          font-semibold bg-eDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-eBlue
+              <button type="button" onClick={() => formatText('underline')} className="rounded-lg border-2 border-edBlue px-4 py-2 mx-1
+          font-semibold bg-elBlue dark:bg-edDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-edBlue
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>underline</button>
-              <button type="button" onClick={() => handleQuestionRequirement('latex')} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
-          font-semibold bg-eDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-eBlue
+              <button type="button" onClick={() => handleQuestionRequirement('latex')} className="rounded-lg border-2 border-edBlue px-4 py-2 mx-1
+          font-semibold bg-elBlue dark:bg-edDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-edBlue
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>latex</button>
-              <button type="button" onClick={() => makeLink()} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
-          font-semibold bg-eDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-eBlue
+              <button type="button" onClick={() => makeLink()} className="rounded-lg border-2 border-edBlue px-4 py-2 mx-1
+          font-semibold bg-elBlue dark:bg-edDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-edBlue
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>URL</button>
             </div>
 
-            <div id="QuestionDiv" onInput={handleQuestionInput} contentEditable className='bg-eDarker rounded-md border 
-            border-eGray w-[90%] h-[15vh] text-left p-2'>
+            <div id="QuestionDiv" onInput={handleQuestionInput} contentEditable className='bg-elBlue dark:bg-edDarker rounded-md border 
+            border-edGray w-[90%] h-[15vh] text-left p-2'>
               <htmlcontent html={question}></htmlcontent>
             </div>
 
@@ -385,31 +385,31 @@ function CreateCard() {
             <h1 className='text-2xl mt-6 mb-2 w-[90%] border-b p-1 text-center'>Answer</h1>
 
             <div className='m-2'>
-              <button type="button" onClick={() => handleAnswerRequirement('image')} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
-            font-semibold bg-eDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-eBlue
+              <button type="button" onClick={() => handleAnswerRequirement('image')} className="rounded-lg border-2 border-edBlue px-4 py-2 mx-1
+            font-semibold bg-elBlue dark:bg-edDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-edBlue
             active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>Image</button>
-              <button type="button" onClick={() => handleAnswerRequirement('video')} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
-            font-semibold bg-eDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-eBlue
+              <button type="button" onClick={() => handleAnswerRequirement('video')} className="rounded-lg border-2 border-edBlue px-4 py-2 mx-1
+            font-semibold bg-elBlue dark:bg-edDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-edBlue
             active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>video</button>
-              <button type="button" onClick={() => formatText('bold')} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
-            font-semibold bg-eDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-eBlue
+              <button type="button" onClick={() => formatText('bold')} className="rounded-lg border-2 border-edBlue px-4 py-2 mx-1
+            font-semibold bg-elBlue dark:bg-edDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-edBlue
             active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>bold</button>
-              <button type="button" onClick={() => formatText('italic')} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
-            font-semibold bg-eDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-eBlue
+              <button type="button" onClick={() => formatText('italic')} className="rounded-lg border-2 border-edBlue px-4 py-2 mx-1
+            font-semibold bg-elBlue dark:bg-edDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-edBlue
             active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>italic</button>
-              <button type="button" onClick={() => formatText('underline')} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
-            font-semibold bg-eDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-eBlue
+              <button type="button" onClick={() => formatText('underline')} className="rounded-lg border-2 border-edBlue px-4 py-2 mx-1
+            font-semibold bg-elBlue dark:bg-edDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-edBlue
             active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>underline</button>
-              <button type="button" onClick={() => handleAnswerRequirement('latex')} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
-            font-semibold bg-eDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-eBlue
+              <button type="button" onClick={() => handleAnswerRequirement('latex')} className="rounded-lg border-2 border-edBlue px-4 py-2 mx-1
+            font-semibold bg-elBlue dark:bg-edDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-edBlue
             active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>latex</button>
-              <button type="button" onClick={() => makeLink()} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
-            font-semibold bg-eDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-eBlue
+              <button type="button" onClick={() => makeLink()} className="rounded-lg border-2 border-edBlue px-4 py-2 mx-1
+            font-semibold bg-elBlue dark:bg-edDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-edBlue
             active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>URL</button>
             </div>
 
-            <div id="AnswerDiv" onInput={handleAnswerInput} contentEditable className='bg-eDarker rounded-md border 
-            border-eGray w-[90%] h-[15vh] text-left p-2'>
+            <div id="AnswerDiv" onInput={handleAnswerInput} contentEditable className='bg-elBlue dark:bg-edDarker rounded-md border 
+            border-edGray w-[90%] h-[15vh] text-left p-2'>
               <htmlcontent html={answer}></htmlcontent>
             </div>
 
@@ -446,7 +446,7 @@ function CreateCard() {
           </form>
         )}
         {showPopup && (
-          <div className={`fixed font-bold text-eDarker bottom-5 left-1/2 -translate-x-1/2 transform p-4 bg-${popupColor}-500 rounded-md transition-opacity duration-1000 ${popupOpacity}`}>
+          <div className={`fixed font-bold text-edDarker bottom-5 left-1/2 -translate-x-1/2 transform p-4 bg-${popupColor}-500 rounded-md transition-opacity duration-1000 ${popupOpacity}`}>
             {popupMessage}
           </div>
         )}
@@ -458,8 +458,8 @@ function CreateCard() {
 function LatexDisplay({ value, onChange, blockMathInput }) {
   return (
     <div className='w-full flex flex-col items-center mt-2'>
-      <textarea value={value} onChange={onChange} className='bg-eDarker rounded-md border 
-            border-eGray w-[40%] h-20 p-2 text-center'></textarea>
+      <textarea value={value} onChange={onChange} className='bg-elBlue dark:bg-edDarker rounded-md border 
+            border-edGray w-[40%] h-20 p-2 text-center'></textarea>
       <h2>Preview</h2>
       <div className='px-4 border min-w-16 min-h-12'>
         <BlockMath math={blockMathInput} errorColor={'#cc0000'} />
@@ -474,7 +474,7 @@ function ImageDisplay({ htmlFor, name, value, onChange, imgSrc }) {
       <div className='m-2'>
         <label htmlFor={htmlFor} className='font-bold mr-2'>Image Link:</label>
         <input name={name} value={value} type="text" onChange={onChange}
-          className='bg-eDarker mb-2'></input>
+          className='bg-elBlue dark:bg-edDarker mb-2'></input>
       </div>
       <img src={imgSrc} className='max-w-[250px] max-h-[250px]' />
     </>

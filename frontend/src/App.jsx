@@ -24,12 +24,43 @@ import CommunityPage from './pages/community'
 
 const queryClient = new QueryClient();
 
-function ErrorPage({ statusCode, errorMessage }) {
+function App() {
   return (
-    <>
-      <h1 className="mt-20 text-[3rem] font-bold">{statusCode}</h1>
-      <p className="mt-2 text-[1.5rem]">{errorMessage}</p>
-    </>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </QueryClientProvider>
+  );
+}
+
+function AppContent() {
+  const { isLoggedIn } = useAuth();
+
+  // If the user is not logged in then default to dark mode
+  return (
+    <BrowserRouter>
+      <div className={`min-w-screen min-h-screen flex flex-col font-base 
+        ${isLoggedIn ? "text-elBlack dark:text-edWhite bg-elBase dark:bg-edBase" : "text-edWhite bg-edBase"}`}>
+        <Header />
+        <Main />
+      </div>
+    </BrowserRouter>
+  );
+}
+
+function Main() {
+  const { isLoggedIn, token } = useAuth();
+  console.log("isLoggedIn: " + isLoggedIn);
+  console.log("token: " + !!token);
+
+  return (
+    <main className="w-full h-full flex flex-col items-center">
+      {isLoggedIn ?
+        <AuthenticatedRoutes /> :
+        <UnauthenticatedRoutes />
+      }
+    </main>
   );
 }
 
@@ -66,34 +97,13 @@ function UnauthenticatedRoutes() {
   );
 }
 
-function Main() {
-  const { isLoggedIn, token } = useAuth();
-  console.log("isLoggedIn: " + isLoggedIn);
-  console.log("token: " + !!token);
-
+function ErrorPage({ statusCode, errorMessage }) {
   return (
-    <main className="w-full h-full flex flex-col items-center">
-      {isLoggedIn ?
-        <AuthenticatedRoutes /> :
-        <UnauthenticatedRoutes />
-      }
-    </main>
+    <>
+      <h1 className="mt-20 text-[3rem] font-bold">{statusCode}</h1>
+      <p className="mt-2 text-[1.5rem]">{errorMessage}</p>
+    </>
   );
-}
-
-function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <BrowserRouter>
-          <div className="min-w-screen min-h-screen flex flex-col font-base text-eWhite bg-eBase">
-            <Header />
-            <Main />
-          </div>
-        </BrowserRouter>
-      </AuthProvider>
-    </QueryClientProvider>
-  )
 }
 
 export default App;

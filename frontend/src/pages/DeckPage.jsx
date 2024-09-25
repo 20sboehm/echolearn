@@ -275,7 +275,7 @@ function DeckPage({ publicAccess = false }) {
                 <div className="modal-content">
                   <h2>Select a folder </h2>
                   {folders.map(folder => (
-                    <button className={`bg-eBlue rounded-lg border border-transparent px-2 py-1 
+                    <button className={`bg-edBlue rounded-lg border border-transparent px-2 py-1 
                       font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
                       key={folder.folder_id} onClick={() => handleFolderSelection(folder.folder_id)}>
                       {folder.name}
@@ -301,7 +301,7 @@ function DeckPage({ publicAccess = false }) {
           {deckCards.cards.map(card => (
             <div className="grid grid-cols-2 gap-4 font-medium px-2" key={card.card_id}>
 
-              <div className="border rounded-sm bg-eWhite text-eDarker mt-2 px-2 py-2 relative" onClick={() => handleCardClick(card.card_id)}>
+              <div className="border rounded-sm bg-edWhite text-black dark:text-eDarker mt-2 px-2 py-2 relative" onClick={() => handleCardClick(card.card_id)}>
                 <div dangerouslySetInnerHTML={{ __html: card.question }} />
 
                 {ReactPlayer.canPlay(card.questionvideolink) && (
@@ -321,7 +321,7 @@ function DeckPage({ publicAccess = false }) {
               </div>
 
 
-              <div className="rounded-sm bg-eWhite text-eDarker mt-2 p-2 relative" onClick={() => handleCardClick(card.card_id)}>
+              <div className="rounded-sm bg-edWhite text-black dark:text-edDarker mt-2 p-2 relative" onClick={() => handleCardClick(card.card_id)}>
                 <div dangerouslySetInnerHTML={{ __html: card.answer }} />
 
                 {ReactPlayer.canPlay(card.answervideolink) && (

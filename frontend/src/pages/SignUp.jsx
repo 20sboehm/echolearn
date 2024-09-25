@@ -92,7 +92,7 @@ function SignUp() {
 
   return (
     <>
-      <form onSubmit={handleSubmit} className='flex flex-col items-start mt-20 p-10 bg-eDarker'>
+      <form onSubmit={handleSubmit} className='flex flex-col items-start mt-20 p-10 bg-edDarker'>
         <h1 className=' mb-5 text-3xl font-bold self-center'>Sign up</h1>
 
         <FormInputLabel htmlFor="email">Email</FormInputLabel>
@@ -106,9 +106,9 @@ function SignUp() {
 
         <FormInputButton isPrimaryButton={true}>Register</FormInputButton>
         <div className='flex flex-row justify-center items-center mt-4 w-full'>
-          <span className='flex-grow border-b border-eGray h-1'></span>
-          <p className='self-center text-eGray mx-2'>or</p>
-          <span className='flex-grow border-b border-eGray h-1'></span>
+          <span className='flex-grow border-b border-edGray h-1'></span>
+          <p className='self-center text-edGray mx-2'>or</p>
+          <span className='flex-grow border-b border-edGray h-1'></span>
         </div>
         <FormInputButton navigateTo="/login">Log in</FormInputButton>
       </form>

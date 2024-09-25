@@ -212,7 +212,7 @@ const Sidebar = ({ refetchTrigger }) => {
       <button
         onClick={sidebarShow}
         style={{ left: `calc(${sidebarWidth}px)` }}
-        className={`text-eWhite px-1 py-1 m-1 absolute top-[4rem] z-50 hover:bg-eStrongHLT rounded-md`}
+        className={`text-edWhite px-1 py-1 m-1 absolute top-[4rem] z-50 hover:bg-edStrongHLT rounded-md`}
       >
         <SidebarOpenClose sidebarOpen={sidebarOpen} sidebarWidth={sidebarWidth} />
       </button>
@@ -225,18 +225,18 @@ const Sidebar = ({ refetchTrigger }) => {
         resizeHandles={['e']}
         minConstraints={[10, Infinity]} // Minimum width
         maxConstraints={[600, Infinity]} // Maximum width
-        className="bg-eDark h-[calc(100%-4rem)] border-r border-eDarkGray group"
+        className="bg-elDark dark:bg-edDark h-[calc(100%-4rem)] border-r border-elDarkGray dark:border-edDarkGray group"
         style={{ overflow: 'hidden', position: 'absolute', left: '0', zIndex: '1' }}
         onResize={handleResize}
-        handle={<div className="absolute top-0 right-0 h-full w-1 cursor-default hover:cursor-ew-resize bg-transparent hover:bg-eBlue z-10 transition duration-200" />}
+        handle={<div className="absolute top-0 right-0 h-full w-1 cursor-default hover:cursor-ew-resize bg-transparent hover:bg-edBlue z-10 transition duration-200" />}
       >
         <div className="h-[92vh] overflow-y-auto p-2">
-          <div className='flex justify-between border-b border-eGray'>
-            <h2 className='font-bold text-xl text-eWhite whitespace-nowrap'>Deck Library</h2>
+          <div className='flex justify-between border-b border-edGray'>
+            <h2 className='font-bold text-xl text-edWhite whitespace-nowrap'>Deck Library</h2>
             <div className='flex items-center'>
-              <button onClick={() => buttonCreate('deck')} className='hover:bg-eStrongHLT mr-1 rounded-md'><DeckCreateIcon /></button>
-              <button onClick={() => buttonCreate('folder')} className='hover:bg-eStrongHLT mr-1 rounded-md'><FolderCreateIcon /></button>
-              <button onClick={handleExpandCollapseAll} className='hover:bg-eStrongHLT rounded-md'>
+              <button onClick={() => buttonCreate('deck')} className='hover:bg-edStrongHLT mr-1 rounded-md'><DeckCreateIcon /></button>
+              <button onClick={() => buttonCreate('folder')} className='hover:bg-edStrongHLT mr-1 rounded-md'><FolderCreateIcon /></button>
+              <button onClick={handleExpandCollapseAll} className='hover:bg-edStrongHLT rounded-md'>
                 <ExpandContractAllIcon isExpanded={isAnyFolderOpen} />
               </button>
             </div>
@@ -262,15 +262,15 @@ const Sidebar = ({ refetchTrigger }) => {
           //   position: "absolute",
           //   top: `${contextMenu.y}px`,
           //   left: `${contextMenu.x}px`,
-          //   backgroundColor: "eWhite",
-          //   color: "eWhite",
+          //   backgroundColor: "edWhite",
+          //   color: "edWhite",
           //   padding: "10px",
           //   zIndex: 9999,
           //   display: "flex",
           //   flexDirection: "column",
           //   borderRadius: "5px",
           // }}
-          className="absolute bg-eDarker text-eWhite p-2 z-[9999] flex flex-col rounded-md border border-eGray"
+          className="absolute bg-elBlue dark:bg-edDarker p-2 z-[9999] flex flex-col rounded-md border border-edGray"
           style={{
             top: `${contextMenu.y}px`,
             left: `${contextMenu.x}px`,
@@ -279,19 +279,19 @@ const Sidebar = ({ refetchTrigger }) => {
           {selected && ( // Right-click on folder or deck
             <>
               <div
-                className='px-1 py-1 cursor-pointer text-[1rem] hover:bg-eHLT'
+                className='px-1 py-1 cursor-pointer text-[1rem] hover:bg-edHLT'
                 onClick={() => setCreateType('deck')}
               >
                 Create Deck
               </div>
               <div
-                className='px-1 py-1 cursor-pointer text-[1rem] hover:bg-eHLT'
+                className='px-1 py-1 cursor-pointer text-[1rem] hover:bg-edHLT'
                 onClick={() => setCreateType('folder')}
               >
                 Create Folder
               </div>
               <div
-                className='px-1 py-1 cursor-pointer text-[1rem] hover:bg-eHLT'
+                className='px-1 py-1 cursor-pointer text-[1rem] hover:bg-edHLT'
                 onClick={() => {
                   setRenaming(true);
                   setNewName(selected.name);
@@ -300,13 +300,13 @@ const Sidebar = ({ refetchTrigger }) => {
                 Rename
               </div>
               <div
-                className='px-1 py-1 cursor-pointer text-[1rem] hover:bg-eHLT'
+                className='px-1 py-1 cursor-pointer text-[1rem] hover:bg-edHLT'
                 onClick={handleDelete}
               >
                 Delete
               </div>
               <div
-                className='px-1 py-1 cursor-pointer text-[1rem] hover:bg-eHLT text-eRed'
+                className='px-1 py-1 cursor-pointer text-[1rem] hover:bg-edHLT text-edRed'
                 onClick={() => { setNewName(''); setContextMenu(null); setCreateType(''); }}>
                 Cancel
               </div>
@@ -316,13 +316,13 @@ const Sidebar = ({ refetchTrigger }) => {
           {!selected && ( // Right-click on empty space
             <>
               <div
-                className='px-1 py-1 cursor-pointer text-[1rem] hover:bg-eHLT'
+                className='px-1 py-1 cursor-pointer text-[1rem] hover:bg-edHLT'
                 onClick={() => setCreateType('folder')}
               >
                 Create Folder
               </div>
               <div
-                className='px-1 py-1 cursor-pointer text-[1rem] hover:bg-eHLT text-eRed'
+                className='px-1 py-1 cursor-pointer text-[1rem] hover:bg-edHLT text-edRed'
                 onClick={() => { setNewName(''); setContextMenu(null); setCreateType(''); }}>
                 Cancel
               </div>
@@ -423,16 +423,16 @@ const Folder = ({ folder, onRightClick, folderStates, toggleFolder, setContextMe
   return (
     <div className="mt-2">
       <div onClick={handleLeftClick} onContextMenu={(e) => onRightClick(e, folder)}
-        className={`cursor-pointer text-base text-eWhite flex items-center select-none ${selected === folder ? 'bg-gray-500' : ''}`}>
+        className={`cursor-pointer text-base text-edWhite flex items-center select-none ${selected === folder ? 'bg-gray-500' : ''}`}>
         <button onClick={() => { toggleFolder(folder.folder_id); }}>
           <ChevronIcon isOpen={folderStates[folder.folder_id]} />
         </button>
         <p className="overflow-x-auto">{folder.name}</p>
       </div>
       {folderStates[folder.folder_id] && (
-        <div className="ml-2 border-l border-eGray">
+        <div className="ml-2 border-l border-edGray">
           {folder.decks.map((deck, index) => (
-            <div key={index} className="text-eWhite flex items-center select-none text-base ml-2 mt-2 hover:text-eBlue" onContextMenu={(e) => onRightClick(e, deck)}>
+            <div key={index} className="text-edWhite flex items-center select-none text-base ml-2 mt-2 hover:text-edBlue" onContextMenu={(e) => onRightClick(e, deck)}>
               <Link to={`/decks/${deck.deck_id}`}>
                 <p className="overflow-x-auto whitespace-nowrap">{deck.name}</p>
               </Link>
