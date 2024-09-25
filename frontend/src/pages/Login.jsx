@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApiWithoutToken, useAuth } from '../hooks';
-import { FormInputButton, FormInputBox, FormInputLabel } from './FormInput';
+import { FormInputButton, FormInputBox, FormInputLabel } from '../components/FormInput';
 
 function Login() {
   const api = useApiWithoutToken();
@@ -46,7 +46,7 @@ function Login() {
 
   return (
     <>
-      <form onSubmit={handleLogin} className='flex flex-col items-start mt-20 p-10 bg-eBlack'>
+      <form onSubmit={handleLogin} className='flex flex-col items-start mt-20 p-10 bg-eDarker'>
         <h1 className=' mb-5 text-3xl font-bold self-center'>Login</h1>
 
         <FormInputLabel htmlFor="username">Username</FormInputLabel>

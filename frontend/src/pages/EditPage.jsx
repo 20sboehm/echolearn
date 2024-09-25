@@ -1,24 +1,12 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "react-query";
 import { useState, useEffect } from "react";
-import Sidebar from "./SideBar";
+import Sidebar from "../components/SideBar";
 import { useApi } from "../hooks";
 import sanitizeHtml from 'sanitize-html';
 import ReactPlayer from 'react-player';
 import { BlockMath } from 'react-katex';
-import LoadingSpinner from "./LoadingSpinner";
-
-const CustomButton = ({ onClick, text }) => (
-  <button
-    type="button"
-    onClick={onClick}
-    className="rounded-lg border border-transparent px-2 py-1 mx-1 mt-8 font-normal bg-[#111111] 
-    hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] active:border-[#555]"
-    style={{ transition: "border-color 0.10s, color 0.10s" }}
-  >
-    {text}
-  </button>
-);
+import LoadingSpinner from "../components/LoadingSpinner";
 
 function EditPage() {
   const api = useApi();
@@ -358,5 +346,17 @@ function EditPage() {
     </>
   );
 }
+
+const CustomButton = ({ onClick, text }) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className="rounded-lg border border-transparent px-2 py-1 mx-1 mt-8 font-normal bg-[#111111] 
+    hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] active:border-[#555]"
+    style={{ transition: "border-color 0.10s, color 0.10s" }}
+  >
+    {text}
+  </button>
+);
 
 export default EditPage

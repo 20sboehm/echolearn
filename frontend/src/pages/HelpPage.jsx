@@ -7,6 +7,7 @@ import SidebarImg from "../assets/Sidebar.png"
 import DeckViewImg from "../assets/DeckPage.png"
 import ReviewViewImg from "../assets/ReviewPage.png"
 import SpaceRepeImg from "../assets/growth.png"
+
 const topics = [
   {
     title: "TO DO list",

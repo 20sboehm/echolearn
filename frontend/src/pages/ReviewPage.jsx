@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery } from 'react-query';
 import { Link, useParams } from "react-router-dom";
-import Sidebar from "./SideBar";
+import Sidebar from "../components/SideBar";
 import { useApi } from "../hooks";
 import ReactPlayer from 'react-player';
 import { BlockMath } from 'react-katex'; // we might need this here
@@ -12,20 +12,135 @@ import partyPopperFlipImg from '../assets/party-popper-flip.png';
 import set from '../assets/reviewSwitch2.png';
 import card from '../assets/reviewSwitch.png';
 import "./ReviewPage.css";
-import LoadingSpinner from "./LoadingSpinner";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 // Two layers in order to maintain border rounding with active scrollbar
 const cardOuterCSS = "bg-white rounded-md overflow-hidden"
 const cardInnerCSS = "h-[30vh] px-4 py-2 text-black flex flex-col items-center overflow-x-hidden overflow-y-auto text-[1.4em] py-4"
 
-const KatexOutput = ({ latex }) => {
-  const html = katex.renderToString(latex, {
-    throwOnError: false,
-    output: "html"
-  });
+function ReviewPage() {
+  const api = useApi();
 
-  return <div dangerouslySetInnerHTML={{ __html: html }} />;
-};
+  const [cardIndex, setCardIndex] = useState(0);
+  const [showAnswer, setShowAnswer] = useState(false);
+  const [finish, setFinish] = useState(false);
+  const [changeAnimation, setAnimation] = useState(false);
+  const [currImage, setCurrImage] = useState(set);
+  const { deckId } = useParams();
+
+  const [flip, setFlip] = useState(false);
+
+  const switchAnimation = () => {
+    setCurrImage((prev) =>
+      prev === set ? card : set
+    );
+    setAnimation(!changeAnimation);
+    setShowAnswer(false);
+    setFlip(false);
+  }
+
+  // Fetch reviews info
+  const { data: reviews, isLoading, error } = useQuery(
+    ['reviews', deckId],
+    async () => {
+      let response = await api._get(`/api/reviews/${deckId}`);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        const message = errorData.detail || 'An error occurred';
+        throw new Error(`${response.status}: ${message}`);
+      }
+
+      return response.json()
+    },
+    {
+      retry: false
+    }
+  );
+
+  if (isLoading) {
+    return <LoadingSpinner />
+  }
+
+  if (error) {
+    const [status, message] = error.message.split(': ');
+
+    return (
+      <>
+        <h1 className="mt-20 text-[3rem] font-bold">{status}</h1>
+        <p className="mt-2 text-[1.5rem]">{message}</p>
+      </>
+    );
+  }
+
+  const updateReviewedCard = (newBucket, nextReviewTime, card, setFlip, wasCorrect) => {
+    setFlip(false);
+
+    const today = new Date();
+    const formatTime = (time) => {
+      return time.toISOString();
+    }
+    const updatedCardData = {
+      bucket: newBucket,
+      next_review: formatTime(nextReviewTime),
+      last_reviewed: formatTime(today)
+    };
+
+    if (wasCorrect) {
+      updatedCardData.correct_count = (card.correct_count || 0) + 1;
+    } else {
+      updatedCardData.incorrect_count = (card.incorrect_count || 0) + 1;
+    }
+    api._patch(
+      `/api/cards/${card.card_id}`, updatedCardData)
+      .then(response => {
+        if (response.ok) {
+          if (cardIndex < reviews.cards.length - 1) {
+            setCardIndex(cardIndex + 1);
+            setShowAnswer(false);
+          } else {
+            setFinish(true);
+          }
+        } else {
+          console.error('Failed to update next_review');
+        }
+      })
+      .catch(error => {
+        console.error('Error updating next_review:', error);
+      });
+  };
+
+  // Check if reviews data is available
+  if (!reviews || !reviews.cards || reviews.cards.length === 0) {
+    return <div>No cards found for review.</div>;
+  }
+
+  return (
+    <>
+      <Sidebar />
+      <div className="rounded-lg mt-[2%] h-[60vh] w-[40vw] flex flex-col min-w-[16rem]">
+        <div className="flex items-center border-b pb-[1rem]">
+          <h2 className="text-[2em] absolute left-1/2 transform -translate-x-1/2">{reviews.deck_name}</h2>
+          <button className="border w-[12%] ml-auto" onClick={switchAnimation}>
+            <img src={currImage}></img>
+          </button>
+        </div>
+        {!finish && (
+          <ReviewCard
+            card={reviews.cards[cardIndex]}
+            showAnswer={showAnswer}
+            setShowAnswer={setShowAnswer}
+            updateReviewedCard={updateReviewedCard}
+            changeAnimation={changeAnimation}
+            flip={flip}
+            setFlip={setFlip}
+          />
+        )}
+        {finish && <FinishView deckId={deckId} />}
+      </div>
+    </>
+  );
+}
 
 function QuestionCard({ card }) {
   if (card) {
@@ -232,128 +347,13 @@ function ReviewCard({ card, showAnswer, setShowAnswer, updateReviewedCard, chang
   );
 }
 
-function ReviewPage() {
-  const api = useApi();
+const KatexOutput = ({ latex }) => {
+  const html = katex.renderToString(latex, {
+    throwOnError: false,
+    output: "html"
+  });
 
-  const [cardIndex, setCardIndex] = useState(0);
-  const [showAnswer, setShowAnswer] = useState(false);
-  const [finish, setFinish] = useState(false);
-  const [changeAnimation, setAnimation] = useState(false);
-  const [currImage, setCurrImage] = useState(set);
-  const { deckId } = useParams();
-
-  const [flip, setFlip] = useState(false);
-
-  const switchAnimation = () => {
-    setCurrImage((prev) =>
-      prev === set ? card : set
-    );
-    setAnimation(!changeAnimation);
-    setShowAnswer(false);
-    setFlip(false);
-  }
-
-  // Fetch reviews info
-  const { data: reviews, isLoading, error } = useQuery(
-    ['reviews', deckId],
-    async () => {
-      let response = await api._get(`/api/reviews/${deckId}`);
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        const message = errorData.detail || 'An error occurred';
-        throw new Error(`${response.status}: ${message}`);
-      }
-
-      return response.json()
-    },
-    {
-      retry: false
-    }
-  );
-
-  if (isLoading) {
-    return <LoadingSpinner />
-  }
-
-  if (error) {
-    const [status, message] = error.message.split(': ');
-
-    return (
-      <>
-        <h1 className="mt-20 text-[3rem] font-bold">{status}</h1>
-        <p className="mt-2 text-[1.5rem]">{message}</p>
-      </>
-    );
-  }
-
-  const updateReviewedCard = (newBucket, nextReviewTime, card, setFlip, wasCorrect) => {
-    setFlip(false);
-
-    const today = new Date();
-    const formatTime = (time) => {
-      return time.toISOString();
-    }
-    const updatedCardData = {
-      bucket: newBucket,
-      next_review: formatTime(nextReviewTime),
-      last_reviewed: formatTime(today)
-    };
-
-    if (wasCorrect) {
-      updatedCardData.correct_count = (card.correct_count || 0) + 1;
-    } else {
-      updatedCardData.incorrect_count = (card.incorrect_count || 0) + 1;
-    }
-    api._patch(
-      `/api/cards/${card.card_id}`, updatedCardData)
-      .then(response => {
-        if (response.ok) {
-          if (cardIndex < reviews.cards.length - 1) {
-            setCardIndex(cardIndex + 1);
-            setShowAnswer(false);
-          } else {
-            setFinish(true);
-          }
-        } else {
-          console.error('Failed to update next_review');
-        }
-      })
-      .catch(error => {
-        console.error('Error updating next_review:', error);
-      });
-  };
-
-  // Check if reviews data is available
-  if (!reviews || !reviews.cards || reviews.cards.length === 0) {
-    return <div>No cards found for review.</div>;
-  }
-
-  return (
-    <>
-      <Sidebar />
-      <div className="rounded-lg mt-[2%] h-[60vh] w-[40vw] flex flex-col min-w-[16rem]">
-        <div className="flex items-center border-b pb-[1rem]">
-          <h2 className="text-[2em] absolute left-1/2 transform -translate-x-1/2">{reviews.deck_name}</h2>
-          <button className="border w-[12%] ml-auto" onClick={switchAnimation}>
-            <img src={currImage}></img>
-          </button>
-        </div>
-        {!finish && (
-          <ReviewCard
-            card={reviews.cards[cardIndex]}
-            showAnswer={showAnswer}
-            setShowAnswer={setShowAnswer}
-            updateReviewedCard={updateReviewedCard}
-            changeAnimation={changeAnimation}
-            flip={flip}
-            setFlip={setFlip}
-          />
-        )}
-        {finish && <FinishView deckId={deckId} />}
-      </div>
-    </>
-  );
-}
+  return <div dangerouslySetInnerHTML={{ __html: html }} />;
+};
 
 export default ReviewPage
