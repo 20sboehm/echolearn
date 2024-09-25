@@ -7,45 +7,6 @@ import { DeckCreateIcon, FolderCreateIcon, ExpandContractAllIcon, SidebarOpenClo
 import 'react-resizable/css/styles.css';
 import './SideBar.css';
 
-const Folder = ({ folder, onRightClick, folderStates, toggleFolder, setContextMenu, selected, setSelected }) => {
-
-  const handleLeftClick = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-
-    setSelected(folder);
-    // toggleFolder(folder.folder_id);
-  };
-
-  return (
-    <div className="mt-2">
-      <div onClick={handleLeftClick} onContextMenu={(e) => onRightClick(e, folder)}
-        className={`cursor-pointer text-base text-eWhite flex items-center select-none ${selected === folder ? 'bg-gray-500' : ''}`}>
-        <button onClick={() => { toggleFolder(folder.folder_id); }}>
-          <ChevronIcon isOpen={folderStates[folder.folder_id]} />
-        </button>
-        <p className="overflow-x-auto">{folder.name}</p>
-      </div>
-      {folderStates[folder.folder_id] && (
-        <div className="ml-2 border-l border-eGray">
-          {folder.decks.map((deck, index) => (
-            <div key={index} className="text-eWhite flex items-center select-none text-base ml-2 mt-2 hover:text-eBlue" onContextMenu={(e) => onRightClick(e, deck)}>
-              <Link to={`/decks/${deck.deck_id}`}>
-                <p className="overflow-x-auto whitespace-nowrap">{deck.name}</p>
-              </Link>
-            </div>
-          ))}
-          {folder.children &&
-            folder.children.map((child, index) => (
-              <Folder key={index} folder={child} className="mt-2" onRightClick={onRightClick} folderStates={folderStates} toggleFolder={toggleFolder} setContextMenu={setContextMenu} selected={selected} setSelected={setSelected} />
-            ))}
-        </div>
-      )}
-    </div>
-  );
-};
-
-
 const Sidebar = ({ refetchTrigger }) => {
   const api = useApi();
   const [sidebarData, setSidebarData] = useState(null);
@@ -271,7 +232,7 @@ const Sidebar = ({ refetchTrigger }) => {
       >
         <div className="h-[92vh] overflow-y-auto p-2">
           <div className='flex justify-between border-b border-eGray'>
-            <h2 className='font-bold text-1xl text-eWhite whitespace-nowrap'>Deck Library</h2>
+            <h2 className='font-bold text-xl text-eWhite whitespace-nowrap'>Deck Library</h2>
             <div className='flex items-center'>
               <button onClick={() => buttonCreate('deck')} className='hover:bg-eStrongHLT mr-1 rounded-md'><DeckCreateIcon /></button>
               <button onClick={() => buttonCreate('folder')} className='hover:bg-eStrongHLT mr-1 rounded-md'><FolderCreateIcon /></button>
@@ -347,20 +308,25 @@ const Sidebar = ({ refetchTrigger }) => {
               <div
                 className='px-1 py-1 cursor-pointer text-[1rem] hover:bg-eHLT text-eRed'
                 onClick={() => { setNewName(''); setContextMenu(null); setCreateType(''); }}>
-                {/* onClick={() => { setContextMenu(null) }}> */}
-                {/* setNewName(''); setContextMenu(null); setCreateType('') */}
                 Cancel
               </div>
             </>
           )}
 
           {!selected && ( // Right-click on empty space
-            <div
-              style={{ padding: "8px 12px", cursor: "pointer" }}
-              onClick={() => setCreateType('folder')}
-            >
-              Create Folder
-            </div>
+            <>
+              <div
+                className='px-1 py-1 cursor-pointer text-[1rem] hover:bg-eHLT'
+                onClick={() => setCreateType('folder')}
+              >
+                Create Folder
+              </div>
+              <div
+                className='px-1 py-1 cursor-pointer text-[1rem] hover:bg-eHLT text-eRed'
+                onClick={() => { setNewName(''); setContextMenu(null); setCreateType(''); }}>
+                Cancel
+              </div>
+            </>
           )}
 
           {/* Input for creating new deck or folder */}
@@ -438,6 +404,44 @@ const Sidebar = ({ refetchTrigger }) => {
             <button onClick={handleCreate}>Create</button>
             <button onClick={() => { setNewName(''); setShowInput(false); setCreateType(''); }}>Cancel</button>
           </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const Folder = ({ folder, onRightClick, folderStates, toggleFolder, setContextMenu, selected, setSelected }) => {
+
+  const handleLeftClick = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    setSelected(folder);
+    // toggleFolder(folder.folder_id);
+  };
+
+  return (
+    <div className="mt-2">
+      <div onClick={handleLeftClick} onContextMenu={(e) => onRightClick(e, folder)}
+        className={`cursor-pointer text-base text-eWhite flex items-center select-none ${selected === folder ? 'bg-gray-500' : ''}`}>
+        <button onClick={() => { toggleFolder(folder.folder_id); }}>
+          <ChevronIcon isOpen={folderStates[folder.folder_id]} />
+        </button>
+        <p className="overflow-x-auto">{folder.name}</p>
+      </div>
+      {folderStates[folder.folder_id] && (
+        <div className="ml-2 border-l border-eGray">
+          {folder.decks.map((deck, index) => (
+            <div key={index} className="text-eWhite flex items-center select-none text-base ml-2 mt-2 hover:text-eBlue" onContextMenu={(e) => onRightClick(e, deck)}>
+              <Link to={`/decks/${deck.deck_id}`}>
+                <p className="overflow-x-auto whitespace-nowrap">{deck.name}</p>
+              </Link>
+            </div>
+          ))}
+          {folder.children &&
+            folder.children.map((child, index) => (
+              <Folder key={index} folder={child} className="mt-2" onRightClick={onRightClick} folderStates={folderStates} toggleFolder={toggleFolder} setContextMenu={setContextMenu} selected={selected} setSelected={setSelected} />
+            ))}
         </div>
       )}
     </div>

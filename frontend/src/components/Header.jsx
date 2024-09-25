@@ -36,7 +36,7 @@ function Header() {
     );
   } else {
     return (
-      <header className="h-16 flex justify-center top-0 left-0 w-full bg-eDarker font-semibold border-b border-eDarkGray">
+      <header className="h-16 flex justify-center top-0 left-0 w-full text-lg bg-eDarker font-semibold border-b border-eDarkGray">
         <div className="w-screen flex flex-row justify-around">
           <div className="flex mr-auto ml-10">
             <Link to="/" className="flex items-center">
