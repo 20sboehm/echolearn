@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "react-query";
 import { useState } from "react";
 import SideBar from "../components/SideBar";
@@ -12,6 +12,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 
 function DeckPage({ publicAccess = false }) {
   const api = useApi();
+  const navigate = useNavigate();
 
   const [deleteMode, setDeleteMode] = useState(false);
   const { deckId } = useParams();
@@ -119,6 +120,22 @@ function DeckPage({ publicAccess = false }) {
     setNewQuestion("");
     setNewAnswer("");
     setCreateMode(false);
+  };
+
+  const handleDeleteDeck = async () => {
+    if (window.confirm('Are you sure you want to delete this deck? This action cannot be undone.')) {
+      try {
+        const response = await api._delete(`/api/decks/${deckId}`);
+        if (!response.ok) {
+          throw new Error('Failed to delete deck');
+        }
+        popupDetails('Deck deleted successfully!', 'green');
+        navigate('/');
+      } catch (error) {
+        console.error('Error deleting deck:', error);
+        popupDetails('Failed to delete deck.', 'red');
+      }
+    }
   };
 
   // Calculate the percentage of cards that don't need review
@@ -268,6 +285,17 @@ function DeckPage({ publicAccess = false }) {
                 Study
               </Link>
             )}
+            {publicAccess ? (
+              null
+            ) : (            
+              <button 
+                className="mt-2 rounded-lg border border-transparent px-4 py-2 font-semibold bg-red-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] active:border-[#555]"
+                style={{ transition: "border-color 0.10s, color 0.10s" }} 
+                onClick={handleDeleteDeck}
+              >
+                Delete Deck
+              </button>
+            )}
             {/* <Link to={`/review/${deckId}`} className={` rounded-lg border border-transparent px-12 py-2 text-center
               font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
               active:border-[#555]`} style={{ transition: "border-color 0.10s, color 0.10s" }}>
@@ -315,7 +343,10 @@ function DeckPage({ publicAccess = false }) {
               font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
             style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={handleGenerateLink}>Generate Share Link</button> */}
 
-          <div>
+          {publicAccess ? (
+            null
+          ) : (
+            <div>
             <button className={`${isCreateMode ? "bg-green-500" : "bg-blue-500"} rounded-lg border border-transparent px-2 py-1 
               font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
               style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={isCreateMode ? handleCreateCard : toggleCreateMode}>
@@ -328,7 +359,8 @@ function DeckPage({ publicAccess = false }) {
                 Cancel
               </button>
             )}
-        </div>
+            </div>
+          )}
 
           <div>
             <button onClick={handleTakeACopy}>Copy Deck</button>
