@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "react-query";
 import { useState } from "react";
 import SideBar from "../components/SideBar";
@@ -12,6 +12,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 
 function DeckPage({ publicAccess = false }) {
   const api = useApi();
+  const navigate = useNavigate();
 
   const [deleteMode, setDeleteMode] = useState(false);
   const { deckId } = useParams();
@@ -27,6 +28,10 @@ function DeckPage({ publicAccess = false }) {
   const [newFolderName, setNewFolderName] = useState('');
   const [isModalOpen, setModalOpen] = useState(false);
   const [refetchTrigger, setRefetchTrigger] = useState(false);
+
+  const [isCreateMode, setCreateMode] = useState(false);
+  const [newQuestion, setNewQuestion] = useState("");
+  const [newAnswer, setNewAnswer] = useState("");
 
   // Fetch reviews info
   const { data: deckCards, isLoading, error, refetch } = useQuery({
@@ -73,6 +78,65 @@ function DeckPage({ publicAccess = false }) {
   }
 
   const totalCardsCount = deckCards.cards.length; // Total number of cards in the deck
+
+  const toggleCreateMode = () => {
+    setCreateMode(!isCreateMode);
+  };
+
+  const handleCreateCard = async () => {
+    if (newQuestion.trim() === "" || newAnswer.trim() === "") {
+      alert("Question and Answer cannot be empty");
+      return;
+    }
+  
+    const requestData = {
+      deck_id: deckId,
+      question: newQuestion,
+      answer: newAnswer,
+      questionvideolink: "", 
+      answervideolink: "",   
+      questionimagelink: "", 
+      answerimagelink: "",   
+      questionlatex: "",     
+      answerlatex: "",       
+    };
+  
+    try {
+      const response = await api._post(`/api/cards`, requestData);
+      if (!response.ok) {
+        throw new Error('Failed to create card');
+      }
+  
+      setNewQuestion("");
+      setNewAnswer("");
+      setCreateMode(false);
+      refetch();
+    } catch (error) {
+      console.error('Error creating card:', error);
+    }
+  };
+
+  const handleCancelCreateCard = () => {
+    setNewQuestion("");
+    setNewAnswer("");
+    setCreateMode(false);
+  };
+
+  const handleDeleteDeck = async () => {
+    if (window.confirm('Are you sure you want to delete this deck? This action cannot be undone.')) {
+      try {
+        const response = await api._delete(`/api/decks/${deckId}`);
+        if (!response.ok) {
+          throw new Error('Failed to delete deck');
+        }
+        popupDetails('Deck deleted successfully!', 'green');
+        navigate('/');
+      } catch (error) {
+        console.error('Error deleting deck:', error);
+        popupDetails('Failed to delete deck.', 'red');
+      }
+    }
+  };
 
   // Calculate the percentage of cards that don't need review
   const percentage = totalCardsCount > 0 ? ((reviewedCardsCount / totalCardsCount) * 100).toFixed(2) : 100;
@@ -221,6 +285,17 @@ function DeckPage({ publicAccess = false }) {
                 Study
               </Link>
             )}
+            {publicAccess ? (
+              null
+            ) : (            
+              <button 
+                className="mt-2 rounded-lg border border-transparent px-4 py-2 font-semibold bg-red-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] active:border-[#555]"
+                style={{ transition: "border-color 0.10s, color 0.10s" }} 
+                onClick={handleDeleteDeck}
+              >
+                Delete Deck
+              </button>
+            )}
             {/* <Link to={`/review/${deckId}`} className={` rounded-lg border border-transparent px-12 py-2 text-center
               font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
               active:border-[#555]`} style={{ transition: "border-color 0.10s, color 0.10s" }}>
@@ -267,6 +342,25 @@ function DeckPage({ publicAccess = false }) {
           {/* <button className={`bg-blue-500  rounded-lg border border-transparent px-2 py-1 
               font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
             style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={handleGenerateLink}>Generate Share Link</button> */}
+
+          {publicAccess ? (
+            null
+          ) : (
+            <div>
+            <button className={`${isCreateMode ? "bg-green-500" : "bg-blue-500"} rounded-lg border border-transparent px-2 py-1 
+              font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
+              style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={isCreateMode ? handleCreateCard : toggleCreateMode}>
+              {isCreateMode ? "Done" : "Create"}
+            </button>
+            {isCreateMode && (
+              <button className="bg-red-500 rounded-lg border border-transparent px-2 py-1 
+                font-semibold hover:border-white hover:text-white active:scale-[0.97]"
+                style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={handleCancelCreateCard}>
+                Cancel
+              </button>
+            )}
+            </div>
+          )}
 
           <div>
             <button onClick={handleTakeACopy}>Copy Deck</button>
@@ -344,6 +438,31 @@ function DeckPage({ publicAccess = false }) {
               </div>
             </div>
           ))}
+
+          {/* Create cards */}
+          {isCreateMode && (
+            <div className="grid grid-cols-2 gap-4 font-medium px-2 mt-4">
+            <div className="border rounded-sm bg-eWhite text-eBlack p-2">
+              <input
+                type="text"
+                placeholder="Enter question"
+                value={newQuestion}
+                onChange={(e) => setNewQuestion(e.target.value)}
+                className="w-full px-2 py-1 rounded"
+                autoFocus
+              />
+            </div>
+            <div className="border rounded-sm bg-eWhite text-eBlack p-2">
+              <input
+                type="text"
+                placeholder="Enter answer"
+                value={newAnswer}
+                onChange={(e) => setNewAnswer(e.target.value)}
+                className="w-full px-2 py-1 rounded"
+              />
+            </div>
+          </div>
+          )}
         </div>
       </div>
       {showPopup && (

@@ -80,6 +80,24 @@ def copy_deck(request, deck_id:int,folder_id:int):
     print(1)
     return 201, deck
 
+@decks_router.post("/cards", response={201: sc.GetCard, 404: str}, auth=JWTAuth())
+def create_card(request, payload: sc.CreateCard):
+    deck_ref = get_object_or_404(Deck, pk=payload.deck_id)
+
+    card = Card.objects.create(
+        deck=deck_ref,
+        question=payload.question,
+        answer=payload.answer,
+        questionvideolink=payload.questionvideolink or "",  
+        answervideolink=payload.answervideolink or "",  
+        questionimagelink=payload.questionimagelink or "",  
+        answerimagelink=payload.answerimagelink or "",  
+        questionlatex=payload.questionlatex or "",  
+        answerlatex=payload.answerlatex or ""  
+    )
+    return 201, card
+
+
 # ---------------------------------------------
 # -------------------- POST -------------------
 # ---------------------------------------------
