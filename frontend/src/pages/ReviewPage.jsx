@@ -24,8 +24,8 @@ function ReviewPage() {
   const [cardIndex, setCardIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
   const [finish, setFinish] = useState(false);
-  const [changeAnimation, setAnimation] = useState(false);
-  const [currImage, setCurrImage] = useState(set);
+  const [changeAnimation, setAnimation] = useState(true);
+  const [currImage, setCurrImage] = useState(card);
   const { deckId } = useParams();
 
   const [flip, setFlip] = useState(false);
@@ -120,6 +120,9 @@ function ReviewPage() {
       <Sidebar />
       <div className="rounded-lg mt-[2%] h-[60vh] w-[40vw] flex flex-col min-w-[16rem]">
         <div className="flex items-center border-b pb-[1rem]">
+        <Link to={`/decks/${deckId}`} className="rounded-lg border border-transparent px-10 py-2 text-center
+              font-semibold bg-white text-black hover:border-black active:scale-[0.97] active:bg-[#333] 
+              active:border-[#555]">back</Link>
           <h2 className="text-[2em] absolute left-1/2 transform -translate-x-1/2">{reviews.deck_name}</h2>
           <button className="border w-[12%] ml-auto" onClick={switchAnimation}>
             <img src={currImage}></img>

@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "react-query";
 import { useState, useEffect } from "react";
 import Sidebar from "../components/SideBar";
@@ -230,7 +230,7 @@ function EditPage() {
       popupDetails(`No changes detected.`, 'blue');
     }
   };
-
+  
   return (
     <>
       <Sidebar />
@@ -331,11 +331,16 @@ function EditPage() {
           </div>
         )}
 
-        <button type='submit' className="rounded-lg border border-transparent px-4 py-2 mt-6
-          font-semibold bg-[#111111] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-          active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>
-          Submit
-        </button>
+        <div className="flex flex-row items-center justify-between gap-x-8">
+          <button type='submit' className="rounded-lg border border-transparent px-4 py-2 mt-6
+            font-semibold bg-[#111111] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+            active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>
+            Submit
+          </button>
+          <Link to={`/decks/${card.deck_id}`} className="rounded-lg border border-transparent px-4 py-2 text-center mt-6
+            font-semibold bg-red-500 text-white hover:border-white active:scale-[0.97] active:bg-[#333] 
+            active:border-[#555]">Cancel</Link>
+        </div>
       </form>
 
       {showPopup && (
