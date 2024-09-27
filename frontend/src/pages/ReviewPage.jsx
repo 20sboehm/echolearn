@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery } from 'react-query';
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import Sidebar from "../components/SideBar";
 import { useApi } from "../hooks";
 import ReactPlayer from 'react-player';
@@ -27,6 +27,8 @@ function ReviewPage() {
   const [changeAnimation, setAnimation] = useState(true);
   const [currImage, setCurrImage] = useState(card);
   const { deckId } = useParams();
+  const [searchParams] = useSearchParams();
+  const studyAll = searchParams.get('studyAll') === 'true';
 
   const [flip, setFlip] = useState(false);
 
@@ -41,9 +43,9 @@ function ReviewPage() {
 
   // Fetch reviews info
   const { data: reviews, isLoading, error } = useQuery(
-    ['reviews', deckId],
+    ['reviews', deckId, studyAll],
     async () => {
-      let response = await api._get(`/api/reviews/${deckId}`);
+      let response = await api._get(`/api/reviews/${deckId}?studyAll=${studyAll}`);
 
       if (!response.ok) {
         const errorData = await response.json();

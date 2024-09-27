@@ -9,7 +9,7 @@ import time
 review_router = Router(tags=["Review"])
 
 @review_router.get("/{deck_id}", response=sc.ReviewCards, auth=JWTAuth())
-def get_reviews(request, deck_id: int):
+def get_reviews(request, deck_id: int, studyAll: bool = False):
     deck = Deck.objects.get(deck_id=deck_id)
 
     # time.sleep(1)
@@ -22,7 +22,7 @@ def get_reviews(request, deck_id: int):
 
     reviewSets = []
     for card in cards:
-        if card.next_review <= today:
+        if studyAll or card.next_review <= today:
             reviewSets.append({
                 "card_id": card.card_id,
                 "question": card.question,
