@@ -33,6 +33,8 @@ function DeckPage({ publicAccess = false }) {
   const [newQuestion, setNewQuestion] = useState("");
   const [newAnswer, setNewAnswer] = useState("");
 
+  const [sidebarWidth, setSidebarWidth] = useState(250);
+
   // Fetch reviews info
   const { data: deckCards, isLoading, error, refetch } = useQuery({
     queryKey: ['deckCards', deckId], // Unique key based on deckId
@@ -271,8 +273,9 @@ function DeckPage({ publicAccess = false }) {
 
   return (
     <>
-      <SideBar refetchTrigger={refetchTrigger} />
-      <div className="w-[65vw]">
+    <div className="flex flex-row w-full h-full">
+      <SideBar refetchTrigger={refetchTrigger} onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth}/>
+      <div className="w-[65vw] flex flex-col flex-grow transition-transform mx-[5vh] overflow-x-hidden">
         <div className="flex flex-row">
           <div className="flex flex-col items-start">
             <h1 className="text-4xl font-bold my-4">{deckCards.deck_name}</h1>
@@ -303,11 +306,6 @@ function DeckPage({ publicAccess = false }) {
                 Delete Deck
               </button>
             )}
-            {/* <Link to={`/review/${deckId}`} className={` rounded-lg border border-transparent px-12 py-2 text-center
-              font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-              active:border-[#555]`} style={{ transition: "border-color 0.10s, color 0.10s" }}>
-              Study
-            </Link> */}
           </div>
 
           {publicAccess ? (
@@ -477,6 +475,7 @@ function DeckPage({ publicAccess = false }) {
           {popupMessage}
         </div>
       )}
+    </div>
     </>
   )
 }
