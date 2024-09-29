@@ -1,7 +1,7 @@
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "react-query";
 import { useState, useEffect } from "react";
-import Sidebar from "../components/SideBar";
+import SideBar from "../components/SideBar";
 import { useApi } from "../hooks";
 import sanitizeHtml from 'sanitize-html';
 import ReactPlayer from 'react-player';
@@ -15,6 +15,7 @@ function EditPage() {
   const [popupMessage, setPopupMessage] = useState('');
   const [popupColor, setPopupColor] = useState('');
   const [popupOpacity, setPopupOpacity] = useState('opacity-100');
+  const [sidebarWidth, setSidebarWidth] = useState(250);
 
   const { cardId } = useParams();
   const [question, setQuestion] = useState('');
@@ -230,124 +231,126 @@ function EditPage() {
       popupDetails(`No changes detected.`, 'blue');
     }
   };
-  
+
   return (
     <>
-      <Sidebar />
-      <form onSubmit={handleSubmit} className='flex flex-col items-center mt-10' >
+      <div className="flex w-full h-full">
+        <SideBar onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
+        <form onSubmit={handleSubmit} className='flex flex-col flex-grow items-center mt-10 overflow-x-auto' >
 
-        <div>
-          <CustomButton onClick={() => handleQuestionRequirement('image')} text="Image" />
-          <CustomButton onClick={() => handleQuestionRequirement('video')} text="Video" />
-          <CustomButton onClick={() => formatText('bold')} text="Bold" />
-          <CustomButton onClick={() => formatText('italic')} text="Italic" />
-          <CustomButton onClick={() => formatText('underline')} text="Underline" />
-          <CustomButton onClick={() => handleQuestionRequirement('latex')} text="Latex" />
-          <CustomButton onClick={() => makeLink()} text="URL" />
-        </div>
-
-        <div id="QuestionDiv" onInput={handleQuestionInput} contentEditable className='mt-2 rounded-lg'
-          style={{ border: '1px solid black', minHeight: '180px', width: '500px', padding: '10px', backgroundColor: '#666666' }} dangerouslySetInnerHTML={{ __html: card.question }}>
-        </div>
-
-        {questionRequirement === 'latex' && (
           <div>
-            <textarea value={questionlatex} onChange={(e) => setQuestionLatexInput(e.target.value)} style={{ border: '1px solid black', textAlign: 'left', minHeight: '180px', width: '500px', padding: '10px', marginTop: '10px', backgroundColor: '#666666' }}></textarea>
-            <h2>Preview</h2>
-            <div style={{ border: '1px solid #ccc', padding: '10px', minHeight: '180px', width: '500px' }}>
+            <CustomButton onClick={() => handleQuestionRequirement('image')} text="Image" />
+            <CustomButton onClick={() => handleQuestionRequirement('video')} text="Video" />
+            <CustomButton onClick={() => formatText('bold')} text="Bold" />
+            <CustomButton onClick={() => formatText('italic')} text="Italic" />
+            <CustomButton onClick={() => formatText('underline')} text="Underline" />
+            <CustomButton onClick={() => handleQuestionRequirement('latex')} text="Latex" />
+            <CustomButton onClick={() => makeLink()} text="URL" />
+          </div>
 
-              <BlockMath math={questionlatex} errorColor={'#cc0000'} />
+          <div id="QuestionDiv" onInput={handleQuestionInput} contentEditable className='mt-2 rounded-lg'
+            style={{ border: '1px solid black', minHeight: '180px', width: '500px', padding: '10px', backgroundColor: '#666666' }} dangerouslySetInnerHTML={{ __html: card.question }}>
+          </div>
+
+          {questionRequirement === 'latex' && (
+            <div>
+              <textarea value={questionlatex} onChange={(e) => setQuestionLatexInput(e.target.value)} style={{ border: '1px solid black', textAlign: 'left', minHeight: '180px', width: '500px', padding: '10px', marginTop: '10px', backgroundColor: '#666666' }}></textarea>
+              <h2>Preview</h2>
+              <div style={{ border: '1px solid #ccc', padding: '10px', minHeight: '180px', width: '500px' }}>
+
+                <BlockMath math={questionlatex} errorColor={'#cc0000'} />
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {questionRequirement === 'video' && (
-          <div>
-            <label htmlFor='videoInput'>Put your video link here : </label>
-            <input name="videoInput" type="text" value={questionvideolink} onChange={(e) => setQuestionVideoLink(e.target.value)} style={{ width: '250px', height: '50px' }}></input>
-            {ReactPlayer.canPlay(questionvideolink) ? (
-              <>
-                <p>below is the preview of video</p>
-                <ReactPlayer url={questionvideolink} controls={true} />
-              </>
-            ) : (
-              <p>Current link not valid</p>
-            )}
-          </div>
-        )}
-
-        {questionRequirement === 'image' && (
-          <div className='mt-2'>
-            <label htmlFor='QuestionimageInput'>Put your image here:</label>
-            <input name='QuestionimageInput' value={questionImageLink} type="text" onChange={(e) => setQuestionImageLink(e.target.value)}></input>
-            <img src={questionImageLink} style={{ maxWidth: '250px', maxHeight: '250px' }} />
-          </div>
-        )}
-
-        <div>
-          <CustomButton onClick={() => handleAnswerRequirement('image')} text="Image" />
-          <CustomButton onClick={() => handleAnswerRequirement('video')} text="Video" />
-          <CustomButton onClick={() => formatText('bold')} text="Bold" />
-          <CustomButton onClick={() => formatText('italic')} text="Italic" />
-          <CustomButton onClick={() => formatText('underline')} text="Underline" />
-          <CustomButton onClick={() => handleAnswerRequirement('latex')} text="Latex" />
-          <CustomButton onClick={() => makeLink()} text="URL" />
-        </div>
-
-        <div id="AnswerDiv" onInput={handleAnswerInput} contentEditable className='mt-2 rounded-lg'
-          style={{ border: '1px solid black', minHeight: '180px', width: '500px', padding: '10px', backgroundColor: '#666666' }} dangerouslySetInnerHTML={{ __html: card.answer }}>
-        </div>
-
-        {answerRequirement === 'latex' && (
-          <div>
-            <textarea value={answerlatex} onChange={(e) => setAnswerLatexInput(e.target.value)} style={{ border: '1px solid black', textAlign: 'left', minHeight: '180px', width: '500px', padding: '10px', marginTop: '10px', backgroundColor: '#666666' }}></textarea>
-            <h2>Preview</h2>
-            <div style={{ border: '1px solid #ccc', padding: '10px', minHeight: '180px', width: '500px' }}>
-              <BlockMath math={answerlatex} errorColor={'#cc0000'} />
+          {questionRequirement === 'video' && (
+            <div>
+              <label htmlFor='videoInput'>Put your video link here : </label>
+              <input name="videoInput" type="text" value={questionvideolink} onChange={(e) => setQuestionVideoLink(e.target.value)} style={{ width: '250px', height: '50px' }}></input>
+              {ReactPlayer.canPlay(questionvideolink) ? (
+                <>
+                  <p>below is the preview of video</p>
+                  <ReactPlayer url={questionvideolink} controls={true} />
+                </>
+              ) : (
+                <p>Current link not valid</p>
+              )}
             </div>
-          </div>
-        )}
+          )}
 
-        {answerRequirement === 'video' && (
+          {questionRequirement === 'image' && (
+            <div className='mt-2'>
+              <label htmlFor='QuestionimageInput'>Put your image here:</label>
+              <input name='QuestionimageInput' value={questionImageLink} type="text" onChange={(e) => setQuestionImageLink(e.target.value)}></input>
+              <img src={questionImageLink} style={{ maxWidth: '250px', maxHeight: '250px' }} />
+            </div>
+          )}
+
           <div>
-            <label htmlFor='videoInput'>Put your video link here : </label>
-            <input name="videoInput" type="text" value={answervideolink} onChange={(e) => setAnswerVideoLink(e.target.value)} style={{ width: '250px', height: '50px' }}></input>
-            {ReactPlayer.canPlay(answervideolink) ? (
-              <>
-                <p>preview </p>
-                <ReactPlayer url={answervideolink} controls={true} />
-              </>
-            ) : (
-              <p>The link is not available</p>
-            )}
+            <CustomButton onClick={() => handleAnswerRequirement('image')} text="Image" />
+            <CustomButton onClick={() => handleAnswerRequirement('video')} text="Video" />
+            <CustomButton onClick={() => formatText('bold')} text="Bold" />
+            <CustomButton onClick={() => formatText('italic')} text="Italic" />
+            <CustomButton onClick={() => formatText('underline')} text="Underline" />
+            <CustomButton onClick={() => handleAnswerRequirement('latex')} text="Latex" />
+            <CustomButton onClick={() => makeLink()} text="URL" />
           </div>
-        )}
 
-        {answerRequirement === 'image' && (
-          <div className='mt-2'>
-            <label htmlFor='AnswerimageInput'>Put your image here:</label>
-            <input name='AnswerimageInput' value={answerImageLink} type="text" onChange={(e) => setAnswerImageLink(e.target.value)}></input>
-            <img src={answerImageLink} style={{ maxWidth: '250px', maxHeight: '250px' }} />
+          <div id="AnswerDiv" onInput={handleAnswerInput} contentEditable className='mt-2 rounded-lg'
+            style={{ border: '1px solid black', minHeight: '180px', width: '500px', padding: '10px', backgroundColor: '#666666' }} dangerouslySetInnerHTML={{ __html: card.answer }}>
           </div>
-        )}
 
-        <div className="flex flex-row items-center justify-between gap-x-8">
-          <button type='submit' className="rounded-lg border border-transparent px-4 py-2 mt-6
+          {answerRequirement === 'latex' && (
+            <div>
+              <textarea value={answerlatex} onChange={(e) => setAnswerLatexInput(e.target.value)} style={{ border: '1px solid black', textAlign: 'left', minHeight: '180px', width: '500px', padding: '10px', marginTop: '10px', backgroundColor: '#666666' }}></textarea>
+              <h2>Preview</h2>
+              <div style={{ border: '1px solid #ccc', padding: '10px', minHeight: '180px', width: '500px' }}>
+                <BlockMath math={answerlatex} errorColor={'#cc0000'} />
+              </div>
+            </div>
+          )}
+
+          {answerRequirement === 'video' && (
+            <div>
+              <label htmlFor='videoInput'>Put your video link here : </label>
+              <input name="videoInput" type="text" value={answervideolink} onChange={(e) => setAnswerVideoLink(e.target.value)} style={{ width: '250px', height: '50px' }}></input>
+              {ReactPlayer.canPlay(answervideolink) ? (
+                <>
+                  <p>preview </p>
+                  <ReactPlayer url={answervideolink} controls={true} />
+                </>
+              ) : (
+                <p>The link is not available</p>
+              )}
+            </div>
+          )}
+
+          {answerRequirement === 'image' && (
+            <div className='mt-2'>
+              <label htmlFor='AnswerimageInput'>Put your image here:</label>
+              <input name='AnswerimageInput' value={answerImageLink} type="text" onChange={(e) => setAnswerImageLink(e.target.value)}></input>
+              <img src={answerImageLink} style={{ maxWidth: '250px', maxHeight: '250px' }} />
+            </div>
+          )}
+
+          <div className="flex flex-row items-center justify-between gap-x-8">
+            <button type='submit' className="rounded-lg border border-transparent px-4 py-2 mt-6
             font-semibold bg-[#111111] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
             active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>
-            Submit
-          </button>
-          <Link to={`/decks/${card.deck_id}`} className="rounded-lg border border-transparent px-4 py-2 text-center mt-6
+              Submit
+            </button>
+            <Link to={`/decks/${card.deck_id}`} className="rounded-lg border border-transparent px-4 py-2 text-center mt-6
             font-semibold bg-red-500 text-white hover:border-white active:scale-[0.97] active:bg-[#333] 
             active:border-[#555]">Cancel</Link>
-        </div>
-      </form>
+          </div>
+        </form>
 
-      {showPopup && (
-        <div className={`fixed bottom-20 left-1/2 -translate-x-1/2 transform p-4 bg-${popupColor}-500 rounded-md transition-opacity duration-1000 ${popupOpacity}`}>
-          {popupMessage}
-        </div>
-      )}
+        {showPopup && (
+          <div className={`fixed bottom-20 left-1/2 -translate-x-1/2 transform p-4 bg-${popupColor}-500 rounded-md transition-opacity duration-1000 ${popupOpacity}`}>
+            {popupMessage}
+          </div>
+        )}
+      </div>
     </>
   );
 }

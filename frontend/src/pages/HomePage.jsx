@@ -1,4 +1,5 @@
 import { useQuery } from "react-query";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import SideBar from "../components/SideBar";
 import ScrollContainer from "../components/ScrollContainer";
@@ -6,15 +7,17 @@ import { useApi } from "../hooks";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 function HomePage() {
+  const [sidebarWidth, setSidebarWidth] = useState(250);
+
   return (
     <>
-      <div className="flex">
-        <div>
-          <SideBar />
-        </div>
-        <div className="flex flex-col mt-10 ">
-          <h1 className="font-bold text-[2rem] mb-6 border-b border-eMedGray">Today</h1>
-          <TaskList />
+      <div className="flex w-full h-full">
+        <SideBar onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
+        <div className="flex flex-col flex-grow mt-10 overflow-x-auto items-center">
+          <div className="mx-auto">
+            <h1 className="font-bold text-[2rem] mb-6 border-b border-eMedGray">Today</h1>
+            <TaskList />
+          </div>
         </div>
       </div>
     </>
@@ -83,8 +86,7 @@ function DeckRow({ deck, cards }) {
       <div className="flex items-center w-[15%]">{reviewCardsCount}</div>
       <div className="flex justify-center items-center w-[15%]">
         <Link to={`/review/${deck.deck_id}`} className="block rounded-sm sm:rounded-lg border-2 px-1 py-0.5 sm:px-3 sm:py-1 text-center font-medium active:scale-[0.97]
-                  bg-eDarker text-eBlue border-eBlue hover:border-eWhite hover:text-eWhite"
-        >
+                  bg-eDarker text-eBlue border-eBlue hover:border-eWhite hover:text-eWhite">
           Review
         </Link>
       </div>

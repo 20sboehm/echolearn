@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery } from 'react-query';
 import { Link, useParams, useSearchParams } from "react-router-dom";
-import Sidebar from "../components/SideBar";
+import SideBar from "../components/SideBar";
 import { useApi } from "../hooks";
 import ReactPlayer from 'react-player';
 import { BlockMath } from 'react-katex'; // we might need this here
@@ -29,6 +29,7 @@ function ReviewPage() {
   const { deckId } = useParams();
   const [searchParams] = useSearchParams();
   const studyAll = searchParams.get('studyAll') === 'true';
+  const [sidebarWidth, setSidebarWidth] = useState(250);
 
   const [flip, setFlip] = useState(false);
 
@@ -119,29 +120,31 @@ function ReviewPage() {
 
   return (
     <>
-      <Sidebar />
-      <div className="rounded-lg mt-[2%] h-[60vh] w-[40vw] flex flex-col min-w-[16rem]">
-        <div className="flex items-center border-b pb-[1rem]">
-        <Link to={`/decks/${deckId}`} className="rounded-lg border border-transparent px-10 py-2 text-center
+      <div className="flex w-full h-full">
+        <SideBar onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
+        <div className="rounded-lg mt-[2%] flex flex-col flex-grow min-w-[16rem] mx-auto overflow-x-auto">
+          <div className="flex mx-auto items-center border-b pb-[1rem] w-[40vw]">
+            <Link to={`/decks/${deckId}`} className="rounded-lg border border-transparent px-10 py-2 text-center
               font-semibold bg-white text-black hover:border-black active:scale-[0.97] active:bg-[#333] 
               active:border-[#555]">back</Link>
-          <h2 className="text-[2em] absolute left-1/2 transform -translate-x-1/2">{reviews.deck_name}</h2>
-          <button className="border w-[12%] ml-auto" onClick={switchAnimation}>
-            <img src={currImage}></img>
-          </button>
+            <h2 className="text-[2em] mx-auto">{reviews.deck_name}</h2>
+            <button className="border w-[12%] ml-auto" onClick={switchAnimation}>
+              <img src={currImage}></img>
+            </button>
+          </div>
+          {!finish && (
+            <ReviewCard
+              card={reviews.cards[cardIndex]}
+              showAnswer={showAnswer}
+              setShowAnswer={setShowAnswer}
+              updateReviewedCard={updateReviewedCard}
+              changeAnimation={changeAnimation}
+              flip={flip}
+              setFlip={setFlip}
+            />
+          )}
+          {finish && <FinishView deckId={deckId} />}
         </div>
-        {!finish && (
-          <ReviewCard
-            card={reviews.cards[cardIndex]}
-            showAnswer={showAnswer}
-            setShowAnswer={setShowAnswer}
-            updateReviewedCard={updateReviewedCard}
-            changeAnimation={changeAnimation}
-            flip={flip}
-            setFlip={setFlip}
-          />
-        )}
-        {finish && <FinishView deckId={deckId} />}
       </div>
     </>
   );
@@ -283,25 +286,27 @@ function ShowAnswerButtons({ card, showAnswer, setShowAnswer, updateReviewedCard
   }
 
   return (
-    <div className="fixed bottom-8 left-0 right-0 mx-auto w-[100vw] flex justify-center">
-      {!showAnswer && <button className="mt-8 border rounded-md w-[20%] min-w-[16rem]" onClick={changeShowAnswer}>Reveal Answer</button>}
-      {
-        showAnswer && (
-          <div className="flex justify-center mt-28 flex-wrap">
-            <button className="rounded-md w-24 px-4 mr-4 text-black bg-red-600 hover:bg-red-700" onClick={() => updateReviewedCard(0, getNextReviewTime(1), card, setFlip, false)}>Again <br />
-              {formatTimeDifference(now.getTime(), getNextReviewTime(1))}</button>
+    <div className="flex-grow">
+      <div className="flex justify-center mt-8 mb-8">
+        {!showAnswer && <button className="border rounded-md w-[20%] min-w-[16rem]" onClick={changeShowAnswer}>Reveal Answer</button>}
+        {
+          showAnswer && (
+            <div className="flex justify-center flex-wrap">
+              <button className="rounded-md w-24 px-4 mr-4 text-black bg-red-600 hover:bg-red-700" onClick={() => updateReviewedCard(0, getNextReviewTime(1), card, setFlip, false)}>Again <br />
+                {formatTimeDifference(now.getTime(), getNextReviewTime(1))}</button>
 
-            <button className="rounded-md w-24 px-4 mr-4 text-black bg-yellow-400 hover:bg-yellow-500" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(2), card, setFlip, true)}>Hard <br />
-              {formatTimeDifference(now.getTime(), getNextReviewTime(2))}</button>
+              <button className="rounded-md w-24 px-4 mr-4 text-black bg-yellow-400 hover:bg-yellow-500" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(2), card, setFlip, true)}>Hard <br />
+                {formatTimeDifference(now.getTime(), getNextReviewTime(2))}</button>
 
-            <button className="rounded-md w-24 px-4 mr-4 text-black bg-green-700 hover:bg-green-800" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(3), card, setFlip, true)}>Good <br />
-              {formatTimeDifference(now.getTime(), getNextReviewTime(3))}</button>
+              <button className="rounded-md w-24 px-4 mr-4 text-black bg-green-700 hover:bg-green-800" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(3), card, setFlip, true)}>Good <br />
+                {formatTimeDifference(now.getTime(), getNextReviewTime(3))}</button>
 
-            <button className="rounded-md w-24 px-4 text-black bg-green-400 hover:bg-green-500" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(4), card, setFlip, true)}>Easy <br />
-              {formatTimeDifference(now.getTime(), getNextReviewTime(4))}</button>
-          </div>
-        )
-      }
+              <button className="rounded-md w-24 px-4 text-black bg-green-400 hover:bg-green-500" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(4), card, setFlip, true)}>Easy <br />
+                {formatTimeDifference(now.getTime(), getNextReviewTime(4))}</button>
+            </div>
+          )
+        }
+      </div>
     </div>
   )
 }
