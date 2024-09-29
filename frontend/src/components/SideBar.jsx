@@ -3,7 +3,7 @@ import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 import { useApi } from "../hooks";
 import { ResizableBox } from 'react-resizable';
-import { DeckCreateIcon, FolderCreateIcon, ExpandContractAllIcon, SidebarOpenClose, ChevronIcon } from './SideBarIcons';
+import { DeckCreateIcon, FolderCreateIcon, ExpandContractAllIcon, SidebarOpenClose, ChevronIcon } from './Icons';
 import 'react-resizable/css/styles.css';
 
 const Sidebar = ({ refetchTrigger }) => {
