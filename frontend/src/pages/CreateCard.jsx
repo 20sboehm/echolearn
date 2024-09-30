@@ -37,6 +37,8 @@ function CreateCard() {
   const [multipleRequired, setmultipleRequired] = useState('');
   const [quizletInput, setQuizletInput] = useState('');
   const [quizletRequired, setquizletRequired] = useState('');
+  const [placeholder,setPlaceHolder] = useState('');
+
 
   const [selectedOptionSpace, setSelectedOptionspace] = useState('spacetab');
   const [selectedOptionLine, setSelectedOptionline] = useState('newline');
@@ -207,7 +209,22 @@ function CreateCard() {
   useEffect(() => {
     let spaceChoice = selectedOptionSpace === "spacetab" ? '\t' : ',';
     let lineChoice = selectedOptionLine === "newline" ? '\n' : ';';
-
+    if(spaceChoice === '\t'){
+      if(lineChoice === '\n'){
+        setPlaceHolder("cards1: question answer\ncards2: question answer\n...")
+      }
+      else{
+        setPlaceHolder("cards1: question  answer;cards2: question answer;...")
+      }
+    }
+    else if(spaceChoice === ','){
+      if(lineChoice === '\n'){
+        setPlaceHolder("cards1: question,answer\ncards2: question,answer\n...")
+      }
+      else{
+        setPlaceHolder("cards1: question,answer;cards2: question,answer;...")
+      }
+    }
     const lines = multipleInput.split(lineChoice).filter(line => line.trim());
     const formattedPreview = lines.map(line => {
       const parts = line.split(spaceChoice).map(part => part.trim());
@@ -426,7 +443,7 @@ function CreateCard() {
             </div>
 
             <div>
-              <textarea placeholder="cards1: question answer&#10;cards2: question answer&#10;..." value={multipleInput} onChange={(e) => setMultipleInput(e.target.value)} onKeyDown={handleKeyDown}
+              <textarea placeholder={placeholder} value={multipleInput} onChange={(e) => setMultipleInput(e.target.value)} onKeyDown={handleKeyDown}
                 style={{ border: '1px solid black', textAlign: 'left', minHeight: '180px', width: '500px', padding: '10px', marginTop: '10px', backgroundColor: 'grey' }} ></textarea>
             </div>
 
