@@ -15,7 +15,7 @@ function HomePage() {
         <SideBar onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
         <div className="flex flex-col flex-grow mt-10 overflow-x-auto items-center">
           <div className="mx-auto">
-            <h1 className="font-bold text-[2rem] mb-6 border-b border-eMedGray">Today</h1>
+            <h1 className="font-bold text-[2rem] mb-6 border-b border-eMedGray">Today's Task List</h1>
             <TaskList />
           </div>
         </div>
