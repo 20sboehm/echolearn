@@ -1,8 +1,9 @@
 import { useEffect } from "react";
 import hljs from 'highlight.js';
 import './MarkdownPreviewer.css'
+import voiceIconImg from "../assets/voice.png"
 
-function MarkdownPreviewer({ content }) {
+function MarkdownPreviewer({ content, className }) {
   // ------------------------------------------------
   // ------------------- Features -------------------
   // ------------------------------------------------
@@ -13,10 +14,17 @@ function MarkdownPreviewer({ content }) {
   | ------ | ------ |
   | Data   | Data   |
   | Data   | Data   |
+
   Bold: **bold**
   Italic: *italic*
   Underline: __underline__
-  Code block: ```code```
+
+  Code block: 
+  ```python
+  def main():
+    return 0
+  ```
+
   Code snippet: `code`
   Header 1: # Header
   Header 2: ## Header
@@ -77,15 +85,21 @@ function MarkdownPreviewer({ content }) {
     const underlinePattern = /__(.*?)__/g;
     text = text.replace(underlinePattern, '<u>$1</u>');
 
-    const codeBlockPattern = /```((.|\n)*?)```/g;
-    text = text.replace(codeBlockPattern, (fullStringMatch, innerCodeContent) => {
+    const codeBlockPattern = /```([A-Za-z]*\n)((.|\n)*?)```/g;
+    text = text.replace(codeBlockPattern, (fullStringMatch, language, innerCodeContent) => {
+      language = language.toLowerCase().trim();
+
       const trimmedCode = innerCodeContent.trim();
 
-      return `<pre class="py-2 my-1 rounded-md bg-eBlack"> <code class="language-python">${trimmedCode}</code> </pre>`;
+      if (language) {
+        return `<pre class="p-2 my-1 rounded-md bg-eBlack"><code class="language-${language}">${trimmedCode}</code></pre>`;
+      } else {
+        return `<pre class="p-2 my-1 rounded-md bg-eBlack">${trimmedCode}</pre>`;
+      }
     });
 
     const codePattern = /`(.*?)`/g;
-    text = text.replace(codePattern, '<code class="language-python bg-eBlack px-1 py-0.5 rounded-md">$1</code>');
+    text = text.replace(codePattern, '<code class="bg-eBlack px-1 py-0.5 rounded-md">$1</code>');
 
     const header1Pattern = /^# (.*$)/gim;
     text = text.replace(header1Pattern, '<h1 class="text-[2rem]">$1</h1>');
@@ -111,7 +125,7 @@ function MarkdownPreviewer({ content }) {
   return (
     <>
       <div
-        className='bg-eDarker w-full min-h-24 p-4 whitespace-pre-wrap break-words'
+        className={`w-full min-h-[10vh] whitespace-pre-wrap break-words ${className}`}
         dangerouslySetInnerHTML={{ __html: formatContent(content) }}
       ></div>
     </>

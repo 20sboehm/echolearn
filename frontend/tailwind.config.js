@@ -18,6 +18,7 @@ export default {
 				eMedGray: '#666',
 				eDarkGray: '#333',
 				eBlue: '#0078d4',
+				eGreen: '#00cc00',
 				eWhite: '#ccc',
 				eRed: '#D2042D',
 				eHLT: '#ffffff10', // Highlight

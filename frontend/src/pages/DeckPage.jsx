@@ -7,8 +7,9 @@ import katex from 'katex';
 import 'katex/dist/katex.min.css';
 import { useApi } from "../hooks";
 import editIconImg from "../assets/edit-icon.png"
-import voiceIconImg from "../assets/voice.png"
+// import voiceIconImg from "../assets/voice.png"
 import LoadingSpinner from "../components/LoadingSpinner";
+import MarkdownPreviewer from "../components/MarkdownPreviewer";
 
 function DeckPage({ publicAccess = false }) {
   const api = useApi();
@@ -33,7 +34,6 @@ function DeckPage({ publicAccess = false }) {
   const [newQuestion, setNewQuestion] = useState("");
   const [newAnswer, setNewAnswer] = useState("");
 
-  // Fetch reviews info
   const { data: deckCards, isLoading, error, refetch } = useQuery({
     queryKey: ['deckCards', deckId], // Unique key based on deckId
     queryFn: async () => {
@@ -88,25 +88,25 @@ function DeckPage({ publicAccess = false }) {
       alert("Question and Answer cannot be empty");
       return;
     }
-  
+
     const requestData = {
       deck_id: deckId,
       question: newQuestion,
       answer: newAnswer,
-      questionvideolink: "", 
-      answervideolink: "",   
-      questionimagelink: "", 
-      answerimagelink: "",   
-      questionlatex: "",     
-      answerlatex: "",       
+      questionvideolink: "",
+      answervideolink: "",
+      questionimagelink: "",
+      answerimagelink: "",
+      questionlatex: "",
+      answerlatex: "",
     };
-  
+
     try {
       const response = await api._post(`/api/cards`, requestData);
       if (!response.ok) {
         throw new Error('Failed to create card');
       }
-  
+
       setNewQuestion("");
       setNewAnswer("");
       setCreateMode(false);
@@ -294,10 +294,10 @@ function DeckPage({ publicAccess = false }) {
             )}
             {publicAccess ? (
               null
-            ) : (            
-              <button 
+            ) : (
+              <button
                 className="mt-2 rounded-lg border border-transparent px-4 py-2 font-semibold bg-red-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] active:border-[#555]"
-                style={{ transition: "border-color 0.10s, color 0.10s" }} 
+                style={{ transition: "border-color 0.10s, color 0.10s" }}
                 onClick={handleDeleteDeck}
               >
                 Delete Deck
@@ -354,18 +354,18 @@ function DeckPage({ publicAccess = false }) {
             null
           ) : (
             <div>
-            <button className={`${isCreateMode ? "bg-green-500" : "bg-blue-500"} rounded-lg border border-transparent px-2 py-1 
+              <button className={`${isCreateMode ? "bg-green-500" : "bg-blue-500"} rounded-lg border border-transparent px-2 py-1 
               font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
-              style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={isCreateMode ? handleCreateCard : toggleCreateMode}>
-              {isCreateMode ? "Done" : "Create"}
-            </button>
-            {isCreateMode && (
-              <button className="bg-red-500 rounded-lg border border-transparent px-2 py-1 
-                font-semibold hover:border-white hover:text-white active:scale-[0.97]"
-                style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={handleCancelCreateCard}>
-                Cancel
+                style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={isCreateMode ? handleCreateCard : toggleCreateMode}>
+                {isCreateMode ? "Done" : "Create"}
               </button>
-            )}
+              {isCreateMode && (
+                <button className="bg-red-500 rounded-lg border border-transparent px-2 py-1 
+                font-semibold hover:border-white hover:text-white active:scale-[0.97]"
+                  style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={handleCancelCreateCard}>
+                  Cancel
+                </button>
+              )}
             </div>
           )}
 
@@ -398,11 +398,37 @@ function DeckPage({ publicAccess = false }) {
           )}
         </div>
 
-        <div className="h-[50vh] overflow-y-auto border-t border-gray-500">
+        <div className="h-[50vh] overflow-y-auto border-t border-gray-500 px-1">
           {deckCards.cards.map(card => (
-            <div className="grid grid-cols-2 gap-4 font-medium px-2" key={card.card_id}>
+            <div className="flex font-medium mt-4 border border-eGray w-full" key={card.card_id}>
 
-              <div className="border rounded-sm bg-eWhite text-eDarker mt-2 px-2 py-2 relative" onClick={() => handleCardClick(card.card_id)}>
+              <div className="relative w-1/2 flex flex-col bg-eDarker pr-4 border-r border-eGray">
+                <MarkdownPreviewer content={card.question} className="flex-1 p-2" />
+                <Link to={`/edit/${card.card_id}`}>
+                  <img src={editIconImg} alt="Edit_Icon" className="absolute top-8 right-0.5 h-[21px] w-[28px]" />
+                </Link>
+                <Link onClick={() => speakText(card.question)}>
+                  <SpeakerIcon className="absolute top-1 right-1" />
+                </Link>
+              </div>
+
+              <div className="relative w-1/2 flex flex-col bg-eDarker">
+                <MarkdownPreviewer content={card.answer} className="flex-1 p-2" />
+                <Link onClick={() => speakText(card.answer)}>
+                  <SpeakerIcon className="absolute top-1 right-1" />
+                </Link>
+              </div>
+
+
+              {/* <img src={voiceIconImg} alt="Voice_Icon" className="absolute top-1 right-1 h-[19px] w-[19px]" /> */}
+              {/* <img src={SpeakerIcon} alt="Voice_Icon" className="absolute top-1 right-1 h-[19px] w-[19px]" /> */}
+
+              {/* <img src={voiceIconImg} alt="Voice_Icon" className="absolute top-1 right-1 h-[19px] w-[19px]" /> */}
+              {/* <img src={SpeakerIcon} alt="Voice_Icon" className="absolute top-1 right-1 h-[19px] w-[19px]" /> */}
+
+              {/* <MarkdownPreviewer content={card.answer} className="mb-2" /> */}
+
+              {/* <div className="border rounded-sm bg-eWhite text-eDarker mt-2 px-2 py-2 relative" onClick={() => handleCardClick(card.card_id)}>
                 <div dangerouslySetInnerHTML={{ __html: card.question }} />
 
                 {ReactPlayer.canPlay(card.questionvideolink) && (
@@ -442,44 +468,61 @@ function DeckPage({ publicAccess = false }) {
                 <Link onClick={() => speakText(card.answer)}>
                   <img src={voiceIconImg} alt="Voice_Icon" className="absolute top-1 right-1 h-[19px] w-[19px]" />
                 </Link>
-              </div>
+              </div> */}
+
             </div>
           ))}
 
           {/* Create cards */}
           {isCreateMode && (
             <div className="grid grid-cols-2 gap-4 font-medium px-2 mt-4">
-            <div className="border rounded-sm bg-eWhite text-eBlack p-2">
-              <input
-                type="text"
-                placeholder="Enter question"
-                value={newQuestion}
-                onChange={(e) => setNewQuestion(e.target.value)}
-                className="w-full px-2 py-1 rounded"
-                autoFocus
-              />
+              <div className="border rounded-sm bg-eWhite text-eBlack p-2">
+                <input
+                  type="text"
+                  placeholder="Enter question"
+                  value={newQuestion}
+                  onChange={(e) => setNewQuestion(e.target.value)}
+                  className="w-full px-2 py-1 rounded"
+                  autoFocus
+                />
+              </div>
+              <div className="border rounded-sm bg-eWhite text-eBlack p-2">
+                <input
+                  type="text"
+                  placeholder="Enter answer"
+                  value={newAnswer}
+                  onChange={(e) => setNewAnswer(e.target.value)}
+                  className="w-full px-2 py-1 rounded"
+                />
+              </div>
             </div>
-            <div className="border rounded-sm bg-eWhite text-eBlack p-2">
-              <input
-                type="text"
-                placeholder="Enter answer"
-                value={newAnswer}
-                onChange={(e) => setNewAnswer(e.target.value)}
-                className="w-full px-2 py-1 rounded"
-              />
-            </div>
-          </div>
           )}
         </div>
-      </div>
+      </div >
       {showPopup && (
         <div className={`fixed bottom-20 left-1/2 -translate-x-1/2 transform p-4 bg-${popupColor}-500 rounded-md transition-opacity duration-1000 ${popupOpacity}`}>
           {popupMessage}
         </div>
-      )}
+      )
+      }
     </>
   )
 }
+
+const SpeakerIcon = ({ width = "20px", height = "20px", fill = "#ccc", className }) => {
+  return (
+    <svg
+      fill={fill}
+      width={width}
+      height={height}
+      viewBox="-2.5 0 19 19"
+      xmlns="http://www.w3.org/2000/svg"
+      className={`cf-icon-svg ${className}`}
+    >
+      <path d="M7.365 4.785v9.63c0 .61-.353.756-.784.325l-2.896-2.896H1.708A1.112 1.112 0 0 1 .6 10.736V8.464a1.112 1.112 0 0 1 1.108-1.108h1.977L6.581 4.46c.43-.43.784-.285.784.325zm2.468 7.311a3.53 3.53 0 0 0 0-4.992.554.554 0 0 0-.784.784 2.425 2.425 0 0 1 0 3.425.554.554 0 1 0 .784.783zm1.791 1.792a6.059 6.059 0 0 0 0-8.575.554.554 0 1 0-.784.783 4.955 4.955 0 0 1 0 7.008.554.554 0 1 0 .784.784z" />
+    </svg>
+  );
+};
 
 
 export default DeckPage

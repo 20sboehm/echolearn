@@ -30,6 +30,23 @@ def get_card(request, card_id: int):
 # -------------------- POST -------------------
 # ---------------------------------------------
 
+# @cards_router.post("", response={201: sc.GetCard, 404: str}, auth=JWTAuth())
+# def create_card(request, payload: sc.CreateCard):
+#     deck_ref = get_object_or_404(Deck, pk=payload.deck_id)
+
+#     card = Card.objects.create(
+#         deck=deck_ref,
+#         question=payload.question,
+#         answer=payload.answer,
+#         questionvideolink=payload.questionvideolink,
+#         answervideolink = payload.answervideolink,
+#         questionimagelink = payload.questionimagelink,
+#         answerimagelink = payload.answerimagelink,
+#         questionlatex = payload.questionlatex,
+#         answerlatex = payload.answerlatex
+#     )
+#     return 201, card
+
 @cards_router.post("", response={201: sc.GetCard, 404: str}, auth=JWTAuth())
 def create_card(request, payload: sc.CreateCard):
     deck_ref = get_object_or_404(Deck, pk=payload.deck_id)
@@ -37,13 +54,7 @@ def create_card(request, payload: sc.CreateCard):
     card = Card.objects.create(
         deck=deck_ref,
         question=payload.question,
-        answer=payload.answer,
-        questionvideolink=payload.questionvideolink,
-        answervideolink = payload.answervideolink,
-        questionimagelink = payload.questionimagelink,
-        answerimagelink = payload.answerimagelink,
-        questionlatex = payload.questionlatex,
-        answerlatex = payload.answerlatex
+        answer=payload.answer
     )
     return 201, card
 

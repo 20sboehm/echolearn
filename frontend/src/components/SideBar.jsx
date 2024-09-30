@@ -74,6 +74,9 @@ const Sidebar = ({ refetchTrigger }) => {
 
   // Handle folder open/close state
   const toggleFolder = (folderId) => {
+    // console.log("toggling folder 2")
+    // console.log(folderId)
+    console.log(folderStates)
     setFolderStates((prevState) => ({
       ...prevState,
       [folderId]: !prevState[folderId],
@@ -412,20 +415,25 @@ const Sidebar = ({ refetchTrigger }) => {
 const Folder = ({ folder, onRightClick, folderStates, toggleFolder, setContextMenu, selected, setSelected }) => {
 
   const handleLeftClick = (event) => {
+    // console.log("clicked")
+    // console.log(folder)
+
     event.preventDefault();
     event.stopPropagation();
 
+
     setSelected(folder);
-    // toggleFolder(folder.folder_id);
+
+    // console.log("toggling")
+    // console.log(folder.folder_id)
+    toggleFolder(folder.folder_id);
   };
 
   return (
     <div className="mt-2">
       <div onClick={handleLeftClick} onContextMenu={(e) => onRightClick(e, folder)}
         className={`cursor-pointer text-base text-eWhite flex items-center select-none ${selected === folder ? 'bg-gray-500' : ''}`}>
-        <button onClick={() => { toggleFolder(folder.folder_id); }}>
-          <ChevronIcon isOpen={folderStates[folder.folder_id]} />
-        </button>
+        <ChevronIcon onClick={(e) => e.stopPropagation()} isOpen={folderStates[folder.folder_id]} color="#ccc" />
         <p className="overflow-x-auto">{folder.name}</p>
       </div>
       {folderStates[folder.folder_id] && (

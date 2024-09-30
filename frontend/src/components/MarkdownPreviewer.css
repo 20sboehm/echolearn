@@ -1,25 +1,20 @@
-/* highlight-custom.css */
 .hljs {
-  /* background: #050505; */
   background: transparent;
-  /* Dark background */
   color: #abb2bf;
-  /* Light text color */
 }
 
-.hljs-keyword,
-.hljs-selector-tag,
-.hljs-literal {
+.hljs-keyword {
+  color: #2986dd;
+}
+
+.hljs-title {
+  color: #e2bc3d;
+}
+
+.hljs-number {
   color: #c678dd;
-  /* Purple */
 }
 
-.hljs-string {
-  color: #98c379;
-  /* Green */
-}
-
-.hljs-function {
-  color: #61afef;
-  /* Blue */
+.hljs-built_in {
+  color: #31bd5b;
 }

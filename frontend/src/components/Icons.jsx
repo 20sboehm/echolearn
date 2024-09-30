@@ -98,7 +98,7 @@ export const SidebarOpenClose = ({ sidebarOpen, sidebarWidth }) => {
   );
 };
 
-export const ChevronIcon = ({ isOpen }) => {
+export const ChevronIcon = ({ isOpen, color }) => {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -113,7 +113,7 @@ export const ChevronIcon = ({ isOpen }) => {
     >
       <path
         d="M9 6L15 12L9 18"
-        stroke="#FFFFFF" // Change stroke to white
+        stroke={color} // Change stroke to white
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
