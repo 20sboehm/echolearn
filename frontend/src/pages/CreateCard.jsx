@@ -35,6 +35,8 @@ function CreateCard() {
 
   const [multipleInput, setMultipleInput] = useState('');
   const [multipleRequired, setmultipleRequired] = useState('');
+  const [quizletInput, setQuizletInput] = useState('');
+  const [quizletRequired, setquizletRequired] = useState('');
 
   const [selectedOptionSpace, setSelectedOptionspace] = useState('spacetab');
   const [selectedOptionLine, setSelectedOptionline] = useState('newline');
@@ -61,6 +63,23 @@ function CreateCard() {
       setmultipleRequired(false);
     }
   }
+
+  const handlequizletParser = (value) => {
+    setQuestionVideoLink('');
+    setAnswerVideoLink('');
+    setAnswer_ImageUrl('');
+    setQuestion_ImageUrl('');
+    setQuestionLatexInput('');
+    setAnswerLatexInput('');
+    if (!quizletRequired) {
+      setquizletRequired(true);
+      console.log(quizletRequired)
+    }
+    else {
+      setquizletRequired(false);
+    }
+  }
+
   const handleAnswerRequirement = (value) => {
     // setQuestionVideoLink('');
     setAnswerVideoLink('');
@@ -137,7 +156,7 @@ function CreateCard() {
     setQuestionLatexInput('');
     setAnswerLatexInput('');
 
-    if (multipleRequired === true) {
+    if (multipleRequired === true || quizletRequired === true) {
       return
     }
     document.getElementById("QuestionDiv").textContent = '';
@@ -197,6 +216,18 @@ function CreateCard() {
     setPreview(formattedPreview);
   }, [multipleInput, selectedOptionSpace, selectedOptionLine]);
 
+  useEffect(() => {
+    let spaceChoice = "|||";
+    let lineChoice = "{|||}";
+
+    const lines = quizletInput.split(lineChoice).filter(line => line.trim());
+    const formattedPreview = lines.map(line => {
+      const parts = line.split(spaceChoice).map(part => part.trim());
+      return { question: parts[0], answer: parts[1] };
+    });
+    setPreview(formattedPreview);
+  }, [quizletInput]);
+
   const handleSubmitMultiple = (e) => {
     e.preventDefault();
     console.log(multipleInput)
@@ -234,6 +265,34 @@ function CreateCard() {
     });
 
   };
+
+  const handlequizletparser = (e) => {
+    e.preventDefault();
+    console.log(quizletInput)
+    let lineChoice = "{|||}";
+    let spaceChoice = "|||";
+
+    const lines = (quizletInput).trim().split(lineChoice).filter(line => line.trim());
+    console.log(lines)
+    const newCards = lines.map(line => {
+      const parts = line.split(spaceChoice);
+      console.log(parts[0], parts[1])
+      const question = parts[0]
+      const answer = parts[1]
+      formSubmissionMutation.mutate({ deck_id: deckId, question, answer, questionvideolink, answervideolink, questionimagelink, answerimagelink, questionlatex, answerlatex }, {
+        onSuccess: () => {
+          popupDetails('Card created successfully!', 'green')
+          setRefetchTrigger(prev => !prev);
+        },
+        onError: () => {
+          popupDetails('Something went wrong...', 'red')
+        }
+      });
+    });
+
+  };
+
+
   const handleKeyDown = (e) => {
     if (e.key === 'Tab') {
       const start = e.target.selectionStart;
@@ -254,6 +313,47 @@ function CreateCard() {
       <>
         <SideBar refetchTrigger={refetchTrigger} />
         <h1 className='text-4xl mb-10 mt-10 font-medium'>New Card</h1>
+
+        {quizletRequired == true && (
+          <form onSubmit={handlequizletparser} className='flex flex-col items-center'>
+            <select value={deckId} onChange={(e) => setDeckId(e.target.value)} className='mb-4 px-2 rounded-md h-10 bg-eDarker border border-eGray' style={{ width: '30vw' }} >
+              <option key='select-deck-key' value='' className=''>Select a deck</option>
+              {decks.map((deck) => (
+                <option key={deck.deck_id} value={deck.deck_id}>{deck.name}</option>
+              ))}
+            </select>
+            <p>
+              To export from Quizlet, you need to go to "your library", then select the set you want to copy, then click on the triple dots and select export.
+              <br/>
+              In the pop-up window, input "<code>|||</code>" for customizing the separator between term and definition and input "<code>&#123;|||&#125;</code>" for customizing the separator between rows.
+            </p>
+            <div>
+              <textarea value={quizletInput} onChange={(e) => setQuizletInput(e.target.value)} onKeyDown={handleKeyDown}
+                style={{ border: '1px solid black', textAlign: 'left', minHeight: '180px', width: '500px', padding: '10px', marginTop: '10px', backgroundColor: 'grey' }} ></textarea>
+            </div>
+
+            <button type='submit' className="rounded-lg border border-transparent px-4 py-2 
+          font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+          active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>
+              Submit
+            </button>
+
+            <h3>Preview</h3>
+            <div className="h-[50vh] overflow-y-auto">
+              {preview.map((item, index) => (
+                <div className="grid grid-cols-2 gap-4 font-medium px-2" key={index}>
+                  <div className="border bg-white text-black mt-2 px-2 py-2">
+                    <p>Question: {item.question}</p>
+                  </div>
+                  <div className="border bg-white text-black mt-2 px-2 py-2 relative">
+                    <p>Answer: {item.answer}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </form>
+        )}
+
         {multipleRequired == true && (
           <form onSubmit={handleSubmitMultiple} className='flex flex-col items-center'>
             <select value={deckId} onChange={(e) => setDeckId(e.target.value)} className='mb-4 px-2 rounded-md h-10 bg-eDarker border border-eGray' style={{ width: '30vw' }} >
@@ -315,7 +415,7 @@ function CreateCard() {
             </div>
           </form>
         )}
-        {multipleRequired == false && (
+        {quizletRequired == false && multipleRequired == false && (
           <form onSubmit={handleSubmit} className='flex flex-col items-center'>
             <select value={deckId} onChange={(e) => setDeckId(e.target.value)} className='mb-4 px-2 h-10 bg-eDarker border border-eGray' style={{ width: '30vw' }} >
               <option key='select-deck-key' value='' className=''>Select a deck</option>
@@ -326,6 +426,10 @@ function CreateCard() {
             <button type="button" onClick={() => handleMultipleInput('MultipleInput')} className="rounded-lg border border-transparent px-4 py-2 
           font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }} >Multiple input</button>
+
+            <button type="button" onClick={() => handlequizletParser('MultipleInput')} className="rounded-lg border border-transparent px-4 py-2 
+          font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+          active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }} >quizlet parser</button>
 
             <h1 className='text-2xl mt-6 mb-2 w-[90%] border-b p-1 text-center'>Question</h1>
 
