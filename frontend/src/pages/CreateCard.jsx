@@ -14,6 +14,7 @@ function CreateCard() {
   const [popupColor, setPopupColor] = useState('');
   const [popupOpacity, setPopupOpacity] = useState('opacity-100');
   const [refetchTrigger, setRefetchTrigger] = useState(false);
+  const [sidebarWidth, setSidebarWidth] = useState(250);
 
   const [deckId, setDeckId] = useState('');
   const [question, setQuestion] = useState('');
@@ -39,6 +40,7 @@ function CreateCard() {
   const [selectedOptionSpace, setSelectedOptionspace] = useState('spacetab');
   const [selectedOptionLine, setSelectedOptionline] = useState('newline');
   const [preview, setPreview] = useState([]);
+
   const handleOptionChangeSpace = (event) => {
     setSelectedOptionspace(event.target.value);
   };
@@ -252,204 +254,208 @@ function CreateCard() {
   if (decks) {
     return (
       <>
-        <SideBar refetchTrigger={refetchTrigger} />
-        <h1 className='text-4xl mb-10 mt-10 font-medium'>New Card</h1>
-        {multipleRequired == true && (
-          <form onSubmit={handleSubmitMultiple} className='flex flex-col items-center'>
-            <select value={deckId} onChange={(e) => setDeckId(e.target.value)} className='mb-4 px-2 rounded-md h-10 bg-eDarker border border-eGray' style={{ width: '30vw' }} >
-              <option key='select-deck-key' value='' className=''>Select a deck</option>
-              {decks.map((deck) => (
-                <option key={deck.deck_id} value={deck.deck_id}>{deck.name}</option>
-              ))}
-            </select>
-            <div>
-              <div>
-                <h2>Select space style: </h2>
-                <div style={{ display: 'inline-block', marginRight: '10px' }}>
-                  <input name='spacetab' type="radio" value="spacetab" checked={selectedOptionSpace === 'spacetab'} onChange={handleOptionChangeSpace}></input>
-                  <label htmlFor='spacetab'> Tab </label>
+        <div className='flex w-full h-full'>
+          <SideBar refetchTrigger={refetchTrigger} onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
+          <div className='flex flex-col flex-glow items-center overflow-x-auto mx-auto'>
+            <h1 className='text-4xl mb-10 mt-10 font-medium'>New Card</h1>
+            {multipleRequired == true && (
+              <form onSubmit={handleSubmitMultiple} className='flex flex-col items-center'>
+                <select value={deckId} onChange={(e) => setDeckId(e.target.value)} className='mb-4 px-2 rounded-md h-10 bg-eDarker border border-eGray' style={{ width: '30vw' }} >
+                  <option key='select-deck-key' value='' className=''>Select a deck</option>
+                  {decks.map((deck) => (
+                    <option key={deck.deck_id} value={deck.deck_id}>{deck.name}</option>
+                  ))}
+                </select>
+                <div>
+                  <div>
+                    <h2>Select space style: </h2>
+                    <div style={{ display: 'inline-block', marginRight: '10px' }}>
+                      <input name='spacetab' type="radio" value="spacetab" checked={selectedOptionSpace === 'spacetab'} onChange={handleOptionChangeSpace}></input>
+                      <label htmlFor='spacetab'> Tab </label>
+                    </div>
+
+                    <div style={{ display: 'inline-block', marginRight: '10px' }}>
+                      <input name='spacecomma' type="radio" value="spacecomma" checked={selectedOptionSpace === 'spacecomma'} onChange={handleOptionChangeSpace}></input>
+                      <label htmlFor='spacecomma'> comma </label>
+                    </div>
+                  </div>
+                  <div>
+                    <h2>Select new line style: </h2>
+                    <div style={{ display: 'inline-block', marginRight: '10px' }}>
+                      <input name='newline' type="radio" value='newline' checked={selectedOptionLine === 'newline'} onChange={handleOptionChangenewline}></input>
+                      <label htmlFor='newline'> newline </label>
+                    </div>
+
+                    <div style={{ display: 'inline-block', marginRight: '10px' }}>
+                      <input name='newlinesemicolon' type="radio" value='semicolon' checked={selectedOptionLine === 'semicolon'} onChange={handleOptionChangenewline}></input>
+                      <label htmlFor='newlinesemicolon'> semicolon </label>
+                    </div>
+                  </div>
                 </div>
 
-                <div style={{ display: 'inline-block', marginRight: '10px' }}>
-                  <input name='spacecomma' type="radio" value="spacecomma" checked={selectedOptionSpace === 'spacecomma'} onChange={handleOptionChangeSpace}></input>
-                  <label htmlFor='spacecomma'> comma </label>
-                </div>
-              </div>
-              <div>
-                <h2>Select new line style: </h2>
-                <div style={{ display: 'inline-block', marginRight: '10px' }}>
-                  <input name='newline' type="radio" value='newline' checked={selectedOptionLine === 'newline'} onChange={handleOptionChangenewline}></input>
-                  <label htmlFor='newline'> newline </label>
+                <div>
+                  <textarea value={multipleInput} onChange={(e) => setMultipleInput(e.target.value)} onKeyDown={handleKeyDown}
+                    style={{ border: '1px solid black', textAlign: 'left', minHeight: '180px', width: '500px', padding: '10px', marginTop: '10px', backgroundColor: 'grey' }} ></textarea>
                 </div>
 
-                <div style={{ display: 'inline-block', marginRight: '10px' }}>
-                  <input name='newlinesemicolon' type="radio" value='semicolon' checked={selectedOptionLine === 'semicolon'} onChange={handleOptionChangenewline}></input>
-                  <label htmlFor='newlinesemicolon'> semicolon </label>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <textarea value={multipleInput} onChange={(e) => setMultipleInput(e.target.value)} onKeyDown={handleKeyDown}
-                style={{ border: '1px solid black', textAlign: 'left', minHeight: '180px', width: '500px', padding: '10px', marginTop: '10px', backgroundColor: 'grey' }} ></textarea>
-            </div>
-
-            <button type='submit' className="rounded-lg border border-transparent px-4 py-2 
+                <button type='submit' className="rounded-lg border border-transparent px-4 py-2 
           font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>
-              Submit
-            </button>
+                  Submit
+                </button>
 
-            <h3>Preview</h3>
-            <div className="h-[50vh] overflow-y-auto">
-              {preview.map((item, index) => (
-                <div className="grid grid-cols-2 gap-4 font-medium px-2" key={index}>
-                  <div className="border bg-white text-black mt-2 px-2 py-2">
-                    <p>Question: {item.question}</p>
-                  </div>
-                  <div className="border bg-white text-black mt-2 px-2 py-2 relative">
-                    <p>Answer: {item.answer}</p>
-                  </div>
+                <h3>Preview</h3>
+                <div className="h-[50vh] overflow-y-auto">
+                  {preview.map((item, index) => (
+                    <div className="grid grid-cols-2 gap-4 font-medium px-2" key={index}>
+                      <div className="border bg-white text-black mt-2 px-2 py-2">
+                        <p>Question: {item.question}</p>
+                      </div>
+                      <div className="border bg-white text-black mt-2 px-2 py-2 relative">
+                        <p>Answer: {item.answer}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </form>
-        )}
-        {multipleRequired == false && (
-          <form onSubmit={handleSubmit} className='flex flex-col items-center'>
-            <select value={deckId} onChange={(e) => setDeckId(e.target.value)} className='mb-4 px-2 h-10 bg-eDarker border border-eGray' style={{ width: '30vw' }} >
-              <option key='select-deck-key' value='' className=''>Select a deck</option>
-              {decks.map((deck) => (
-                <option key={deck.deck_id} value={deck.deck_id}>{deck.name}</option>
-              ))}
-            </select>
-            <button type="button" onClick={() => handleMultipleInput('MultipleInput')} className="rounded-lg border border-transparent px-4 py-2 
+              </form>
+            )}
+            {multipleRequired == false && (
+              <form onSubmit={handleSubmit} className='flex flex-col items-center'>
+                <select value={deckId} onChange={(e) => setDeckId(e.target.value)} className='mb-4 px-2 h-10 bg-eDarker border border-eGray' style={{ width: '30vw' }} >
+                  <option key='select-deck-key' value='' className=''>Select a deck</option>
+                  {decks.map((deck) => (
+                    <option key={deck.deck_id} value={deck.deck_id}>{deck.name}</option>
+                  ))}
+                </select>
+                <button type="button" onClick={() => handleMultipleInput('MultipleInput')} className="rounded-lg border border-transparent px-4 py-2 
           font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }} >Multiple input</button>
 
-            <h1 className='text-2xl mt-6 mb-2 w-[90%] border-b p-1 text-center'>Question</h1>
+                <h1 className='text-2xl mt-6 mb-2 w-[90%] border-b p-1 text-center'>Question</h1>
 
-            <div className='m-2'>
-              <button type="button" onClick={() => handleQuestionRequirement('image')} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
+                <div className='m-2'>
+                  <button type="button" onClick={() => handleQuestionRequirement('image')} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
           font-semibold bg-eDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-eBlue
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>Image</button>
-              <button type="button" onClick={() => handleQuestionRequirement('video')} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
+                  <button type="button" onClick={() => handleQuestionRequirement('video')} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
           font-semibold bg-eDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-eBlue
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>video</button>
-              <button type="button" onClick={() => formatText('bold')} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
+                  <button type="button" onClick={() => formatText('bold')} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
           font-semibold bg-eDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-eBlue
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>bold</button>
-              <button type="button" onClick={() => formatText('italic')} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
+                  <button type="button" onClick={() => formatText('italic')} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
           font-semibold bg-eDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-eBlue
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>italic</button>
-              <button type="button" onClick={() => formatText('underline')} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
+                  <button type="button" onClick={() => formatText('underline')} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
           font-semibold bg-eDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-eBlue
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>underline</button>
-              <button type="button" onClick={() => handleQuestionRequirement('latex')} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
+                  <button type="button" onClick={() => handleQuestionRequirement('latex')} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
           font-semibold bg-eDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-eBlue
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>latex</button>
-              <button type="button" onClick={() => makeLink()} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
+                  <button type="button" onClick={() => makeLink()} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
           font-semibold bg-eDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-eBlue
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>URL</button>
-            </div>
+                </div>
 
-            <div id="QuestionDiv" onInput={handleQuestionInput} contentEditable className='bg-eDarker rounded-md border 
+                <div id="QuestionDiv" onInput={handleQuestionInput} contentEditable className='bg-eDarker rounded-md border 
             border-eGray w-[90%] h-[15vh] text-left p-2'>
-              <htmlcontent html={question}></htmlcontent>
-            </div>
+                  <htmlcontent html={question}></htmlcontent>
+                </div>
 
-            {Question_requirement === 'latex' && (
-              <LatexDisplay value={questionlatex} onChange={(e) => setQuestionLatexInput(e.target.value)} blockMathInput={questionlatex}></LatexDisplay>
-            )}
-
-            {Question_requirement === 'video' && (
-              <div>
-                <label htmlFor='videoInput'>Put your video link here : </label>
-                <input name="videoInput" type="text" value={questionvideolink} onChange={(e) => setQuestionVideoLink(e.target.value)} style={{ width: '250px', height: '50px' }}></input>
-                {ReactPlayer.canPlay(questionvideolink) ? (
-                  <>
-                    <p>below is the preview of video</p>
-                    <ReactPlayer url={questionvideolink} controls={true} />
-                  </>
-                ) : (
-                  <p>The link is not available</p>
+                {Question_requirement === 'latex' && (
+                  <LatexDisplay value={questionlatex} onChange={(e) => setQuestionLatexInput(e.target.value)} blockMathInput={questionlatex}></LatexDisplay>
                 )}
-              </div>
-            )}
 
-            {Question_requirement === 'image' && (
-              <ImageDisplay htmlFor='QuestionimageInput' name='QuestionimageInput' value={questionimagelink}
-                onChange={(e) => setQuestion_ImageUrl(e.target.value)} imgSrc={questionimagelink} />
-            )}
+                {Question_requirement === 'video' && (
+                  <div>
+                    <label htmlFor='videoInput'>Put your video link here : </label>
+                    <input name="videoInput" type="text" value={questionvideolink} onChange={(e) => setQuestionVideoLink(e.target.value)} style={{ width: '250px', height: '50px' }}></input>
+                    {ReactPlayer.canPlay(questionvideolink) ? (
+                      <>
+                        <p>below is the preview of video</p>
+                        <ReactPlayer url={questionvideolink} controls={true} />
+                      </>
+                    ) : (
+                      <p>The link is not available</p>
+                    )}
+                  </div>
+                )}
 
-            <h1 className='text-2xl mt-6 mb-2 w-[90%] border-b p-1 text-center'>Answer</h1>
+                {Question_requirement === 'image' && (
+                  <ImageDisplay htmlFor='QuestionimageInput' name='QuestionimageInput' value={questionimagelink}
+                    onChange={(e) => setQuestion_ImageUrl(e.target.value)} imgSrc={questionimagelink} />
+                )}
 
-            <div className='m-2'>
-              <button type="button" onClick={() => handleAnswerRequirement('image')} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
+                <h1 className='text-2xl mt-6 mb-2 w-[90%] border-b p-1 text-center'>Answer</h1>
+
+                <div className='m-2'>
+                  <button type="button" onClick={() => handleAnswerRequirement('image')} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
             font-semibold bg-eDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-eBlue
             active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>Image</button>
-              <button type="button" onClick={() => handleAnswerRequirement('video')} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
+                  <button type="button" onClick={() => handleAnswerRequirement('video')} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
             font-semibold bg-eDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-eBlue
             active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>video</button>
-              <button type="button" onClick={() => formatText('bold')} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
+                  <button type="button" onClick={() => formatText('bold')} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
             font-semibold bg-eDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-eBlue
             active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>bold</button>
-              <button type="button" onClick={() => formatText('italic')} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
+                  <button type="button" onClick={() => formatText('italic')} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
             font-semibold bg-eDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-eBlue
             active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>italic</button>
-              <button type="button" onClick={() => formatText('underline')} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
+                  <button type="button" onClick={() => formatText('underline')} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
             font-semibold bg-eDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-eBlue
             active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>underline</button>
-              <button type="button" onClick={() => handleAnswerRequirement('latex')} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
+                  <button type="button" onClick={() => handleAnswerRequirement('latex')} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
             font-semibold bg-eDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-eBlue
             active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>latex</button>
-              <button type="button" onClick={() => makeLink()} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
+                  <button type="button" onClick={() => makeLink()} className="rounded-lg border-2 border-eBlue px-4 py-2 mx-1
             font-semibold bg-eDarker hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] text-eBlue
             active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>URL</button>
-            </div>
+                </div>
 
-            <div id="AnswerDiv" onInput={handleAnswerInput} contentEditable className='bg-eDarker rounded-md border 
+                <div id="AnswerDiv" onInput={handleAnswerInput} contentEditable className='bg-eDarker rounded-md border 
             border-eGray w-[90%] h-[15vh] text-left p-2'>
-              <htmlcontent html={answer}></htmlcontent>
-            </div>
+                  <htmlcontent html={answer}></htmlcontent>
+                </div>
 
-            {Answer_requirement === 'latex' && (
-              <LatexDisplay value={answerlatex} onChange={(e) => setAnswerLatexInput(e.target.value)} blockMathInput={answerlatex}></LatexDisplay>
-            )}
-
-            {Answer_requirement === 'video' && (
-              <div>
-                <label htmlFor='videoInput'>Put your video link here : </label>
-                <input name="videoInput" type="text" value={answervideolink} onChange={(e) => setAnswerVideoLink(e.target.value)} style={{ width: '250px', height: '50px' }}></input>
-                {ReactPlayer.canPlay(answervideolink) ? (
-                  <>
-                    <p>preview </p>
-                    <ReactPlayer url={answervideolink} controls={true} />
-                  </>
-                ) : (
-                  <p>The link is not available</p>
+                {Answer_requirement === 'latex' && (
+                  <LatexDisplay value={answerlatex} onChange={(e) => setAnswerLatexInput(e.target.value)} blockMathInput={answerlatex}></LatexDisplay>
                 )}
-              </div>
-            )}
 
-            {Answer_requirement === 'image' && (
-              <ImageDisplay htmlFor='AnswerimageInput' name='AnswerimageInput' value={answerimagelink}
-                onChange={(e) => setAnswer_ImageUrl(e.target.value)} imgSrc={answerimagelink} />
-            )}
+                {Answer_requirement === 'video' && (
+                  <div>
+                    <label htmlFor='videoInput'>Put your video link here : </label>
+                    <input name="videoInput" type="text" value={answervideolink} onChange={(e) => setAnswerVideoLink(e.target.value)} style={{ width: '250px', height: '50px' }}></input>
+                    {ReactPlayer.canPlay(answervideolink) ? (
+                      <>
+                        <p>preview </p>
+                        <ReactPlayer url={answervideolink} controls={true} />
+                      </>
+                    ) : (
+                      <p>The link is not available</p>
+                    )}
+                  </div>
+                )}
 
-            <button type='submit' className="rounded-lg border border-transparent px-4 py-2 
+                {Answer_requirement === 'image' && (
+                  <ImageDisplay htmlFor='AnswerimageInput' name='AnswerimageInput' value={answerimagelink}
+                    onChange={(e) => setAnswer_ImageUrl(e.target.value)} imgSrc={answerimagelink} />
+                )}
+
+                <button type='submit' className="rounded-lg border border-transparent px-4 py-2 
           font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
           active:border-[#555] mt-4" style={{ transition: "border-color 0.10s, color 0.10s" }}>
-              Submit
-            </button>
+                  Submit
+                </button>
 
-          </form>
-        )}
-        {showPopup && (
-          <div className={`fixed font-bold text-eDarker bottom-5 left-1/2 -translate-x-1/2 transform p-4 bg-${popupColor}-500 rounded-md transition-opacity duration-1000 ${popupOpacity}`}>
-            {popupMessage}
+              </form>
+            )}
+            {showPopup && (
+              <div className={`fixed font-bold text-eDarker bottom-5 left-1/2 -translate-x-1/2 transform p-4 bg-${popupColor}-500 rounded-md transition-opacity duration-1000 ${popupOpacity}`}>
+                {popupMessage}
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </>
     );
   }

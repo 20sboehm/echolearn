@@ -15,6 +15,7 @@ function CreateDeck() {
   const [deckName, setDeckName] = useState('');
   const [deckDescription, setDeckDescription] = useState('');
   const [refetchTrigger, setRefetchTrigger] = useState(false);
+  const [sidebarWidth, setSidebarWidth] = useState(250);
 
   function popupDetails(popupMessage, popupColor) {
     setShowPopup(true);
@@ -69,36 +70,40 @@ function CreateDeck() {
   if (folders) {
     return (
       <>
-        <SideBar refetchTrigger={refetchTrigger} />
-        <h1 className='text-4xl mb-10 mt-10 font-medium'>New Deck</h1>
-        <form onSubmit={handleSubmit} className='flex flex-col items-center'>
-          <select value={folderId} onChange={(e) => setFolderId(e.target.value)} className='mb-4 px-2 rounded-md h-10 bg-black' style={{ width: '30vw' }} >
-            <option key='select-folder-key' value='' className='bg'>Select a folder</option>
-            {folders.map((folder) => (
-              <option key={folder.folder_id} value={folder.folder_id}>{folder.name}</option>
-            ))}
-          </select>
-          <input
-            type='text'
-            value={deckName}
-            onChange={(e) => { setDeckName(e.target.value) }}
-            placeholder='Deck name'
-            className='mb-4 p-2 rounded-md bg-[#151515]'
-            style={{ width: '30vw' }}
-          />
-          <textarea value={deckDescription} onChange={(e) => setDeckDescription(e.target.value)}
-            placeholder='Deck description' className='mb-4 p-2 rounded-md h-40 bg-[#151515]' style={{ width: '30vw' }} />
-          <button type='submit' className="rounded-lg border border-transparent px-4 py-2 
+        <div className='flex w-full h-full'>
+          <SideBar refetchTrigger={refetchTrigger} onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
+          <div className='flex flex-col flex-glow items-center overflow-x-auto mx-auto'>
+            <h1 className='text-4xl mb-10 mt-10 font-medium'>New Deck</h1>
+            <form onSubmit={handleSubmit} className='flex flex-col items-center'>
+              <select value={folderId} onChange={(e) => setFolderId(e.target.value)} className='mb-4 px-2 rounded-md h-10 bg-black' style={{ width: '30vw' }} >
+                <option key='select-folder-key' value='' className='bg'>Select a folder</option>
+                {folders.map((folder) => (
+                  <option key={folder.folder_id} value={folder.folder_id}>{folder.name}</option>
+                ))}
+              </select>
+              <input
+                type='text'
+                value={deckName}
+                onChange={(e) => { setDeckName(e.target.value) }}
+                placeholder='Deck name'
+                className='mb-4 p-2 rounded-md bg-[#151515]'
+                style={{ width: '30vw' }}
+              />
+              <textarea value={deckDescription} onChange={(e) => setDeckDescription(e.target.value)}
+                placeholder='Deck description' className='mb-4 p-2 rounded-md h-40 bg-[#151515]' style={{ width: '30vw' }} />
+              <button type='submit' className="rounded-lg border border-transparent px-4 py-2 
           font-semibold bg-[#111111] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
           active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>
-            Submit
-          </button>
-        </form>
-        {showPopup && (
-          <div className={`fixed bottom-20 left-1/2 -translate-x-1/2 transform p-4 bg-${popupColor}-500 rounded-md transition-opacity duration-1000 ${popupOpacity}`}>
-            {popupMessage}
+                Submit
+              </button>
+            </form>
+            {showPopup && (
+              <div className={`fixed bottom-20 left-1/2 -translate-x-1/2 transform p-4 bg-${popupColor}-500 rounded-md transition-opacity duration-1000 ${popupOpacity}`}>
+                {popupMessage}
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </>
     );
   }
