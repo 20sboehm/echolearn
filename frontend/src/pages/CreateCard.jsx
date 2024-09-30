@@ -263,7 +263,9 @@ function CreateCard() {
         }
       });
     });
-
+    if (multipleInput !== null) {
+      setQuizletInput('')
+    }
   };
 
   const handlequizletparser = (e) => {
@@ -290,8 +292,38 @@ function CreateCard() {
       });
     });
 
+    if (quizletInput !== null) {
+      setQuizletInput('')
+    }
+
   };
 
+  const handlebackButton = () => {
+    if (multipleRequired) {
+      if (multipleInput) {
+        const shouldLeave = window.confirm("You have stuff did not save. Do you still want to leave?");
+        if (shouldLeave) {
+          setMultipleInput("")
+          setmultipleRequired(false)
+        }
+      }
+     else{
+      setmultipleRequired(false)
+     }
+    }
+    if (quizletRequired) {
+      if (quizletInput) {
+        const shouldLeave = window.confirm("You have stuff did not save. Do you still want to leave?");
+        if (shouldLeave) {
+          setQuizletInput("")
+          setquizletRequired(false)
+        }
+      }
+      else{
+        setquizletRequired(false)
+       }
+    }
+  }
 
   const handleKeyDown = (e) => {
     if (e.key === 'Tab') {
@@ -313,7 +345,11 @@ function CreateCard() {
       <>
         <SideBar refetchTrigger={refetchTrigger} />
         <h1 className='text-4xl mb-10 mt-10 font-medium'>New Card</h1>
-
+        <button type='button' onClick={handlebackButton} className="rounded-lg border border-transparent px-4 py-2 
+          font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+          active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>
+          Back
+        </button>
         {quizletRequired == true && (
           <form onSubmit={handlequizletparser} className='flex flex-col items-center'>
             <select value={deckId} onChange={(e) => setDeckId(e.target.value)} className='mb-4 px-2 rounded-md h-10 bg-eDarker border border-eGray' style={{ width: '30vw' }} >
@@ -324,11 +360,11 @@ function CreateCard() {
             </select>
             <p>
               To export from Quizlet, you need to go to "your library", then select the set you want to copy, then click on the triple dots and select export.
-              <br/>
+              <br />
               In the pop-up window, input "<code>|||</code>" for customizing the separator between term and definition and input "<code>&#123;|||&#125;</code>" for customizing the separator between rows.
             </p>
             <div>
-              <textarea value={quizletInput} onChange={(e) => setQuizletInput(e.target.value)} onKeyDown={handleKeyDown}
+              <textarea value={quizletInput} onChange={(e) => setQuizletInput(e.target.value)} onKeyDown={handleKeyDown} 
                 style={{ border: '1px solid black', textAlign: 'left', minHeight: '180px', width: '500px', padding: '10px', marginTop: '10px', backgroundColor: 'grey' }} ></textarea>
             </div>
 
@@ -390,7 +426,7 @@ function CreateCard() {
             </div>
 
             <div>
-              <textarea value={multipleInput} onChange={(e) => setMultipleInput(e.target.value)} onKeyDown={handleKeyDown}
+              <textarea placeholder="cards1: question answer&#10;cards2: question answer&#10;..." value={multipleInput} onChange={(e) => setMultipleInput(e.target.value)} onKeyDown={handleKeyDown}
                 style={{ border: '1px solid black', textAlign: 'left', minHeight: '180px', width: '500px', padding: '10px', marginTop: '10px', backgroundColor: 'grey' }} ></textarea>
             </div>
 
