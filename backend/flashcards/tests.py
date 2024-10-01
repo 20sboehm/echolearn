@@ -94,12 +94,6 @@ class SchemasTest(TestCase):
         folder_schema = CreateFolder(**data)
         self.assertEqual(folder_schema.name, "New Folder")
 
-# 这个测试失败的原因是因为在 schemas.py 中的 CreateFolder Schema 中，name 字段没有定义为必填项，也没有限制最小长度或其他约束条件。所以即使 name 是空字符串，也不会触发 ValidationError。
-    # def test_invalid_create_folder(self):
-    #     with self.assertRaises(ValidationError):
-    #         data = {"name": ""}
-    #         CreateFolder(**data)
-
 # -----------------------------------------------
 # ------------------ folders.py -----------------
 # -----------------------------------------------
