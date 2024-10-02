@@ -54,7 +54,7 @@ function TaskList() {
       <div className="text-2xl text-left border border-eMedGray rounded-md">
         <ul className="w-[80vw] sm:[75vw] md:w-[50vw] text-xs sm:text-sm lg:text-xl">
           <li className="flex text-eWhite font-semibold border-eGray px-2 py-3 rounded-t-lg bg-eDark">
-            <div className="w-[55%]">Deck</div>
+            <div className="w-[45%]">Deck</div>
             <div className="w-[15%]">New</div>
             <div className="w-[15%]">Review</div>
           </li>
@@ -79,15 +79,19 @@ function DeckRow({ deck, cards }) {
 
   return (
     <li className="flex text-eWhite px-2 py-2 hover:bg-eHLT border-eMedGray border-t">
-      <div className="flex items-center w-[55%]">
+      <div className="flex items-center w-[45%]">
         <Link to={`/decks/${deck.deck_id}`} className="hover:text-eBlue hover:border-eBlue">{deck.name}</Link>
       </div>
       <div className="flex items-center w-[15%]">{newCardsCount}</div>
       <div className="flex items-center w-[15%]">{reviewCardsCount}</div>
       <div className="flex justify-center items-center w-[15%]">
-        <Link to={`/review/${deck.deck_id}`} className="block rounded-sm sm:rounded-lg border-2 px-1 py-0.5 sm:px-3 sm:py-1 text-center font-medium active:scale-[0.97]
+        <Link to={`/review/${deck.deck_id}`} className="block rounded-sm sm:rounded-lg border-2 ml-8 mr-4 px-1 py-0.5 sm:px-3 sm:py-1 text-center font-medium active:scale-[0.97]
                   bg-eDarker text-eBlue border-eBlue hover:border-eWhite hover:text-eWhite">
           Review
+        </Link>
+        <Link to={`/review/${deck.deck_id}?studyAll=true`} className="block rounded-sm sm:rounded-lg border-2 px-1 py-0.5 sm:px-3 sm:py-1 text-center font-medium active:scale-[0.97]
+                  bg-eDarker text-eBlue border-eBlue hover:border-eWhite hover:text-eWhite">
+          ReviewAll
         </Link>
       </div>
     </li>

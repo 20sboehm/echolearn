@@ -7,12 +7,13 @@ import decksImg from "../assets/decks.png";
 
 function ProfilePage() {
   const { _get, _patch } = api();
-  const [profile, setProfile] = useState({ username: '', age: '', country: '', email: '' });
+  const [profile, setProfile] = useState({ username: '', age: '', country: '', email: '', flip_or_set: true });
   const [folders, setFolders] = useState([]);
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editableAge, setEditableAge] = useState('');
   const [editableCountry, setEditableCountry] = useState('');
+  const [flipOrSet, setFlipOrSet] = useState(true);
 
   const countries = [
     "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia",
@@ -46,6 +47,7 @@ function ProfilePage() {
         setProfile(data);
         setEditableAge(data.age);
         setEditableCountry(data.country);
+        setFlipOrSet(data.flip_or_set);
 
         const foldersResponse = await _get('/api/profile/folders_decks');
         const foldersData = await foldersResponse.json();
@@ -85,73 +87,103 @@ function ProfilePage() {
   }
 
   return (
-    <div className="ml-0 w-3/4 text-left">
-      <h1 className="text-2xl font-bold">User Profile</h1>
-      <p className='eWhite'><strong>Username:</strong> {profile.username}</p>
-      <p className='eWhite'><strong>Email:</strong> {profile.email}</p>
+    <div className="ml-0 w-3/4 text-left flex">
+      {/* Left column: User Profile Information */}
+      <div className="w-1/2">
+        <h1 className="text-2xl font-bold">User Profile</h1>
+        <p><strong>Username:</strong> {profile.username}</p>
+        <p><strong>Email:</strong> {profile.email}</p>
 
-      {/* Age */}
-      <p className='eWhite'>
-        <strong>Age:</strong>
+        {/* Age */}
+        <p className='eWhite'>
+          <strong>Age:</strong>
+          {isEditing ? (
+            <input
+              type="number"
+              value={editableAge}
+              onChange={(e) => setEditableAge(Number(e.target.value))}
+              className="border rounded bg-eDarker ml-1"
+            />
+          ) : (
+            ` ${profile.age}`
+          )}
+        </p>
+
+        {/* Country */}
+        <p className='eWhite'>
+          <strong>Country:</strong>
+          {isEditing ? (
+            <select
+              value={editableCountry}
+              onChange={(e) => setEditableCountry(e.target.value)}
+              className="border rounded bg-eDarker ml-1"
+            >
+              {countries.map((country, index) => (
+                <option key={index} value={country}>
+                  {country}
+                </option>
+              ))}
+            </select>
+          ) : (
+            ` ${profile.country}`
+          )}
+        </p>
+
+        {/* Edit and Save button */}
         {isEditing ? (
-          <input
-            type="number"
-            value={editableAge}
-            onChange={(e) => setEditableAge(Number(e.target.value))}
-            className="border rounded bg-eDarker ml-1"
-          />
+          <button onClick={handleSaveClick} className="mt-2 border px-4 py-2 rounded bg-green-500 text-white hover:bg-green-600">
+            Save
+          </button>
         ) : (
-          ` ${profile.age}`
+          <button onClick={handleEditClick} className="mt-2 border px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600">
+            Edit
+          </button>
         )}
-      </p>
 
-      {/* Country */}
-      <p className='eWhite'>
-        <strong>Country:</strong>
-        {isEditing ? (
-          <select
-            value={editableCountry}
-            onChange={(e) => setEditableCountry(e.target.value)}
-            className="border rounded bg-eDarker ml-1"
-          >
-            {countries.map((country, index) => (
-              <option key={index} value={country}>
-                {country}
-              </option>
-            ))}
-          </select>
-        ) : (
-          ` ${profile.country}`
-        )}
-      </p>
+        {/* Display Folders and Decks */}
+        <div className="mt-8">
+          <h2 className="text-xl font-bold">Folders and Decks</h2>
+          {folders.length > 0 ? (
+            folders.map((folder) => <Folder key={folder.folder_id} folder={folder} />)
+          ) : (
+            <p>No folders or decks available</p>
+          )}
+        </div>
+      </div>
 
-      {/* Edit and Save button */}
-      {isEditing ? (
-        <button
-          onClick={handleSaveClick}
-          className="mt-2 border px-4 py-2 rounded bg-green-500 text-white hover:bg-green-600"
-        >
-          Save
-        </button>
-      ) : (
-        <button
-          onClick={handleEditClick}
-          className="mt-2 border px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600"
-        >
-          Edit
-        </button>
-      )}
+      <div className="w-1/2 pl-10">
+        <h2 className="text-2xl font-bold">Settings</h2>
+        <div className="flex items-center mt-4">
+          <label className="flex items-center">
+            <span className="mr-2">Flip</span>
 
-      {/* Display Folders and Decks */}
-      <div className="mt-8">
-        <h2 className="text-xl font-bold">Folders and Decks</h2>
-        {folders.length > 0 ? (
-          folders.map((folder) => (
-            <Folder key={folder.folder_id} folder={folder} />
-          ))
-        ) : (
-          <p className='eWhite'>No folders or decks available</p>
-        )}
+            {/* Toggle Switch */}
+            <div
+              onClick={async () => {
+                const newFlipOrSet = !flipOrSet;
+                setFlipOrSet(newFlipOrSet);
+
+                try {
+                  const response = await _patch('/api/profile/me', {
+                    flip_or_set: newFlipOrSet
+                  });
+                } catch (error) {
+                  setError('Failed to update flip or set setting');
+                }
+              }}
+              className="flex items-center w-12 h-6 rounded-full bg-gray-300 dark:bg-edDarkGray cursor-pointer p-1 transition-colors duration-300"
+            >
+              {/* Ball that moves left or right */}
+              <div
+                className={`w-4 h-4 bg-elDarkGray dark:bg-white rounded-full shadow-md transform transition-transform duration-300 ${flipOrSet ? 'translate-x-6' : 'translate-x-0'}`}
+              >
+              </div>
+            </div>
+
+            <span className="ml-2">Set</span>
+          </label>
+
+        </div>
       </div>
     </div>
   );
@@ -172,11 +204,6 @@ const Folder = ({ folder, onRightClick }) => {
         onContextMenu={(e) => onRightClick(e, folder)}
         className="cursor-pointer eWhite flex"
       >
-        {/* <img
-          src={openFolder ? folderOpenImg : folderCloseImg}
-          alt={openFolder ? "Open folder" : "Closed folder"}
-          className="w-6 h-6 ml-2 mr-2"
-        /> */}
         <span className="w-6 h-6 ml-2 mr-2">{openFolder ? "📂" : "📁"}</span>
         <p className="overflow-x-auto">{folder.name}</p>
       </div>
@@ -189,7 +216,6 @@ const Folder = ({ folder, onRightClick }) => {
             folder.decks.map((deck) => (
               <div key={deck.deck_id} className="eWhite flex items-center" onContextMenu={(e) => onRightClick(e, deck)}>
                 <Link to={`/decks/${deck.deck_id}`} style={{ display: "flex", alignItems: "center" }}>
-                  {/* <img src={decksImg} alt="Deck" className="w-10 h-10" /> */}
                   <span className="mr-2">📚</span>
                   <p className="overflow-x-auto whitespace-nowrap">{deck.name}</p>
                 </Link>

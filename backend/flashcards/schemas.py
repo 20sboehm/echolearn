@@ -16,14 +16,16 @@ class GetUser(Schema):
     email: Optional[str] = None
     age: Optional[int] = None
     country: Optional[str] = None
+    flip_or_set: Optional[bool] = None
 
 class UserLogin(Schema):
     username: str
     userpassword: str
 
 class UpdateUser(Schema):
-    age: Union[int, None]
+    age: Optional[int] = None
     country: Optional[str] = None
+    flip_or_set: Optional[bool] = None
 
 # class GetUser(Schema):
     

@@ -14,7 +14,8 @@ def get_profile(request):
         "username": user.username,
         "email": user.email,
         "age": user.age,
-        "country": user.country
+        "country": user.country,
+        "flip_or_set": user.flip_or_set
     }
 
 # Edit profile
@@ -27,6 +28,9 @@ def update_profile(request, data: UpdateUser):
     
     if data.country is not None:
         user.country = data.country if data.country != "" else None
+
+    if data.flip_or_set is not None:
+        user.flip_or_set = data.flip_or_set
     
     user.save()
     return user
