@@ -33,6 +33,32 @@ function ReviewPage() {
 
   const [flip, setFlip] = useState(false);
 
+  const { data: userSettings, loading } = useQuery(
+    ['userSettings'],
+    async () => {
+      let response = await api._get('/api/profile/me');
+      if (!response.ok) {
+        const errorData = await response.json();
+        const message = errorData.detail || 'An error occurred';
+        throw new Error(`${response.status}: ${message}`);
+      }
+      return response.json(); // Ensure we return the response data
+    },
+    {
+      onSuccess: (data) => {
+        setAnimation(data?.flip_or_set ?? true);  // Set flip after successful data fetch
+        if (data?.flip_or_set == false){
+          setCurrImage(set)
+        }
+      }
+    }
+  );
+  
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+  
+  
   const switchAnimation = () => {
     setCurrImage((prev) =>
       prev === set ? card : set

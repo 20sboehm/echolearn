@@ -86,6 +86,17 @@ function ProfilePage() {
     return <p>{error}</p>;
   }
 
+
+  const handleFlipOrSetChange = async () => {
+    const newFlipOrSet = !flipOrSet;
+    setFlipOrSet(newFlipOrSet);
+    try {
+      const response = await _patch('/api/profile/me', { flip_or_set: newFlipOrSet });
+    } catch (error) {
+      setError('Failed to update flip or set setting');
+    }
+  };
+
   return (
     <div className="ml-0 w-3/4 text-left flex">
       {/* Left column: User Profile Information */}
@@ -151,43 +162,42 @@ function ProfilePage() {
         </div>
       </div>
 
-      <div className="w-1/2 pl-10">
+      <div className="w-1/2 pl-10 border rounded-lg">
         <h2 className="text-2xl font-bold">Settings</h2>
-        <div className="flex items-center mt-4">
-          <label className="flex items-center">
-            <span className="mr-2">Flip</span>
-
-            {/* Toggle Switch */}
-            <div
-              onClick={async () => {
-                const newFlipOrSet = !flipOrSet;
-                setFlipOrSet(newFlipOrSet);
-
-                try {
-                  const response = await _patch('/api/profile/me', {
-                    flip_or_set: newFlipOrSet
-                  });
-                } catch (error) {
-                  setError('Failed to update flip or set setting');
-                }
-              }}
-              className="flex items-center w-12 h-6 rounded-full bg-gray-300 dark:bg-edDarkGray cursor-pointer p-1 transition-colors duration-300"
-            >
-              {/* Ball that moves left or right */}
-              <div
-                className={`w-4 h-4 bg-elDarkGray dark:bg-white rounded-full shadow-md transform transition-transform duration-300 ${flipOrSet ? 'translate-x-6' : 'translate-x-0'}`}
-              >
-              </div>
-            </div>
-
-            <span className="ml-2">Set</span>
-          </label>
-
-        </div>
+        <ToggleSetting
+          label="Review animation:"
+          leftLabel="Flip"
+          rightLabel="Set"
+          value={flipOrSet}
+          onChange={handleFlipOrSetChange}
+        />
       </div>
     </div>
   );
 }
+
+const ToggleSetting = ({ label, leftLabel, rightLabel, value, onChange }) => {
+  return (
+    <div className="flex flex-col mt-4">
+      <label className="flex items-center">
+        <p className="text-big font-bold">{label}</p>
+      </label>
+      <div className="flex items-center mt-2">
+        <span className="mr-4">{leftLabel}</span>
+
+        {/* Toggle Switch */}
+        <div onClick={onChange} className="flex items-center w-12 h-6 rounded-full bg-gray-300 dark:bg-edDarkGray cursor-pointer p-1 transition-colors duration-300">
+          {/* Ball that moves left or right */}
+          <div
+            className={`w-4 h-4 bg-elDarkGray dark:bg-white rounded-full shadow-md transform transition-transform duration-300 ${value ? 'translate-x-0' : 'translate-x-6'}`}
+          ></div>
+        </div>
+
+        <span className="ml-4">{rightLabel}</span>
+      </div>
+    </div>
+  );
+};
 
 // Folder component to handle folder and nested folders
 const Folder = ({ folder, onRightClick }) => {
