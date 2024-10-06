@@ -15,7 +15,8 @@ def get_profile(request):
         "email": user.email,
         "age": user.age,
         "country": user.country,
-        "flip_or_set": user.flip_or_set
+        "flip_or_set": user.flip_or_set,
+        "sidebar_open": user.sidebar_open,
     }
 
 # Edit profile
@@ -32,6 +33,9 @@ def update_profile(request, data: UpdateUser):
     if data.flip_or_set is not None:
         user.flip_or_set = data.flip_or_set
     
+    if data.sidebar_open is not None:
+        user.sidebar_open = data.sidebar_open
+
     user.save()
     return user
 

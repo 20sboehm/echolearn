@@ -7,13 +7,14 @@ import decksImg from "../assets/decks.png";
 
 function ProfilePage() {
   const { _get, _patch } = api();
-  const [profile, setProfile] = useState({ username: '', age: '', country: '', email: '', flip_or_set: true });
+  const [profile, setProfile] = useState({ username: '', age: '', country: '', email: '', flip_or_set: true, sidebar_open: false });
   const [folders, setFolders] = useState([]);
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editableAge, setEditableAge] = useState('');
   const [editableCountry, setEditableCountry] = useState('');
   const [flipOrSet, setFlipOrSet] = useState(true);
+  const [sidebarClosed, setSidebarClosed] = useState(false);
 
   const countries = [
     "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia",
@@ -48,7 +49,8 @@ function ProfilePage() {
         setEditableAge(data.age);
         setEditableCountry(data.country);
         setFlipOrSet(data.flip_or_set);
-
+        setSidebarClosed(data.sidebar_open);
+        
         const foldersResponse = await _get('/api/profile/folders_decks');
         const foldersData = await foldersResponse.json();
         setFolders(foldersData);
@@ -94,6 +96,16 @@ function ProfilePage() {
       const response = await _patch('/api/profile/me', { flip_or_set: newFlipOrSet });
     } catch (error) {
       setError('Failed to update flip or set setting');
+    }
+  };
+
+  const handleSidebarChange = async () => {
+    const newSidebarClosed = !sidebarClosed;
+    setSidebarClosed(newSidebarClosed);
+    try {
+      const response = await _patch('/api/profile/me', { sidebar_open: newSidebarClosed });
+    } catch (error) {
+      setError('Failed to update sidebar closed setting');
     }
   };
 
@@ -164,12 +176,22 @@ function ProfilePage() {
 
       <div className="w-1/2 pl-10 border rounded-lg">
         <h2 className="text-2xl font-bold">Settings</h2>
+        {/* Review Animation */}
         <ToggleSetting
           label="Review animation:"
           leftLabel="Flip"
           rightLabel="Set"
           value={flipOrSet}
           onChange={handleFlipOrSetChange}
+        />
+
+        {/* Sidebar default setting */}
+        <ToggleSetting
+          label="Sidebar default state:"
+          leftLabel="Open"
+          rightLabel="Close"
+          value={sidebarClosed}
+          onChange={handleSidebarChange}
         />
       </div>
     </div>

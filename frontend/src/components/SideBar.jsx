@@ -51,6 +51,31 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
     fetchSidebarData();
   }, [refetchTrigger]);
 
+  const { data: userSettings, loading } = useQuery(
+    ['userSettings'],
+    async () => {
+      let response = await api._get('/api/profile/me');
+      if (!response.ok) {
+        const errorData = await response.json();
+        const message = errorData.detail || 'An error occurred';
+        throw new Error(`${response.status}: ${message}`);
+      }
+      return response.json(); // Ensure we return the response data
+    },
+    {
+      onSuccess: (data) => {
+        setSidebarOpen(data?.sidebar_open);
+        if (data?.sidebar_open == false){
+          setSidebarWidth(10);
+        }
+      }
+    }
+  );
+  
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
   const sidebarShow = () => {
     if (sidebarOpen) {
       setSidebarWidth(10);

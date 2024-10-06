@@ -17,6 +17,7 @@ class GetUser(Schema):
     age: Optional[int] = None
     country: Optional[str] = None
     flip_or_set: Optional[bool] = None
+    sidebar_open: Optional[bool] = None
 
 class UserLogin(Schema):
     username: str
@@ -26,6 +27,7 @@ class UpdateUser(Schema):
     age: Optional[int] = None
     country: Optional[str] = None
     flip_or_set: Optional[bool] = None
+    sidebar_open: Optional[bool] = None
 
 # class GetUser(Schema):
     

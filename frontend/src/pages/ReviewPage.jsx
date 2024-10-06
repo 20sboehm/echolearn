@@ -9,8 +9,8 @@ import sanitizeHtml from 'sanitize-html'; // we might need this here
 import katex from 'katex';
 import partyPopperImg from '../assets/party-popper.png';
 import partyPopperFlipImg from '../assets/party-popper-flip.png';
-import set from '../assets/reviewSwitch2.png';
-import card from '../assets/reviewSwitch.png';
+import card from '../assets/reviewSwitch2.png';
+import set from '../assets/reviewSwitch.png';
 import "./ReviewPage.css";
 import LoadingSpinner from "../components/LoadingSpinner";
 
