@@ -400,9 +400,11 @@ function DeckPage({ publicAccess = false }) {
 
         <div className="h-[50vh] overflow-y-auto border-t border-gray-500 px-1">
           {deckCards.cards.map(card => (
-            <div className="flex font-medium mt-4 border border-eGray w-full" key={card.card_id}>
+            <div className={`flex font-medium mt-4 border border-eGray bg-eDarker w-full ${deleteMode ? "hover:bg-[#ff000055] cursor-not-allowed" : ""}`}
+              key={card.card_id} onClick={() => { handleCardClick(card.card_id) }}
+            >
 
-              <div className="relative w-1/2 flex flex-col bg-eDarker pr-4 border-r border-eGray">
+              <div className={`relative w-1/2 flex flex-col pr-4 border-r border-eGray`}>
                 <MarkdownPreviewer content={card.question} className="flex-1 p-2" />
                 <Link to={`/edit/${card.card_id}`}>
                   <img src={editIconImg} alt="Edit_Icon" className="absolute top-8 right-0.5 h-[21px] w-[28px]" />
@@ -412,63 +414,12 @@ function DeckPage({ publicAccess = false }) {
                 </Link>
               </div>
 
-              <div className="relative w-1/2 flex flex-col bg-eDarker">
+              <div className="relative w-1/2 flex flex-col">
                 <MarkdownPreviewer content={card.answer} className="flex-1 p-2" />
                 <Link onClick={() => speakText(card.answer)}>
                   <SpeakerIcon className="absolute top-1 right-1" />
                 </Link>
               </div>
-
-
-              {/* <img src={voiceIconImg} alt="Voice_Icon" className="absolute top-1 right-1 h-[19px] w-[19px]" /> */}
-              {/* <img src={SpeakerIcon} alt="Voice_Icon" className="absolute top-1 right-1 h-[19px] w-[19px]" /> */}
-
-              {/* <img src={voiceIconImg} alt="Voice_Icon" className="absolute top-1 right-1 h-[19px] w-[19px]" /> */}
-              {/* <img src={SpeakerIcon} alt="Voice_Icon" className="absolute top-1 right-1 h-[19px] w-[19px]" /> */}
-
-              {/* <MarkdownPreviewer content={card.answer} className="mb-2" /> */}
-
-              {/* <div className="border rounded-sm bg-eWhite text-eDarker mt-2 px-2 py-2 relative" onClick={() => handleCardClick(card.card_id)}>
-                <div dangerouslySetInnerHTML={{ __html: card.question }} />
-
-                {ReactPlayer.canPlay(card.questionvideolink) && (
-                  <>
-                    <ReactPlayer
-                      url={card.questionvideolink}
-                      controls={true}
-                      style={{ maxWidth: '100%', maxHeight: '100%' }}
-                    />
-                  </>
-                )}
-                {card.questionimagelink && <img src={card.questionimagelink} style={{ maxWidth: '250px', maxHeight: '250px' }} />}
-                {card.questionlatex && <KatexOutput latex={card.questionlatex} />}
-                <Link onClick={() => speakText(card.question)}>
-                  <img src={voiceIconImg} alt="Voice_Icon" className="absolute top-1 right-1 h-[19px] w-[19px]" />
-                </Link>
-              </div>
-
-
-              <div className="rounded-sm bg-eWhite text-eDarker mt-2 p-2 relative" onClick={() => handleCardClick(card.card_id)}>
-                <div dangerouslySetInnerHTML={{ __html: card.answer }} />
-
-                {ReactPlayer.canPlay(card.answervideolink) && (
-                  <>
-                    <ReactPlayer
-                      url={card.answervideolink}
-                      controls={true}
-                      style={{ maxWidth: '100%', maxHeight: '100%' }}
-                    />
-                  </>
-                )}
-                {card.answerimagelink && <img src={card.answerimagelink} style={{ maxWidth: '250px', maxHeight: '250px' }} />}
-                {card.answerlatex && <KatexOutput latex={card.answerlatex} />}
-                <Link to={`/edit/${card.card_id}`}>
-                  <img src={editIconImg} alt="Edit_Icon" className="absolute top-1 right-8 h-[21px] w-[28px]" />
-                </Link>
-                <Link onClick={() => speakText(card.answer)}>
-                  <img src={voiceIconImg} alt="Voice_Icon" className="absolute top-1 right-1 h-[19px] w-[19px]" />
-                </Link>
-              </div> */}
 
             </div>
           ))}
