@@ -135,7 +135,7 @@ function TextBoxPreview({ label, content }) {
         <p className="text-eGray">{label}</p>
       </button>
       {textBoxPreviewOpen && (
-        <MarkdownPreviewer content={content} className="border border-eDarkGray bg-eDarker p-2" />
+        <MarkdownPreviewer content={content} className="border border-eDarkGray bg-eDarker p-2 min-h-[10vh]" />
       )}
     </>
   )

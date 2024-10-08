@@ -18,43 +18,43 @@ function EditPage() {
 
   const { cardId } = useParams();
   const [question, setQuestion] = useState('');
-
-  const [questionvideolink, setQuestionVideoLink] = useState('');
-  const [answervideolink, setAnswerVideoLink] = useState('');
-
-  const [answerlatex, setAnswerLatexInput] = useState('');
-  const [questionlatex, setQuestionLatexInput] = useState('');
-
-  const [answerRequirement, setAnswerRequirement] = useState('');
-  const [questionRequirement, setQuestionRequirement] = useState('');
-
-  const [answerImageLink, setAnswerImageLink] = useState('');
-  const [questionImageLink, setQuestionImageLink] = useState('');
   const [answer, setAnswer] = useState('');
+
+  // const [questionvideolink, setQuestionVideoLink] = useState('');
+  // const [answervideolink, setAnswerVideoLink] = useState('');
+
+  // const [answerlatex, setAnswerLatexInput] = useState('');
+  // const [questionlatex, setQuestionLatexInput] = useState('');
+
+  // const [answerRequirement, setAnswerRequirement] = useState('');
+  // const [questionRequirement, setQuestionRequirement] = useState('');
+
+  // const [answerImageLink, setAnswerImageLink] = useState('');
+  // const [questionImageLink, setQuestionImageLink] = useState('');
 
   const navigate = useNavigate();
 
-  const handleAnswerRequirement = (value) => {
-    setAnswerVideoLink('');
-    setAnswerImageLink('');
-    setAnswerLatexInput('');
-    if (answerRequirement === value) {
-      setAnswerRequirement("");
-      return;
-    }
-    setAnswerRequirement(value);
-  }
+  // const handleAnswerRequirement = (value) => {
+  //   setAnswerVideoLink('');
+  //   setAnswerImageLink('');
+  //   setAnswerLatexInput('');
+  //   if (answerRequirement === value) {
+  //     setAnswerRequirement("");
+  //     return;
+  //   }
+  //   setAnswerRequirement(value);
+  // }
 
-  const handleQuestionRequirement = (value) => {
-    setQuestionVideoLink('');
-    setQuestionImageLink('');
-    setQuestionLatexInput('');
-    if (questionRequirement === value) {
-      setQuestionRequirement("");
-      return;
-    }
-    setQuestionRequirement(value);
-  }
+  // const handleQuestionRequirement = (value) => {
+  //   setQuestionVideoLink('');
+  //   setQuestionImageLink('');
+  //   setQuestionLatexInput('');
+  //   if (questionRequirement === value) {
+  //     setQuestionRequirement("");
+  //     return;
+  //   }
+  //   setQuestionRequirement(value);
+  // }
 
   const makeLink = () => {
     const url = prompt("Enter the URL:", "http://");
@@ -120,12 +120,12 @@ function EditPage() {
       {
         question: formData.question,
         answer: formData.answer,
-        answerlatex: formData.answerlatex,
-        questionlatex: formData.questionlatex,
-        answervideolink: formData.answervideolink,
-        questionvideolink: formData.questionvideolink,
-        answerimagelink: formData.answerimagelink,
-        questionimagelink: formData.questionimagelink
+        // answerlatex: formData.answerlatex,
+        // questionlatex: formData.questionlatex,
+        // answervideolink: formData.answervideolink,
+        // questionvideolink: formData.questionvideolink,
+        // answerimagelink: formData.answerimagelink,
+        // questionimagelink: formData.questionimagelink
       }
     );
 
@@ -142,30 +142,30 @@ function EditPage() {
     if (card) {
       setQuestion(card.question);
       setAnswer(card.answer);
-      setAnswerLatexInput(card.answerlatex);
-      setQuestionLatexInput(card.questionlatex);
-      setAnswerVideoLink(card.answervideolink);
-      setQuestionVideoLink(card.questionvideolink);
-      setAnswerImageLink(card.answerimagelink);
-      setQuestionImageLink(card.questionimagelink);
-      if (card.answerlatex != "") {
-        setAnswerRequirement('latex');
-      }
-      if (card.questionlatex != "") {
-        setQuestionRequirement('latex');
-      }
-      if (card.answervideolink != "") {
-        setAnswerRequirement('video');
-      }
-      if (card.questionvideolink != "") {
-        setQuestionRequirement('video');
-      }
-      if (card.answerimagelink != "") {
-        setAnswerRequirement('image');
-      }
-      if (card.questionimagelink != "") {
-        setQuestionRequirement('image');
-      }
+      // setAnswerLatexInput(card.answerlatex);
+      // setQuestionLatexInput(card.questionlatex);
+      // setAnswerVideoLink(card.answervideolink);
+      // setQuestionVideoLink(card.questionvideolink);
+      // setAnswerImageLink(card.answerimagelink);
+      // setQuestionImageLink(card.questionimagelink);
+      // if (card.answerlatex != "") {
+      //   setAnswerRequirement('latex');
+      // }
+      // if (card.questionlatex != "") {
+      //   setQuestionRequirement('latex');
+      // }
+      // if (card.answervideolink != "") {
+      //   setAnswerRequirement('video');
+      // }
+      // if (card.questionvideolink != "") {
+      //   setQuestionRequirement('video');
+      // }
+      // if (card.answerimagelink != "") {
+      //   setAnswerRequirement('image');
+      // }
+      // if (card.questionimagelink != "") {
+      //   setQuestionRequirement('image');
+      // }
     }
   }, [card]);
 
@@ -197,29 +197,29 @@ function EditPage() {
       updatedData.answer = answer;
     }
 
-    if (answerlatex !== card.answerlatex) {
-      updatedData.answerlatex = answerlatex;
-    }
+    // if (answerlatex !== card.answerlatex) {
+    //   updatedData.answerlatex = answerlatex;
+    // }
 
-    if (questionlatex !== card.questionlatex) {
-      updatedData.questionlatex = questionlatex;
-    }
+    // if (questionlatex !== card.questionlatex) {
+    //   updatedData.questionlatex = questionlatex;
+    // }
 
-    if (answervideolink !== card.answervideolink) {
-      updatedData.answervideolink = answervideolink;
-    }
+    // if (answervideolink !== card.answervideolink) {
+    //   updatedData.answervideolink = answervideolink;
+    // }
 
-    if (questionvideolink !== card.questionvideolink) {
-      updatedData.questionvideolink = questionvideolink;
-    }
+    // if (questionvideolink !== card.questionvideolink) {
+    //   updatedData.questionvideolink = questionvideolink;
+    // }
 
-    if (answerImageLink !== card.answerimagelink) {
-      updatedData.answerimagelink = answerImageLink;
-    }
+    // if (answerImageLink !== card.answerimagelink) {
+    //   updatedData.answerimagelink = answerImageLink;
+    // }
 
-    if (questionImageLink !== card.questionimagelink) {
-      updatedData.questionimagelink = questionImageLink;
-    }
+    // if (questionImageLink !== card.questionimagelink) {
+    //   updatedData.questionimagelink = questionImageLink;
+    // }
 
     // console.log(updatedData)
     // should only send the data if user changed a least one
@@ -230,27 +230,27 @@ function EditPage() {
       popupDetails(`No changes detected.`, 'blue');
     }
   };
-  
+
   return (
     <>
       <Sidebar />
       <form onSubmit={handleSubmit} className='flex flex-col items-center mt-10' >
 
-        <div>
-          <CustomButton onClick={() => handleQuestionRequirement('image')} text="Image" />
-          <CustomButton onClick={() => handleQuestionRequirement('video')} text="Video" />
-          <CustomButton onClick={() => formatText('bold')} text="Bold" />
-          <CustomButton onClick={() => formatText('italic')} text="Italic" />
-          <CustomButton onClick={() => formatText('underline')} text="Underline" />
-          <CustomButton onClick={() => handleQuestionRequirement('latex')} text="Latex" />
-          <CustomButton onClick={() => makeLink()} text="URL" />
-        </div>
+        {/* <div> */}
+        {/* <CustomButton onClick={() => handleQuestionRequirement('image')} text="Image" /> */}
+        {/* <CustomButton onClick={() => handleQuestionRequirement('video')} text="Video" /> */}
+        {/* <CustomButton onClick={() => formatText('bold')} text="Bold" /> */}
+        {/* <CustomButton onClick={() => formatText('italic')} text="Italic" /> */}
+        {/* <CustomButton onClick={() => formatText('underline')} text="Underline" /> */}
+        {/* <CustomButton onClick={() => handleQuestionRequirement('latex')} text="Latex" /> */}
+        {/* <CustomButton onClick={() => makeLink()} text="URL" /> */}
+        {/* </div> */}
 
         <div id="QuestionDiv" onInput={handleQuestionInput} contentEditable className='mt-2 rounded-lg'
           style={{ border: '1px solid black', minHeight: '180px', width: '500px', padding: '10px', backgroundColor: '#666666' }} dangerouslySetInnerHTML={{ __html: card.question }}>
         </div>
 
-        {questionRequirement === 'latex' && (
+        {/* {questionRequirement === 'latex' && (
           <div>
             <textarea value={questionlatex} onChange={(e) => setQuestionLatexInput(e.target.value)} style={{ border: '1px solid black', textAlign: 'left', minHeight: '180px', width: '500px', padding: '10px', marginTop: '10px', backgroundColor: '#666666' }}></textarea>
             <h2>Preview</h2>
@@ -282,7 +282,7 @@ function EditPage() {
             <input name='QuestionimageInput' value={questionImageLink} type="text" onChange={(e) => setQuestionImageLink(e.target.value)}></input>
             <img src={questionImageLink} style={{ maxWidth: '250px', maxHeight: '250px' }} />
           </div>
-        )}
+        )} */}
 
         <div>
           <CustomButton onClick={() => handleAnswerRequirement('image')} text="Image" />
@@ -298,7 +298,7 @@ function EditPage() {
           style={{ border: '1px solid black', minHeight: '180px', width: '500px', padding: '10px', backgroundColor: '#666666' }} dangerouslySetInnerHTML={{ __html: card.answer }}>
         </div>
 
-        {answerRequirement === 'latex' && (
+        {/* {answerRequirement === 'latex' && (
           <div>
             <textarea value={answerlatex} onChange={(e) => setAnswerLatexInput(e.target.value)} style={{ border: '1px solid black', textAlign: 'left', minHeight: '180px', width: '500px', padding: '10px', marginTop: '10px', backgroundColor: '#666666' }}></textarea>
             <h2>Preview</h2>
@@ -329,7 +329,7 @@ function EditPage() {
             <input name='AnswerimageInput' value={answerImageLink} type="text" onChange={(e) => setAnswerImageLink(e.target.value)}></input>
             <img src={answerImageLink} style={{ maxWidth: '250px', maxHeight: '250px' }} />
           </div>
-        )}
+        )} */}
 
         <div className="flex flex-row items-center justify-between gap-x-8">
           <button type='submit' className="rounded-lg border border-transparent px-4 py-2 mt-6

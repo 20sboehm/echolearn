@@ -28,13 +28,7 @@ def get_reviews(request, deck_id: int, studyAll: bool = False):
                 "question": card.question,
                 "answer": card.answer,
                 "bucket": card.bucket,
-                "next_review": card.next_review,
-                "questionvideolink": card.questionvideolink,
-                "answervideolink": card.answervideolink,
-                "questionimagelink":card.questionimagelink,
-                "answerimagelink":card.answerimagelink,
-                "questionlatex":card.questionlatex,
-                "answerlatex":card.answerlatex
+                "next_review": card.next_review
             })
 
     return {"deck_id": deck.deck_id, "deck_name": deck.name, "cards": reviewSets}
