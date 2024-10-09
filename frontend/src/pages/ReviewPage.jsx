@@ -3,10 +3,6 @@ import { useQuery } from 'react-query';
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import Sidebar from "../components/SideBar";
 import { useApi } from "../hooks";
-import ReactPlayer from 'react-player';
-import { BlockMath } from 'react-katex'; // we might need this here
-import sanitizeHtml from 'sanitize-html'; // we might need this here
-import katex from 'katex';
 import partyPopperImg from '../assets/party-popper.png';
 import partyPopperFlipImg from '../assets/party-popper-flip.png';
 import set from '../assets/reviewSwitch2.png';
@@ -14,6 +10,10 @@ import card from '../assets/reviewSwitch.png';
 import "./ReviewPage.css";
 import LoadingSpinner from "../components/LoadingSpinner";
 import MarkdownPreviewer from "../components/MarkdownPreviewer";
+// import ReactPlayer from 'react-player';
+// import { BlockMath } from 'react-katex'; // we might need this here
+// import sanitizeHtml from 'sanitize-html'; // we might need this here
+// import katex from 'katex';
 
 // -- Two layers in order to maintain border rounding with active scrollbar - keep this here in case we decide to round our borders --
 // const cardOuterCSS = "bg-white rounded-md overflow-hidden"

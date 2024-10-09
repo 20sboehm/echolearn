@@ -82,8 +82,8 @@ function DeckRow({ deck, cards }) {
       <div className="flex items-center w-[15%]">{newCardsCount}</div>
       <div className="flex items-center w-[15%]">{reviewCardsCount}</div>
       <div className="flex justify-center items-center w-[15%]">
-        <Link to={`/review/${deck.deck_id}`} className="block rounded-sm sm:rounded-lg border-2 px-1 py-0.5 sm:px-3 sm:py-1 text-center font-medium active:scale-[0.97]
-                  bg-eDarker text-eBlue border-eBlue hover:border-eWhite hover:text-eWhite"
+        <Link to={`/review/${deck.deck_id}`} className="block rounded-sm sm:rounded-lg px-1 py-0.5 sm:px-4 sm:py-1.5 text-center font-normal
+                  bg-eBlue text-eWhite hover:bg-eLightBlue"
         >
           Review
         </Link>

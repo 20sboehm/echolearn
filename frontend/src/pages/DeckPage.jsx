@@ -2,14 +2,14 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "react-query";
 import { useState } from "react";
 import SideBar from "../components/SideBar";
-import ReactPlayer from 'react-player';
-import katex from 'katex';
-import 'katex/dist/katex.min.css';
 import { useApi } from "../hooks";
 import editIconImg from "../assets/edit-icon.png"
-// import voiceIconImg from "../assets/voice.png"
 import LoadingSpinner from "../components/LoadingSpinner";
 import MarkdownPreviewer from "../components/MarkdownPreviewer";
+// import ReactPlayer from 'react-player';
+// import katex from 'katex';
+// import 'katex/dist/katex.min.css';
+// import voiceIconImg from "../assets/voice.png"
 
 function DeckPage({ publicAccess = false }) {
   const api = useApi();
@@ -23,12 +23,12 @@ function DeckPage({ publicAccess = false }) {
   const [popupColor, setPopupColor] = useState('');
   const [popupOpacity, setPopupOpacity] = useState('opacity-100');
 
-  const [link, setLink] = useState('');
-  const [inputShareLink, setinputShareLink] = useState('');
   const [folders, setFolders] = useState([]);
-  const [newFolderName, setNewFolderName] = useState('');
   const [isModalOpen, setModalOpen] = useState(false);
   const [refetchTrigger, setRefetchTrigger] = useState(false);
+  // const [link, setLink] = useState('');
+  // const [inputShareLink, setinputShareLink] = useState('');
+  // const [newFolderName, setNewFolderName] = useState('');
 
   const [isCreateMode, setCreateMode] = useState(false);
   const [newQuestion, setNewQuestion] = useState("");
@@ -202,29 +202,29 @@ function DeckPage({ publicAccess = false }) {
     }
   };
 
-  const KatexOutput = ({ latex }) => {
-    const html = katex.renderToString(latex, {
-      throwOnError: false,
-      output: "html"
-    });
+  // const KatexOutput = ({ latex }) => {
+  //   const html = katex.renderToString(latex, {
+  //     throwOnError: false,
+  //     output: "html"
+  //   });
 
-    return <div dangerouslySetInnerHTML={{ __html: html }} />;
-  };
+  //   return <div dangerouslySetInnerHTML={{ __html: html }} />;
+  // };
 
-  const handleGenerateLink = async () => {
-    const response = await api._post(`/api/decks/${deckId}/generate-share-link`)
-    try {
-      if (!response.ok) {
-        throw new Error('Failed to share deck');
-      }
-      const data = await response.json();
-      console.log("shared link:", data.link);
-      setLink(data.link)
-      prompt("Copy this link and share it:", data.link);
-    } catch (error) {
-      console.error('Error', error);
-    }
-  };
+  // const handleGenerateLink = async () => {
+  //   const response = await api._post(`/api/decks/${deckId}/generate-share-link`)
+  //   try {
+  //     if (!response.ok) {
+  //       throw new Error('Failed to share deck');
+  //     }
+  //     const data = await response.json();
+  //     console.log("shared link:", data.link);
+  //     setLink(data.link)
+  //     prompt("Copy this link and share it:", data.link);
+  //   } catch (error) {
+  //     console.error('Error', error);
+  //   }
+  // };
 
   const handleTakeACopy = async () => {
     setModalOpen(true); // Open the modal to select or create a folder
@@ -288,7 +288,7 @@ function DeckPage({ publicAccess = false }) {
                 <Link to={`/review/${deckId}?studyAll=true`} className={` rounded-lg border border-transparent px-12 py-2 text-center
                 font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
                 active:border-[#555]`} style={{ transition: "border-color 0.10s, color 0.10s" }}>
-                  StudyAll
+                  Study All
                 </Link>
               </div>
             )}

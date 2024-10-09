@@ -2,7 +2,7 @@ import { Link, useParams } from "react-router-dom";
 import { useQuery, useMutation } from "react-query";
 import { useState, useEffect } from "react";
 import Sidebar from "../components/SideBar";
-import 'katex/dist/katex.min.css';
+// import 'katex/dist/katex.min.css';
 import { useApi } from "../hooks";
 import arrowIconImg from "../assets/arrow_icon.png"
 
