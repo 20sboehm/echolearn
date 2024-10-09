@@ -1,7 +1,7 @@
 import { useState, useEffect, Children } from "react";
 import { useQuery } from 'react-query';
 import { Link, useParams, useSearchParams } from "react-router-dom";
-import Sidebar from "../components/SideBar";
+import SideBar from "../components/SideBar";
 import { useApi } from "../hooks";
 import partyPopperImg from '../assets/party-popper.png';
 import partyPopperFlipImg from '../assets/party-popper-flip.png';
@@ -30,6 +30,7 @@ function ReviewPage() {
   const { deckId } = useParams();
   const [searchParams] = useSearchParams();
   const studyAll = searchParams.get('studyAll') === 'true';
+  const [sidebarWidth, setSidebarWidth] = useState(250);
 
   const [flip, setFlip] = useState(false);
 
@@ -126,23 +127,24 @@ function ReviewPage() {
           <Link to={`/decks/${deckId}`} className="rounded-lg border border-transparent px-10 py-2 text-center
               font-semibold bg-white text-black hover:border-black active:scale-[0.97] active:bg-[#333] 
               active:border-[#555]">back</Link>
-          <h2 className="text-[2em] absolute left-1/2 transform -translate-x-1/2">{reviews.deck_name}</h2>
-          <button className="border w-[12%] ml-auto" onClick={switchAnimation}>
-            <img src={currImage}></img>
-          </button>
+            <h2 className="text-[2em] mx-auto">{reviews.deck_name}</h2>
+            <button className="border w-[12%] ml-auto" onClick={switchAnimation}>
+              <img src={currImage}></img>
+            </button>
+          </div>
+          {!finish && (
+            <ReviewCard
+              card={reviews.cards[cardIndex]}
+              showAnswer={showAnswer}
+              setShowAnswer={setShowAnswer}
+              updateReviewedCard={updateReviewedCard}
+              changeAnimation={changeAnimation}
+              flip={flip}
+              setFlip={setFlip}
+            />
+          )}
+          {finish && <FinishView deckId={deckId} />}
         </div>
-        {!finish && (
-          <ReviewCard
-            card={reviews.cards[cardIndex]}
-            showAnswer={showAnswer}
-            setShowAnswer={setShowAnswer}
-            updateReviewedCard={updateReviewedCard}
-            changeAnimation={changeAnimation}
-            flip={flip}
-            setFlip={setFlip}
-          />
-        )}
-        {finish && <FinishView deckId={deckId} />}
       </div>
     </>
   );

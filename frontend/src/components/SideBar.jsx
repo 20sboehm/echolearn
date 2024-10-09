@@ -6,7 +6,7 @@ import { ResizableBox } from 'react-resizable';
 import { DeckCreateIcon, FolderCreateIcon, ExpandContractAllIcon, SidebarOpenClose, ChevronIcon } from './Icons';
 import 'react-resizable/css/styles.css';
 
-const Sidebar = ({ refetchTrigger }) => {
+const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) => {
   const api = useApi();
   const [sidebarData, setSidebarData] = useState(null);
   const [contextMenu, setContextMenu] = useState(null); // For right-click menu
@@ -16,7 +16,6 @@ const Sidebar = ({ refetchTrigger }) => {
   const [renaming, setRenaming] = useState(false);
   const [showInput, setShowInput] = useState(false);
   const [folderStates, setFolderStates] = useState({});
-  const [sidebarWidth, setSidebarWidth] = useState(250);
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const fetchSidebarData = () => {
@@ -55,9 +54,11 @@ const Sidebar = ({ refetchTrigger }) => {
   const sidebarShow = () => {
     if (sidebarOpen) {
       setSidebarWidth(10);
+      onResize(10);
       setSidebarOpen(true);
     } else {
       setSidebarWidth(250);
+      onResize(250);
       setSidebarOpen(false);
     }
     setSidebarOpen(!sidebarOpen);
@@ -65,6 +66,9 @@ const Sidebar = ({ refetchTrigger }) => {
 
   const handleResize = (e, { size }) => {
     setSidebarWidth(size.width);
+    if (onResize) {
+      onResize(size.width);
+    }
     if (size.width === 10) {
       setSidebarOpen(false);
     } else if (size.width > 10 && !sidebarOpen) {
@@ -226,9 +230,9 @@ const Sidebar = ({ refetchTrigger }) => {
         axis="x"
         resizeHandles={['e']}
         minConstraints={[10, Infinity]} // Minimum width
-        maxConstraints={[600, Infinity]} // Maximum width
-        className="bg-eDark h-[calc(100%-4rem)] border-r border-eDarkGray group"
-        style={{ overflow: 'hidden', position: 'absolute', left: '0', zIndex: '1' }}
+        maxConstraints={[1200, Infinity]} // Maximum width
+        className="bg-eDark border-r border-eDarkGray group"
+        style={{ overflow: 'hidden' }}
         onResize={handleResize}
         handle={<div className="absolute top-0 right-0 h-full w-1 cursor-default hover:cursor-ew-resize bg-transparent hover:bg-eBlue z-10 transition duration-200" />}
       >
@@ -423,9 +427,6 @@ const Folder = ({ folder, onRightClick, folderStates, toggleFolder, setContextMe
 
 
     setSelected(folder);
-
-    // console.log("toggling")
-    // console.log(folder.folder_id)
     toggleFolder(folder.folder_id);
   };
 

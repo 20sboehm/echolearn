@@ -271,16 +271,58 @@ function DeckPage({ publicAccess = false }) {
 
   return (
     <>
-      <SideBar refetchTrigger={refetchTrigger} />
-      <div className="w-[65vw]">
-        <div className="flex flex-row">
-          <div className="flex flex-col items-start">
-            <h1 className="text-4xl font-bold my-4">{deckCards.deck_name}</h1>
+      <div className="flex flex-row w-full h-full">
+        <SideBar refetchTrigger={refetchTrigger} onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
+        <div className="w-[65vw] flex flex-col flex-grow transition-transform mx-[5vh] overflow-x-auto">
+          <div className="flex flex-row">
+            <div className="flex flex-col items-start">
+              <h1 className="text-4xl font-bold my-4">{deckCards.deck_name}</h1>
+              {publicAccess ? (
+                null
+              ) : (
+                <div className="flex gap-4 mb-2">
+                  <Link to={`/review/${deckId}`} className={` rounded-lg border border-transparent px-12 py-2 text-center
+                font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+                active:border-[#555]`} style={{ transition: "border-color 0.10s, color 0.10s" }}>
+                    Study
+                  </Link>
+                  <Link to={`/review/${deckId}?studyAll=true`} className={` rounded-lg border border-transparent px-12 py-2 text-center
+                font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+                active:border-[#555]`} style={{ transition: "border-color 0.10s, color 0.10s" }}>
+                    StudyAll
+                  </Link>
+                </div>
+              )}
+              {publicAccess ? (
+                null
+              ) : (
+                <button
+                  className="mt-2 rounded-lg border border-transparent px-4 py-2 font-semibold bg-red-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] active:border-[#555]"
+                  style={{ transition: "border-color 0.10s, color 0.10s" }}
+                  onClick={handleDeleteDeck}
+                >
+                  Delete Deck
+                </button>
+              )}
+            </div>
+
             {publicAccess ? (
               null
             ) : (
-              <div className="flex gap-4 mb-2">
-                <Link to={`/review/${deckId}`} className={` rounded-lg border border-transparent px-12 py-2 text-center
+              <div className="flex flex-col ml-auto justify-center items-center mb-4">
+                {/* JavaScript code to draw the graph */}
+                <svg width="200" height="200" viewBox="0 20 200 150">
+                  <circle cx="100" cy="100" r={radius} fill="none" stroke="#ECEFF1" strokeWidth="7.5" />
+                  <circle cx="100" cy="100" r={radius} fill="none" stroke="#29A5DC" strokeWidth="7.5" strokeLinecap="round"
+                    strokeDasharray={`${dashLength},${gapLength}`} strokeDashoffset={strokeDashoffset}>
+                    <title>Progress</title>
+                  </circle>
+                  <text x="100" y="100" textAnchor="middle" dominantBaseline="middle" fill="white" fontSize="16">
+                    {percentage}%
+                  </text>
+                </svg>
+                <Link to={`/stats/${deckId}`}>
+                  <button className="rounded-lg border border-transparent px-4 py-2 
                 font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
                 active:border-[#555]`} style={{ transition: "border-color 0.10s, color 0.10s" }}>
                   Study
@@ -310,43 +352,18 @@ function DeckPage({ publicAccess = false }) {
             </Link> */}
           </div>
 
-          {publicAccess ? (
-            null
-          ) : (
-            <div className="flex flex-col ml-auto justify-center items-center mb-4">
-              {/* JavaScript code to draw the graph */}
-              <svg width="200" height="200" viewBox="0 20 200 150">
-                <circle cx="100" cy="100" r={radius} fill="none" stroke="#ECEFF1" strokeWidth="7.5" />
-                <circle cx="100" cy="100" r={radius} fill="none" stroke="#29A5DC" strokeWidth="7.5" strokeLinecap="round"
-                  strokeDasharray={`${dashLength},${gapLength}`} strokeDashoffset={strokeDashoffset}>
-                  <title>Progress</title>
-                </circle>
-                <text x="100" y="100" textAnchor="middle" dominantBaseline="middle" fill="white" fontSize="16">
-                  {percentage}%
-                </text>
-              </svg>
-              <Link to={`/stats/${deckId}`}>
-                <button className="rounded-lg border border-transparent px-4 py-2 
-                font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-                active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>
-                  More Statistics</button>
-              </Link>
-            </div>
-          )}
-        </div>
-
-        <div className="flex flex-row items-center justify-between mt-2 mb-4 border-t border-gray-500 pt-4">
-          <h1>{deckCards.cards.length} Cards</h1>
-          <button
-            disabled={publicAccess}
-            className={`${deckCards.isPublic ? "bg-green-600" : "bg-red-600"}
+          <div className="flex flex-row items-center justify-between mt-2 mb-4 border-t border-gray-500 pt-4">
+            <h1>{deckCards.cards.length} Cards</h1>
+            <button
+              disabled={publicAccess}
+              className={`${deckCards.isPublic ? "bg-green-600" : "bg-red-600"}
               ${publicAccess ? "" : "active:scale-[0.97] hover:border-white hover:text-white"}
               rounded-lg border border-transparent px-2 py-1 disabled:bg-gray-500 font-semibold`}
-            style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={setStatus}>
-            {deckCards.isPublic ? "Public" : "Private"}
-          </button>
+              style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={setStatus}>
+              {deckCards.isPublic ? "Public" : "Private"}
+            </button>
 
-          {/* <button className={`bg-blue-500  rounded-lg border border-transparent px-2 py-1 
+            {/* <button className={`bg-blue-500  rounded-lg border border-transparent px-2 py-1 
               font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
             style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={handleGenerateLink}>Generate Share Link</button> */}
 
@@ -369,33 +386,79 @@ function DeckPage({ publicAccess = false }) {
             </div>
           )}
 
-          <div>
-            <button onClick={handleTakeACopy}>Copy Deck</button>
-            {isModalOpen && (
-              <div className="modal">
-                <div className="modal-content">
-                  <h2>Select a folder </h2>
-                  {folders.map(folder => (
-                    <button className={`bg-eBlue rounded-lg border border-transparent px-2 py-1 
-                      font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
-                      key={folder.folder_id} onClick={() => handleFolderSelection(folder.folder_id)}>
-                      {folder.name}
-                    </button>
-                  ))}
-                  <button onClick={() => setModalOpen(false)}>Close</button>
+          <div className="h-[50vh] overflow-y-auto border-t border-gray-500">
+            {deckCards.cards.map(card => (
+              <div className="grid grid-cols-2 gap-4 font-medium px-2" key={card.card_id}>
+
+                <div className="border rounded-sm bg-eWhite text-eDarker mt-2 px-2 py-2 relative" onClick={() => handleCardClick(card.card_id)}>
+                  <div dangerouslySetInnerHTML={{ __html: card.question }} />
+
+                  {ReactPlayer.canPlay(card.questionvideolink) && (
+                    <>
+                      <ReactPlayer
+                        url={card.questionvideolink}
+                        controls={true}
+                        style={{ maxWidth: '100%', maxHeight: '100%' }}
+                      />
+                    </>
+                  )}
+                  {card.questionimagelink && <img src={card.questionimagelink} style={{ maxWidth: '250px', maxHeight: '250px' }} />}
+                  {card.questionlatex && <KatexOutput latex={card.questionlatex} />}
+                  <Link onClick={() => speakText(card.question)}>
+                    <img src={voiceIconImg} alt="Voice_Icon" className="absolute top-1 right-1 h-[19px] w-[19px]" />
+                  </Link>
+                </div>
+
+
+                <div className="rounded-sm bg-eWhite text-eDarker mt-2 p-2 relative" onClick={() => handleCardClick(card.card_id)}>
+                  <div dangerouslySetInnerHTML={{ __html: card.answer }} />
+
+                  {ReactPlayer.canPlay(card.answervideolink) && (
+                    <>
+                      <ReactPlayer
+                        url={card.answervideolink}
+                        controls={true}
+                        style={{ maxWidth: '100%', maxHeight: '100%' }}
+                      />
+                    </>
+                  )}
+                  {card.answerimagelink && <img src={card.answerimagelink} style={{ maxWidth: '250px', maxHeight: '250px' }} />}
+                  {card.answerlatex && <KatexOutput latex={card.answerlatex} />}
+                  <Link to={`/edit/${card.card_id}`}>
+                    <img src={editIconImg} alt="Edit_Icon" className="absolute top-1 right-8 h-[21px] w-[28px]" />
+                  </Link>
+                  <Link onClick={() => speakText(card.answer)}>
+                    <img src={voiceIconImg} alt="Voice_Icon" className="absolute top-1 right-1 h-[19px] w-[19px]" />
+                  </Link>
+                </div>
+              </div>
+            ))}
+
+            {/* Create cards */}
+            {isCreateMode && (
+              <div className="grid grid-cols-2 gap-4 font-medium px-2 mt-4">
+                <div className="border rounded-sm bg-eWhite text-eBlack p-2">
+                  <input
+                    type="text"
+                    placeholder="Enter question"
+                    value={newQuestion}
+                    onChange={(e) => setNewQuestion(e.target.value)}
+                    className="w-full px-2 py-1 rounded"
+                    autoFocus
+                  />
+                </div>
+                <div className="border rounded-sm bg-eWhite text-eBlack p-2">
+                  <input
+                    type="text"
+                    placeholder="Enter answer"
+                    value={newAnswer}
+                    onChange={(e) => setNewAnswer(e.target.value)}
+                    className="w-full px-2 py-1 rounded"
+                  />
                 </div>
               </div>
             )}
           </div>
-          {publicAccess ? (
-            null
-          ) : (
-            <button className={`${deleteMode ? "bg-red-500" : "bg-blue-500"} rounded-lg border border-transparent px-2 py-1 
-              font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
-              style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={changeMode}>
-              {deleteMode ? "Cancel" : "Delete"}
-            </button>
-          )}
         </div>
 
         <div className="h-[50vh] overflow-y-auto border-t border-gray-500 px-1">
