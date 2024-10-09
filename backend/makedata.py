@@ -12,18 +12,19 @@ def initial_data():
     joe = CustomUser.objects.create_user(username="joe", email="joe@cs.utah.edu", password="joe", age=30, country="USA")
 
     # Create folders
-    library = Folder.objects.create(name="Library", owner=admin)
-    history_folder = Folder.objects.create(name="History", owner=admin, parent=library)
-    math_folder = Folder.objects.create(name="Math", owner=admin, parent=library)
-    misc_folder = Folder.objects.create(name="Misc", owner=admin, parent=library)
+    school_folder = Folder.objects.create(name="School", owner=admin)
+    history_folder = Folder.objects.create(name="History", owner=admin, parent=school_folder)
+    math_folder = Folder.objects.create(name="Math", owner=admin, parent=school_folder)
     spanish_folder = Folder.objects.create(name="Spanish", owner=admin)
+    misc_folder = Folder.objects.create(name="Misc", owner=admin)
 
     # Create decks
-    us_pres_deck = Deck.objects.create(folder=history_folder, owner=admin, name="US Presidents", description="A deck for United States presidents.",isPublic = True)
-    addition_deck = Deck.objects.create(folder=math_folder, owner=admin, name="Addition", description="A deck for addition practice.",isPublic = True)
-    subtraction_deck = Deck.objects.create(folder=math_folder, owner=admin, name="Subtraction", description="A deck for subtraction practice.",isPublic = True)
-    phones = Deck.objects.create(folder=misc_folder, owner=admin, name="Phones", description="A deck for remembering people's phone numbers.",isPublic = True)
-    spanish_nouns = Deck.objects.create(folder=spanish_folder, owner=admin, name="Common Spanish Nouns", description="A deck for Spanish nouns.",isPublic = True)
+    us_pres_deck = Deck.objects.create(folder=history_folder, owner=admin, name="US Presidents", description="A deck for United States presidents.", isPublic = True)
+    addition_deck = Deck.objects.create(folder=math_folder, owner=admin, name="Addition", description="A deck for addition practice.", isPublic = True)
+    subtraction_deck = Deck.objects.create(folder=math_folder, owner=admin, name="Subtraction", description="A deck for subtraction practice.", isPublic = True)
+    spanish_nouns_deck = Deck.objects.create(folder=spanish_folder, owner=admin, name="Common Spanish Nouns", description="A deck for Spanish nouns.", isPublic = True)
+    phones_deck = Deck.objects.create(folder=misc_folder, owner=admin, name="Phones", description="A deck for remembering people's phone numbers.", isPublic = True)
+    markdown_examples_deck = Deck.objects.create(folder=misc_folder, owner=admin, name="Examples", description="A deck to show off our markdown renderer.", isPublic = True)
 
     # Create cards
     Card.objects.create(deck=us_pres_deck, question="1st president", answer="George Washington", bucket=4, correct_count=4, incorrect_count=0)
@@ -51,7 +52,6 @@ def initial_data():
     Card.objects.create(deck=us_pres_deck, question="23rd president", answer="Benjamin Harrison")
     Card.objects.create(deck=us_pres_deck, question="24th president", answer="Grover Cleveland")
 
-
     Card.objects.create(deck=addition_deck, question="2 + 2 = ?", answer="4")
     Card.objects.create(deck=addition_deck, question="5 + 7 = ?", answer="12")
     Card.objects.create(deck=addition_deck, question="24 + 21 = ?", answer="45")
@@ -66,7 +66,6 @@ def initial_data():
     Card.objects.create(deck=addition_deck, question="17 + 8 = ?", answer="25")
     Card.objects.create(deck=addition_deck, question="40 + 60 = ?", answer="100")
 
-
     Card.objects.create(deck=subtraction_deck, question="10 - 5 = ?", answer="5")
     Card.objects.create(deck=subtraction_deck, question="15 - 8 = ?", answer="7")
     Card.objects.create(deck=subtraction_deck, question="20 - 4 = ?", answer="16")
@@ -78,25 +77,60 @@ def initial_data():
     Card.objects.create(deck=subtraction_deck, question="80 - 33 = ?", answer="47")
     Card.objects.create(deck=subtraction_deck, question="90 - 9 = ?", answer="81")
 
-    Card.objects.create(deck=phones, question="James", answer="111-222-3333")
-    Card.objects.create(deck=phones, question="Jane", answer="222-333-444")
-    Card.objects.create(deck=phones, question="John", answer="333-444-555")
+    Card.objects.create(deck=spanish_nouns_deck, question="Dog", answer="El perro")
+    Card.objects.create(deck=spanish_nouns_deck, question="House", answer="La casa")
+    Card.objects.create(deck=spanish_nouns_deck, question="Car", answer="El coche")
+    Card.objects.create(deck=spanish_nouns_deck, question="Book", answer="El libro")
+    Card.objects.create(deck=spanish_nouns_deck, question="Tree", answer="El árbol")
+    Card.objects.create(deck=spanish_nouns_deck, question="Sun", answer="El sol")
+    Card.objects.create(deck=spanish_nouns_deck, question="Moon", answer="La luna")
+    Card.objects.create(deck=spanish_nouns_deck, question="Chair", answer="La silla")
+    Card.objects.create(deck=spanish_nouns_deck, question="Table", answer="La mesa")
+    Card.objects.create(deck=spanish_nouns_deck, question="School", answer="La escuela")
+    Card.objects.create(deck=spanish_nouns_deck, question="Teacher", answer="El profesor / la profesora")
+    Card.objects.create(deck=spanish_nouns_deck, question="Student", answer="(El/La) estudiante")
+    Card.objects.create(deck=spanish_nouns_deck, question="City", answer="La ciudad")
+    Card.objects.create(deck=spanish_nouns_deck, question="Country", answer="El país")
+    Card.objects.create(deck=spanish_nouns_deck, question="Food", answer="La comida")
 
-    Card.objects.create(deck=spanish_nouns, question="Dog", answer="El perro")
-    Card.objects.create(deck=spanish_nouns, question="House", answer="La casa")
-    Card.objects.create(deck=spanish_nouns, question="Car", answer="El coche")
-    Card.objects.create(deck=spanish_nouns, question="Book", answer="El libro")
-    Card.objects.create(deck=spanish_nouns, question="Tree", answer="El árbol")
-    Card.objects.create(deck=spanish_nouns, question="Sun", answer="El sol")
-    Card.objects.create(deck=spanish_nouns, question="Moon", answer="La luna")
-    Card.objects.create(deck=spanish_nouns, question="Chair", answer="La silla")
-    Card.objects.create(deck=spanish_nouns, question="Table", answer="La mesa")
-    Card.objects.create(deck=spanish_nouns, question="School", answer="La escuela")
-    Card.objects.create(deck=spanish_nouns, question="Teacher", answer="El profesor/la profesora")
-    Card.objects.create(deck=spanish_nouns, question="Student", answer="El estudiante/la estudiante")
-    Card.objects.create(deck=spanish_nouns, question="City", answer="La ciudad")
-    Card.objects.create(deck=spanish_nouns, question="Country", answer="El país")
-    Card.objects.create(deck=spanish_nouns, question="Food", answer="La comida")
+    Card.objects.create(deck=phones_deck, question="James", answer="111-222-3333")
+    Card.objects.create(deck=phones_deck, question="Jane", answer="222-333-444")
+    Card.objects.create(deck=phones_deck, question="John", answer="333-444-555")
+
+    Card.objects.create(
+        deck=markdown_examples_deck, 
+        question="**Bold** \n *Italic* \n __Underline__ \n ***__Combination__*** \n ",
+        answer="""
+| Header | Header |
+| ------ | ------ |
+| Data   | Data   |
+| Data   | Data   |
+"""
+    )
+    Card.objects.create(
+        deck=markdown_examples_deck, 
+        question="Please write your code in the `main` function. You may also write it in `foo`.",
+        answer="""
+function add(a, b) {
+  return a + b;
+}
+
+function main() {
+  console.log("Hello EchoLearn!");
+  let a = 7;
+  let b = 12;
+  console.log(add(a, b));
+}
+
+main();
+"""
+    )
+    Card.objects.create(
+        deck=markdown_examples_deck, 
+        question="# Header 1 \n Content \n\n ## Header 2 \n Content \n\n ### Header 3 \n Content \n\n --- \n More Content",
+        answer="![image of apple](https://shorturl.at/jsPr9) \n Here is a link: [facebook](https://www.facebook.com/)"
+    )
+
 
 
 if __name__ == "__main__":

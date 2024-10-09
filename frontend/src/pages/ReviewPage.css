@@ -1,13 +1,12 @@
 .flashCard {
-    position: relative;
-    transform-style: preserve-3d;
-    transition: transform 0.7s ease-in-out;
+    /* transition: transform 0.4s linear; */
+    transition: transform 0.3s linear;
 }
-  
+
 .flip {
     transform: rotateY(180deg);
 }
-  
+
 .flashCardBack {
     transform: rotateY(180deg);
 }

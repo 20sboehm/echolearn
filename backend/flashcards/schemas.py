@@ -81,12 +81,12 @@ class GetCard(Schema):
     deck_id: int
     question: str
     answer: str
-    questionvideolink:str
-    answervideolink:str
-    questionimagelink:str
-    answerimagelink:str
-    questionlatex:str
-    answerlatex:str
+    # questionvideolink: str
+    # answervideolink: str
+    # questionimagelink: str
+    # answerimagelink: str
+    # questionlatex: str
+    # answerlatex: str
     bucket: int
     last_reviewed: datetime
     next_review: datetime
@@ -103,12 +103,12 @@ class UpdateCard(Schema):
     bucket: Optional[int] = None
     next_review: Optional[datetime] = None
     last_reviewed: Optional[datetime] = None
-    questionvideolink: Optional[str] = None
-    answervideolink: Optional[str] = None
-    questionimagelink: Optional[str] = None
-    answerimagelink: Optional[str] = None
-    questionlatex: Optional[str] = None
-    answerlatex: Optional[str] = None
+    # questionvideolink: Optional[str] = None
+    # answervideolink: Optional[str] = None
+    # questionimagelink: Optional[str] = None
+    # answerimagelink: Optional[str] = None
+    # questionlatex: Optional[str] = None
+    # answerlatex: Optional[str] = None
     correct_count: Optional[int] = None
     incorrect_count: Optional[int] = None
     review_history: Optional[list[datetime]] = None
@@ -117,24 +117,18 @@ class CreateCard(Schema):
     deck_id: int
     question: str
     answer: str
-    questionvideolink:str
-    answervideolink:str
-    questionimagelink:str
-    answerimagelink:str
-    questionlatex:str
-    answerlatex:str
 
 class Cards(Schema):
     card_id: int
     question: str
     answer: str
     bucket: int
-    questionvideolink:str
-    answervideolink:str
-    questionimagelink:str
-    answerimagelink:str
-    questionlatex:str
-    answerlatex:str
+    # questionvideolink:str
+    # answervideolink:str
+    # questionimagelink:str
+    # answerimagelink:str
+    # questionlatex:str
+    # answerlatex:str
     next_review: datetime
 
 class ReviewCards(Schema):

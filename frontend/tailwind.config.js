@@ -6,6 +6,9 @@ export default {
 	],
 	theme: {
 		extend: {
+			// fontFamily: {
+			// 	sans: ['Segoe UI', 'sans-serif'],
+			// },
 			colors: {
 				userHeaderColor: '#0D79A1',
 				customBlue: '#82DEFF',
@@ -17,9 +20,11 @@ export default {
 				eGray: '#999',
 				eMedGray: '#666',
 				eDarkGray: '#333',
-				eBlue: '#0078d4',
+				eBlue: '#0065b3',
+				eLightBlue: '#0082e6',
+				eGreen: '#009355',
 				eWhite: '#ccc',
-				eRed: '#D2042D',
+				eRed: '#a2042d',
 				eHLT: '#ffffff10', // Highlight
 				eStrongHLT: '#ffffff20' // Strong highlight
 			},
@@ -27,4 +32,3 @@ export default {
 	},
 	plugins: [],
 }
-

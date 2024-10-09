@@ -1,0 +1,20 @@
+.hljs {
+  background: transparent;
+  color: #abb2bf;
+}
+
+.hljs-keyword {
+  color: #2986dd;
+}
+
+.hljs-title {
+  color: #e2bc3d;
+}
+
+.hljs-number {
+  color: #c678dd;
+}
+
+.hljs-built_in {
+  color: #31bd5b;
+}

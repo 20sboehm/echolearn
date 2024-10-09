@@ -1,99 +1,43 @@
-import { Link, useParams, useNavigate } from "react-router-dom";
-import { useQuery, useMutation } from "react-query";
-import { useState, useEffect } from "react";
-import SideBar from "../components/SideBar";
+import { useParams, useNavigate } from "react-router-dom";
+import { useQuery } from "react-query";
+import { useState, useEffect, useRef } from "react";
+import Sidebar from "../components/SideBar";
 import { useApi } from "../hooks";
-import sanitizeHtml from 'sanitize-html';
-import ReactPlayer from 'react-player';
-import { BlockMath } from 'react-katex';
 import LoadingSpinner from "../components/LoadingSpinner";
+import MarkdownPreviewer from "../components/MarkdownPreviewer";
+import { ChevronIcon } from "../components/Icons";
 
 function EditPage() {
   const api = useApi();
-
-  const [showPopup, setShowPopup] = useState(false);
-  const [popupMessage, setPopupMessage] = useState('');
-  const [popupColor, setPopupColor] = useState('');
-  const [popupOpacity, setPopupOpacity] = useState('opacity-100');
-  const [sidebarWidth, setSidebarWidth] = useState(250);
-
-  const { cardId } = useParams();
-  const [question, setQuestion] = useState('');
-
-  const [questionvideolink, setQuestionVideoLink] = useState('');
-  const [answervideolink, setAnswerVideoLink] = useState('');
-
-  const [answerlatex, setAnswerLatexInput] = useState('');
-  const [questionlatex, setQuestionLatexInput] = useState('');
-
-  const [answerRequirement, setAnswerRequirement] = useState('');
-  const [questionRequirement, setQuestionRequirement] = useState('');
-
-  const [answerImageLink, setAnswerImageLink] = useState('');
-  const [questionImageLink, setQuestionImageLink] = useState('');
-  const [answer, setAnswer] = useState('');
-
   const navigate = useNavigate();
+  const { cardId } = useParams();
 
-  const handleAnswerRequirement = (value) => {
-    setAnswerVideoLink('');
-    setAnswerImageLink('');
-    setAnswerLatexInput('');
-    if (answerRequirement === value) {
-      setAnswerRequirement("");
-      return;
+  const [questionContent, setQuestionContent] = useState("");
+  const [answerContent, setAnswerContent] = useState("");
+
+  const [popupActive, setPopupActive] = useState(false);
+  const [popupText, setPopupText] = useState("");
+  const [popupColor, setPopupColor] = useState("");
+  const popupTimerRef = useRef(null); // Ref to hold the popup timer
+
+  const displayPopup = (isSuccess) => {
+    // Clear the old timer if it is still active
+    if (popupTimerRef.current) {
+      clearTimeout(popupTimerRef.current);
     }
-    setAnswerRequirement(value);
-  }
+    setPopupActive(true);
 
-  const handleQuestionRequirement = (value) => {
-    setQuestionVideoLink('');
-    setQuestionImageLink('');
-    setQuestionLatexInput('');
-    if (questionRequirement === value) {
-      setQuestionRequirement("");
-      return;
+    if (isSuccess) {
+      setPopupText("Card updated");
+      setPopupColor("bg-eGreen");
+    } else {
+      setPopupText("Something went wrong");
+      setPopupColor("bg-eRed");
     }
-    setQuestionRequirement(value);
-  }
 
-  const makeLink = () => {
-    const url = prompt("Enter the URL:", "http://");
-    // console.log(url);
-    document.execCommand('createLink', false, url);
-  }
-
-  const formatText = (command) => {
-    document.execCommand(command, false, null);
-  };
-
-  const handleAnswerInput = (e) => {
-    const newText = e.currentTarget.innerHTML;
-    const safeHtml = sanitizeHtml(newText, {
-      allowedTags: sanitizeHtml.defaults.allowedTags.concat(['b', 'i', 'u', 'strong', 'em']),
-      allowedAttributes: {}
-    });
-    setAnswer(safeHtml);
-  };
-
-  const handleQuestionInput = (e) => {
-    const newText = e.currentTarget.innerHTML;
-    const safeHtml = sanitizeHtml(newText, {
-      allowedTags: sanitizeHtml.defaults.allowedTags.concat(['b', 'i', 'u', 'strong', 'em']),
-      allowedAttributes: {}
-    });
-    setQuestion(safeHtml);
-  };
-
-  function popupDetails(popupMessage, popupColor) {
-    setShowPopup(true);
-    setPopupMessage(popupMessage)
-    setPopupColor(popupColor)
-    setPopupOpacity('opacity-100'); // Ensure it's fully visible initially
-    setTimeout(() => {
-      setPopupOpacity('opacity-0'); // Start fading out
-      setTimeout(() => setShowPopup(false), 1000); // Give it 1 second to fade
-    }, 1000); // Stay fully visible for 1 second
+    popupTimerRef.current = setTimeout(() => {
+      setPopupActive(false);
+    }, 1500)
   }
 
   // Fetch the card data
@@ -113,60 +57,11 @@ function EditPage() {
     retry: false
   });
 
-  const formSubmissionMutation = useMutation(async (formData) => {
-    // console.log(JSON.stringify(formData))
-
-    const response = await api._patch(
-      `/api/cards/${formData.card_id}`,
-      {
-        question: formData.question,
-        answer: formData.answer,
-        answerlatex: formData.answerlatex,
-        questionlatex: formData.questionlatex,
-        answervideolink: formData.answervideolink,
-        questionvideolink: formData.questionvideolink,
-        answerimagelink: formData.answerimagelink,
-        questionimagelink: formData.questionimagelink
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(`Network response was not ok: ${response.status_code}`);
-    }
-
-    // Navigate back to deck page
-    navigate(`/decks/${card.deck_id}`);
-  });
-
   useEffect(() => {
-    // Update state only when card data is available
+    // Update state when card data is available
     if (card) {
-      setQuestion(card.question);
-      setAnswer(card.answer);
-      setAnswerLatexInput(card.answerlatex);
-      setQuestionLatexInput(card.questionlatex);
-      setAnswerVideoLink(card.answervideolink);
-      setQuestionVideoLink(card.questionvideolink);
-      setAnswerImageLink(card.answerimagelink);
-      setQuestionImageLink(card.questionimagelink);
-      if (card.answerlatex != "") {
-        setAnswerRequirement('latex');
-      }
-      if (card.questionlatex != "") {
-        setQuestionRequirement('latex');
-      }
-      if (card.answervideolink != "") {
-        setAnswerRequirement('video');
-      }
-      if (card.questionvideolink != "") {
-        setQuestionRequirement('video');
-      }
-      if (card.answerimagelink != "") {
-        setAnswerRequirement('image');
-      }
-      if (card.questionimagelink != "") {
-        setQuestionRequirement('image');
-      }
+      setQuestionContent(card.question);
+      setAnswerContent(card.answer);
     }
   }, [card]);
 
@@ -185,186 +80,116 @@ function EditPage() {
     );
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Getting data object with only the fields that user have changed
-    const updatedData = { card_id: cardId };
 
-    if (question !== card.question) {
-      updatedData.question = question;
+    const cardData = {
+      question: questionContent,
+      answer: answerContent,
     }
 
-    if (answer !== card.answer) {
-      updatedData.answer = answer;
-    }
+    const response = await api._patch(`/api/cards/${cardId}`, cardData);
 
-    if (answerlatex !== card.answerlatex) {
-      updatedData.answerlatex = answerlatex;
-    }
-
-    if (questionlatex !== card.questionlatex) {
-      updatedData.questionlatex = questionlatex;
-    }
-
-    if (answervideolink !== card.answervideolink) {
-      updatedData.answervideolink = answervideolink;
-    }
-
-    if (questionvideolink !== card.questionvideolink) {
-      updatedData.questionvideolink = questionvideolink;
-    }
-
-    if (answerImageLink !== card.answerimagelink) {
-      updatedData.answerimagelink = answerImageLink;
-    }
-
-    if (questionImageLink !== card.questionimagelink) {
-      updatedData.questionimagelink = questionImageLink;
-    }
-
-    // console.log(updatedData)
-    // should only send the data if user changed a least one
-    if (Object.keys(updatedData).length > 1) {
-      formSubmissionMutation.mutate(updatedData);
-      popupDetails(`Card data has changed.`, 'green');
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Error updating card: ", errorData);
+      displayPopup(false);
     } else {
-      popupDetails(`No changes detected.`, 'blue');
+      console.log("Card updated successfully");
+      displayPopup(true);
+
+      // Navigate back to deck page after short delay
+      setTimeout(() => {
+        navigate(`/decks/${card.deck_id}`);
+      }, 300);
     }
-  };
+  }
 
   return (
     <>
-      <div className="flex w-full h-full">
-        <SideBar onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
-        <form onSubmit={handleSubmit} className='flex flex-col flex-grow items-center mt-10 overflow-x-auto' >
+      <Sidebar />
+      <div className="w-1/2 flex flex-col">
+        <div className="flex justify-between border-b border-eMedGray mb-4 mt-8 pb-1">
+          <h1 className="text-2xl font-medium">Edit Card</h1>
+        </div>
 
-          <div>
-            <CustomButton onClick={() => handleQuestionRequirement('image')} text="Image" />
-            <CustomButton onClick={() => handleQuestionRequirement('video')} text="Video" />
-            <CustomButton onClick={() => formatText('bold')} text="Bold" />
-            <CustomButton onClick={() => formatText('italic')} text="Italic" />
-            <CustomButton onClick={() => formatText('underline')} text="Underline" />
-            <CustomButton onClick={() => handleQuestionRequirement('latex')} text="Latex" />
-            <CustomButton onClick={() => makeLink()} text="URL" />
+        <form onSubmit={handleSubmit}>
+          <div className="mb-2 flex flex-col">
+            <TextBox label="Front" content={questionContent} inputHandler={(e) => { setQuestionContent(e.target.value) }} />
           </div>
+          <TextBox label="Back" content={answerContent} inputHandler={(e) => { setAnswerContent(e.target.value) }} />
 
-          <div id="QuestionDiv" onInput={handleQuestionInput} contentEditable className='mt-2 rounded-lg'
-            style={{ border: '1px solid black', minHeight: '180px', width: '500px', padding: '10px', backgroundColor: '#666666' }} dangerouslySetInnerHTML={{ __html: card.question }}>
+          <DividerLine />
+
+          <div className="mb-2 flex flex-col">
+            <TextBoxPreview label="Question Preview" content={questionContent} />
           </div>
+          <TextBoxPreview label="Answer Preview" content={answerContent} />
 
-          {questionRequirement === 'latex' && (
-            <div>
-              <textarea value={questionlatex} onChange={(e) => setQuestionLatexInput(e.target.value)} style={{ border: '1px solid black', textAlign: 'left', minHeight: '180px', width: '500px', padding: '10px', marginTop: '10px', backgroundColor: '#666666' }}></textarea>
-              <h2>Preview</h2>
-              <div style={{ border: '1px solid #ccc', padding: '10px', minHeight: '180px', width: '500px' }}>
-
-                <BlockMath math={questionlatex} errorColor={'#cc0000'} />
-              </div>
-            </div>
-          )}
-
-          {questionRequirement === 'video' && (
-            <div>
-              <label htmlFor='videoInput'>Put your video link here : </label>
-              <input name="videoInput" type="text" value={questionvideolink} onChange={(e) => setQuestionVideoLink(e.target.value)} style={{ width: '250px', height: '50px' }}></input>
-              {ReactPlayer.canPlay(questionvideolink) ? (
-                <>
-                  <p>below is the preview of video</p>
-                  <ReactPlayer url={questionvideolink} controls={true} />
-                </>
-              ) : (
-                <p>Current link not valid</p>
-              )}
-            </div>
-          )}
-
-          {questionRequirement === 'image' && (
-            <div className='mt-2'>
-              <label htmlFor='QuestionimageInput'>Put your image here:</label>
-              <input name='QuestionimageInput' value={questionImageLink} type="text" onChange={(e) => setQuestionImageLink(e.target.value)}></input>
-              <img src={questionImageLink} style={{ maxWidth: '250px', maxHeight: '250px' }} />
-            </div>
-          )}
-
-          <div>
-            <CustomButton onClick={() => handleAnswerRequirement('image')} text="Image" />
-            <CustomButton onClick={() => handleAnswerRequirement('video')} text="Video" />
-            <CustomButton onClick={() => formatText('bold')} text="Bold" />
-            <CustomButton onClick={() => formatText('italic')} text="Italic" />
-            <CustomButton onClick={() => formatText('underline')} text="Underline" />
-            <CustomButton onClick={() => handleAnswerRequirement('latex')} text="Latex" />
-            <CustomButton onClick={() => makeLink()} text="URL" />
-          </div>
-
-          <div id="AnswerDiv" onInput={handleAnswerInput} contentEditable className='mt-2 rounded-lg'
-            style={{ border: '1px solid black', minHeight: '180px', width: '500px', padding: '10px', backgroundColor: '#666666' }} dangerouslySetInnerHTML={{ __html: card.answer }}>
-          </div>
-
-          {answerRequirement === 'latex' && (
-            <div>
-              <textarea value={answerlatex} onChange={(e) => setAnswerLatexInput(e.target.value)} style={{ border: '1px solid black', textAlign: 'left', minHeight: '180px', width: '500px', padding: '10px', marginTop: '10px', backgroundColor: '#666666' }}></textarea>
-              <h2>Preview</h2>
-              <div style={{ border: '1px solid #ccc', padding: '10px', minHeight: '180px', width: '500px' }}>
-                <BlockMath math={answerlatex} errorColor={'#cc0000'} />
-              </div>
-            </div>
-          )}
-
-          {answerRequirement === 'video' && (
-            <div>
-              <label htmlFor='videoInput'>Put your video link here : </label>
-              <input name="videoInput" type="text" value={answervideolink} onChange={(e) => setAnswerVideoLink(e.target.value)} style={{ width: '250px', height: '50px' }}></input>
-              {ReactPlayer.canPlay(answervideolink) ? (
-                <>
-                  <p>preview </p>
-                  <ReactPlayer url={answervideolink} controls={true} />
-                </>
-              ) : (
-                <p>The link is not available</p>
-              )}
-            </div>
-          )}
-
-          {answerRequirement === 'image' && (
-            <div className='mt-2'>
-              <label htmlFor='AnswerimageInput'>Put your image here:</label>
-              <input name='AnswerimageInput' value={answerImageLink} type="text" onChange={(e) => setAnswerImageLink(e.target.value)}></input>
-              <img src={answerImageLink} style={{ maxWidth: '250px', maxHeight: '250px' }} />
-            </div>
-          )}
-
-          <div className="flex flex-row items-center justify-between gap-x-8">
-            <button type='submit' className="rounded-lg border border-transparent px-4 py-2 mt-6
-            font-semibold bg-[#111111] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-            active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>
-              Submit
-            </button>
-            <Link to={`/decks/${card.deck_id}`} className="rounded-lg border border-transparent px-4 py-2 text-center mt-6
-            font-semibold bg-red-500 text-white hover:border-white active:scale-[0.97] active:bg-[#333] 
-            active:border-[#555]">Cancel</Link>
+          <div className="flex flex-col items-center mt-8">
+            <SubmitButton>Edit Card</SubmitButton>
+            <button onClick={() => { navigate(`/decks/${card.deck_id}`); }} className="block rounded-sm sm:rounded-lg p-[7px] w-1/3 text-center font-medium
+              border border-eGray text-eWhite hover:bg-eHLT active:scale-[0.97] mt-2"> Back</button>
           </div>
         </form>
-
-        {showPopup && (
-          <div className={`fixed bottom-20 left-1/2 -translate-x-1/2 transform p-4 bg-${popupColor}-500 rounded-md transition-opacity duration-1000 ${popupOpacity}`}>
-            {popupMessage}
-          </div>
-        )}
       </div>
+      <div className={`width-20 p-3 absolute top-20 right-5 rounded-[1.4rem] text-white ${popupColor}
+          transition-opacity duration-200 ${popupActive ? 'opacity-100' : 'opacity-0'}`}>{popupText}</div>
+    </>
+  )
+}
+
+function TextBox({ label, content, inputHandler }) {
+  const [textBoxOpen, setTextBoxOpen] = useState(true);
+
+  return (
+    <>
+      <button type="button" onClick={() => { setTextBoxOpen(!textBoxOpen) }} className="flex items-center">
+        <ChevronIcon isOpen={textBoxOpen} color="#ccc" />
+        <p>{label}</p>
+      </button>
+      {textBoxOpen && (
+        <textarea value={content} onInput={inputHandler} className="bg-eDarker w-full min-h-20 h-[15vh] p-2 border border-eDarkGray focus:outline-none custom-scrollbar"></textarea>
+      )}
     </>
   );
 }
 
-const CustomButton = ({ onClick, text }) => (
-  <button
-    type="button"
-    onClick={onClick}
-    className="rounded-lg border border-transparent px-2 py-1 mx-1 mt-8 font-normal bg-[#111111] 
-    hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] active:border-[#555]"
-    style={{ transition: "border-color 0.10s, color 0.10s" }}
-  >
-    {text}
-  </button>
-);
+function DividerLine() {
+  return (
+    <div className="flex flex-row justify-center items-center my-3 w-full" >
+      <span className="flex-grow border-b border-eGray h-1"></span>
+      <p className="self-center text-eGray mx-2">Preview</p>
+      <span className="flex-grow border-b border-eGray h-1"></span>
+    </div >
+  )
+}
 
-export default EditPage
+function TextBoxPreview({ label, content }) {
+  const [textBoxPreviewOpen, setTextBoxPreviewOpen] = useState(true);
+
+  return (
+    <>
+      <button type="button" onClick={() => { setTextBoxPreviewOpen(!textBoxPreviewOpen) }} className="flex items-center">
+        <ChevronIcon isOpen={textBoxPreviewOpen} color="#999" />
+        <p className="text-eGray">{label}</p>
+      </button>
+      {textBoxPreviewOpen && (
+        <MarkdownPreviewer content={content} className="border border-eDarkGray bg-eDarker p-2 min-h-[10vh]" />
+      )}
+    </>
+  )
+}
+
+function SubmitButton({ children, onSubmit }) {
+  return (
+    <button onSubmit={onSubmit} className="block rounded-sm sm:rounded-lg p-2 w-1/3 text-center font-medium
+                  bg-eBlue text-eWhite hover:bg-eLightBlue active:scale-[0.97]"
+    >
+      {children}
+    </button>
+
+  )
+}
+
+export default EditPage;
