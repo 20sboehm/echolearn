@@ -7,7 +7,7 @@ import decksImg from "../assets/decks.png";
 
 function ProfilePage() {
   const { _get, _patch } = api();
-  const [profile, setProfile] = useState({ username: '', age: '', country: '', email: '', flip_or_set: true, sidebar_open: false });
+  const [profile, setProfile] = useState({ username: '', age: '', country: '', email: '', flip_mode: true, sidebar_open: false, light_mode: false });
   const [folders, setFolders] = useState([]);
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -15,6 +15,7 @@ function ProfilePage() {
   const [editableCountry, setEditableCountry] = useState('');
   const [flipOrSet, setFlipOrSet] = useState(true);
   const [sidebarClosed, setSidebarClosed] = useState(false);
+  const [lightMode, setLightMode] = useState(false);
 
   const countries = [
     "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia",
@@ -48,9 +49,10 @@ function ProfilePage() {
         setProfile(data);
         setEditableAge(data.age);
         setEditableCountry(data.country);
-        setFlipOrSet(data.flip_or_set);
+        setFlipOrSet(data.flip_mode);
         setSidebarClosed(data.sidebar_open);
-        
+        setLightMode(data.light_mode);
+
         const foldersResponse = await _get('/api/profile/folders_decks');
         const foldersData = await foldersResponse.json();
         setFolders(foldersData);
@@ -93,7 +95,7 @@ function ProfilePage() {
     const newFlipOrSet = !flipOrSet;
     setFlipOrSet(newFlipOrSet);
     try {
-      const response = await _patch('/api/profile/me', { flip_or_set: newFlipOrSet });
+      const response = await _patch('/api/profile/me', { flip_mode: newFlipOrSet });
     } catch (error) {
       setError('Failed to update flip or set setting');
     }
@@ -104,6 +106,16 @@ function ProfilePage() {
     setSidebarClosed(newSidebarClosed);
     try {
       const response = await _patch('/api/profile/me', { sidebar_open: newSidebarClosed });
+    } catch (error) {
+      setError('Failed to update sidebar closed setting');
+    }
+  };
+
+  const handleLightMode = async () => {
+    const newLightMode = !lightMode;
+    setLightMode(newLightMode);
+    try {
+      const response = await _patch('/api/profile/me', { light_mode: newLightMode });
     } catch (error) {
       setError('Failed to update sidebar closed setting');
     }
@@ -192,6 +204,15 @@ function ProfilePage() {
           rightLabel="Close"
           value={sidebarClosed}
           onChange={handleSidebarChange}
+        />
+
+        {/* light mode setting */}
+        <ToggleSetting
+          label="Color theme"
+          leftLabel="light"
+          rightLabel="dark"
+          value={lightMode}
+          onChange={handleLightMode}
         />
       </div>
     </div>

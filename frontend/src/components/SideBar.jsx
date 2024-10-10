@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 import { useApi } from "../hooks";
@@ -17,6 +17,25 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
   const [showInput, setShowInput] = useState(false);
   const [folderStates, setFolderStates] = useState({});
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const folderRef = useRef(null);
+
+  // Click outside handler to unselect the folder or deck
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (folderRef.current && !folderRef.current.contains(event.target)) {
+        // Click is outside the sidebar, unselect the item
+        setSelected(null);
+      }
+    };
+
+    // Add the event listener for clicks outside
+    document.addEventListener('mousedown', handleClickOutside);
+
+    // Cleanup the event listener on component unmount
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const fetchSidebarData = () => {
     api._get('/api/sidebar')
@@ -272,7 +291,7 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
           {sidebarData && sidebarData.folders ? (
             sidebarData.folders.length > 0 ? (
               sidebarData.folders.map((folder, index) => (
-                <Folder key={index} folder={folder} onRightClick={handleRightClick} folderStates={folderStates} toggleFolder={toggleFolder} setContextMenu={setContextMenu} selected={selected} setSelected={setSelected} />
+                <Folder key={index} folder={folder} onRightClick={handleRightClick} folderStates={folderStates} toggleFolder={toggleFolder} setContextMenu={setContextMenu} selected={selected} setSelected={setSelected} folderRef={folderRef}/>
               ))
             ) : (
               <p>You have no decks!</p>
@@ -286,18 +305,6 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
 
       {contextMenu && (
         <div
-          // style={{
-          //   position: "absolute",
-          //   top: `${contextMenu.y}px`,
-          //   left: `${contextMenu.x}px`,
-          //   backgroundColor: "eWhite",
-          //   color: "eWhite",
-          //   padding: "10px",
-          //   zIndex: 9999,
-          //   display: "flex",
-          //   flexDirection: "column",
-          //   borderRadius: "5px",
-          // }}
           className="absolute bg-eDarker text-eWhite p-2 z-[9999] flex flex-col rounded-md border border-eGray"
           style={{
             top: `${contextMenu.y}px`,
@@ -438,7 +445,7 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
   );
 };
 
-const Folder = ({ folder, onRightClick, folderStates, toggleFolder, setContextMenu, selected, setSelected }) => {
+const Folder = ({ folder, onRightClick, folderStates, toggleFolder, setContextMenu, selected, setSelected, folderRef }) => {
 
   const handleLeftClick = (event) => {
     event.preventDefault();
@@ -449,7 +456,7 @@ const Folder = ({ folder, onRightClick, folderStates, toggleFolder, setContextMe
   };
 
   return (
-    <div className="mt-2">
+    <div ref={folderRef} className="mt-2">
       <div onClick={handleLeftClick} onContextMenu={(e) => onRightClick(e, folder)}
         className={`cursor-pointer text-base text-eWhite flex items-center select-none ${selected === folder ? 'bg-gray-500' : ''}`}>
         <button onClick={() => { toggleFolder(folder.folder_id); }}>

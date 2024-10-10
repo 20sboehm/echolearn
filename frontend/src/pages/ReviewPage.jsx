@@ -46,8 +46,8 @@ function ReviewPage() {
     },
     {
       onSuccess: (data) => {
-        setAnimation(data?.flip_or_set ?? true);  // Set flip after successful data fetch
-        if (data?.flip_or_set == false){
+        setAnimation(data?.flip_mode ?? true);  // Set flip after successful data fetch
+        if (data?.flip_mode == false){
           setCurrImage(set)
         }
       }

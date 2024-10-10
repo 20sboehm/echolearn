@@ -10,9 +10,10 @@ Each attribute of the model corresponds to a column in that table.
 class CustomUser(AbstractUser):
     age = models.IntegerField(null=True, blank=True)
     country = models.TextField(null=True, blank=True)
-    flip_or_set = models.BooleanField(default=True)
+    flip_mode = models.BooleanField(default=True)
     sidebar_open = models.BooleanField(default=True)
-
+    light_mode = models.BooleanField(default=False)
+    
     def __str__(self):
         return self.username
 
