@@ -1,6 +1,6 @@
 import { useApi } from "../hooks";
 import { useState, useRef, useEffect, Children } from "react";
-import Sidebar from "../components/SideBar";
+import Sidebar from "../components/Sidebar";
 import { ChevronIcon } from "../components/Icons";
 import MarkdownPreviewer from "../components/MarkdownPreviewer";
 import { useQuery } from "react-query";
@@ -17,6 +17,8 @@ function CreateCard() {
   const [popupText, setPopupText] = useState("");
   const [popupColor, setPopupColor] = useState("");
   const popupTimerRef = useRef(null); // Ref to hold the popup timer
+
+  const [sidebarWidth, setSidebarWidth] = useState(250);
 
   const displayPopup = (isSuccess) => {
     // Clear the old timer if it is still active
@@ -92,38 +94,40 @@ function CreateCard() {
 
   return (
     <>
-      <Sidebar />
-      <div className="w-1/2 flex flex-col">
-        <div className="flex justify-between border-b border-eMedGray mb-4 mt-8 pb-1">
-          <h1 className="text-2xl font-medium">New Card</h1>
-          <select id="selectDeck" value={deckId} onChange={(e) => setDeckId(e.target.value)} className='bg-eDarker text-eWhite focus:outline-none' >
-            <option key='select-deck-key' value=''>Select a deck</option>
-            {decks.map((deck) => (
-              <option key={deck.deck_id} value={deck.deck_id}>{deck.name}</option>
-            ))}
-          </select>
+      <div className='flex w-full h-full'>
+        <Sidebar onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
+        <div className="w-1/2 flex flex-col m-auto">
+          <div className="flex justify-between border-b border-eMedGray mb-4 mt-8 pb-1">
+            <h1 className="text-2xl font-medium">New Card</h1>
+            <select id="selectDeck" value={deckId} onChange={(e) => setDeckId(e.target.value)} className='bg-eDarker text-eWhite focus:outline-none' >
+              <option key='select-deck-key' value=''>Select a deck</option>
+              {decks.map((deck) => (
+                <option key={deck.deck_id} value={deck.deck_id}>{deck.name}</option>
+              ))}
+            </select>
+          </div>
+
+          <form onSubmit={handleSubmit}>
+            <div className="mb-2 flex flex-col">
+              <TextBox label="Front" content={questionContent} inputHandler={(e) => { setQuestionContent(e.target.value) }} />
+            </div>
+            <TextBox label="Back" content={answerContent} inputHandler={(e) => { setAnswerContent(e.target.value) }} />
+
+            <DividerLine />
+
+            <div className="mb-2 flex flex-col">
+              <TextBoxPreview label="Question Preview" content={questionContent} />
+            </div>
+            <TextBoxPreview label="Answer Preview" content={answerContent} />
+
+            <div className="flex justify-center mt-8">
+              <SubmitButton>Create Card</SubmitButton>
+            </div>
+          </form>
         </div>
-
-        <form onSubmit={handleSubmit}>
-          <div className="mb-2 flex flex-col">
-            <TextBox label="Front" content={questionContent} inputHandler={(e) => { setQuestionContent(e.target.value) }} />
-          </div>
-          <TextBox label="Back" content={answerContent} inputHandler={(e) => { setAnswerContent(e.target.value) }} />
-
-          <DividerLine />
-
-          <div className="mb-2 flex flex-col">
-            <TextBoxPreview label="Question Preview" content={questionContent} />
-          </div>
-          <TextBoxPreview label="Answer Preview" content={answerContent} />
-
-          <div className="flex justify-center mt-8">
-            <SubmitButton>Create Card</SubmitButton>
-          </div>
-        </form>
-      </div>
-      <div className={`width-20 p-3 absolute top-20 right-5 rounded-[1.4rem] text-white ${popupColor}
+        <div className={`width-20 p-3 absolute top-20 right-5 rounded-[1.4rem] text-white ${popupColor}
           transition-opacity duration-200 ${popupActive ? 'opacity-100' : 'opacity-0'}`}>{popupText}</div>
+      </div>
     </>
   )
 }

@@ -1,7 +1,7 @@
 import { useQuery } from "react-query";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import SideBar from "../components/SideBar";
+import Sidebar from "../components/Sidebar";
 import ScrollContainer from "../components/ScrollContainer";
 import { useApi } from "../hooks";
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -12,7 +12,7 @@ function HomePage() {
   return (
     <>
       <div className="flex w-full h-full">
-        <SideBar onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
+        <Sidebar onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
         <div className="flex flex-col flex-grow mt-10 overflow-x-auto items-center">
           <div className="mx-auto">
             <h1 className="font-bold text-[2rem] mb-6 border-b border-eMedGray">Today's Task List</h1>

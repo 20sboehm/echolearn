@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from 'react-query';
 import { useState } from 'react';
-import SideBar from '../components/SideBar'
+import Sidebar from '../components/Sidebar'
 import { useApi } from "../hooks";
 
 function CreateDeck() {
@@ -15,6 +15,7 @@ function CreateDeck() {
   const [deckName, setDeckName] = useState('');
   const [deckDescription, setDeckDescription] = useState('');
   const [refetchTrigger, setRefetchTrigger] = useState(false);
+
   const [sidebarWidth, setSidebarWidth] = useState(250);
 
   function popupDetails(popupMessage, popupColor) {
@@ -71,7 +72,7 @@ function CreateDeck() {
     return (
       <>
         <div className='flex w-full h-full'>
-          <SideBar refetchTrigger={refetchTrigger} onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
+          <Sidebar refetchTrigger={refetchTrigger} onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
           <div className='flex flex-col flex-glow items-center overflow-x-auto mx-auto'>
             <h1 className='text-4xl mb-10 mt-10 font-medium'>New Deck</h1>
             <form onSubmit={handleSubmit} className='flex flex-col items-center'>

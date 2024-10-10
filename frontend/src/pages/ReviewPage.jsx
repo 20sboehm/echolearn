@@ -1,7 +1,7 @@
 import { useState, useEffect, Children } from "react";
 import { useQuery } from 'react-query';
 import { Link, useParams, useSearchParams } from "react-router-dom";
-import SideBar from "../components/SideBar";
+import Sidebar from "../components/Sidebar";
 import { useApi } from "../hooks";
 import partyPopperImg from '../assets/party-popper.png';
 import partyPopperFlipImg from '../assets/party-popper-flip.png';
@@ -121,10 +121,14 @@ function ReviewPage() {
 
   return (
     <>
-      <Sidebar />
-      <div className="mt-[2%] h-[60vh] w-[40vw] flex flex-col min-w-[16rem]">
-        <div className="flex items-center border-b pb-[1rem]">
-          <Link to={`/decks/${deckId}`} className="rounded-lg border border-transparent px-10 py-2 text-center
+      <div className="flex w-full h-full">
+        {/* <Sidebar /> */}
+        <Sidebar onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
+        <div className="rounded-lg mt-[2%] flex flex-col flex-grow min-w-[16rem] mx-auto overflow-x-auto">
+          {/* <div className="mt-[2%] h-[60vh] w-[40vw] flex flex-col min-w-[16rem] items-center"> */}
+          {/* <div className="flex items-center border-b pb-[1rem]"> */}
+          <div className="flex mx-auto items-center border-b pb-[1rem] w-[40vw]">
+            <Link to={`/decks/${deckId}`} className="rounded-lg border border-transparent px-10 py-2 text-center
               font-semibold bg-white text-black hover:border-black active:scale-[0.97] active:bg-[#333] 
               active:border-[#555]">back</Link>
             <h2 className="text-[2em] mx-auto">{reviews.deck_name}</h2>
@@ -145,6 +149,7 @@ function ReviewPage() {
           )}
           {finish && <FinishView deckId={deckId} />}
         </div>
+      </div>
     </>
   );
 }
@@ -301,11 +306,12 @@ function ShowAnswerButtons({ card, showAnswer, updateReviewedCard, toggleFlip })
   }
 
   return (
-    <div className="fixed bottom-8 left-0 right-0 mx-auto w-[100vw] flex justify-center">
+    // <div className="fixed bottom-8 left-0 right-0 mx-auto w-[100vw] flex justify-center">
+    <div className="flex justify-center mt-8 mb-8">
       {!showAnswer && <button className="mt-8 border rounded-md w-[20%] min-w-[16rem]" onClick={toggleFlip}>Reveal Answer</button>}
       {
         showAnswer && (
-          <div className="flex justify-center mt-28 flex-wrap">
+          <div className="flex justify-center mt-8 flex-wrap">
             <ResultButton customStyles="mr-4 bg-red-600 hover:bg-red-700" confidenceLevel={1}
               clickEvent={updateReviewedCardAndDisplay} timeUntil={timeUntilNextReview}>Again</ResultButton>
 

@@ -238,7 +238,7 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
       >
         <div className="h-[92vh] overflow-y-auto p-2">
           <div className='flex justify-between border-b border-eGray'>
-            <h2 className='font-bold text-xl text-eWhite whitespace-nowrap'>Deck Library</h2>
+            <h2 className='font-bold text-base text-eWhite whitespace-nowrap'>Deck Library</h2>
             <div className='flex items-center'>
               <button onClick={() => buttonCreate('deck')} className='hover:bg-eStrongHLT mr-1 rounded-md'><DeckCreateIcon /></button>
               <button onClick={() => buttonCreate('folder')} className='hover:bg-eStrongHLT mr-1 rounded-md'><FolderCreateIcon /></button>

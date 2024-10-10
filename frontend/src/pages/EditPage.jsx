@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "react-query";
 import { useState, useEffect, useRef } from "react";
-import Sidebar from "../components/SideBar";
+import Sidebar from "../components/Sidebar";
 import { useApi } from "../hooks";
 import LoadingSpinner from "../components/LoadingSpinner";
 import MarkdownPreviewer from "../components/MarkdownPreviewer";
@@ -19,6 +19,8 @@ function EditPage() {
   const [popupText, setPopupText] = useState("");
   const [popupColor, setPopupColor] = useState("");
   const popupTimerRef = useRef(null); // Ref to hold the popup timer
+
+  const [sidebarWidth, setSidebarWidth] = useState(250);
 
   const displayPopup = (isSuccess) => {
     // Clear the old timer if it is still active
@@ -99,42 +101,44 @@ function EditPage() {
       displayPopup(true);
 
       // Navigate back to deck page after short delay
-      setTimeout(() => {
-        navigate(`/decks/${card.deck_id}`);
-      }, 300);
+      // setTimeout(() => {
+      //   navigate(`/decks/${card.deck_id}`);
+      // }, 300);
     }
   }
 
   return (
     <>
-      <Sidebar />
-      <div className="w-1/2 flex flex-col">
-        <div className="flex justify-between border-b border-eMedGray mb-4 mt-8 pb-1">
-          <h1 className="text-2xl font-medium">Edit Card</h1>
-        </div>
-
-        <form onSubmit={handleSubmit}>
-          <div className="mb-2 flex flex-col">
-            <TextBox label="Front" content={questionContent} inputHandler={(e) => { setQuestionContent(e.target.value) }} />
+      <div className="flex w-full h-full">
+        <Sidebar onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
+        <div className="w-1/2 flex flex-col m-auto">
+          <div className="flex justify-between border-b border-eMedGray mb-4 mt-8 pb-1">
+            <h1 className="text-2xl font-medium">Edit Card</h1>
           </div>
-          <TextBox label="Back" content={answerContent} inputHandler={(e) => { setAnswerContent(e.target.value) }} />
 
-          <DividerLine />
+          <form onSubmit={handleSubmit}>
+            <div className="mb-2 flex flex-col">
+              <TextBox label="Front" content={questionContent} inputHandler={(e) => { setQuestionContent(e.target.value) }} />
+            </div>
+            <TextBox label="Back" content={answerContent} inputHandler={(e) => { setAnswerContent(e.target.value) }} />
 
-          <div className="mb-2 flex flex-col">
-            <TextBoxPreview label="Question Preview" content={questionContent} />
-          </div>
-          <TextBoxPreview label="Answer Preview" content={answerContent} />
+            <DividerLine />
 
-          <div className="flex flex-col items-center mt-8">
-            <SubmitButton>Edit Card</SubmitButton>
-            <button onClick={() => { navigate(`/decks/${card.deck_id}`); }} className="block rounded-sm sm:rounded-lg p-[7px] w-1/3 text-center font-medium
+            <div className="mb-2 flex flex-col">
+              <TextBoxPreview label="Question Preview" content={questionContent} />
+            </div>
+            <TextBoxPreview label="Answer Preview" content={answerContent} />
+
+            <div className="flex flex-col items-center mt-8">
+              <SubmitButton>Edit Card</SubmitButton>
+              <button onClick={() => { navigate(`/decks/${card.deck_id}`); }} className="block rounded-sm sm:rounded-lg p-[7px] w-1/3 text-center font-medium
               border border-eGray text-eWhite hover:bg-eHLT active:scale-[0.97] mt-2"> Back</button>
-          </div>
-        </form>
-      </div>
-      <div className={`width-20 p-3 absolute top-20 right-5 rounded-[1.4rem] text-white ${popupColor}
+            </div>
+          </form>
+        </div>
+        <div className={`width-20 p-3 absolute top-20 right-5 rounded-[1.4rem] text-white ${popupColor}
           transition-opacity duration-200 ${popupActive ? 'opacity-100' : 'opacity-0'}`}>{popupText}</div>
+      </div>
     </>
   )
 }

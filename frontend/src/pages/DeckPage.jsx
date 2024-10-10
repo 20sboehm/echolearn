@@ -1,7 +1,7 @@
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "react-query";
 import { useState } from "react";
-import SideBar from "../components/SideBar";
+import Sidebar from "../components/Sidebar";
 import { useApi } from "../hooks";
 import editIconImg from "../assets/edit-icon.png"
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -228,18 +228,6 @@ function DeckPage({ publicAccess = false }) {
     const folderData = await userfolders.json()
     console.log(folderData)
     setFolders(folderData)
-    if (userfolders !== null && userfolders.length !== 0) {
-      const response = await api._get(`/api/decks/${deckId}/take_copy`)
-      try {
-        if (!response.ok) {
-          throw new Error('Failed to share deck');
-        }
-      } catch (error) {
-        console.error('Error', error);
-      }
-    } else {
-      console.log("No input provided or user cancelled the prompt.");
-    }
   };
 
   const handleFolderSelection = async (folderId) => {
@@ -268,7 +256,7 @@ function DeckPage({ publicAccess = false }) {
   return (
     <>
       <div className="flex flex-row w-full h-full">
-        <SideBar refetchTrigger={refetchTrigger} onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
+        <Sidebar refetchTrigger={refetchTrigger} onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
         <div className="w-[65vw] flex flex-col flex-grow transition-transform mx-[5vh] overflow-x-auto">
           <div className="flex flex-row">
             <TopButtons deckCards={deckCards} publicAccess={publicAccess} deckId={deckId} handleDeleteDeck={handleDeleteDeck} />
@@ -277,7 +265,9 @@ function DeckPage({ publicAccess = false }) {
           </div>
 
           <MiddleButtons deckCards={deckCards} publicAccess={publicAccess} setStatus={setStatus} isCreateMode={isCreateMode}
-            handleCreateCard={handleCreateCard} toggleCreateMode={toggleCreateMode} handleCancelCreateCard={handleCancelCreateCard} />
+            handleCreateCard={handleCreateCard} toggleCreateMode={toggleCreateMode} handleCancelCreateCard={handleCancelCreateCard}
+            handleTakeACopy={handleTakeACopy} isModalOpen={isModalOpen} folders={folders} handleFolderSelection={handleFolderSelection}
+            setModalOpen={setModalOpen} deleteMode={deleteMode} changeMode={changeMode} />
 
           <div className="h-[50vh] overflow-y-auto border-t border-gray-500">
             {deckCards.cards.map(card => (
@@ -392,7 +382,8 @@ function TopButtons({ deckCards, publicAccess, deckId, handleDeleteDeck, }) {
   )
 }
 
-function MiddleButtons({ deckCards, publicAccess, setStatus, isCreateMode, handleCreateCard, toggleCreateMode, handleCancelCreateCard }) {
+function MiddleButtons({ deckCards, publicAccess, setStatus, isCreateMode, handleCreateCard, toggleCreateMode, handleCancelCreateCard,
+  handleTakeACopy, isModalOpen, folders, handleFolderSelection, setModalOpen, deleteMode, changeMode }) {
   return (
     <div className="flex flex-row items-center justify-between mt-2 mb-4 border-t border-gray-500 pt-4">
       <h1>{deckCards.cards.length} Cards</h1>
@@ -423,6 +414,36 @@ function MiddleButtons({ deckCards, publicAccess, setStatus, isCreateMode, handl
           )}
         </div>
       )}
+
+      <div>
+        <button type="button" onClick={handleTakeACopy}>Copy Deck</button>
+        {isModalOpen && (
+          <div className="modal">
+            <div className="modal-content">
+              <h2>Select a folder </h2>
+              {folders.map(folder => (
+                <button className={`bg-eBlue rounded-lg border border-transparent px-2 py-1 
+                      font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
+                  key={folder.folder_id} onClick={() => handleFolderSelection(folder.folder_id)}>
+                  {folder.name}
+                </button>
+              ))}
+              <button onClick={() => setModalOpen(false)}>Close</button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {publicAccess ? (
+        null
+      ) : (
+        <button className={`${deleteMode ? "bg-red-500" : "bg-blue-500"} rounded-lg border border-transparent px-2 py-1 
+              font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
+          style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={changeMode}>
+          {deleteMode ? "Cancel" : "Delete"}
+        </button>
+      )}
+
     </div>
   )
 }

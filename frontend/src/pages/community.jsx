@@ -1,7 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { useQuery, useMutation } from "react-query";
 import { useState, useEffect } from "react";
-import Sidebar from "../components/SideBar";
+import Sidebar from "../components/Sidebar";
 // import 'katex/dist/katex.min.css';
 import { useApi } from "../hooks";
 import arrowIconImg from "../assets/arrow_icon.png"
@@ -33,7 +33,7 @@ function CommunityPage() {
     return (
       <>
         <div className='flex w-full h-full'>
-          <SideBar onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
+          <Sidebar onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
           <div className="flex flex-grow justify-center mt-4">
             {allPublicDecks && allPublicDecks.length > 0 ? (
               <div className="h-screen overflow-y-auto border-gray-500 w-full max-w-4xl">
