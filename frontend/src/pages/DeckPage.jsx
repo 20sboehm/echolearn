@@ -322,10 +322,11 @@ function DeckPage({ publicAccess = false }) {
                   </text>
                 </svg>
                 <Link to={`/stats/${deckId}`}>
-                  <button className="rounded-lg border border-transparent px-4 py-2 
+                  <button className={` rounded-lg border border-transparent px-4 py-2 
                 font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
                 active:border-[#555]`} style={{ transition: "border-color 0.10s, color 0.10s" }}>
                   Study
+                  </button>
                 </Link>
                 <Link to={`/review/${deckId}?studyAll=true`} className={` rounded-lg border border-transparent px-12 py-2 text-center
                 font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
@@ -345,11 +346,6 @@ function DeckPage({ publicAccess = false }) {
                 Delete Deck
               </button>
             )}
-            {/* <Link to={`/review/${deckId}`} className={` rounded-lg border border-transparent px-12 py-2 text-center
-              font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-              active:border-[#555]`} style={{ transition: "border-color 0.10s, color 0.10s" }}>
-              Study
-            </Link> */}
           </div>
 
           <div className="flex flex-row items-center justify-between mt-2 mb-4 border-t border-gray-500 pt-4">
@@ -362,10 +358,6 @@ function DeckPage({ publicAccess = false }) {
               style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={setStatus}>
               {deckCards.isPublic ? "Public" : "Private"}
             </button>
-
-            {/* <button className={`bg-blue-500  rounded-lg border border-transparent px-2 py-1 
-              font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
-            style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={handleGenerateLink}>Generate Share Link</button> */}
 
           {publicAccess ? (
             null
@@ -462,7 +454,7 @@ function DeckPage({ publicAccess = false }) {
         </div>
 
         <div className="h-[50vh] overflow-y-auto border-t border-gray-500 px-1">
-          {deckCards.cards.map(card => (
+        {deckCards.cards.map(card => (
             <div className={`flex font-medium mt-4 border border-eMedGray bg-eDarker w-full ${deleteMode ? "hover:bg-[#ff000055] cursor-not-allowed" : ""}`}
               key={card.card_id} onClick={() => { handleCardClick(card.card_id) }}
             >
@@ -486,6 +478,7 @@ function DeckPage({ publicAccess = false }) {
 
             </div>
           ))}
+          </div>
 
           {/* Create cards */}
           {isCreateMode && (
@@ -511,6 +504,7 @@ function DeckPage({ publicAccess = false }) {
               </div>
             </div>
           )}
+          
         </div>
       </div >
       {showPopup && (

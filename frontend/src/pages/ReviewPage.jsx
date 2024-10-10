@@ -145,7 +145,6 @@ function ReviewPage() {
           )}
           {finish && <FinishView deckId={deckId} />}
         </div>
-      </div>
     </>
   );
 }
