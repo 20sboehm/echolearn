@@ -34,6 +34,8 @@ function DeckPage({ publicAccess = false }) {
   const [newQuestion, setNewQuestion] = useState("");
   const [newAnswer, setNewAnswer] = useState("");
 
+  const [sidebarWidth, setSidebarWidth] = useState(250);
+
   const { data: deckCards, isLoading, error, refetch } = useQuery({
     queryKey: ['deckCards', deckId], // Unique key based on deckId
     queryFn: async () => {
@@ -93,12 +95,6 @@ function DeckPage({ publicAccess = false }) {
       deck_id: deckId,
       question: newQuestion,
       answer: newAnswer,
-      // questionvideolink: "",
-      // answervideolink: "",
-      // questionimagelink: "",
-      // answerimagelink: "",
-      // questionlatex: "",
-      // answerlatex: "",
     };
 
     try {
@@ -275,154 +271,37 @@ function DeckPage({ publicAccess = false }) {
         <SideBar refetchTrigger={refetchTrigger} onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
         <div className="w-[65vw] flex flex-col flex-grow transition-transform mx-[5vh] overflow-x-auto">
           <div className="flex flex-row">
-            <div className="flex flex-col items-start">
-              <h1 className="text-4xl font-bold my-4">{deckCards.deck_name}</h1>
-              {publicAccess ? (
-                null
-              ) : (
-                <div className="flex gap-4 mb-2">
-                  <Link to={`/review/${deckId}`} className={` rounded-lg border border-transparent px-12 py-2 text-center
-                font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-                active:border-[#555]`} style={{ transition: "border-color 0.10s, color 0.10s" }}>
-                    Study
-                  </Link>
-                  <Link to={`/review/${deckId}?studyAll=true`} className={` rounded-lg border border-transparent px-12 py-2 text-center
-                font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-                active:border-[#555]`} style={{ transition: "border-color 0.10s, color 0.10s" }}>
-                    StudyAll
-                  </Link>
-                </div>
-              )}
-              {publicAccess ? (
-                null
-              ) : (
-                <button
-                  className="mt-2 rounded-lg border border-transparent px-4 py-2 font-semibold bg-red-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] active:border-[#555]"
-                  style={{ transition: "border-color 0.10s, color 0.10s" }}
-                  onClick={handleDeleteDeck}
-                >
-                  Delete Deck
-                </button>
-              )}
-            </div>
+            <TopButtons deckCards={deckCards} publicAccess={publicAccess} deckId={deckId} handleDeleteDeck={handleDeleteDeck} />
 
-            {publicAccess ? (
-              null
-            ) : (
-              <div className="flex flex-col ml-auto justify-center items-center mb-4">
-                {/* JavaScript code to draw the graph */}
-                <svg width="200" height="200" viewBox="0 20 200 150">
-                  <circle cx="100" cy="100" r={radius} fill="none" stroke="#ECEFF1" strokeWidth="7.5" />
-                  <circle cx="100" cy="100" r={radius} fill="none" stroke="#29A5DC" strokeWidth="7.5" strokeLinecap="round"
-                    strokeDasharray={`${dashLength},${gapLength}`} strokeDashoffset={strokeDashoffset}>
-                    <title>Progress</title>
-                  </circle>
-                  <text x="100" y="100" textAnchor="middle" dominantBaseline="middle" fill="white" fontSize="16">
-                    {percentage}%
-                  </text>
-                </svg>
-                <Link to={`/stats/${deckId}`}>
-                  <button className={` rounded-lg border border-transparent px-4 py-2 
-                font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-                active:border-[#555]`} style={{ transition: "border-color 0.10s, color 0.10s" }}>
-                  Study
-                  </button>
-                </Link>
-                <Link to={`/review/${deckId}?studyAll=true`} className={` rounded-lg border border-transparent px-12 py-2 text-center
-                font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
-                active:border-[#555]`} style={{ transition: "border-color 0.10s, color 0.10s" }}>
-                  Study All
-                </Link>
-              </div>
-            )}
-            {publicAccess ? (
-              null
-            ) : (
-              <button
-                className="mt-2 rounded-lg border border-transparent px-4 py-2 font-semibold bg-red-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] active:border-[#555]"
-                style={{ transition: "border-color 0.10s, color 0.10s" }}
-                onClick={handleDeleteDeck}
-              >
-                Delete Deck
-              </button>
-            )}
+            <ProgressCircleGraph radius={radius} dashLength={dashLength} gapLength={gapLength} strokeDashoffset={strokeDashoffset} percentage={percentage} />
           </div>
 
-          <div className="flex flex-row items-center justify-between mt-2 mb-4 border-t border-gray-500 pt-4">
-            <h1>{deckCards.cards.length} Cards</h1>
-            <button
-              disabled={publicAccess}
-              className={`${deckCards.isPublic ? "bg-green-600" : "bg-red-600"}
-              ${publicAccess ? "" : "active:scale-[0.97] hover:border-white hover:text-white"}
-              rounded-lg border border-transparent px-2 py-1 disabled:bg-gray-500 font-semibold`}
-              style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={setStatus}>
-              {deckCards.isPublic ? "Public" : "Private"}
-            </button>
-
-          {publicAccess ? (
-            null
-          ) : (
-            <div>
-              <button className={`${isCreateMode ? "bg-green-500" : "bg-blue-500"} rounded-lg border border-transparent px-2 py-1 
-              font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
-                style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={isCreateMode ? handleCreateCard : toggleCreateMode}>
-                {isCreateMode ? "Done" : "Create"}
-              </button>
-              {isCreateMode && (
-                <button className="bg-red-500 rounded-lg border border-transparent px-2 py-1 
-                font-semibold hover:border-white hover:text-white active:scale-[0.97]"
-                  style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={handleCancelCreateCard}>
-                  Cancel
-                </button>
-              )}
-            </div>
-          )}
+          <MiddleButtons deckCards={deckCards} publicAccess={publicAccess} setStatus={setStatus} isCreateMode={isCreateMode}
+            handleCreateCard={handleCreateCard} toggleCreateMode={toggleCreateMode} handleCancelCreateCard={handleCancelCreateCard} />
 
           <div className="h-[50vh] overflow-y-auto border-t border-gray-500">
             {deckCards.cards.map(card => (
-              <div className="grid grid-cols-2 gap-4 font-medium px-2" key={card.card_id}>
+              <div className={`flex font-medium mt-4 border border-eMedGray bg-eDarker w-full ${deleteMode ? "hover:bg-[#ff000055] cursor-not-allowed" : ""}`}
+                key={card.card_id} onClick={() => { handleCardClick(card.card_id) }}
+              >
 
-                <div className="border rounded-sm bg-eWhite text-eDarker mt-2 px-2 py-2 relative" onClick={() => handleCardClick(card.card_id)}>
-                  <div dangerouslySetInnerHTML={{ __html: card.question }} />
-
-                  {ReactPlayer.canPlay(card.questionvideolink) && (
-                    <>
-                      <ReactPlayer
-                        url={card.questionvideolink}
-                        controls={true}
-                        style={{ maxWidth: '100%', maxHeight: '100%' }}
-                      />
-                    </>
-                  )}
-                  {card.questionimagelink && <img src={card.questionimagelink} style={{ maxWidth: '250px', maxHeight: '250px' }} />}
-                  {card.questionlatex && <KatexOutput latex={card.questionlatex} />}
-                  <Link onClick={() => speakText(card.question)}>
-                    <img src={voiceIconImg} alt="Voice_Icon" className="absolute top-1 right-1 h-[19px] w-[19px]" />
-                  </Link>
-                </div>
-
-
-                <div className="rounded-sm bg-eWhite text-eDarker mt-2 p-2 relative" onClick={() => handleCardClick(card.card_id)}>
-                  <div dangerouslySetInnerHTML={{ __html: card.answer }} />
-
-                  {ReactPlayer.canPlay(card.answervideolink) && (
-                    <>
-                      <ReactPlayer
-                        url={card.answervideolink}
-                        controls={true}
-                        style={{ maxWidth: '100%', maxHeight: '100%' }}
-                      />
-                    </>
-                  )}
-                  {card.answerimagelink && <img src={card.answerimagelink} style={{ maxWidth: '250px', maxHeight: '250px' }} />}
-                  {card.answerlatex && <KatexOutput latex={card.answerlatex} />}
+                <div className={`relative w-1/2 flex flex-col pr-4 border-r border-eMedGray`}>
+                  <MarkdownPreviewer content={card.question} className="flex-1 p-2 min-h-20" />
                   <Link to={`/edit/${card.card_id}`}>
-                    <img src={editIconImg} alt="Edit_Icon" className="absolute top-1 right-8 h-[21px] w-[28px]" />
+                    <img src={editIconImg} alt="Edit_Icon" className="absolute top-8 right-0.5 h-[21px] w-[28px]" />
                   </Link>
-                  <Link onClick={() => speakText(card.answer)}>
-                    <img src={voiceIconImg} alt="Voice_Icon" className="absolute top-1 right-1 h-[19px] w-[19px]" />
+                  <Link onClick={() => speakText(card.question)}>
+                    <SpeakerIcon className="absolute top-1 right-1" />
                   </Link>
                 </div>
+
+                <div className="relative w-1/2 flex flex-col">
+                  <MarkdownPreviewer content={card.answer} className="flex-1 p-2" />
+                  <Link onClick={() => speakText(card.answer)}>
+                    <SpeakerIcon className="absolute top-1 right-1" />
+                  </Link>
+                </div>
+
               </div>
             ))}
 
@@ -452,60 +331,6 @@ function DeckPage({ publicAccess = false }) {
             )}
           </div>
         </div>
-
-        <div className="h-[50vh] overflow-y-auto border-t border-gray-500 px-1">
-        {deckCards.cards.map(card => (
-            <div className={`flex font-medium mt-4 border border-eMedGray bg-eDarker w-full ${deleteMode ? "hover:bg-[#ff000055] cursor-not-allowed" : ""}`}
-              key={card.card_id} onClick={() => { handleCardClick(card.card_id) }}
-            >
-
-              <div className={`relative w-1/2 flex flex-col pr-4 border-r border-eMedGray`}>
-                <MarkdownPreviewer content={card.question} className="flex-1 p-2 min-h-20" />
-                <Link to={`/edit/${card.card_id}`}>
-                  <img src={editIconImg} alt="Edit_Icon" className="absolute top-8 right-0.5 h-[21px] w-[28px]" />
-                </Link>
-                <Link onClick={() => speakText(card.question)}>
-                  <SpeakerIcon className="absolute top-1 right-1" />
-                </Link>
-              </div>
-
-              <div className="relative w-1/2 flex flex-col">
-                <MarkdownPreviewer content={card.answer} className="flex-1 p-2" />
-                <Link onClick={() => speakText(card.answer)}>
-                  <SpeakerIcon className="absolute top-1 right-1" />
-                </Link>
-              </div>
-
-            </div>
-          ))}
-          </div>
-
-          {/* Create cards */}
-          {isCreateMode && (
-            <div className="grid grid-cols-2 gap-4 font-medium px-2 mt-4">
-              <div className="border rounded-sm bg-eWhite text-eBlack p-2">
-                <input
-                  type="text"
-                  placeholder="Enter question"
-                  value={newQuestion}
-                  onChange={(e) => setNewQuestion(e.target.value)}
-                  className="w-full px-2 py-1 rounded"
-                  autoFocus
-                />
-              </div>
-              <div className="border rounded-sm bg-eWhite text-eBlack p-2">
-                <input
-                  type="text"
-                  placeholder="Enter answer"
-                  value={newAnswer}
-                  onChange={(e) => setNewAnswer(e.target.value)}
-                  className="w-full px-2 py-1 rounded"
-                />
-              </div>
-            </div>
-          )}
-          
-        </div>
       </div >
       {showPopup && (
         <div className={`fixed bottom-20 left-1/2 -translate-x-1/2 transform p-4 bg-${popupColor}-500 rounded-md transition-opacity duration-1000 ${popupOpacity}`}>
@@ -532,5 +357,92 @@ const SpeakerIcon = ({ width = "20px", height = "20px", fill = "#ccc", className
   );
 };
 
+function TopButtons({ deckCards, publicAccess, deckId, handleDeleteDeck, }) {
+  return (
+    <div className="flex flex-col items-start">
+      <h1 className="text-4xl font-bold my-4">{deckCards.deck_name}</h1>
+      {publicAccess ? (
+        null
+      ) : (
+        <div className="flex gap-4 mb-2">
+          <Link to={`/review/${deckId}`} className={` rounded-lg border border-transparent px-12 py-2 text-center
+                font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+                active:border-[#555]`} style={{ transition: "border-color 0.10s, color 0.10s" }}>
+            Study
+          </Link>
+          <Link to={`/review/${deckId}?studyAll=true`} className={` rounded-lg border border-transparent px-12 py-2 text-center
+                font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+                active:border-[#555]`} style={{ transition: "border-color 0.10s, color 0.10s" }}>
+            StudyAll
+          </Link>
+        </div>
+      )}
+      {publicAccess ? (
+        null
+      ) : (
+        <button
+          className="mt-2 rounded-lg border border-transparent px-4 py-2 font-semibold bg-red-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] active:border-[#555]"
+          style={{ transition: "border-color 0.10s, color 0.10s" }}
+          onClick={handleDeleteDeck}
+        >
+          Delete Deck
+        </button>
+      )}
+    </div>
+  )
+}
+
+function MiddleButtons({ deckCards, publicAccess, setStatus, isCreateMode, handleCreateCard, toggleCreateMode, handleCancelCreateCard }) {
+  return (
+    <div className="flex flex-row items-center justify-between mt-2 mb-4 border-t border-gray-500 pt-4">
+      <h1>{deckCards.cards.length} Cards</h1>
+      <button
+        disabled={publicAccess}
+        className={`${deckCards.isPublic ? "bg-green-600" : "bg-red-600"}
+              ${publicAccess ? "" : "active:scale-[0.97] hover:border-white hover:text-white"}
+              rounded-lg border border-transparent px-2 py-1 disabled:bg-gray-500 font-semibold`}
+        style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={setStatus}>
+        {deckCards.isPublic ? "Public" : "Private"}
+      </button>
+
+      {publicAccess ? (
+        null
+      ) : (
+        <div>
+          <button className={`${isCreateMode ? "bg-green-500" : "bg-blue-500"} rounded-lg border border-transparent px-2 py-1 
+              font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
+            style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={isCreateMode ? handleCreateCard : toggleCreateMode}>
+            {isCreateMode ? "Done" : "Create"}
+          </button>
+          {isCreateMode && (
+            <button className="bg-red-500 rounded-lg border border-transparent px-2 py-1 
+                font-semibold hover:border-white hover:text-white active:scale-[0.97]"
+              style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={handleCancelCreateCard}>
+              Cancel
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function ProgressCircleGraph({ radius, dashLength, gapLength, strokeDashoffset, percentage }) {
+  return (
+    <div className="flex flex-col ml-auto justify-center items-center mb-4">
+      {/* JavaScript code to draw the graph */}
+      <svg width="200" height="200" viewBox="0 20 200 150">
+        <circle cx="100" cy="100" r={radius} fill="none" stroke="#ECEFF1" strokeWidth="7.5" />
+        <circle cx="100" cy="100" r={radius} fill="none" stroke="#29A5DC" strokeWidth="7.5" strokeLinecap="round"
+          strokeDasharray={`${dashLength},${gapLength}`} strokeDashoffset={strokeDashoffset}>
+          <title>Progress</title>
+        </circle>
+        <text x="100" y="100" textAnchor="middle" dominantBaseline="middle" fill="white" fontSize="16">
+          {percentage}%
+        </text>
+      </svg>
+    </div>
+  )
+}
 
 export default DeckPage
