@@ -1,6 +1,6 @@
 import { useApi } from "../hooks";
 import { useState, useRef, useEffect, Children } from "react";
-import Sidebar from "../components/Sidebar";
+import Sidebar from "../components/SideBar";
 import { ChevronIcon } from "../components/Icons";
 import MarkdownPreviewer from "../components/MarkdownPreviewer";
 import { useQuery } from "react-query";

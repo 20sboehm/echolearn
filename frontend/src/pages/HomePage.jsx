@@ -1,7 +1,7 @@
 import { useQuery } from "react-query";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import Sidebar from "../components/Sidebar";
+import Sidebar from "../components/SideBar";
 import ScrollContainer from "../components/ScrollContainer";
 import { useApi } from "../hooks";
 import LoadingSpinner from "../components/LoadingSpinner";
