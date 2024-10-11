@@ -82,25 +82,6 @@ function Main() {
 }
 
 function App() {
-  const [theme, setTheme] = useState('light');
-
-  // Check for light/dark mode
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    setTheme(mediaQuery.matches ? 'dark' : 'light');
-
-    const handleThemeChange = (e) => {
-      setTheme(e.matches ? 'dark' : 'light');
-    };
-
-    mediaQuery.addEventListener('change', handleThemeChange);
-
-    // Cleanup event listener on unmount
-    return () => {
-      mediaQuery.removeEventListener('change', handleThemeChange);
-    };
-  }, []);
-
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
