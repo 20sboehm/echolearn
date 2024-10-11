@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { QueryClient, QueryClientProvider } from "react-query";
 import { BrowserRouter, Navigate, Routes, Route, useParams } from "react-router-dom";
 
@@ -82,11 +82,30 @@ function Main() {
 }
 
 function App() {
+  const [theme, setTheme] = useState('light');
+
+  // Check for light/dark mode
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    setTheme(mediaQuery.matches ? 'dark' : 'light');
+
+    const handleThemeChange = (e) => {
+      setTheme(e.matches ? 'dark' : 'light');
+    };
+
+    mediaQuery.addEventListener('change', handleThemeChange);
+
+    // Cleanup event listener on unmount
+    return () => {
+      mediaQuery.removeEventListener('change', handleThemeChange);
+    };
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <BrowserRouter>
-          <div className="min-w-screen min-h-screen flex flex-col font-base text-eWhite bg-eBase">
+          <div className="min-w-screen min-h-screen flex flex-col font-base text-eWhite bg-elBase dark:bg-eBase">
             <Header />
             <Main />
           </div>

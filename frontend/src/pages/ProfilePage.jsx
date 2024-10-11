@@ -52,6 +52,11 @@ function ProfilePage() {
         setFlipOrSet(data.flip_mode);
         setSidebarClosed(data.sidebar_open);
         setLightMode(data.light_mode);
+        console.log('Profile data:', data);
+
+        if (!data.light_mode) {
+          document.documentElement.classList.add('dark');
+        }
 
         const foldersResponse = await _get('/api/profile/folders_decks');
         const foldersData = await foldersResponse.json();
@@ -114,6 +119,14 @@ function ProfilePage() {
   const handleLightMode = async () => {
     const newLightMode = !lightMode;
     setLightMode(newLightMode);
+    console.log(lightMode);
+    
+    if (newLightMode == false) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+
     try {
       const response = await _patch('/api/profile/me', { light_mode: newLightMode });
     } catch (error) {
@@ -122,22 +135,22 @@ function ProfilePage() {
   };
 
   return (
-    <div className="ml-0 w-3/4 text-left flex">
+    <div className="ml-0 w-3/4 text-left flex mt-4">
       {/* Left column: User Profile Information */}
       <div className="w-1/2">
-        <h1 className="text-2xl font-bold">User Profile</h1>
-        <p><strong>Username:</strong> {profile.username}</p>
-        <p><strong>Email:</strong> {profile.email}</p>
+        <h1 className="text-2xl font-bold text-elDark dark:text-edWhite">User Profile</h1>
+        <p className='text-elDark dark:text-edWhite'><strong>Username:</strong> {profile.username}</p>
+        <p className='text-elDark dark:text-edWhite'><strong>Email:</strong> {profile.email}</p>
 
         {/* Age */}
-        <p className='eWhite'>
+        <p className='text-elDark dark:text-edWhite'>
           <strong>Age:</strong>
           {isEditing ? (
             <input
               type="number"
               value={editableAge}
               onChange={(e) => setEditableAge(Number(e.target.value))}
-              className="border rounded bg-eDarker ml-1"
+              className="border rounded bg-edDarker ml-1"
             />
           ) : (
             ` ${profile.age}`
@@ -145,13 +158,13 @@ function ProfilePage() {
         </p>
 
         {/* Country */}
-        <p className='eWhite'>
+        <p className='text-elDark dark:text-edWhite'>
           <strong>Country:</strong>
           {isEditing ? (
             <select
               value={editableCountry}
               onChange={(e) => setEditableCountry(e.target.value)}
-              className="border rounded bg-eDarker ml-1"
+              className="border rounded bg-edDarker ml-1"
             >
               {countries.map((country, index) => (
                 <option key={index} value={country}>
@@ -177,7 +190,7 @@ function ProfilePage() {
 
         {/* Display Folders and Decks */}
         <div className="mt-8">
-          <h2 className="text-xl font-bold">Folders and Decks</h2>
+          <h2 className="text-xl font-bold text-elDark dark:text-edWhite">Folders and Decks</h2>
           {folders.length > 0 ? (
             folders.map((folder) => <Folder key={folder.folder_id} folder={folder} />)
           ) : (
@@ -186,13 +199,13 @@ function ProfilePage() {
         </div>
       </div>
 
-      <div className="w-1/2 pl-10 border rounded-lg">
-        <h2 className="text-2xl font-bold">Settings</h2>
+      <div className="w-1/2 pl-10 border border-elDark dark:border-edWhite rounded-lg">
+        <h2 className="text-2xl font-bold text-elDark dark:text-edWhite">Settings</h2>
         {/* Review Animation */}
         <ToggleSetting
           label="Review animation:"
-          leftLabel="Flip"
-          rightLabel="Set"
+          leftLabel="Flash card"
+          rightLabel="Question set"
           value={flipOrSet}
           onChange={handleFlipOrSetChange}
         />
@@ -208,9 +221,9 @@ function ProfilePage() {
 
         {/* light mode setting */}
         <ToggleSetting
-          label="Color theme"
-          leftLabel="light"
-          rightLabel="dark"
+          label="Color theme:"
+          leftLabel="Light mode"
+          rightLabel="Dark mode"
           value={lightMode}
           onChange={handleLightMode}
         />
@@ -223,20 +236,20 @@ const ToggleSetting = ({ label, leftLabel, rightLabel, value, onChange }) => {
   return (
     <div className="flex flex-col mt-4">
       <label className="flex items-center">
-        <p className="text-big font-bold">{label}</p>
+        <p className="text-big font-bold text-elDark dark:text-edWhite">{label}</p>
       </label>
       <div className="flex items-center mt-2">
-        <span className="mr-4">{leftLabel}</span>
+        <span className="mr-4 text-elDark dark:text-edWhite">{leftLabel}</span>
 
         {/* Toggle Switch */}
-        <div onClick={onChange} className="flex items-center w-12 h-6 rounded-full bg-gray-300 dark:bg-edDarkGray cursor-pointer p-1 transition-colors duration-300">
+        <div onClick={onChange} className="flex items-center w-12 h-6 rounded-full bg-gray-700 dark:bg-edDarkGray cursor-pointer p-1 transition-colors duration-300">
           {/* Ball that moves left or right */}
           <div
-            className={`w-4 h-4 bg-elDarkGray dark:bg-white rounded-full shadow-md transform transition-transform duration-300 ${value ? 'translate-x-0' : 'translate-x-6'}`}
+            className={`w-4 h-4 bg-elBlack dark:bg-white rounded-full shadow-md transform transition-transform duration-300 ${value ? 'translate-x-0' : 'translate-x-6'}`}
           ></div>
         </div>
 
-        <span className="ml-4">{rightLabel}</span>
+        <span className="ml-4 text-elDark dark:text-edWhite">{rightLabel}</span>
       </div>
     </div>
   );
@@ -251,7 +264,7 @@ const Folder = ({ folder, onRightClick }) => {
   };
 
   return (
-    <div className="mt-2">
+    <div className="mt-2 text-elDark dark:text-edWhite">
       <div
         onClick={handleOpenFolder}
         onContextMenu={(e) => onRightClick(e, folder)}
