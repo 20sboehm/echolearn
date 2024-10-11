@@ -1,7 +1,7 @@
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "react-query";
 import { useState } from "react";
-import Sidebar from "../components/Sidebar";
+import Sidebar from "../components/SideBar";
 import { useApi } from "../hooks";
 import editIconImg from "../assets/edit-icon.png"
 import LoadingSpinner from "../components/LoadingSpinner";

@@ -1,7 +1,7 @@
 import { useState, useEffect, Children } from "react";
 import { useQuery } from 'react-query';
 import { Link, useParams, useSearchParams } from "react-router-dom";
-import Sidebar from "../components/Sidebar";
+import Sidebar from "../components/SideBar";
 import { useApi } from "../hooks";
 import partyPopperImg from '../assets/party-popper.png';
 import partyPopperFlipImg from '../assets/party-popper-flip.png';
