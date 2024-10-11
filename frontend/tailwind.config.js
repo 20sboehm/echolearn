@@ -48,6 +48,7 @@ export default {
 				elDarkGray: '#666',
 				elBlack: '#9f9f9f',
 				elRed: '#D2042D',
+				elLavender: '#DBD3EB', // Sidebar Light mode Highlight
 				elHLT: '#00000010', // Highlight
 				elStrongHLT: '#00000020', // Strong highlight
 

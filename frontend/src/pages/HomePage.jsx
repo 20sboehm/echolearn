@@ -15,7 +15,7 @@ function HomePage() {
         <SideBar onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
         <div className="flex flex-col flex-grow mt-10 overflow-x-auto items-center">
           <div className="mx-auto">
-            <h1 className="font-bold text-[2rem] mb-6 border-b border-eMedGray">Today's Task List</h1>
+            <h1 className="font-bold text-[2rem] mb-6 text-elDark border-b border-elDarkGray dark:text-edWhite dark:border-edMedGray">Today's Task List</h1>
             <TaskList />
           </div>
         </div>
@@ -53,7 +53,7 @@ function TaskList() {
     return (
       <div className="text-2xl text-left border border-eMedGray rounded-md">
         <ul className="w-[80vw] sm:[75vw] md:w-[50vw] text-xs sm:text-sm lg:text-xl">
-          <li className="flex text-eWhite font-semibold border-eGray px-2 py-3 rounded-t-lg bg-eDark">
+          <li className="flex font-semibold border-eGray px-2 py-3 rounded-t-lg text-elCloudWhite bg-elLightBlue dark:bg-edDark dark:text-edWhite">
             <div className="w-[45%]">Deck</div>
             <div className="w-[15%]">New</div>
             <div className="w-[15%]">Review</div>
@@ -78,7 +78,7 @@ function DeckRow({ deck, cards }) {
   }
 
   return (
-    <li className="flex text-eWhite px-2 py-2 hover:bg-eHLT border-eMedGray border-t">
+    <li className="flex px-2 py-2 text-elDark hover:bg-elStrongHLT dark:text-edWhite dark:hover:bg-edHLT dark:border-edMedGray border-t">
       <div className="flex items-center w-[45%]">
         <Link to={`/decks/${deck.deck_id}`} className="hover:text-eBlue hover:border-eBlue">{deck.name}</Link>
       </div>
@@ -86,11 +86,11 @@ function DeckRow({ deck, cards }) {
       <div className="flex items-center w-[15%]">{reviewCardsCount}</div>
       <div className="flex justify-center items-center w-[15%]">
         <Link to={`/review/${deck.deck_id}`} className="block rounded-sm sm:rounded-lg border-2 ml-8 mr-4 px-1 py-0.5 sm:px-3 sm:py-1 text-center font-medium active:scale-[0.97]
-                  bg-eDarker text-eBlue border-eBlue hover:border-eWhite hover:text-eWhite">
+                  text-elDark border-elDarkGray hover:border-elLightBlue hover:text-elLightBlue dark:bg-edDarker dark:text-edBlue dark:border-edBlue dark:hover:border-edWhite dark:hover:text-edWhite">
           Review
         </Link>
         <Link to={`/review/${deck.deck_id}?studyAll=true`} className="block rounded-sm sm:rounded-lg border-2 px-1 py-0.5 sm:px-3 sm:py-1 text-center font-medium active:scale-[0.97]
-                  bg-eDarker text-eBlue border-eBlue hover:border-eWhite hover:text-eWhite">
+                  text-elDark border-elDarkGray hover:border-elLightBlue hover:text-elLightBlue dark:bg-edDarker dark:text-edBlue dark:border-edBlue dark:hover:border-edWhite dark:hover:text-edWhite">
           ReviewAll
         </Link>
       </div>

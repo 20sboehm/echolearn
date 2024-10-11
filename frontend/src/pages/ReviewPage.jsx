@@ -15,7 +15,7 @@ import "./ReviewPage.css";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 // Two layers in order to maintain border rounding with active scrollbar
-const cardOuterCSS = "bg-white rounded-md overflow-hidden"
+const cardOuterCSS = "border border-elDarkGray bg-white rounded-md overflow-hidden"
 const cardInnerCSS = "h-[30vh] px-4 py-2 text-black flex flex-col items-center overflow-x-hidden overflow-y-auto text-[1.4em] py-4"
 
 function ReviewPage() {
