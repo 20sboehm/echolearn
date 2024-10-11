@@ -120,7 +120,7 @@ function ProfilePage() {
     const newLightMode = !lightMode;
     setLightMode(newLightMode);
     console.log(lightMode);
-    
+
     if (newLightMode == false) {
       document.documentElement.classList.add('dark');
     } else {

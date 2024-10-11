@@ -47,18 +47,18 @@ function ReviewPage() {
     {
       onSuccess: (data) => {
         setAnimation(data?.flip_mode ?? true);  // Set flip after successful data fetch
-        if (data?.flip_mode == false){
+        if (data?.flip_mode == false) {
           setCurrImage(set)
         }
       }
     }
   );
-  
+
   if (loading) {
     return <LoadingSpinner />;
   }
-  
-  
+
+
   const switchAnimation = () => {
     setCurrImage((prev) =>
       prev === set ? card : set
@@ -149,12 +149,12 @@ function ReviewPage() {
       <div className="flex w-full h-full">
         <SideBar onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
         <div className="rounded-lg mt-[2%] flex flex-col flex-grow min-w-[16rem] mx-auto overflow-x-auto">
-          <div className="flex mx-auto items-center border-b pb-[1rem] w-[40vw]">
-            <Link to={`/decks/${deckId}`} className="rounded-lg border border-transparent px-10 py-2 text-center
-              font-semibold bg-white text-black hover:border-black active:scale-[0.97] active:bg-[#333] 
-              active:border-[#555]">back</Link>
-            <h2 className="text-[2em] mx-auto">{reviews.deck_name}</h2>
-            <button className="border w-[12%] ml-auto" onClick={switchAnimation}>
+          <div className="flex mx-auto items-center border-b border-black dark:border-edWhite pb-[1rem] w-[40vw]">
+            <Link to={`/decks/${deckId}`} className="rounded-lg border border-black hover:border-elMedGray hover:text-elMedGray 
+              dark:border-transparent dark:hover:border-black dark:hover:text-black px-10 py-2 text-center
+              font-semibold dark:bg-white text-black active:scale-[0.97] active:border-[#555]">back</Link>
+            <h2 className="text-[2em] text-elDark dark:text-edWhite mx-auto">{reviews.deck_name}</h2>
+            <button className="border border-black w-[12%] ml-auto" onClick={switchAnimation}>
               <img src={currImage}></img>
             </button>
           </div>
@@ -176,11 +176,11 @@ function ReviewPage() {
   );
 }
 
-function QuestionCard({ card }) {
+function QuestionCard({ card, setShowAnswer }) {
   if (card) {
     return (
       <div className={`mt-8 ${cardOuterCSS}`}>
-        <div className={`${cardInnerCSS}`} style={{ scrollbarGutter: 'stable both-edges' }}>
+        <div className={`${cardInnerCSS}`} onClick={() => setShowAnswer(true)} style={{ scrollbarGutter: 'stable both-edges' }}>
           <div dangerouslySetInnerHTML={{ __html: card.question }}></div>
           {ReactPlayer.canPlay(card.questionvideolink) && (
             <ReactPlayer
@@ -314,20 +314,20 @@ function ShowAnswerButtons({ card, showAnswer, setShowAnswer, updateReviewedCard
   return (
     <div className="flex-grow">
       <div className="flex justify-center mt-8 mb-8">
-        {!showAnswer && <button className="border rounded-md w-[20%] min-w-[16rem]" onClick={changeShowAnswer}>Reveal Answer</button>}
+        {!showAnswer && <button className="border border-black text-elDark dark:border-edWhite dark:text-edWhite rounded-md w-[20%] min-w-[16rem]" onClick={changeShowAnswer}>Reveal Answer</button>}
         {
           showAnswer && (
             <div className="flex justify-center flex-wrap">
-              <button className="rounded-md w-24 px-4 mr-4 text-black bg-red-600 hover:bg-red-700" onClick={() => updateReviewedCard(0, getNextReviewTime(1), card, setFlip, false)}>Again <br />
+              <button className="rounded-md w-24 px-4 mr-4 border border-black text-black bg-red-600 hover:bg-red-700" onClick={() => updateReviewedCard(0, getNextReviewTime(1), card, setFlip, false)}>Again <br />
                 {formatTimeDifference(now.getTime(), getNextReviewTime(1))}</button>
 
-              <button className="rounded-md w-24 px-4 mr-4 text-black bg-yellow-400 hover:bg-yellow-500" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(2), card, setFlip, true)}>Hard <br />
+              <button className="rounded-md w-24 px-4 mr-4 border border-black text-black bg-yellow-400 hover:bg-yellow-500" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(2), card, setFlip, true)}>Hard <br />
                 {formatTimeDifference(now.getTime(), getNextReviewTime(2))}</button>
 
-              <button className="rounded-md w-24 px-4 mr-4 text-black bg-green-700 hover:bg-green-800" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(3), card, setFlip, true)}>Good <br />
+              <button className="rounded-md w-24 px-4 mr-4 border border-black text-black bg-green-700 hover:bg-green-800" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(3), card, setFlip, true)}>Good <br />
                 {formatTimeDifference(now.getTime(), getNextReviewTime(3))}</button>
 
-              <button className="rounded-md w-24 px-4 text-black bg-green-400 hover:bg-green-500" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(4), card, setFlip, true)}>Easy <br />
+              <button className="rounded-md w-24 px-4 border border-black text-black bg-green-400 hover:bg-green-500" onClick={() => updateReviewedCard(card.bucket + 1, getNextReviewTime(4), card, setFlip, true)}>Easy <br />
                 {formatTimeDifference(now.getTime(), getNextReviewTime(4))}</button>
             </div>
           )
@@ -342,9 +342,9 @@ function FinishView(deckId) {
     <div className="flex flex-row justify-center items-center mt-[10vh]">
       <img className="w-40 h-40 mt-[-10vh]" src={partyPopperFlipImg} alt="Party Popper" />
       <div className="flex flex-col justify-center items-center mx-4">
-        <h3 className="h-[25vh] flex justify-center items-center w-full border-black bg-white rounded-md p-5 text-2xl text-black my-4">You have studied all the cards in this deck</h3>
+        <h3 className="h-[25vh] flex justify-center items-center w-full border border-black bg-white rounded-md p-5 text-2xl text-black my-4">You have studied all the cards in this deck</h3>
         <Link to={`/decks/${deckId.deckId}`}>
-          <button className="border rounded-md px-2 py-1">Back to deck</button>
+          <button className="border border-black text-elDark hover:border-elLightBlue hover:text-elLightBlue dark:border-edWhite dark:text-edWhite dark:hover:border-edGray dark:hover:text-edGray rounded-md px-2 py-1">Back to deck</button>
         </Link>
       </div>
       <img className="w-40 h-40 mt-[-10vh]" src={partyPopperImg} alt="Party Popper" />
@@ -372,7 +372,7 @@ function ReviewCard({ card, showAnswer, setShowAnswer, updateReviewedCard, chang
       <div className="flex flex-col items-center">
         <div className={`flex flex-col items-center h-auto w-[35vw] min-w-[16rem] mx-auto`}>
           <div className="w-full">
-            {!changeAnimation && (<QuestionCard card={card}></QuestionCard>)}
+            {!changeAnimation && (<QuestionCard card={card} setShowAnswer={setShowAnswer}></QuestionCard>)}
             {!changeAnimation && (<AnswerCard card={card} showAnswer={showAnswer}></AnswerCard>)}
             {changeAnimation && (<FlashCard card={card} setShowAnswer={setShowAnswer} flip={flip} setFlip={setFlip}></FlashCard>)}
           </div>

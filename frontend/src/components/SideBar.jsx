@@ -18,13 +18,21 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
   const [folderStates, setFolderStates] = useState({});
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const folderRef = useRef(null);
+  const buttonRef = useRef(null);
+  const popupRef = useRef(null);
 
   // Click outside handler to unselect the folder or deck
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (folderRef.current && !folderRef.current.contains(event.target)) {
-        // Click is outside the sidebar, unselect the item
+      // Check if the clicked element is inside any of the specified elements
+      const isInsideFolder = folderRef.current && folderRef.current.contains(event.target);
+      const isInsideButtons = buttonRef.current && buttonRef.current.contains(event.target);
+      const isInsidePopup = popupRef.current && popupRef.current.contains(event.target);
+
+      // Only unselect if the click is outside of all specified elements
+      if (!isInsideFolder && !isInsideButtons && !isInsidePopup) {
         setSelected(null);
+        setContextMenu(null);
       }
     };
 
@@ -84,13 +92,13 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
     {
       onSuccess: (data) => {
         setSidebarOpen(data?.sidebar_open);
-        if (data?.sidebar_open == false){
+        if (data?.sidebar_open == false) {
           setSidebarWidth(10);
         }
       }
     }
   );
-  
+
   if (loading) {
     return <LoadingSpinner />;
   }
@@ -272,7 +280,7 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
         resizeHandles={['e']}
         minConstraints={[10, Infinity]} // Minimum width
         maxConstraints={[1200, Infinity]} // Maximum width
-        className="bg-elGray dark:bg-edDark border-r border-edDarkGray group"
+        className="h-full bg-elGray dark:bg-edDark border-r border-edDarkGray group"
         style={{ overflow: 'hidden' }}
         onResize={handleResize}
         handle={<div className="absolute top-0 right-0 h-full w-2 cursor-default hover:cursor-ew-resize bg-transparent hover:bg-edBlue z-10 transition duration-200" />}
@@ -280,7 +288,7 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
         <div className="h-[92vh] overflow-y-auto p-2">
           <div className='flex justify-between border-b border-elDark dark:border-edGray'>
             <h2 className='font-bold text-xl text-elDark dark:text-edWhite whitespace-nowrap'>Deck Library</h2>
-            <div className='flex items-center'>
+            <div ref={buttonRef} className='flex items-center'>
               <button onClick={() => buttonCreate('deck')} className='hover:bg-elLavender dark:hover:bg-eStrongHLT mr-1 rounded-md'><DeckCreateIcon /></button>
               <button onClick={() => buttonCreate('folder')} className='hover:bg-elLavender dark:hover:bg-eStrongHLT mr-1 rounded-md'><FolderCreateIcon /></button>
               <button onClick={handleExpandCollapseAll} className='hover:bg-elLavender dark:hover:bg-eStrongHLT rounded-md'>
@@ -291,7 +299,7 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
           {sidebarData && sidebarData.folders ? (
             sidebarData.folders.length > 0 ? (
               sidebarData.folders.map((folder, index) => (
-                <Folder key={index} folder={folder} onRightClick={handleRightClick} folderStates={folderStates} toggleFolder={toggleFolder} setContextMenu={setContextMenu} selected={selected} setSelected={setSelected} folderRef={folderRef}/>
+                <Folder key={index} folder={folder} onRightClick={handleRightClick} folderStates={folderStates} toggleFolder={toggleFolder} setContextMenu={setContextMenu} selected={selected} setSelected={setSelected} folderRef={folderRef} />
               ))
             ) : (
               <p>You have no decks!</p>
@@ -305,6 +313,7 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
 
       {contextMenu && (
         <div
+          ref={popupRef}
           className="absolute bg-edDarker text-eWhite p-2 z-[9999] flex flex-col rounded-md border border-eGray"
           style={{
             top: `${contextMenu.y}px`,
