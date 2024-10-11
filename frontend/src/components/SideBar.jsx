@@ -272,14 +272,14 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
         resizeHandles={['e']}
         minConstraints={[10, Infinity]} // Minimum width
         maxConstraints={[1200, Infinity]} // Maximum width
-        className="bg-eDark border-r border-eDarkGray group"
+        className="bg-elGray dark:bg-edDark border-r border-eDarkGray group"
         style={{ overflow: 'hidden' }}
         onResize={handleResize}
-        handle={<div className="absolute top-0 right-0 h-full w-1 cursor-default hover:cursor-ew-resize bg-transparent hover:bg-eBlue z-10 transition duration-200" />}
+        handle={<div className="absolute top-0 right-0 h-full w-2 cursor-default hover:cursor-ew-resize bg-transparent hover:bg-eBlue z-10 transition duration-200" />}
       >
         <div className="h-[92vh] overflow-y-auto p-2">
-          <div className='flex justify-between border-b border-eGray'>
-            <h2 className='font-bold text-xl text-eWhite whitespace-nowrap'>Deck Library</h2>
+          <div className='flex justify-between border-b border-elDark dark:border-edGray'>
+            <h2 className='font-bold text-xl text-elDark dark:text-edWhite whitespace-nowrap'>Deck Library</h2>
             <div className='flex items-center'>
               <button onClick={() => buttonCreate('deck')} className='hover:bg-eStrongHLT mr-1 rounded-md'><DeckCreateIcon /></button>
               <button onClick={() => buttonCreate('folder')} className='hover:bg-eStrongHLT mr-1 rounded-md'><FolderCreateIcon /></button>
@@ -458,7 +458,7 @@ const Folder = ({ folder, onRightClick, folderStates, toggleFolder, setContextMe
   return (
     <div ref={folderRef} className="mt-2">
       <div onClick={handleLeftClick} onContextMenu={(e) => onRightClick(e, folder)}
-        className={`cursor-pointer text-base text-eWhite flex items-center select-none ${selected === folder ? 'bg-gray-500' : ''}`}>
+        className={`cursor-pointer text-elDark dark:text-edWhite flex items-center select-none ${selected === folder ? 'bg-gray-500' : ''}`}>
         <button onClick={() => { toggleFolder(folder.folder_id); }}>
           <ChevronIcon isOpen={folderStates[folder.folder_id]} />
         </button>
@@ -467,7 +467,7 @@ const Folder = ({ folder, onRightClick, folderStates, toggleFolder, setContextMe
       {folderStates[folder.folder_id] && (
         <div className="ml-2 border-l border-eGray">
           {folder.decks.map((deck, index) => (
-            <div key={index} className="text-eWhite flex items-center select-none text-base ml-2 mt-2 hover:text-eBlue" onContextMenu={(e) => onRightClick(e, deck)}>
+            <div key={index} className="text-elDark dark:text-edWhite flex items-center select-none text-base ml-2 mt-2 hover:text-eBlue" onContextMenu={(e) => onRightClick(e, deck)}>
               <Link to={`/decks/${deck.deck_id}`}>
                 <p className="overflow-x-auto whitespace-nowrap">{deck.name}</p>
               </Link>
