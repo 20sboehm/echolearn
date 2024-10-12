@@ -19,11 +19,16 @@ def get_friends(request):
 # 删除好友
 @friends_router.delete("/{friend_id}/delete", response={204: None, 404: str}, auth=JWTAuth())
 def remove_friend(request, friend_id: int):
-    print("Delet Friends")
+    print("Delete Friends")
     try:
-        # 查找要删除的好友关系
+        # 删除当前用户的好友关系
         friendship = Friendship.objects.get(user=request.user, friend_id=friend_id)
         friendship.delete()
+        
+        # 删除对方的好友关系
+        reverse_friendship = Friendship.objects.get(user_id=friend_id, friend=request.user)
+        reverse_friendship.delete()
+
         return 204, None
     except Friendship.DoesNotExist:
         return 404, "Friendship not found"
@@ -48,6 +53,7 @@ def add_friend(request, friend_id: int):
             return 400, "You are already friends"
         # 创建好友关系
         Friendship.objects.create(user=request.user, friend=friend)
+        Friendship.objects.create(user=friend, friend=request.user)  # 双向好友关系
         return 200, None
     except CustomUser.DoesNotExist:
         return 404, "User not found"
