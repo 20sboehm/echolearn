@@ -86,61 +86,73 @@ function ProfilePage() {
 
   return (
     <div className="ml-0 w-3/4 text-left">
-      <h1 className="text-2xl font-bold">User Profile</h1>
-      <p className='eWhite'><strong>Username:</strong> {profile.username}</p>
-      <p className='eWhite'><strong>Email:</strong> {profile.email}</p>
+      <div className="ml-0 w-3/4 text-left flex flex-row justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">User Profile</h1>
+          <p className='eWhite'><strong>Username:</strong> {profile.username}</p>
+          <p className='eWhite'><strong>Email:</strong> {profile.email}</p>
 
-      {/* Age */}
-      <p className='eWhite'>
-        <strong>Age:</strong>
-        {isEditing ? (
-          <input
-            type="number"
-            value={editableAge}
-            onChange={(e) => setEditableAge(Number(e.target.value))}
-            className="border rounded bg-eDarker ml-1"
-          />
-        ) : (
-          ` ${profile.age}`
-        )}
-      </p>
+          {/* Age */}
+          <p className='eWhite'>
+            <strong>Age:</strong>
+            {isEditing ? (
+              <input
+                type="number"
+                value={editableAge}
+                onChange={(e) => setEditableAge(Number(e.target.value))}
+                className="border rounded bg-eDarker ml-1"
+              />
+            ) : (
+              ` ${profile.age}`
+            )}
+          </p>
 
-      {/* Country */}
-      <p className='eWhite'>
-        <strong>Country:</strong>
-        {isEditing ? (
-          <select
-            value={editableCountry}
-            onChange={(e) => setEditableCountry(e.target.value)}
-            className="border rounded bg-eDarker ml-1"
-          >
-            {countries.map((country, index) => (
-              <option key={index} value={country}>
-                {country}
-              </option>
-            ))}
-          </select>
-        ) : (
-          ` ${profile.country}`
-        )}
-      </p>
+          {/* Country */}
+          <p className='eWhite'>
+            <strong>Country:</strong>
+            {isEditing ? (
+              <select
+                value={editableCountry}
+                onChange={(e) => setEditableCountry(e.target.value)}
+                className="border rounded bg-eDarker ml-1"
+              >
+                {countries.map((country, index) => (
+                  <option key={index} value={country}>
+                    {country}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              ` ${profile.country}`
+            )}
+          </p>
 
-      {/* Edit and Save button */}
-      {isEditing ? (
-        <button
-          onClick={handleSaveClick}
-          className="mt-2 border px-4 py-2 rounded bg-green-500 text-white hover:bg-green-600"
-        >
-          Save
-        </button>
-      ) : (
-        <button
-          onClick={handleEditClick}
-          className="mt-2 border px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600"
-        >
-          Edit
-        </button>
-      )}
+          {/* Edit and Save button */}
+          {isEditing ? (
+            <button
+              onClick={handleSaveClick}
+              className="mt-2 border px-4 py-2 rounded bg-green-500 text-white hover:bg-green-600"
+            >
+              Save
+            </button>
+          ) : (
+            <button
+              onClick={handleEditClick}
+              className="mt-2 border px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600"
+            >
+              Edit
+            </button>
+          )}
+        </div>
+
+        <div>
+          <Link to="/friends">
+            <button className="mt-2 border px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 ml-auto">
+              Friends
+            </button>
+          </Link>
+        </div>
+      </div>
 
       {/* Display Folders and Decks */}
       <div className="mt-8">
@@ -172,11 +184,6 @@ const Folder = ({ folder, onRightClick }) => {
         onContextMenu={(e) => onRightClick(e, folder)}
         className="cursor-pointer eWhite flex"
       >
-        {/* <img
-          src={openFolder ? folderOpenImg : folderCloseImg}
-          alt={openFolder ? "Open folder" : "Closed folder"}
-          className="w-6 h-6 ml-2 mr-2"
-        /> */}
         <span className="w-6 h-6 ml-2 mr-2">{openFolder ? "📂" : "📁"}</span>
         <p className="overflow-x-auto">{folder.name}</p>
       </div>

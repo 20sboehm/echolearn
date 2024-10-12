@@ -1,6 +1,6 @@
 from ninja import Schema
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
 from typing import Union
 
 """
@@ -12,6 +12,7 @@ Schemas are used to define the structure of the data that your API endpoints can
 # -----------------------------------------------
 
 class GetUser(Schema):
+    id: int
     username: str
     email: Optional[str] = None
     age: Optional[int] = None
@@ -163,3 +164,16 @@ class FolderInfo(Schema):
 
 class GetSidebar(Schema):
     folders: list[FolderInfo]
+
+# -----------------------------------------------
+# ------------------ Friend list ----------------
+# -----------------------------------------------
+
+class Friend(Schema):
+    username: str
+    email: Optional[str] = None
+    age: Optional[int] = None
+    country: Optional[str] = None
+
+class GetFriends(Schema):
+    friends: List[Friend]
