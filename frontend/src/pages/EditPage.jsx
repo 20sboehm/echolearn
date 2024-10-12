@@ -6,14 +6,20 @@ import { useApi } from "../hooks";
 import LoadingSpinner from "../components/LoadingSpinner";
 import MarkdownPreviewer from "../components/MarkdownPreviewer";
 import { ChevronIcon } from "../components/Icons";
+import { BoldIcon, ItalicIcon, UnderlineIcon } from "../components/Icons";
 
 function EditPage() {
   const api = useApi();
   const navigate = useNavigate();
   const { cardId } = useParams();
 
-  const [questionContent, setQuestionContent] = useState("");
-  const [answerContent, setAnswerContent] = useState("");
+  const questionRef = useRef(null);
+  const answerRef = useRef(null);
+  const [questionText, setQuestionText] = useState("");
+  const [answerText, setAnswerText] = useState("");
+
+  const [questionSelection, setQuestionSelection] = useState({ start: 0, end: 0 }); // Cursor position
+  const [answerSelection, setAnswerSelection] = useState({ start: 0, end: 0 });
 
   const [popupActive, setPopupActive] = useState(false);
   const [popupText, setPopupText] = useState("");
@@ -42,6 +48,70 @@ function EditPage() {
     }, 1500)
   }
 
+  const handleTextEditingButton = (forQuestionBox, type) => {
+    let textarea = null;
+    if (forQuestionBox) {
+      textarea = questionRef.current;
+    } else {
+      textarea = answerRef.current;
+    }
+
+    let text = null;
+    if (forQuestionBox) {
+      text = questionText;
+    } else {
+      text = answerText;
+    }
+
+    let insertionChar = "";
+    let cursorAdjustment = 0;
+    switch (type) {
+      case "bold":
+        insertionChar = "**";
+        cursorAdjustment = 2;
+        break;
+      case "italic":
+        insertionChar = "*";
+        cursorAdjustment = 1;
+        break;
+      case "underline":
+        insertionChar = "__";
+        cursorAdjustment = 2;
+        break;
+    }
+
+    let selStart = textarea.selectionStart;
+    let selEnd = textarea.selectionEnd;
+
+    const firstHalf = text.substring(0, selStart);
+    const selection = text.substring(selStart, selEnd)
+    const secondHalf = text.substring(selEnd);
+
+    let newText = firstHalf + insertionChar + selection + insertionChar + secondHalf;
+
+    if (forQuestionBox) {
+      setQuestionText(newText);
+      setQuestionSelection({ start: selStart + cursorAdjustment, end: selEnd + cursorAdjustment });
+    } else {
+      setAnswerText(newText);
+      setAnswerSelection({ start: selStart + cursorAdjustment, end: selEnd + cursorAdjustment });
+    }
+  }
+
+  useEffect(() => {
+    if (questionRef.current) {
+      questionRef.current.setSelectionRange(questionSelection.start, questionSelection.end);
+      questionRef.current.focus();
+    }
+  }, [questionSelection]);
+
+  useEffect(() => {
+    if (answerRef.current) {
+      answerRef.current.setSelectionRange(answerSelection.start, answerSelection.end);
+      answerRef.current.focus();
+    }
+  }, [answerSelection]);
+
   // Fetch the card data
   const { data: card, isLoading, error } = useQuery({
     queryKey: ["cards", cardId],
@@ -62,8 +132,8 @@ function EditPage() {
   useEffect(() => {
     // Update state when card data is available
     if (card) {
-      setQuestionContent(card.question);
-      setAnswerContent(card.answer);
+      setQuestionText(card.question);
+      setAnswerText(card.answer);
     }
   }, [card]);
 
@@ -86,8 +156,8 @@ function EditPage() {
     e.preventDefault();
 
     const cardData = {
-      question: questionContent,
-      answer: answerContent,
+      question: questionText,
+      answer: answerText,
     }
 
     const response = await api._patch(`/api/cards/${cardId}`, cardData);
@@ -99,11 +169,6 @@ function EditPage() {
     } else {
       console.log("Card updated successfully");
       displayPopup(true);
-
-      // Navigate back to deck page after short delay
-      // setTimeout(() => {
-      //   navigate(`/decks/${card.deck_id}`);
-      // }, 300);
     }
   }
 
@@ -111,27 +176,29 @@ function EditPage() {
     <>
       <div className="flex w-full h-full">
         <Sidebar onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
-        <div className="w-1/2 flex flex-col m-auto">
+        <div className="w-1/2 flex flex-col mx-auto">
           <div className="flex justify-between border-b border-eMedGray mb-4 mt-8 pb-1">
-            <h1 className="text-2xl font-medium">Edit Card</h1>
+            <h1 className="text-lg font-medium">Edit Card</h1>
           </div>
 
           <form onSubmit={handleSubmit}>
             <div className="mb-2 flex flex-col">
-              <TextBox label="Front" content={questionContent} inputHandler={(e) => { setQuestionContent(e.target.value) }} />
+              <TextBox label="Front" reference={questionRef} content={questionText} inputHandler={(e) => { setQuestionText(e.target.value) }}
+                handleTextEditingButton={handleTextEditingButton} forQuestionBox={true} />
             </div>
-            <TextBox label="Back" content={answerContent} inputHandler={(e) => { setAnswerContent(e.target.value) }} />
+            <TextBox label="Back" reference={answerRef} content={answerText} inputHandler={(e) => { setAnswerText(e.target.value) }}
+              handleTextEditingButton={handleTextEditingButton} forQuestionBox={false} />
 
             <DividerLine />
 
             <div className="mb-2 flex flex-col">
-              <TextBoxPreview label="Question Preview" content={questionContent} />
+              <TextBoxPreview label="Question Preview" content={questionText} />
             </div>
-            <TextBoxPreview label="Answer Preview" content={answerContent} />
+            <TextBoxPreview label="Answer Preview" content={answerText} />
 
             <div className="flex flex-col items-center mt-8">
               <SubmitButton>Edit Card</SubmitButton>
-              <button onClick={() => { navigate(`/decks/${card.deck_id}`); }} className="block rounded-sm sm:rounded-lg p-[7px] w-1/3 text-center font-medium
+              <button type="button" onClick={() => { navigate(`/decks/${card.deck_id}`); }} className="block rounded-sm sm:rounded-lg p-[7px] w-1/3 text-center font-medium
               border border-eGray text-eWhite hover:bg-eHLT active:scale-[0.97] mt-2"> Back</button>
             </div>
           </form>
@@ -143,7 +210,7 @@ function EditPage() {
   )
 }
 
-function TextBox({ label, content, inputHandler }) {
+function TextBox({ label, reference, content, inputHandler, handleTextEditingButton, forQuestionBox }) {
   const [textBoxOpen, setTextBoxOpen] = useState(true);
 
   return (
@@ -152,16 +219,34 @@ function TextBox({ label, content, inputHandler }) {
         <ChevronIcon isOpen={textBoxOpen} color="#ccc" />
         <p>{label}</p>
       </button>
+      <div className="bg-eDarker w-full h-8 border-x border-t border-eDarkGray flex items-center pl-2">
+        <TextEditingIcon handleTextEditingButton={handleTextEditingButton} type="bold" forQuestionBox={forQuestionBox} />
+        <TextEditingIcon handleTextEditingButton={handleTextEditingButton} type="italic" forQuestionBox={forQuestionBox} />
+        <TextEditingIcon handleTextEditingButton={handleTextEditingButton} type="underline" forQuestionBox={forQuestionBox} />
+      </div>
       {textBoxOpen && (
-        <textarea value={content} onInput={inputHandler} className="bg-eDarker w-full min-h-20 h-[15vh] p-2 border border-eDarkGray focus:outline-none custom-scrollbar"></textarea>
+        <textarea value={content} ref={reference} onInput={inputHandler} className="bg-eDarker w-full min-h-20 h-[10vh] p-2 border border-eDarkGray focus:outline-none custom-scrollbar"></textarea>
       )}
     </>
   );
 }
 
+function TextEditingIcon({ handleTextEditingButton, type, forQuestionBox }) {
+  switch (type) {
+    case "bold":
+      return <button type='button' onClick={() => { handleTextEditingButton(forQuestionBox, type); }} className='mr-2'><BoldIcon /></button>;
+    case "italic":
+      return <button type='button' onClick={() => { handleTextEditingButton(forQuestionBox, type); }} className='mr-2'><ItalicIcon /></button>;
+    case "underline":
+      return <button type='button' onClick={() => { handleTextEditingButton(forQuestionBox, type); }} className='mr-2'><UnderlineIcon /></button>;
+    default:
+      return null;
+  }
+}
+
 function DividerLine() {
   return (
-    <div className="flex flex-row justify-center items-center my-3 w-full" >
+    <div className="flex flex-row justify-center items-center my-1 w-full" >
       <span className="flex-grow border-b border-eGray h-1"></span>
       <p className="self-center text-eGray mx-2">Preview</p>
       <span className="flex-grow border-b border-eGray h-1"></span>
