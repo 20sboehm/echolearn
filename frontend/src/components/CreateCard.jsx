@@ -34,7 +34,9 @@ function CreateCard() {
 
   const [questionisListening, setquestionIsListening] = useState(false);
   const [answerisListening, setanswerIsListening] = useState(false);
-  
+
+  const [isQuestionUpdating, setQuestionIsUpdating] = useState(false);
+  const [isAnswerUpdating, setAnswerIsUpdating] = useState(false);
   const handleAnswerRequirement = (value) => {
     if (Answer_requirement === value) {
       setAnswer_requirement("");
@@ -79,30 +81,49 @@ function CreateCard() {
     setAnswer(safeHtml);
   };
 
-  const handleQuestionInput = (e) => {
+  const handleQuestionInput = async(e) => {
     const newText = e.currentTarget.innerHTML;
     setNormalQuestion(e.currentTarget.textContent)
     const safeHtml = sanitizeHtml(newText, {
       allowedTags: sanitizeHtml.defaults.allowedTags.concat(['b', 'i', 'u', 'strong', 'em']),  // Allow basic formatting tags
       allowedAttributes: {}  // Restrict all attributes to prevent potential XSS vectors
     });
-    setQuestion(safeHtml);
+    await new Promise(resolve => {
+      setQuestion(safeHtml); // Asynchronously update the question state
+      setTimeout(resolve, 0); // Resolve the promise on the next tick, allowing state to update
+    });
   };
 
-  const updateQuestionWithTranscript = (newTranscript) => {
-    // Append new transcript to the existing content
-    const combinedText = question + ' ' + newTranscript;
+  const updateQuestionWithTranscript = async (newTranscript) => {
+    setQuestionIsUpdating(true); // Indicate an update is in progress
 
-    setNormalQuestion(combinedText);
+    const combinedText = question + ' ' + newTranscript;
     const safeHtml = sanitizeHtml(combinedText, {
       allowedTags: sanitizeHtml.defaults.allowedTags.concat(['b', 'i', 'u', 'strong', 'em']),
       allowedAttributes: {}
     });
-    setQuestion(safeHtml);
-    document.getElementById("QuestionDiv").innerHTML = safeHtml;
-  };
 
-  const updateAnswerWithTranscript = (newTranscript) => {
+    await new Promise(resolve => {
+      setQuestion(safeHtml); // Asynchronously update the question state
+      setTimeout(resolve, 0); // Resolve the promise on the next tick, allowing state to update
+    });
+
+    document.getElementById("QuestionDiv").innerHTML = safeHtml; // Update the DOM directly as well
+    setQuestionIsUpdating(false); // Update is complete
+};
+
+  useEffect(() => {
+    if (isQuestionUpdating) {
+        const questionDiv = document.getElementById("QuestionDiv");
+        if (questionDiv) {
+            questionDiv.innerHTML = question;
+        }
+        setQuestionIsUpdating(false); // Reset updating flag after update
+    }
+}, [question, isQuestionUpdating]);
+
+  const updateAnswerWithTranscript = async (newTranscript) => {
+    setAnswerIsUpdating(true);
     // Append new transcript to the existing content
     const combinedText = answer + ' ' + newTranscript;
 
@@ -111,10 +132,22 @@ function CreateCard() {
       allowedTags: sanitizeHtml.defaults.allowedTags.concat(['b', 'i', 'u', 'strong', 'em']),
       allowedAttributes: {}
     });
-    setAnswer(safeHtml);
+    await new Promise(resolve => {
+      setAnswer(safeHtml); 
+      setTimeout(resolve, 0); 
+    });
     document.getElementById("AnswerDiv").innerHTML = safeHtml;
+    setAnswerIsUpdating(false); // Update is complete
   };
-
+  useEffect(() => {
+    if (isAnswerUpdating) {
+        const answerDiv = document.getElementById("AnswerDiv");
+        if (answerDiv) {
+          answerDiv.innerHTML = question;
+        }
+        setAnswerIsUpdating(false); // Reset updating flag after update
+    }
+}, [answer, isAnswerUpdating]);
 
   function popupDetails(popupMessage, popupColor) {
     setShowPopup(true);
@@ -180,82 +213,69 @@ function CreateCard() {
 
 
   useEffect(() => {
-    //check if support speech input and careate speech recognition object
-    const speechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new speechRecognition();
-
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
     recognition.continuous = true;
     recognition.interimResults = true;
     recognition.lang = 'en-US';
 
-    recognition.onstart = () => {
-      console.log('Voice recognition activated. Start speaking.');
-    };
-
     recognition.onresult = (event) => {
-      // Check if the current transcript is final
-      const current = event.resultIndex;
-      const transcript = event.results[current][0].transcript;
-      if (event.results[current].isFinal) {
-        updateQuestionWithTranscript(transcript + ' '); // Add a space for separation
-      } else {
-        console.log("Interim result: " + transcript);
+        const current = event.resultIndex;
+        const transcript = event.results[current][0].transcript;
+        if (event.results[current].isFinal) {
+            recognition.stop(); // Stop recognition while processing
+            updateQuestionWithTranscript(transcript + ' ').then(() => {
+              if (questionisListening) {
+                recognition.start(); // Restart recognition after update
+              }
+            });
+        }else {
+          // Update in real-time as the user speaks
+          setQuestion(prev => `${prev}${transcript}`);
       }
     };
 
-    recognition.onend = () => {
-      console.log('Voice recognition stopped.');
-    };
+    recognition.onstart = () => console.log('Voice recognition activated. Start speaking.');
+    recognition.onend = () => console.log('Voice recognition stopped.');
 
-    if (questionisListening) {
-      recognition.start();
-    } else {
-      recognition.stop();
+    if (!isQuestionUpdating && questionisListening) {
+        recognition.start();
     }
 
     return () => {
-      recognition.stop();
+        recognition.stop(); // Ensure recognition is stopped on cleanup
     };
-  }, [questionisListening]);
+}, [questionisListening, isQuestionUpdating]);
 
-  useEffect(() => {
-    //check if support speech input and careate speech recognition object
-    const speechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new speechRecognition();
+useEffect(() => {
+  const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+  recognition.continuous = true;
+  recognition.interimResults = true;
+  recognition.lang = 'en-US';
 
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.lang = 'en-US';
-
-    recognition.onstart = () => {
-      console.log('Voice recognition activated. Start speaking.');
-    };
-
-    recognition.onresult = (event) => {
-      // Check if the current transcript is final
+  recognition.onresult = (event) => {
       const current = event.resultIndex;
       const transcript = event.results[current][0].transcript;
       if (event.results[current].isFinal) {
-        updateAnswerWithTranscript(transcript + ' '); // Add a space for separation
-      } else {
-        console.log("Interim result: " + transcript);
+          recognition.stop(); // Stop recognition while processing
+          updateAnswerWithTranscript(transcript + ' ').then(() => {
+            if (answerisListening) {
+              recognition.start(); // Restart recognition after update
+            }
+          });
       }
-    };
+  };
 
-    recognition.onend = () => {
-      console.log('Voice recognition stopped.');
-    };
+  recognition.onstart = () => console.log('Voice recognition activated. Start speaking.');
+  recognition.onend = () => console.log('Voice recognition stopped.');
 
-    if (answerisListening) {
+  if (!isAnswerUpdating && answerisListening) {
       recognition.start();
-    } else {
-      recognition.stop();
-    }
+  }
 
-    return () => {
-      recognition.stop();
-    };
-  }, [answerisListening]);
+  return () => {
+      recognition.stop(); // Ensure recognition is stopped on cleanup
+  };
+}, [answerisListening, isAnswerUpdating]);
 
 
   if (decks) {
