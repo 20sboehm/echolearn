@@ -76,6 +76,7 @@ function DeckPage({ publicAccess = false }) {
   let reviewedCardsCount = 0;
   // Check if 'cards' property exists and is an array
   if (deckCards.cards && Array.isArray(deckCards.cards)) {
+    
     reviewedCardsCount = deckCards.cards.filter(card => card.next_review && Date.parse(card.next_review) >= Date.now()).length;
   }
 
@@ -251,26 +252,24 @@ function DeckPage({ publicAccess = false }) {
     outputVoice.lang = "en";
     speechSynthesis.speak(outputVoice);
   };
-  useEffect(() => {
+
     const fetchRatingData = async () => {
       try {
         const response = await api._get(`/api/decks/${deckId}/ratedOrnot`);
-        if (response.ok) {  // Ensure the HTTP response is 200 OK
-          const json = await response.json();
-          console.log(json);
-          setRateresult(json === true);  // Directly use the boolean value from json
-        } else {
-          throw new Error('Failed to fetch data');
+        const json = await response.json();
+        console.log(json)
+        if(json === true){
+          setRateresult(true)
+        }
+        else{
+          setRateresult(false)
         }
       } catch (error) {
         console.error('Error fetching data:', error);
-        setRateresult(false);  // Consider setting a default or handling error states more clearly
       }
     };
-  
-    // Call the fetchData function
     fetchRatingData();
-  }, [deckId, api]);  // Include deckId and api in the dependencies if they might change
+
   const submitRating = async () => {
     const response = await api._post(`/api/decks/${deckId}/ratings`);
     const data = await response.json();
