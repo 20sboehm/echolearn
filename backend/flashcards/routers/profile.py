@@ -14,7 +14,10 @@ def get_profile(request):
         "username": user.username,
         "email": user.email,
         "age": user.age,
-        "country": user.country
+        "country": user.country,
+        "flip_mode": user.flip_mode,
+        "sidebar_open": user.sidebar_open,
+        "light_mode": user.light_mode,
     }
 
 # Edit profile
@@ -27,7 +30,16 @@ def update_profile(request, data: UpdateUser):
     
     if data.country is not None:
         user.country = data.country if data.country != "" else None
+
+    if data.flip_mode is not None:
+        user.flip_mode = data.flip_mode
     
+    if data.sidebar_open is not None:
+        user.sidebar_open = data.sidebar_open
+
+    if data.light_mode is not None:
+        user.light_mode = data.light_mode
+
     user.save()
     return user
 

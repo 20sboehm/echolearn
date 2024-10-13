@@ -7,13 +7,17 @@ import decksImg from "../assets/decks.png";
 
 function ProfilePage() {
   const { _get, _patch } = api();
-  const [profile, setProfile] = useState({ username: '', age: '', country: '', email: '' });
+  const [profile, setProfile] = useState({ username: '', age: '', country: '', email: '', flip_mode: true, sidebar_open: false, light_mode: false });
   const [folders, setFolders] = useState([]);
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editableAge, setEditableAge] = useState('');
   const [editableCountry, setEditableCountry] = useState('');
+  const [flipOrSet, setFlipOrSet] = useState(true);
+  const [sidebarClosed, setSidebarClosed] = useState(false);
+  const [lightMode, setLightMode] = useState(false);
   const [RatedDeck, setRatedDeck] = useState([]);
+
   const countries = [
     "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia",
     "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin",
@@ -46,6 +50,13 @@ function ProfilePage() {
         setProfile(data);
         setEditableAge(data.age);
         setEditableCountry(data.country);
+        setFlipOrSet(data.flip_mode);
+        setSidebarClosed(data.sidebar_open);
+        setLightMode(data.light_mode);
+
+        if (!data.light_mode) {
+          document.documentElement.classList.add('dark');
+        }
 
         const foldersResponse = await _get('/api/profile/folders_decks');
         const foldersData = await foldersResponse.json();
@@ -88,74 +99,137 @@ function ProfilePage() {
     return <p>{error}</p>;
   }
 
+
+  const handleFlipOrSetChange = async () => {
+    const newFlipOrSet = !flipOrSet;
+    setFlipOrSet(newFlipOrSet);
+    try {
+      const response = await _patch('/api/profile/me', { flip_mode: newFlipOrSet });
+    } catch (error) {
+      setError('Failed to update flip or set setting');
+    }
+  };
+
+  const handleSidebarChange = async () => {
+    const newSidebarClosed = !sidebarClosed;
+    setSidebarClosed(newSidebarClosed);
+    try {
+      const response = await _patch('/api/profile/me', { sidebar_open: newSidebarClosed });
+    } catch (error) {
+      setError('Failed to update sidebar closed setting');
+    }
+  };
+
+  const handleLightMode = async () => {
+    const newLightMode = !lightMode;
+    setLightMode(newLightMode);
+
+    if (newLightMode == false) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+
+    try {
+      const response = await _patch('/api/profile/me', { light_mode: newLightMode });
+    } catch (error) {
+      setError('Failed to update sidebar closed setting');
+    }
+  };
+
   return (
-    <div className="ml-0 w-3/4 text-left">
-      <h1 className="text-2xl font-bold">User Profile</h1>
-      <p className='eWhite'><strong>Username:</strong> {profile.username}</p>
-      <p className='eWhite'><strong>Email:</strong> {profile.email}</p>
+    <div className="ml-0 w-3/4 text-left flex mt-4">
+      {/* Left column: User Profile Information */}
+      <div className="w-1/2">
+        <h1 className="text-2xl font-bold text-elDark dark:text-edWhite">User Profile</h1>
+        <p className='text-elDark dark:text-edWhite'><strong>Username:</strong> {profile.username}</p>
+        <p className='text-elDark dark:text-edWhite'><strong>Email:</strong> {profile.email}</p>
 
-      {/* Age */}
-      <p className='eWhite'>
-        <strong>Age:</strong>
+        {/* Age */}
+        <p className='text-elDark dark:text-edWhite'>
+          <strong>Age:</strong>
+          {isEditing ? (
+            <input
+              type="number"
+              value={editableAge}
+              onChange={(e) => setEditableAge(Number(e.target.value))}
+              className="border border-black rounded dark:border-edWhite dark:bg-edDarker ml-1"
+            />
+          ) : (
+            ` ${profile.age}`
+          )}
+        </p>
+
+        {/* Country */}
+        <p className='text-elDark dark:text-edWhite'>
+          <strong>Country:</strong>
+          {isEditing ? (
+            <select
+              value={editableCountry}
+              onChange={(e) => setEditableCountry(e.target.value)}
+              className="border border-black rounded dark:border-edWhite dark:bg-edDarker ml-1"
+            >
+              {countries.map((country, index) => (
+                <option key={index} value={country}>
+                  {country}
+                </option>
+              ))}
+            </select>
+          ) : (
+            ` ${profile.country}`
+          )}
+        </p>
+
+        {/* Edit and Save button */}
         {isEditing ? (
-          <input
-            type="number"
-            value={editableAge}
-            onChange={(e) => setEditableAge(Number(e.target.value))}
-            className="border rounded bg-eDarker ml-1"
-          />
+          <button onClick={handleSaveClick} className="mt-2 border px-4 py-2 rounded bg-green-500 text-white hover:bg-green-600">
+            Save
+          </button>
         ) : (
-          ` ${profile.age}`
+          <button onClick={handleEditClick} className="mt-2 border px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600">
+            Edit
+          </button>
         )}
-      </p>
 
-      {/* Country */}
-      <p className='eWhite'>
-        <strong>Country:</strong>
-        {isEditing ? (
-          <select
-            value={editableCountry}
-            onChange={(e) => setEditableCountry(e.target.value)}
-            className="border rounded bg-eDarker ml-1"
-          >
-            {countries.map((country, index) => (
-              <option key={index} value={country}>
-                {country}
-              </option>
-            ))}
-          </select>
-        ) : (
-          ` ${profile.country}`
-        )}
-      </p>
+        {/* Display Folders and Decks */}
+        <div className="mt-8">
+          <h2 className="text-xl font-bold text-elDark dark:text-edWhite">Folders and Decks</h2>
+          {folders.length > 0 ? (
+            folders.map((folder) => <Folder key={folder.folder_id} folder={folder} />)
+          ) : (
+            <p>No folders or decks available</p>
+          )}
+        </div>
+      </div>
 
-      {/* Edit and Save button */}
-      {isEditing ? (
-        <button
-          onClick={handleSaveClick}
-          className="mt-2 border px-4 py-2 rounded bg-green-500 text-white hover:bg-green-600"
-        >
-          Save
-        </button>
-      ) : (
-        <button
-          onClick={handleEditClick}
-          className="mt-2 border px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600"
-        >
-          Edit
-        </button>
-      )}
+      <div className="w-1/2 pl-10 border border-elDark dark:border-edWhite rounded-lg">
+        <h2 className="text-2xl font-bold text-elDark dark:text-edWhite">Settings</h2>
+        {/* Review Animation */}
+        <ToggleSetting
+          label="Review animation:"
+          leftLabel="Flash card"
+          rightLabel="Question set"
+          value={flipOrSet}
+          onChange={handleFlipOrSetChange}
+        />
 
-      {/* Display Folders and Decks */}
-      <div className="mt-8">
-        <h2 className="text-xl font-bold">Folders and Decks</h2>
-        {folders.length > 0 ? (
-          folders.map((folder) => (
-            <Folder key={folder.folder_id} folder={folder} />
-          ))
-        ) : (
-          <p className='eWhite'>No folders or decks available</p>
-        )}
+        {/* Sidebar default setting */}
+        <ToggleSetting
+          label="Sidebar default state:"
+          leftLabel="Open"
+          rightLabel="Close"
+          value={sidebarClosed}
+          onChange={handleSidebarChange}
+        />
+
+        {/* light mode setting */}
+        <ToggleSetting
+          label="Color theme:"
+          leftLabel="Light mode"
+          rightLabel="Dark mode"
+          value={lightMode}
+          onChange={handleLightMode}
+        />
       </div>
 
       {/* Display Rated Decks */}
@@ -176,6 +250,29 @@ function ProfilePage() {
   );
 }
 
+const ToggleSetting = ({ label, leftLabel, rightLabel, value, onChange }) => {
+  return (
+    <div className="flex flex-col mt-4">
+      <label className="flex items-center">
+        <p className="text-big font-bold text-elDark dark:text-edWhite">{label}</p>
+      </label>
+      <div className="flex items-center mt-2">
+        <span className="mr-4 text-elDark dark:text-edWhite">{leftLabel}</span>
+
+        {/* Toggle Switch */}
+        <div onClick={onChange} className="flex items-center w-12 h-6 rounded-full bg-gray-700 dark:bg-edDarkGray cursor-pointer p-1 transition-colors duration-300">
+          {/* Ball that moves left or right */}
+          <div
+            className={`w-4 h-4 bg-elBlack dark:bg-white rounded-full shadow-md transform transition-transform duration-300 ${value ? 'translate-x-0' : 'translate-x-6'}`}
+          ></div>
+        </div>
+
+        <span className="ml-4 text-elDark dark:text-edWhite">{rightLabel}</span>
+      </div>
+    </div>
+  );
+};
+
 // Folder component to handle folder and nested folders
 const Folder = ({ folder, onRightClick }) => {
   const [openFolder, setOpenFolder] = useState(false);
@@ -185,17 +282,12 @@ const Folder = ({ folder, onRightClick }) => {
   };
 
   return (
-    <div className="mt-2">
+    <div className="mt-2 text-elDark dark:text-edWhite">
       <div
         onClick={handleOpenFolder}
         onContextMenu={(e) => onRightClick(e, folder)}
         className="cursor-pointer eWhite flex"
       >
-        {/* <img
-          src={openFolder ? folderOpenImg : folderCloseImg}
-          alt={openFolder ? "Open folder" : "Closed folder"}
-          className="w-6 h-6 ml-2 mr-2"
-        /> */}
         <span className="w-6 h-6 ml-2 mr-2">{openFolder ? "📂" : "📁"}</span>
         <p className="overflow-x-auto">{folder.name}</p>
       </div>
@@ -208,7 +300,6 @@ const Folder = ({ folder, onRightClick }) => {
             folder.decks.map((deck) => (
               <div key={deck.deck_id} className="eWhite flex items-center" onContextMenu={(e) => onRightClick(e, deck)}>
                 <Link to={`/decks/${deck.deck_id}`} style={{ display: "flex", alignItems: "center" }}>
-                  {/* <img src={decksImg} alt="Deck" className="w-10 h-10" /> */}
                   <span className="mr-2">📚</span>
                   <p className="overflow-x-auto whitespace-nowrap">{deck.name}</p>
                 </Link>

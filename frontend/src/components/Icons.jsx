@@ -126,6 +126,40 @@ export const ChevronIcon = ({ isOpen, color }) => {
   );
 };
 
+export const CurveArrowRight = () => {
+  return (
+    <svg
+      fill="none"
+      width="32px"
+      height="32px"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+      className="icon flat-line"
+    >
+      <path
+        d="M3,18A13.17,13.17,0,0,1,15.49,9H21"
+        style={{
+          fill: 'none',
+          stroke: 'black',
+          strokeLinecap: 'round',
+          strokeLinejoin: 'round',
+          strokeWidth: 2,
+        }}
+      />
+      <polyline
+        points="18 12 21 9 18 6"
+        style={{
+          fill: 'none',
+          stroke: 'black',
+          strokeLinecap: 'round',
+          strokeLinejoin: 'round',
+          strokeWidth: 2,
+        }}
+      />
+    </svg>
+  );
+};
+
 // --------------------------------------------------
 // ------------------ Card Editor -------------------
 // --------------------------------------------------

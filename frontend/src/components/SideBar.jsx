@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 import { useApi } from "../hooks";
@@ -17,6 +17,33 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
   const [showInput, setShowInput] = useState(false);
   const [folderStates, setFolderStates] = useState({});
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const folderRef = useRef(null);
+  const buttonRef = useRef(null);
+  const popupRef = useRef(null);
+
+  // Click outside handler to unselect the folder or deck
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // Check if the clicked element is inside any of the specified elements
+      const isInsideFolder = folderRef.current && folderRef.current.contains(event.target);
+      const isInsideButtons = buttonRef.current && buttonRef.current.contains(event.target);
+      const isInsidePopup = popupRef.current && popupRef.current.contains(event.target);
+
+      // Only unselect if the click is outside of all specified elements
+      if (!isInsideFolder && !isInsideButtons && !isInsidePopup) {
+        setSelected(null);
+        setContextMenu(null);
+      }
+    };
+
+    // Add the event listener for clicks outside
+    document.addEventListener('mousedown', handleClickOutside);
+
+    // Cleanup the event listener on component unmount
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const fetchSidebarData = () => {
     api._get('/api/sidebar')
@@ -50,6 +77,31 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
   useEffect(() => {
     fetchSidebarData();
   }, [refetchTrigger]);
+
+  const { data: userSettings, loading } = useQuery(
+    ['userSettings'],
+    async () => {
+      let response = await api._get('/api/profile/me');
+      if (!response.ok) {
+        const errorData = await response.json();
+        const message = errorData.detail || 'An error occurred';
+        throw new Error(`${response.status}: ${message}`);
+      }
+      return response.json(); // Ensure we return the response data
+    },
+    {
+      onSuccess: (data) => {
+        setSidebarOpen(data?.sidebar_open);
+        if (data?.sidebar_open == false) {
+          setSidebarWidth(10);
+        }
+      }
+    }
+  );
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   const sidebarShow = () => {
     if (sidebarOpen) {
@@ -218,7 +270,7 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
       <button
         onClick={sidebarShow}
         style={{ left: `calc(${sidebarWidth}px)` }}
-        className={`text-eWhite px-1 py-1 m-1 absolute top-[4rem] z-50 hover:bg-eStrongHLT rounded-md`}
+        className={`px-1 py-1 m-1 absolute top-[4rem] z-50 hover:bg-elLavender dark:hover:bg-eStrongHLT rounded-md`}
       >
         <SidebarOpenClose sidebarOpen={sidebarOpen} sidebarWidth={sidebarWidth} />
       </button>
@@ -231,18 +283,18 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
         resizeHandles={['e']}
         minConstraints={[10, Infinity]} // Minimum width
         maxConstraints={[1200, Infinity]} // Maximum width
-        className="bg-eDark border-r border-eDarkGray group"
+        className="h-full bg-elGray dark:bg-edDark border-r border-edDarkGray group"
         style={{ overflow: 'hidden' }}
         onResize={handleResize}
-        handle={<div className="absolute top-0 right-0 h-full w-1 cursor-default hover:cursor-ew-resize bg-transparent hover:bg-eBlue z-10 transition duration-200" />}
+        handle={<div className="absolute top-0 right-0 h-full w-2 cursor-default hover:cursor-ew-resize bg-transparent hover:bg-edBlue z-10 transition duration-200" />}
       >
         <div className="h-[92vh] overflow-y-auto p-2">
-          <div className='flex justify-between border-b border-eGray'>
-            <h2 className='font-bold text-base text-eWhite whitespace-nowrap'>Deck Library</h2>
-            <div className='flex items-center'>
-              <button onClick={() => buttonCreate('deck')} className='hover:bg-eStrongHLT mr-1 rounded-md'><DeckCreateIcon /></button>
-              <button onClick={() => buttonCreate('folder')} className='hover:bg-eStrongHLT mr-1 rounded-md'><FolderCreateIcon /></button>
-              <button onClick={handleExpandCollapseAll} className='hover:bg-eStrongHLT rounded-md'>
+          <div className='flex justify-between border-b border-elDark dark:border-edGray'>
+            <h2 className='font-bold text-xl text-elDark dark:text-edWhite whitespace-nowrap'>Deck Library</h2>
+            <div ref={buttonRef} className='flex items-center'>
+              <button onClick={() => buttonCreate('deck')} className='hover:bg-elLavender dark:hover:bg-eStrongHLT mr-1 rounded-md'><DeckCreateIcon /></button>
+              <button onClick={() => buttonCreate('folder')} className='hover:bg-elLavender dark:hover:bg-eStrongHLT mr-1 rounded-md'><FolderCreateIcon /></button>
+              <button onClick={handleExpandCollapseAll} className='hover:bg-elLavender dark:hover:bg-eStrongHLT rounded-md'>
                 <ExpandContractAllIcon isExpanded={isAnyFolderOpen} />
               </button>
             </div>
@@ -250,7 +302,7 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
           {sidebarData && sidebarData.folders ? (
             sidebarData.folders.length > 0 ? (
               sidebarData.folders.map((folder, index) => (
-                <Folder key={index} folder={folder} onRightClick={handleRightClick} folderStates={folderStates} toggleFolder={toggleFolder} setContextMenu={setContextMenu} selected={selected} setSelected={setSelected} />
+                <Folder key={index} folder={folder} onRightClick={handleRightClick} folderStates={folderStates} toggleFolder={toggleFolder} setContextMenu={setContextMenu} selected={selected} setSelected={setSelected} folderRef={folderRef} />
               ))
             ) : (
               <p>You have no decks!</p>
@@ -264,19 +316,8 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
 
       {contextMenu && (
         <div
-          // style={{
-          //   position: "absolute",
-          //   top: `${contextMenu.y}px`,
-          //   left: `${contextMenu.x}px`,
-          //   backgroundColor: "eWhite",
-          //   color: "eWhite",
-          //   padding: "10px",
-          //   zIndex: 9999,
-          //   display: "flex",
-          //   flexDirection: "column",
-          //   borderRadius: "5px",
-          // }}
-          className="absolute bg-eDarker text-eWhite p-2 z-[9999] flex flex-col rounded-md border border-eGray"
+          ref={popupRef}
+          className="absolute bg-edDarker text-eWhite p-2 z-[9999] flex flex-col rounded-md border border-eGray"
           style={{
             top: `${contextMenu.y}px`,
             left: `${contextMenu.x}px`,
@@ -416,7 +457,7 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
   );
 };
 
-const Folder = ({ folder, onRightClick, folderStates, toggleFolder, setContextMenu, selected, setSelected }) => {
+const Folder = ({ folder, onRightClick, folderStates, toggleFolder, setContextMenu, selected, setSelected, folderRef }) => {
 
   const handleLeftClick = (event) => {
     // console.log("clicked")
@@ -431,16 +472,18 @@ const Folder = ({ folder, onRightClick, folderStates, toggleFolder, setContextMe
   };
 
   return (
-    <div className="mt-2">
+    <div ref={folderRef} className="mt-2">
       <div onClick={handleLeftClick} onContextMenu={(e) => onRightClick(e, folder)}
         className={`cursor-pointer text-base text-eWhite flex items-center select-none ${selected === folder ? 'bg-gray-500' : ''}`}>
-        <ChevronIcon onClick={(e) => e.stopPropagation()} isOpen={folderStates[folder.folder_id]} color="#ccc" />
+        <button onClick={() => { toggleFolder(folder.folder_id); }}>
+          <ChevronIcon isOpen={folderStates[folder.folder_id]} />
+        </button>
         <p className="overflow-x-auto">{folder.name}</p>
       </div>
       {folderStates[folder.folder_id] && (
         <div className="ml-2 border-l border-eGray">
           {folder.decks.map((deck, index) => (
-            <div key={index} className="text-eWhite flex items-center select-none text-base ml-2 mt-2 hover:text-eBlue" onContextMenu={(e) => onRightClick(e, deck)}>
+            <div key={index} className="text-elDark dark:text-edWhite flex items-center select-none text-base ml-2 mt-2 hover:text-edBlue" onContextMenu={(e) => onRightClick(e, deck)}>
               <Link to={`/decks/${deck.deck_id}`}>
                 <p className="overflow-x-auto whitespace-nowrap">{deck.name}</p>
               </Link>

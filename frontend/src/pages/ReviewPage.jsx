@@ -5,8 +5,8 @@ import Sidebar from "../components/SideBar";
 import { useApi } from "../hooks";
 import partyPopperImg from '../assets/party-popper.png';
 import partyPopperFlipImg from '../assets/party-popper-flip.png';
-import set from '../assets/reviewSwitch2.png';
-import card from '../assets/reviewSwitch.png';
+import card from '../assets/reviewSwitch2.png';
+import set from '../assets/reviewSwitch.png';
 import "./ReviewPage.css";
 import LoadingSpinner from "../components/LoadingSpinner";
 import MarkdownPreviewer from "../components/MarkdownPreviewer";
@@ -15,9 +15,9 @@ import MarkdownPreviewer from "../components/MarkdownPreviewer";
 // import sanitizeHtml from 'sanitize-html'; // we might need this here
 // import katex from 'katex';
 
-// -- Two layers in order to maintain border rounding with active scrollbar - keep this here in case we decide to round our borders --
-// const cardOuterCSS = "bg-white rounded-md overflow-hidden"
-// const cardInnerCSS = "h-[30vh] px-4 py-2 text-black flex flex-col items-center overflow-x-hidden overflow-y-auto text-[1.4em] py-4"
+// Two layers in order to maintain border rounding with active scrollbar
+const cardOuterCSS = "border border-elDarkGray bg-white rounded-md overflow-hidden"
+const cardInnerCSS = "h-[30vh] px-4 py-2 text-black flex flex-col items-center overflow-x-hidden overflow-y-auto text-[1.4em] py-4"
 
 function ReviewPage() {
   const api = useApi();
@@ -33,6 +33,32 @@ function ReviewPage() {
   const [sidebarWidth, setSidebarWidth] = useState(250);
 
   const [flip, setFlip] = useState(false);
+
+  const { data: userSettings, loading } = useQuery(
+    ['userSettings'],
+    async () => {
+      let response = await api._get('/api/profile/me');
+      if (!response.ok) {
+        const errorData = await response.json();
+        const message = errorData.detail || 'An error occurred';
+        throw new Error(`${response.status}: ${message}`);
+      }
+      return response.json(); // Ensure we return the response data
+    },
+    {
+      onSuccess: (data) => {
+        setAnimation(data?.flip_mode ?? true);  // Set flip after successful data fetch
+        if (data?.flip_mode == false) {
+          setCurrImage(set)
+        }
+      }
+    }
+  );
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
 
   const switchAnimation = () => {
     setCurrImage((prev) =>
@@ -125,14 +151,12 @@ function ReviewPage() {
         {/* <Sidebar /> */}
         <Sidebar onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
         <div className="rounded-lg mt-[2%] flex flex-col flex-grow min-w-[16rem] mx-auto overflow-x-auto">
-          {/* <div className="mt-[2%] h-[60vh] w-[40vw] flex flex-col min-w-[16rem] items-center"> */}
-          {/* <div className="flex items-center border-b pb-[1rem]"> */}
-          <div className="flex mx-auto items-center border-b pb-[1rem] w-[40vw]">
-            <Link to={`/decks/${deckId}`} className="rounded-lg border border-transparent px-10 py-2 text-center
-              font-semibold bg-white text-black hover:border-black active:scale-[0.97] active:bg-[#333] 
-              active:border-[#555]">back</Link>
-            <h2 className="text-[2em] mx-auto">{reviews.deck_name}</h2>
-            <button className="border w-[12%] ml-auto" onClick={switchAnimation}>
+          <div className="flex mx-auto items-center border-b border-black dark:border-edWhite pb-[1rem] w-[40vw]">
+            <Link to={`/decks/${deckId}`} className="rounded-lg border border-black hover:border-elMedGray hover:text-elMedGray 
+              dark:border-transparent dark:hover:border-black dark:hover:text-black px-10 py-2 text-center
+              font-semibold dark:bg-white text-black active:scale-[0.97] active:border-[#555]">back</Link>
+            <h2 className="text-[2em] text-elDark dark:text-edWhite mx-auto">{reviews.deck_name}</h2>
+            <button className="border border-black w-[12%] ml-auto" onClick={switchAnimation}>
               <img src={currImage}></img>
             </button>
           </div>
@@ -205,7 +229,58 @@ function ReviewCard({ card, showAnswer, setShowAnswer, updateReviewedCard, chang
   );
 }
 
-function QuestionCard({ card }) {
+function FinishView(deckId) {
+  return (
+    <div className="flex flex-row justify-center items-center mt-[10vh]">
+      <img className="w-40 h-40 mt-[-10vh]" src={partyPopperFlipImg} alt="Party Popper" />
+      <div className="flex flex-col justify-center items-center mx-4">
+        <h3 className="h-[25vh] flex justify-center items-center w-full border-black bg-white rounded-md p-5 text-2xl text-black my-4">You have studied all the cards in this deck</h3>
+        <Link to={`/decks/${deckId.deckId}`}>
+          <button className="border rounded-md px-2 py-1">Back to deck</button>
+        </Link>
+      </div>
+      <img className="w-40 h-40 mt-[-10vh]" src={partyPopperImg} alt="Party Popper" />
+    </div>
+  )
+}
+
+function ReviewCard({ card, showAnswer, setShowAnswer, updateReviewedCard, changeAnimation, flip, setFlip }) {
+  // Whether to display the question or answer on the 'flip' version of the card
+  // This is to make the animation seem smoother by switching the displayed text half way through the flip animation
+  const [displayQuestionOnFlipCard, setDisplayQuestionOnFlipCard] = useState(true);
+
+  const toggleFlip = () => {
+    setFlip((prevFlip) => {
+      const newFlip = !prevFlip
+
+      setShowAnswer(newFlip);
+
+      // Switch question/answer halfway through the flip
+      setTimeout(() => {
+        setDisplayQuestionOnFlipCard(!newFlip);
+      }, 150);
+
+      return newFlip; // Update flip state
+    });
+  }
+
+  return (
+    <>
+      <div className="flex flex-col items-center">
+        <div className={`flex flex-col items-center h-auto w-[35vw] min-w-[16rem] mx-auto`}>
+          <div className="w-full">
+            {!changeAnimation && (<QuestionCard card={card}></QuestionCard>)}
+            {!changeAnimation && (<AnswerCard card={card} flip={flip} showAnswer={showAnswer} displayQuestion={displayQuestionOnFlipCard}></AnswerCard>)}
+            {changeAnimation && (<FlipFlashcard card={card} flip={flip} toggleFlip={toggleFlip} displayQuestion={displayQuestionOnFlipCard}></FlipFlashcard>)}
+          </div>
+        </div>
+      </div>
+      <ShowAnswerButtons card={card} showAnswer={showAnswer} updateReviewedCard={updateReviewedCard} toggleFlip={toggleFlip}></ShowAnswerButtons>
+    </>
+  );
+}
+
+function QuestionCard({ card, setShowAnswer }) {
   if (card) {
     return (
       <div className={`mt-8 bg-eDarker overflow-x-hidden overflow-y-auto`}>
@@ -362,7 +437,6 @@ function ResultButton({ customStyles, confidenceLevel, clickEvent, timeUntil, ch
 //     throwOnError: false,
 //     output: "html"
 //   });
-
 //   return <div dangerouslySetInnerHTML={{ __html: html }} />;
 // };
 
