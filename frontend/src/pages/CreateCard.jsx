@@ -28,7 +28,9 @@ function CreateCard() {
   const popupTimerRef = useRef(null); // Ref to hold the popup timer
 
   const [sidebarWidth, setSidebarWidth] = useState(250);
-
+  const [quizletInput, setquizletInput] = useState("")
+  const [preview, setPreview] = useState([])
+  const [quizletRequired, setquizletRequired] = useState(false)
   const displayPopup = (isSuccess) => {
     // Clear the old timer if it is still active
     if (popupTimerRef.current) {
@@ -112,6 +114,19 @@ function CreateCard() {
       answerRef.current.focus();
     }
   }, [answerSelection]);
+  // show preview for quizlet parser
+  useEffect(() => {
+    let spaceChoice = "|";
+    let lineChoice = "{|}";
+
+    const lines = quizletInput.split(lineChoice).filter(line => line.trim());
+    const formattedPreview = lines.map(line => {
+      const parts = line.split(spaceChoice).map(part => part.trim());
+      return { question: parts[0], answer: parts[1] };
+    });
+    setPreview(formattedPreview);
+  }, [quizletInput]);
+
 
   // Fetch decks
   const { data: decks, isLoading, error } = useQuery({
@@ -164,7 +179,68 @@ function CreateCard() {
       displayPopup(true);
     }
   }
+  // create multiple cards
+  const handlequizletparser = async (e) => {
+    e.preventDefault();
+    console.log(quizletInput)
+    let lineChoice = "{|}";
+    let spaceChoice = "|";
 
+    const lines = (quizletInput).trim().split(lineChoice).filter(line => line.trim());
+    console.log(lines)
+    const newCards = lines.map(async line => {
+      const parts = line.split(spaceChoice);
+      console.log(parts[0], parts[1])
+      const question = parts[0]
+      const answer = parts[1]
+      const cardData = {
+        deck_id: deckId,
+        question: question,
+        answer: answer,
+      }
+      const response = await api._post('/api/cards', cardData);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error creating card: ", errorData);
+        displayPopup(false);
+      } else {
+        console.log("Card created successfully");
+        displayPopup(true);
+      }
+    });
+
+    if (quizletInput !== null) {
+      setquizletInput('')
+    }
+
+  };
+  const handlebackButton = () => {
+    // if (multipleRequired) {
+    //   if (multipleInput) {
+    //     const shouldLeave = window.confirm("You have stuff did not save. Do you still want to leave?");
+    //     if (shouldLeave) {
+    //       setMultipleInput("")
+    //       setmultipleRequired(false)
+    //     }
+    //   }
+    //  else{
+    //   setmultipleRequired(false)
+    //  }
+    // }
+    if (quizletRequired) {
+      if (quizletInput) {
+        const shouldLeave = window.confirm("You have stuff did not save. Do you still want to leave?");
+        if (shouldLeave) {
+          setQuizletInput("")
+          setquizletRequired(false)
+        }
+      }
+      else {
+        setquizletRequired(false)
+      }
+    }
+  }
   return (
     <>
       <div className='flex w-full h-full'>
@@ -180,27 +256,69 @@ function CreateCard() {
             </select>
           </div>
 
-          <form onSubmit={handleSubmit}>
-            <div className="mb-2 flex flex-col">
-              <TextBox label="Front" reference={questionRef} content={questionText} inputHandler={(e) => { setQuestionText(e.target.value) }}
-                handleTextEditingButton={handleTextEditingButton} forQuestionBox={true} />
-            </div>
-            <TextBox label="Back" reference={answerRef} content={answerText} inputHandler={(e) => { setAnswerText(e.target.value) }}
-              handleTextEditingButton={handleTextEditingButton} forQuestionBox={false} />
+          {quizletRequired == true && (
+            <form onSubmit={handlequizletparser} className='flex flex-col items-center'>
+              <button type='button' onClick={handlebackButton} className="rounded-lg border border-transparent px-4 py-2 
+                font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+                active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>
+                Back
+              </button>
+              <p>
+                To export from Quizlet, you need to go to "your library", then select the set you want to copy, then click on the triple dots and select export.
+                <br />
+                In the pop-up window, input "<code>|</code>" for customizing the separator between term and definition and input "<code>&#123;|&#125;</code>" for customizing the separator between rows.
+              </p>
+              <div className="mb-2 flex flex-col">
+                <textarea value={quizletInput} onChange={(e) => setquizletInput(e.target.value)} className="bg-eDarker w-full h-40  border border-eDarkGray focus:outline-none custom-scrollbar"></textarea>
+              </div>
+              <button type='submit' className="rounded-lg border border-transparent px-4 py-2 
+                font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+                active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }}>
+                Submit
+              </button>
 
-            <DividerLine />
+              <h3>Preview</h3>
+              <div className="h-[50vh] overflow-y-auto">
+                {preview.map((item, index) => (
+                  <div className="grid grid-cols-2 gap-4 font-medium px-2" key={index}>
+                    <div className="border bg-white text-black mt-2 px-2 py-2">
+                      <p>Question: {item.question}</p>
+                    </div>
+                    <div className="border bg-white text-black mt-2 px-2 py-2 relative">
+                      <p>Answer: {item.answer}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </form>
+          )}
+          {quizletRequired == false && (
 
-            <div className="mb-2 flex flex-col">
-              <TextBoxPreview label="Question Preview" content={questionText} />
-            </div>
-            <TextBoxPreview label="Answer Preview" content={answerText} />
+            <form onSubmit={handleSubmit}>
+              <button type="button" onClick={() => setquizletRequired(true)} className="rounded-lg border border-transparent px-4 py-2 
+                font-semibold bg-[#1a1a1a] hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+                active:border-[#555]" style={{ transition: "border-color 0.10s, color 0.10s" }} >quizlet parser</button>
+              <div className="mb-2 flex flex-col">
+                <TextBox label="Front" reference={questionRef} content={questionText} inputHandler={(e) => { setQuestionText(e.target.value) }}
+                  handleTextEditingButton={handleTextEditingButton} forQuestionBox={true} />
+              </div>
+              <TextBox label="Back" reference={answerRef} content={answerText} inputHandler={(e) => { setAnswerText(e.target.value) }}
+                handleTextEditingButton={handleTextEditingButton} forQuestionBox={false} />
 
-            <div className="flex flex-col items-center mt-8">
-              <SubmitButton>Create Card</SubmitButton>
-              <button type="button" onClick={() => { navigate(`/`); }} className="block rounded-sm sm:rounded-lg p-[7px] w-1/3 text-center font-medium
+              <DividerLine />
+
+              <div className="mb-2 flex flex-col">
+                <TextBoxPreview label="Question Preview" content={questionText} />
+              </div>
+              <TextBoxPreview label="Answer Preview" content={answerText} />
+
+              <div className="flex flex-col items-center mt-8">
+                <SubmitButton>Create Card</SubmitButton>
+                <button type="button" onClick={() => { navigate(`/`); }} className="block rounded-sm sm:rounded-lg p-[7px] w-1/3 text-center font-medium
               border border-eGray text-eWhite hover:bg-eHLT active:scale-[0.97] mt-2"> Back</button>
-            </div>
-          </form>
+              </div>
+            </form>
+          )}
         </div>
         <div className={`width-20 p-3 absolute top-20 right-5 rounded-[1.4rem] text-white ${popupColor}
           transition-opacity duration-200 ${popupActive ? 'opacity-100' : 'opacity-0'}`}>{popupText}</div>
