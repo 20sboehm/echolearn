@@ -52,7 +52,6 @@ function ProfilePage() {
         setFlipOrSet(data.flip_mode);
         setSidebarClosed(data.sidebar_open);
         setLightMode(data.light_mode);
-        console.log('Profile data:', data);
 
         if (!data.light_mode) {
           document.documentElement.classList.add('dark');
@@ -119,7 +118,6 @@ function ProfilePage() {
   const handleLightMode = async () => {
     const newLightMode = !lightMode;
     setLightMode(newLightMode);
-    console.log(lightMode);
 
     if (newLightMode == false) {
       document.documentElement.classList.add('dark');

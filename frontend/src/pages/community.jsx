@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import SideBar from "../components/SideBar";
 import 'katex/dist/katex.min.css';
 import { useApi } from "../hooks";
+import { CurveArrowRight } from '../components/SideBarIcons';
 import arrowIconImg from "../assets/arrow_icon.png"
 
 function CommunityPage() {
@@ -28,7 +29,6 @@ function CommunityPage() {
     console.log("Decks in State After Update:", allPublicDecks);
   }, [allPublicDecks]);
 
-
   if (allPublicDecks) {
     return (
       <>
@@ -39,12 +39,12 @@ function CommunityPage() {
               <div className="h-screen overflow-y-auto border-gray-500 w-full max-w-4xl">
                 {allPublicDecks.map(deck => (
                   <div className="grid font-medium px-2" key={deck.deck_id}>
-                    <div className="border rounded-sm bg-white text-black mt-2 px-2 py-2 relative" style={{ minHeight: '100px' }}>
+                    <div className="border border-black rounded-sm bg-white text-black mt-2 px-2 py-2 relative" style={{ minHeight: '100px' }}>
                       <p><strong>Author: </strong>{deck.owner_id}</p>
                       <p><strong>Name: </strong>{deck.name}</p>
                       <p><strong>Description: </strong>{deck.description}</p>
                       <Link to={`/decks/public/${deck.deck_id}`} className="absolute top-0 right-0">
-                        <img src={arrowIconImg} alt="Edit Icon" className="h-6 w-8" />
+                        <CurveArrowRight />
                       </Link>
                     </div>
                   </div>

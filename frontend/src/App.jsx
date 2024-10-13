@@ -4,6 +4,7 @@ import { BrowserRouter, Navigate, Routes, Route, useParams } from "react-router-
 
 import { useAuth } from "./hooks";
 import { AuthProvider } from "./context/auth";
+import { useApi } from './hooks';
 
 import Header from "./components/Header";
 import LandingPage from "./pages/LandingPage"
@@ -70,6 +71,37 @@ function Main() {
   const { isLoggedIn, token } = useAuth();
   console.log("isLoggedIn: " + isLoggedIn);
   console.log("token: " + !!token);
+
+  const api = useApi();
+  
+  useEffect(() => {
+    const fetchUserSettings = async () => {
+      if (isLoggedIn) {
+        try {
+          const response = await api._get('/api/profile/me');
+          const data = await response.json();
+  
+          // Apply the theme globally based on user preference
+          if (data.light_mode === false) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (error) {
+          console.error('Failed to fetch user settings', error);
+        } finally {
+          // Remove the 'theme-pending' class once the theme is applied
+          document.documentElement.classList.remove('theme-pending');
+        }
+      } else {
+        // If the user isn't logged in, just remove the class
+        document.documentElement.classList.remove('theme-pending');
+      }
+    };
+  
+    fetchUserSettings();
+  }, [isLoggedIn, api]);
+  
 
   return (
     <main className="w-full h-full flex flex-col items-center">
