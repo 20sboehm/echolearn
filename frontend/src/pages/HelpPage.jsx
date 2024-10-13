@@ -138,11 +138,11 @@ function HelpPage() {
   return (
     <div className="flex w-screen h-[calc(100vh-4rem)] relative">
       {/* Search Input */}
-      <div className="w-1/3 p-4 overflow-y-auto">
+      <div className="w-1/3 p-4 overflow-y-auto text-elDark dark:text-edWhite">
         <input
           type="text"
           placeholder="Search topics..."
-          className="w-full p-2 border rounded bg-[#151515]"
+          className="w-full p-2 border rounded text-white bg-elDarkGray dark:bg-edDark"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -150,7 +150,7 @@ function HelpPage() {
           {filteredTopics.map((topic, index) => (
             <li
               key={index}
-              className={`p-2 border-b ${selectedTopic === topic ? "bg-gray-600" : ""}`}
+              className={`p-2 border-b border-black dark:border-white ${selectedTopic === topic ? "bg-elStrongHLT dark:bg-edHLT" : ""}`}
               onClick={() => handleCardClick(index)}
             >
               {topic.title}
@@ -160,7 +160,7 @@ function HelpPage() {
       </div>
 
       {/* Vertical 3D Card Stack */}
-      <div className="w-2/3 h-[calc(100vh-4rem)] p-4 flex items-center justify-center relative overflow-hidden">
+      <div className="w-2/3 h-[calc(100vh-4rem)] p-4 flex items-center justify-center relative overflow-hidden text-black">
         {Array.from({ length: VISIBLE_CARDS * 2 + 1 }).map((_, i) => {
           const index = (currentIndex + i - VISIBLE_CARDS + topics.length) % topics.length;
           const positionFromCenter = i - VISIBLE_CARDS;
@@ -170,7 +170,7 @@ function HelpPage() {
             <div
               key={index}
               style={calculateCardStyle(positionFromCenter, isSelected)} // Pass isSelected to calculate card style
-              className={`absolute w-full p-4 bg-white text-black border rounded flex flex-col items-center ${isSelected ? "shadow-xl h-[90vh]" : ""}`}
+              className={`absolute w-full p-4 dark:bg-white dark:text-black border-2 shadow-xl border-black rounded-lg bg-white flex flex-col items-center ${isSelected ? "shadow-xl h-[90vh]" : ""}`}
               onClick={() => handleCardClick(index)}
             >
               <h2 className="text-2xl font-bold mb-4">{topics[index].title}</h2>

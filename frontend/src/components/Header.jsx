@@ -36,8 +36,8 @@ function Header() {
     );
   } else {
     return (
-      <header className="h-16 flex justify-center top-0 left-0 w-full text-lg bg-eDarker font-semibold border-b border-eDarkGray">
-        <div className="w-screen flex flex-row justify-around">
+      <header className="h-16 flex justify-center top-0 left-0 w-full text-lg bg-elLightBlue dark:bg-edDarker font-semibold border-b border-eDarkGray">
+        <div className="w-screen flex flex-row justify-around text-white">
           <div className="flex mr-auto ml-10">
             <Link to="/" className="flex items-center">
               <img src={echolearnLogoBlue} alt="EchoLearn Logo" className="h-10 mr-2" />
@@ -45,11 +45,11 @@ function Header() {
             </Link>
           </div>
           <div className="flex ml-auto items-center">
-            <Link to="/cards" className="px-4 mx-2 transition duration-100 hover:text-black py-2">Create Card</Link>
-            <Link to="/decks" className="px-4 mx-2 transition duration-100 hover:text-black py-2">Create Deck</Link>
-            <Link to="/help" className="px-4 mx-2 transition duration-100 hover:text-black py-2">Help</Link>
-            <Link to="/community" className="px-4 ml-2 transition duration-100 hover:text-black py-2">Community</Link>
-            <button onClick={handleLogout} className="px-4 ml-2 mr-10 transition duration-100 hover:text-black py-2">
+            <Link to="/cards" className="px-4 mx-2 transition duration-100 hover:text-black dark:hover:text-elLightBlue py-2">Create Card</Link>
+            <Link to="/decks" className="px-4 mx-2 transition duration-100 hover:text-black dark:hover:text-elLightBlue py-2">Create Deck</Link>
+            <Link to="/help" className="px-4 mx-2 transition duration-100 hover:text-black dark:hover:text-elLightBlue py-2">Help</Link>
+            <Link to="/community" className="px-4 ml-2 transition duration-100 hover:text-black dark:hover:text-elLightBlue py-2">Community</Link>
+            <button onClick={handleLogout} className="px-4 ml-2 mr-10 transition duration-100 hover:text-black dark:hover:text-elLightBlue py-2">
               Log Out
             </button>
             <Link to="/profile" className="flex items-center">
