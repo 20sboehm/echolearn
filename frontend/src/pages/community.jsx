@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Sidebar from "../components/SideBar";
 // import 'katex/dist/katex.min.css';
 import { useApi } from "../hooks";
-import { CurveArrowRight } from '../components/SideBarIcons';
+import { CurveArrowRight } from '../components/Icons';
 import arrowIconImg from "../assets/arrow_icon.png"
 
 function CommunityPage() {

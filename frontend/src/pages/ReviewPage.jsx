@@ -229,57 +229,6 @@ function ReviewCard({ card, showAnswer, setShowAnswer, updateReviewedCard, chang
   );
 }
 
-function FinishView(deckId) {
-  return (
-    <div className="flex flex-row justify-center items-center mt-[10vh]">
-      <img className="w-40 h-40 mt-[-10vh]" src={partyPopperFlipImg} alt="Party Popper" />
-      <div className="flex flex-col justify-center items-center mx-4">
-        <h3 className="h-[25vh] flex justify-center items-center w-full border-black bg-white rounded-md p-5 text-2xl text-black my-4">You have studied all the cards in this deck</h3>
-        <Link to={`/decks/${deckId.deckId}`}>
-          <button className="border rounded-md px-2 py-1">Back to deck</button>
-        </Link>
-      </div>
-      <img className="w-40 h-40 mt-[-10vh]" src={partyPopperImg} alt="Party Popper" />
-    </div>
-  )
-}
-
-function ReviewCard({ card, showAnswer, setShowAnswer, updateReviewedCard, changeAnimation, flip, setFlip }) {
-  // Whether to display the question or answer on the 'flip' version of the card
-  // This is to make the animation seem smoother by switching the displayed text half way through the flip animation
-  const [displayQuestionOnFlipCard, setDisplayQuestionOnFlipCard] = useState(true);
-
-  const toggleFlip = () => {
-    setFlip((prevFlip) => {
-      const newFlip = !prevFlip
-
-      setShowAnswer(newFlip);
-
-      // Switch question/answer halfway through the flip
-      setTimeout(() => {
-        setDisplayQuestionOnFlipCard(!newFlip);
-      }, 150);
-
-      return newFlip; // Update flip state
-    });
-  }
-
-  return (
-    <>
-      <div className="flex flex-col items-center">
-        <div className={`flex flex-col items-center h-auto w-[35vw] min-w-[16rem] mx-auto`}>
-          <div className="w-full">
-            {!changeAnimation && (<QuestionCard card={card}></QuestionCard>)}
-            {!changeAnimation && (<AnswerCard card={card} flip={flip} showAnswer={showAnswer} displayQuestion={displayQuestionOnFlipCard}></AnswerCard>)}
-            {changeAnimation && (<FlipFlashcard card={card} flip={flip} toggleFlip={toggleFlip} displayQuestion={displayQuestionOnFlipCard}></FlipFlashcard>)}
-          </div>
-        </div>
-      </div>
-      <ShowAnswerButtons card={card} showAnswer={showAnswer} updateReviewedCard={updateReviewedCard} toggleFlip={toggleFlip}></ShowAnswerButtons>
-    </>
-  );
-}
-
 function QuestionCard({ card, setShowAnswer }) {
   if (card) {
     return (
