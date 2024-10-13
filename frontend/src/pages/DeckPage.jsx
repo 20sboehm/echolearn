@@ -1,6 +1,6 @@
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { useQuery } from "react-query";
-import { useState } from "react";
+import { useQuery} from "react-query";
+import { useState,useEffect } from "react";
 import Sidebar from "../components/SideBar";
 import { useApi } from "../hooks";
 import editIconImg from "../assets/edit-icon.png"
@@ -35,7 +35,7 @@ function DeckPage({ publicAccess = false }) {
   const [newAnswer, setNewAnswer] = useState("");
 
   const [sidebarWidth, setSidebarWidth] = useState(250);
-
+  const [Rateresult,setRateresult] = useState(false)
   const { data: deckCards, isLoading, error, refetch } = useQuery({
     queryKey: ['deckCards', deckId], // Unique key based on deckId
     queryFn: async () => {
@@ -251,8 +251,36 @@ function DeckPage({ publicAccess = false }) {
     outputVoice.lang = "en";
     speechSynthesis.speak(outputVoice);
   };
+  useEffect(() => {
+    const fetchRatingData = async () => {
+      try {
+        const response = await api._get(`/api/decks/${deckId}/ratedOrnot`);
+        if (response.ok) {  // Ensure the HTTP response is 200 OK
+          const json = await response.json();
+          console.log(json);
+          setRateresult(json === true);  // Directly use the boolean value from json
+        } else {
+          throw new Error('Failed to fetch data');
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setRateresult(false);  // Consider setting a default or handling error states more clearly
+      }
+    };
+  
+    // Call the fetchData function
+    fetchRatingData();
+  }, [deckId, api]);  // Include deckId and api in the dependencies if they might change
+  const submitRating = async () => {
+    const response = await api._post(`/api/decks/${deckId}/ratings`);
+    const data = await response.json();
+    if (data.status == "removed")
+      setRateresult(false)
+    else if (data.status == "updated")
+      setRateresult(true)
 
-
+    refetch();
+  };
   return (
     <>
       <div className="flex flex-row w-full h-full">
@@ -268,6 +296,20 @@ function DeckPage({ publicAccess = false }) {
             handleCreateCard={handleCreateCard} toggleCreateMode={toggleCreateMode} handleCancelCreateCard={handleCancelCreateCard}
             handleTakeACopy={handleTakeACopy} isModalOpen={isModalOpen} folders={folders} handleFolderSelection={handleFolderSelection}
             setModalOpen={setModalOpen} deleteMode={deleteMode} changeMode={changeMode} />
+            
+            <button onClick={submitRating} id="button-preview" aria-labelledby="tooltip-1f7d89ff-668b-406b-9c3f-e3e313ecdc97" type="button" data-view-component="true" class="Button Button--iconOnly Button--secondary Button--medium">
+            {Rateresult ? (
+              <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-star-filled Button-visual">
+                <path fill="gold" d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z"></path>
+              </svg>
+            ) : (
+              <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-star Button-visual">
+                <path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Zm0 2.445L6.615 5.5a.75.75 0 0 1-.564.41l-3.097.45 2.24 2.184a.75.75 0 0 1 .216.664l-.528 3.084 2.769-1.456a.75.75 0 0 1 .698 0l2.77 1.456-.53-3.084a.75.75 0 0 1 .216-.664l2.24-2.183-3.096-.45a.75.75 0 0 1-.564-.41L8 2.694Z"></path>
+              </svg>
+
+            )}
+            {deckCards.stars}
+          </button>
 
           <div className="h-[50vh] overflow-y-auto border-t border-gray-500">
             {deckCards.cards.map(card => (
