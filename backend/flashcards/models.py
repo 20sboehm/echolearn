@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractUser
+from django.contrib.postgres.fields import JSONField
 from django.db import models
 
 """
@@ -48,12 +49,12 @@ class Card(models.Model):
     deck = models.ForeignKey(Deck, on_delete=models.CASCADE)
     question = models.TextField(max_length=255)
     answer = models.TextField(max_length=255)
-    questionvideolink = models.TextField(max_length=255)
-    answervideolink = models.TextField(max_length=255)
-    questionimagelink = models.TextField(max_length=255)
-    answerimagelink = models.TextField(max_length=255)
-    questionlatex = models.TextField(max_length=255)
-    answerlatex = models.TextField(max_length=255)
+    # questionvideolink = models.TextField(max_length=255)
+    # answervideolink = models.TextField(max_length=255)
+    # questionimagelink = models.TextField(max_length=255)
+    # answerimagelink = models.TextField(max_length=255)
+    # questionlatex = models.TextField(max_length=255)
+    # answerlatex = models.TextField(max_length=255)
     bucket = models.IntegerField(default=0)
     last_reviewed = models.DateTimeField(auto_now_add=True)
     next_review = models.DateTimeField(auto_now_add=True)
@@ -62,6 +63,7 @@ class Card(models.Model):
     is_new = models.BooleanField(default=True)
     correct_count = models.IntegerField(default=0)
     incorrect_count = models.IntegerField(default=0)
+    review_history = models.JSONField(default=list, blank=True)
 
     def __str__(self):
         return f"{self.question} (id={self.card_id})"

@@ -6,18 +6,6 @@ from ninja_jwt.authentication import JWTAuth
 
 users_router = Router(tags=["Users"])
 
-# @users_router.get("current_user", response={200: sc.GetUser})
-# def get_current_user(request):
-#     if request.user.is_authenticated:
-#         print("authenticated")
-#         return request.user
-#         # return {
-#         #     "age": request.user.age,
-#         #     "country": request.user.country
-#         # }
-#     else:
-#         return {"error": "User is not authenticated"}, 401
-
 @users_router.get("", response={200: List[sc.GetUser]}, auth=JWTAuth())
 def get_users(request):
     users = CustomUser.objects.all()

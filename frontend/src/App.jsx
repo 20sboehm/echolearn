@@ -5,30 +5,30 @@ import { BrowserRouter, Navigate, Routes, Route, useParams } from "react-router-
 import { useAuth } from "./hooks";
 import { AuthProvider } from "./context/auth";
 
-import LandingPage from "./components/LandingPage"
-import HomePage from "./components/HomePage";
-import CreateCard from "./components/CreateCard";
-import CreateDeck from "./components/CreateDeck";
-import ReviewPage from "./components/ReviewPage";
-import HelpPage from "./components/HelpPage";
-import DeckPage from './components/DeckPage';
-import EditPage from './components/EditPage';
 import Header from "./components/Header";
-import Login from './components/Login';
-import SignUp from './components/SignUp';
-import FeaturePage from './components/FeaturesPage';
-import AboutPage from './components/AboutPage';
-import ProfilePage from './components/ProfilePage';
-import StatsPage from './components/StatsPage';
-import CommunityPage from './components/community'
+import LandingPage from "./pages/LandingPage"
+import HomePage from "./pages/HomePage";
+import CreateCard from "./pages/CreateCard";
+import CreateDeck from "./pages/CreateDeck";
+import ReviewPage from "./pages/ReviewPage";
+import HelpPage from "./pages/HelpPage";
+import DeckPage from './pages/DeckPage';
+import EditPage from './pages/EditPage';
+import Login from './pages/Login';
+import SignUp from './pages/SignUp';
+import FeaturePage from './pages/FeaturesPage';
+import AboutPage from './pages/AboutPage';
+import ProfilePage from './pages/ProfilePage';
+import StatsPage from './pages/StatsPage';
+import CommunityPage from './pages/community'
 
 const queryClient = new QueryClient();
 
 function ErrorPage({ statusCode, errorMessage }) {
   return (
     <>
-      <h1 className='font-bold text-[4em]'>{statusCode}</h1>
-      <p className='font-bold text-[2em]'>{errorMessage}</p>
+      <h1 className="mt-20 text-[3rem] font-bold">{statusCode}</h1>
+      <p className="mt-2 text-[1.5rem]">{errorMessage}</p>
     </>
   );
 }
@@ -43,6 +43,7 @@ function AuthenticatedRoutes() {
       <Route path="/help" element={<HelpPage />} />
       <Route path="/edit/:cardId" element={<EditPage />} />
       <Route path="/decks/:deckId" element={<DeckPage />} />
+      <Route path="/decks/public/:deckId" element={<DeckPage publicAccess={true} />} />
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/stats/:deckId" element={<StatsPage />} />
       <Route path="/community" element={<CommunityPage />} />
@@ -85,7 +86,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <BrowserRouter>
-          <div className="min-w-screen min-h-screen flex flex-col text-[1.2em] font-base text-eWhite bg-eBase">
+          <div className="min-w-screen min-h-screen flex flex-col font-base text-eWhite bg-eBase">
             <Header />
             <Main />
           </div>

@@ -1,0 +1,12 @@
+.flashCard {
+    /* transition: transform 0.4s linear; */
+    transition: transform 0.3s linear;
+}
+
+.flip {
+    transform: rotateY(180deg);
+}
+
+.flashCardBack {
+    transform: rotateY(180deg);
+}

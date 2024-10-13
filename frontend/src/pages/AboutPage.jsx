@@ -31,6 +31,7 @@ const teamInfo = [
     email: "***@gmail.com",
   }
 ]
+
 function AboutPage() {
   return (
     <>
