@@ -37,7 +37,7 @@ def get_cards_from_deck(request, deck_id: int):
         raise HttpError(403, "You are not authorized to access this deck")
 
     card_list = Card.objects.filter(deck_id=deck_id)
-    return {"deck_id": deck.deck_id, "isPublic": deck.isPublic, "deck_name": deck.name, "cards": card_list}
+    return {"deck_id": deck.deck_id, "isPublic": deck.isPublic, "deck_name": deck.name, "cards": card_list,"stars":deck.stars}
 
 @decks_router.get("/{deck_id}/cards", response={200: sc.DeckCards, 404: str}, auth=JWTAuth())
 def get_cards_from_deck(request, deck_id: int):
@@ -135,7 +135,7 @@ def update_deck_status(request, deck_id:int):
     deck.isPublic = not deck.isPublic
     deck.save()
     card_list = Card.objects.filter(deck_id=deck_id)
-    return {"deck_id": deck.deck_id,"isPublic": deck.isPublic, "deck_name": deck.name, "cards": card_list}
+    return {"deck_id": deck.deck_id,"isPublic": deck.isPublic, "deck_name": deck.name, "cards": card_list,"stars":deck.stars}
 
 @decks_router.post("/{deck_id}/ratings", response={200: dict, 404: str}, auth=JWTAuth())
 def rate_deck(request, deck_id: int):
