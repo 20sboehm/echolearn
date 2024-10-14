@@ -297,6 +297,7 @@ function DeckPage({ publicAccess = false }) {
 
   const handleDragStart = (e, index) => {
     setDragging(index);
+    console.log(index)
     e.dataTransfer.effectAllowed = "move";
   };
 
@@ -343,13 +344,13 @@ function DeckPage({ publicAccess = false }) {
 
           <div className="h-[50vh] overflow-y-auto border-t border-gray-500" >
 
-            {items.map(item=> (
+            {items.map((item,index)=> (
               <div className={`flex font-medium mt-4 border border-eMedGray bg-eDarker w-full ${deleteMode ? "hover:bg-[#ff000055] cursor-not-allowed" : ""}`}
                 key={item.card_id} onClick={() => { handleCardClick(item.card_id) }}
                 draggable
-                onDragStart={(e) => handleDragStart(e, item.card_id)}
+                onDragStart={(e) => handleDragStart(e, index)}
                 onDragOver={handleDragOver}
-                onDrop={(e) => handleDrop(e, item.card_id)}
+                onDrop={(e) => handleDrop(e, index)}
               >
 
                 <div className={`relative w-1/2 flex flex-col pr-4 border-r border-eMedGray`}>
