@@ -177,7 +177,7 @@ function EditPage() {
       <div className="flex w-full h-full">
         <Sidebar onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
         <div className="w-1/2 flex flex-col mx-auto">
-          <div className="flex justify-between border-b border-edMedGray mb-4 mt-8 pb-1">
+          <div className="flex justify-between border-b-2 border-edMedGray mb-4 mt-8 pb-1">
             <h1 className="text-lg text-elDark dark:text-edWhite font-medium">Edit Card</h1>
           </div>
 

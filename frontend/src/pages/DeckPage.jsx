@@ -6,7 +6,7 @@ import { useApi } from "../hooks";
 import editIconImg from "../assets/edit-icon.png"
 import LoadingSpinner from "../components/LoadingSpinner";
 import MarkdownPreviewer from "../components/MarkdownPreviewer";
-import { SpeakerIcon, StarIcon } from "../components/Icons";
+import { SpeakerIcon, StarIcon, EditIcon } from "../components/Icons";
 
 // import ReactPlayer from 'react-player';
 // import katex from 'katex';
@@ -311,17 +311,17 @@ function DeckPage({ publicAccess = false }) {
 
                 <div className={`relative w-1/2 flex flex-col pr-4 border-r border-edMedGray`}>
                   <MarkdownPreviewer content={card.question} className="flex-1 p-2 min-h-20" />
-                  <Link to={`/edit/${card.card_id}`}>
-                    <img src={editIconImg} alt="Edit_Icon" className="absolute top-8 right-0.5 h-[21px] w-[28px]" />
+                  <Link to={`/edit/${card.card_id}`} className="absolute top-8 right-0.5">
+                   <EditIcon />
                   </Link>
-                  <Link onClick={() => speakText(card.question)} className="absolute top-2 right-2">
+                  <Link onClick={() => speakText(card.question)} className="absolute top-2 right-0.5">
                     <SpeakerIcon />
                   </Link>
                 </div>
 
                 <div className="relative w-1/2 flex flex-col">
                   <MarkdownPreviewer content={card.answer} className="flex-1 p-2" />
-                  <Link onClick={() => speakText(card.answer)} className="absolute top-2 right-2">
+                  <Link onClick={() => speakText(card.answer)} className="absolute top-2 right-0.5">
                     <SpeakerIcon  />
                   </Link>
                 </div>

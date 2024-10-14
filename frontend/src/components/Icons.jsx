@@ -173,10 +173,35 @@ export const SpeakerIcon = () => {
     <svg
       width="20px"
       height="20px"
-      viewBox="0 0 64 64"
+      viewBox="-5 0 70 70"
       xmlns="http://www.w3.org/2000/svg"
     >
       <g>
+        {/* Outer white glow */}
+        <path
+          d="M59.998,28.001h-7.999c-2.211,0-4,1.789-4,4s1.789,4,4,4h7.999c2.211,0,4-1.789,4-4 S62.209,28.001,59.998,28.001z"
+          fill="none"
+          stroke="#ffffff"
+          strokeWidth="4"
+        />
+        <path
+          d="M49.71,19.466l6.929-4c1.914-1.105,2.57-3.551,1.461-5.465c-1.102-1.914-3.547-2.57-5.46-1.465l-6.93,4 c-1.914,1.105-2.57,3.551-1.461,5.464C45.351,19.915,47.796,20.571,49.71,19.466z"
+          fill="none"
+          stroke="#ffffff"
+          strokeWidth="4"
+        />
+        <path
+          d="M56.639,48.535l-6.929-3.999c-1.914-1.105-4.355-0.449-5.461,1.464c-1.105,1.914-0.453,4.359,1.461,5.465 l6.93,4c1.913,1.105,4.358,0.449,5.464-1.465S58.553,49.641,56.639,48.535z"
+          fill="none"
+          stroke="#ffffff"
+          strokeWidth="4"
+        />
+        <path
+          d="M37.53,0.307c-1.492-0.625-3.211-0.277-4.359,0.867L18.343,16.001H4c-2.211,0-4,1.789-4,4v24 C0,46.211,1.789,48,4,48h14.343l14.828,14.828C33.937,63.594,34.96,64,35.999,64c0.516,0,1.035-0.098,1.531-0.305 c1.496-0.617,2.469-2.078,2.469-3.695V4.001C39.999,2.384,39.026,0.924,37.53,0.307z"
+          fill="none"
+          stroke="#ffffff"
+          strokeWidth="4"
+        />
         <path className="stroke-elDark dark:stroke-edWhite" d="M59.998,28.001h-7.999c-2.211,0-4,1.789-4,4s1.789,4,4,4h7.999c2.211,0,4-1.789,4-4 S62.209,28.001,59.998,28.001z" />
         <path className="stroke-elDark dark:stroke-edWhite" d="M49.71,19.466l6.929-4c1.914-1.105,2.57-3.551,1.461-5.465c-1.102-1.914-3.547-2.57-5.46-1.465l-6.93,4 c-1.914,1.105-2.57,3.551-1.461,5.464C45.351,19.915,47.796,20.571,49.71,19.466z" />
         <path className="stroke-elDark dark:stroke-edWhite" d="M56.639,48.535l-6.929-3.999c-1.914-1.105-4.355-0.449-5.461,1.464c-1.105,1.914-0.453,4.359,1.461,5.465 l6.93,4c1.913,1.105,4.358,0.449,5.464-1.465S58.553,49.641,56.639,48.535z" />
@@ -204,6 +229,59 @@ export const StarIcon = ({ isFilled = false, className }) => {
     </svg>
   );
 };
+
+export const EditIcon = () => (
+  <svg
+    width="20px"
+    height="px"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+    className="edit-icon"
+  >
+    <g id="Complete">
+      <g id="edit">
+        <g>
+          {/* Outer white glow path */}
+          <path
+            d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8"
+            fill="none"
+            stroke="#ffffff"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="4"
+          />
+          <polygon
+            fill="none"
+            points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8"
+            stroke="#ffffff"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="4"
+          />
+
+          {/* Inner black paths */}
+          <path
+            d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8"
+            fill="none"
+            stroke="#000000"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+          />
+          <polygon
+            fill="none"
+            points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8"
+            stroke="#000000"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+          />
+        </g>
+      </g>
+    </g>
+  </svg>
+);
+
 
 // --------------------------------------------------
 // ------------------ Card Editor -------------------
@@ -256,13 +334,13 @@ export const UnderlineIcon = () => (
 
 export const MicIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-mic-fill" viewBox="0 0 16 16">
-  <path d="M5 3a3 3 0 0 1 6 0v5a3 3 0 0 1-6 0z"/>
-  <path d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 .5-.5"/>
-</svg>
+    <path d="M5 3a3 3 0 0 1 6 0v5a3 3 0 0 1-6 0z" />
+    <path d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 .5-.5" />
+  </svg>
 );
 export const MicIconListening = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="grey" class="bi bi-mic-fill" viewBox="0 0 16 16">
-  <path d="M5 3a3 3 0 0 1 6 0v5a3 3 0 0 1-6 0z"/>
-  <path d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 .5-.5"/>
-</svg>
+    <path d="M5 3a3 3 0 0 1 6 0v5a3 3 0 0 1-6 0z" />
+    <path d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 .5-.5" />
+  </svg>
 );
