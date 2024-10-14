@@ -10,7 +10,7 @@ import Header from "./components/Header";
 import LandingPage from "./pages/LandingPage"
 import HomePage from "./pages/HomePage";
 import CreateCard from "./pages/CreateCard";
-import CreateDeck from "./pages/CreateDeck";
+// import CreateDeck from "./pages/CreateDeck";
 import ReviewPage from "./pages/ReviewPage";
 import HelpPage from "./pages/HelpPage";
 import DeckPage from './pages/DeckPage';
@@ -39,7 +39,7 @@ function AuthenticatedRoutes() {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/cards" element={<CreateCard />} />
-      <Route path="/decks" element={<CreateDeck />} />
+      {/* <Route path="/decks" element={<CreateDeck />} /> */}
       <Route path="/review/:deckId" element={<ReviewPage />} />
       <Route path="/help" element={<HelpPage />} />
       <Route path="/edit/:cardId" element={<EditPage />} />
@@ -118,7 +118,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <BrowserRouter>
-          <div className="min-w-screen min-h-screen flex flex-col font-base text-eWhite bg-elBase dark:bg-eBase">
+          <div className="min-w-screen min-h-screen flex flex-col font-base text-edWhite bg-elBase dark:bg-edBase">
             <Header />
             <Main />
           </div>

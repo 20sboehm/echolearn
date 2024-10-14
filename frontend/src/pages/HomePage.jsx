@@ -51,7 +51,7 @@ function TaskList() {
 
   if (decks && cards) {
     return (
-      <div className="text-2xl text-left border border-eMedGray rounded-md">
+      <div className="text-2xl text-left border border-edMedGray rounded-md">
         <ul className="w-[80vw] sm:[75vw] md:w-[50vw] text-xs sm:text-sm lg:text-xl">
           <li className="flex font-semibold border-eGray px-2 py-3 rounded-t-lg text-elCloudWhite bg-elLightBlue dark:bg-edDark dark:text-edWhite">
             <div className="w-[45%]">Deck</div>

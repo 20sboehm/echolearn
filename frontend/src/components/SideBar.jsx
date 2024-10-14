@@ -270,7 +270,7 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
       <button
         onClick={sidebarShow}
         style={{ left: `calc(${sidebarWidth}px)` }}
-        className={`px-1 py-1 m-1 absolute top-[4rem] z-50 hover:bg-elLavender dark:hover:bg-eStrongHLT rounded-md`}
+        className={`px-1 py-1 m-1 absolute top-[4rem] z-50 hover:bg-elLavender dark:hover:bg-edStrongHLT rounded-md`}
       >
         <SidebarOpenClose sidebarOpen={sidebarOpen} sidebarWidth={sidebarWidth} />
       </button>
@@ -292,9 +292,9 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
           <div className='flex justify-between border-b border-elDark dark:border-edGray'>
             <h2 className='font-bold text-xl text-elDark dark:text-edWhite whitespace-nowrap'>Deck Library</h2>
             <div ref={buttonRef} className='flex items-center'>
-              <button onClick={() => buttonCreate('deck')} className='hover:bg-elLavender dark:hover:bg-eStrongHLT mr-1 rounded-md'><DeckCreateIcon /></button>
-              <button onClick={() => buttonCreate('folder')} className='hover:bg-elLavender dark:hover:bg-eStrongHLT mr-1 rounded-md'><FolderCreateIcon /></button>
-              <button onClick={handleExpandCollapseAll} className='hover:bg-elLavender dark:hover:bg-eStrongHLT rounded-md'>
+              <button onClick={() => buttonCreate('deck')} className='hover:bg-elLavender dark:hover:bg-edStrongHLT mr-1 rounded-md'><DeckCreateIcon /></button>
+              <button onClick={() => buttonCreate('folder')} className='hover:bg-elLavender dark:hover:bg-edStrongHLT mr-1 rounded-md'><FolderCreateIcon /></button>
+              <button onClick={handleExpandCollapseAll} className='hover:bg-elLavender dark:hover:bg-edStrongHLT rounded-md'>
                 <ExpandContractAllIcon isExpanded={isAnyFolderOpen} />
               </button>
             </div>
@@ -483,9 +483,9 @@ const Folder = ({ folder, onRightClick, folderStates, toggleFolder, setContextMe
       {folderStates[folder.folder_id] && (
         <div className="ml-2 border-l border-eGray">
           {folder.decks.map((deck, index) => (
-            <div key={index} className="text-elDark dark:text-edWhite flex items-center select-none text-base ml-2 mt-2 hover:text-edBlue" onContextMenu={(e) => onRightClick(e, deck)}>
+            <div key={index} className="text-elDark dark:text-edWhite flex items-center select-none ml-2 mt-2" onContextMenu={(e) => onRightClick(e, deck)}>
               <Link to={`/decks/${deck.deck_id}`}>
-                <p className="overflow-x-auto whitespace-nowrap">{deck.name}</p>
+                <p className="overflow-x-auto whitespace-nowrap hover:text-edBlue">{deck.name}</p>
               </Link>
             </div>
           ))}
