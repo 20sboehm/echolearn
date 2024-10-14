@@ -152,9 +152,9 @@ function ReviewPage() {
         <Sidebar onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
         <div className="rounded-lg mt-[2%] flex flex-col flex-grow min-w-[16rem] mx-auto overflow-x-auto">
           <div className="flex mx-auto items-center border-b border-black dark:border-edWhite pb-[1rem] w-[40vw]">
-            <Link to={`/decks/${deckId}`} className="rounded-lg border border-black hover:border-elMedGray hover:text-elMedGray 
-              dark:border-transparent dark:hover:border-black dark:hover:text-black px-10 py-2 text-center
-              font-semibold bg-elGray dark:bg-white text-black active:scale-[0.97] active:border-[#555]">back</Link>
+            <Link to={`/decks/${deckId}`} className="rounded-lg border border-black hover:border-elMedGray hover:text-elDark 
+              dark:border-transparent dark:hover:border-black dark:hover:text-white px-10 py-2 text-center
+              font-semibold bg-elLightBlue text-white active:scale-[0.97] active:border-[#555]">back</Link>
             <h2 className="text-[2em] text-elDark dark:text-edWhite mx-auto">{reviews.deck_name}</h2>
             <button className="border border-black w-[12%] ml-auto" onClick={switchAnimation}>
               <img src={currImage}></img>
@@ -259,7 +259,7 @@ function AnswerCard({ card, flip, showAnswer, displayQuestion }) {
 function FlipFlashcard({ card, flip, toggleFlip, displayQuestion }) {
   return (
     <div className={`mt-8 flashCard ${flip ? 'flip' : ''}`} onClick={toggleFlip}>
-      <div className="h-[50vh] text-[1.2rem] bg-eDarker border border-eMedGray text-eWhite flex flex-col justify-center items-center 
+      <div className="h-[50vh] text-[1.2rem] bg-dDarker border border-edMedGray text-edWhite flex flex-col justify-center items-center 
           overflow-x-hidden overflow-y-auto"
       >
         <MarkdownPreviewer
@@ -332,7 +332,7 @@ function ShowAnswerButtons({ card, showAnswer, updateReviewedCard, toggleFlip })
   return (
     // <div className="fixed bottom-8 left-0 right-0 mx-auto w-[100vw] flex justify-center">
     <div className="flex justify-center mt-8 mb-8">
-      {!showAnswer && <button className="mt-8 border border-black text-elDark bg-elGray dark:bg-edGray dark:border-edWhite dark:text-edWhite rounded-md w-[20%] min-w-[16rem]" onClick={toggleFlip}>Reveal Answer</button>}
+      {!showAnswer && <button className="mt-8 border border-black text-white bg-elLightBlue dark:border-edWhite rounded-md w-[20%] min-w-[16rem]" onClick={toggleFlip}>Reveal Answer</button>}
       {
         showAnswer && (
           <div className="flex justify-center mt-8 flex-wrap">

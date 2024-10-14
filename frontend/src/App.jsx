@@ -118,7 +118,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <BrowserRouter>
-          <div className="min-w-screen min-h-screen flex flex-col font-base text-eWhite bg-elBase dark:bg-eBase">
+          <div className="min-w-screen min-h-screen flex flex-col font-base text-edWhite bg-elBase dark:bg-edBase">
             <Header />
             <Main />
           </div>

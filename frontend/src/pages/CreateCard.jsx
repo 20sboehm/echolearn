@@ -378,7 +378,7 @@ function CreateCard() {
                 In the pop-up window, input "<code>|</code>" for customizing the separator between term and definition and input "<code>&#123;|&#125;</code>" for customizing the separator between rows.
               </p>
               <div className="mb-2 flex flex-col">
-                <textarea value={quizletInput} onChange={(e) => setquizletInput(e.target.value)} className="text-black dark:text-white dark:bg-edDarker w-full min-h-20 h-40 p-2 border border-eDarkGray focus:outline-none custom-scrollbar"></textarea>
+                <textarea value={quizletInput} onChange={(e) => setquizletInput(e.target.value)} className="text-black dark:text-white dark:bg-edDarker w-full min-h-20 h-40 p-2 border border-edDarkGray focus:outline-none custom-scrollbar"></textarea>
               </div>
               <button type='submit' className="rounded-lg border border-black hover:border-elMedGray hover:text-elDark 
               dark:border-transparent dark:hover:border-black dark:hover:text-black px-10 py-2 text-center
@@ -405,8 +405,8 @@ function CreateCard() {
 
             <form onSubmit={handleSubmit}>
               <button type="button" onClick={() => setquizletRequired(true)} className="rounded-lg border border-black hover:border-elMedGray hover:text-elDark 
-              dark:border-transparent dark:hover:border-black dark:hover:text-black px-10 py-2 text-center
-              font-semibold bg-elLightBlue text-white dark:text-black dark:bg-white active:scale-[0.97] active:border-[#555]" >quizlet parser</button>
+              dark:border-transparent dark:hover:border-black dark:hover:text-white px-10 py-2 text-center
+              font-semibold bg-elLightBlue text-white active:scale-[0.97] active:border-[#555]">quizlet parser</button>
               <div className="mb-2 flex flex-col">
                 <TextBox label="Front" reference={questionRef} content={questionText} inputHandler={(e) => { setQuestionText(e.target.value) }}
                   handleTextEditingButton={handleTextEditingButton} forQuestionBox={true} questionisListening={questionisListening} />
@@ -464,7 +464,7 @@ function TextBox({ label, reference, content, inputHandler, handleTextEditingBut
         )}
       </div>
       {textBoxOpen && (
-        <textarea value={content} ref={reference} onInput={inputHandler} className="text-black dark:text-white dark:bg-edDarker w-full min-h-20 h-[10vh] p-2 border border-eDarkGray focus:outline-none custom-scrollbar"></textarea>
+        <textarea value={content} ref={reference} onInput={inputHandler} className="text-black dark:text-white dark:bg-edDarker w-full min-h-20 h-[10vh] p-2 border border-edDarkGray focus:outline-none custom-scrollbar"></textarea>
       )}
     </>
   );
