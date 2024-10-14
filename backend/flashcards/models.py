@@ -1,7 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.contrib.postgres.fields import JSONField
 from django.db import models
-
 """
 Models define the structure of your application's data. Each model corresponds to a table in the database.
 Each attribute of the model corresponds to a column in that table.
@@ -39,6 +38,7 @@ class Deck(models.Model):
     last_edited = models.DateTimeField(auto_now_add=True)
     isPublic = models.BooleanField(default=False)
     stars =  models.IntegerField(default=0)
+    order_List =  models.JSONField(default=list, blank=True)
     def __str__(self):
         return f"{self.name} (id={self.deck_id})"
 

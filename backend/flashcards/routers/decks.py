@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404
 from ninja_jwt.authentication import JWTAuth
 from django.http import JsonResponse
 from ninja.errors import HttpError
-
+import json
 decks_router = Router(tags=["Decks"])
 
 # ---------------------------------------------
@@ -37,7 +37,8 @@ def get_cards_from_deck(request, deck_id: int):
         raise HttpError(403, "You are not authorized to access this deck")
 
     card_list = Card.objects.filter(deck_id=deck_id)
-    return {"deck_id": deck.deck_id, "isPublic": deck.isPublic, "deck_name": deck.name, "cards": card_list,"stars":deck.stars}
+    
+    return {"deck_id": deck.deck_id, "isPublic": deck.isPublic, "deck_name": deck.name, "cards": card_list,"stars":deck.stars, "order_List":deck.order_List}
 
 @decks_router.get("/{deck_id}/cards", response={200: sc.DeckCards, 404: str}, auth=JWTAuth())
 def get_cards_from_deck(request, deck_id: int):
@@ -47,7 +48,13 @@ def get_cards_from_deck(request, deck_id: int):
         raise HttpError(403, "You are not authorized to access this deck")
 
     card_list = Card.objects.filter(deck_id=deck_id)
-    return {"deck_id": deck.deck_id, "isPublic": deck.isPublic, "deck_name": deck.name, "cards": card_list, "stars":deck.stars}
+
+    if len(deck.order_List) == 0: 
+        print("hererer")
+        for card in card_list:
+            deck.order_List.append(card.card_id)
+            deck.save()
+    return {"deck_id": deck.deck_id, "isPublic": deck.isPublic, "deck_name": deck.name, "cards": card_list, "stars":deck.stars, "order_List":deck.order_List}
 
 @decks_router.get("/{deck_id}/ratedOrnot", response={200: bool, 404: str}, auth=JWTAuth())
 def checkRatedresult(request, deck_id: int):
@@ -135,7 +142,7 @@ def update_deck_status(request, deck_id:int):
     deck.isPublic = not deck.isPublic
     deck.save()
     card_list = Card.objects.filter(deck_id=deck_id)
-    return {"deck_id": deck.deck_id,"isPublic": deck.isPublic, "deck_name": deck.name, "cards": card_list,"stars":deck.stars}
+    return {"deck_id": deck.deck_id,"isPublic": deck.isPublic, "deck_name": deck.name, "cards": card_list,"stars":deck.stars, "order_List":deck.order_List}
 
 @decks_router.post("/{deck_id}/ratings", response={200: dict, 404: str}, auth=JWTAuth())
 def rate_deck(request, deck_id: int):
@@ -173,6 +180,22 @@ def generate_share_link(request, deck_id):
         print(link)
         return JsonResponse({
             "link": link
+        }, status=200)
+    else:
+        return 404
+    
+@decks_router.post("/{deck_id}/orderList", response={200:None, 404: str}, auth=JWTAuth())
+def store_new_order_list(request, deck_id):
+    deck = get_object_or_404(Deck, deck_id=deck_id)
+    data = json.loads(request.body)
+    print(data)
+    if deck:
+        print("The type of body is", type(data['templist']))
+        print(data['templist'])
+        deck.order_List = data['templist']
+        deck.save()
+        return JsonResponse({
+            "neworderlist": deck.order_List
         }, status=200)
     else:
         return 404

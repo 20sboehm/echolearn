@@ -67,7 +67,8 @@ class GetDeck(Schema):
     created_at: datetime
     last_edited: datetime
     isPublic:bool
-
+    order_List: list[int]
+    
 class CreateDeck(Schema):
     folder_id: int
     name: str
@@ -151,6 +152,7 @@ class DeckCards(Schema):
     deck_name: str
     cards: list[GetCard]
     stars:int
+    order_List: list[int]
     
 class EditCards(Schema):
     question: Optional[str] = None

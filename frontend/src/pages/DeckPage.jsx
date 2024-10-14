@@ -40,6 +40,7 @@ function DeckPage({ publicAccess = false }) {
   const [dragging, setDragging] = useState(null);
   const [items, setItems] = useState([]);
   const [itemKeys, setItemKeys] = useState([]);
+
   const { data: deckCards, isLoading, error, refetch } = useQuery(
     ['deckCards', deckId], // Unique key based on deckId
     async () => { // This function is queryFn
@@ -57,21 +58,45 @@ function DeckPage({ publicAccess = false }) {
   
       return response.json();
     }, 
-    { // This is the configuration object for useQuery
+    { 
       onSuccess: (data) => {
-        setItems(data.cards)
-        // You can add logic here to handle successful data fetching
-        console.log('Data fetched successfully:', data.cards);
+        setItemKeys(data.order_List)
+        setItems(reorderItems(data.cards, data.order_List));
+        console.log('Data fetched successfully:', items);
       },
       retry: false
     }
   );
+  const reorderItems = (cards, orderList) => {
+    if (!orderList) 
+      return cards; 
+    const orderedCards = new Array(cards.length).fill(null);
+    // Place each card in its new position according to orderList
+    orderList.forEach((cardId, index) => {
+        const card = cards.find(card => card.card_id === cardId);
+        if (card) {
+            orderedCards[index] = card;
+        }
+    });
+    return orderedCards
+};
+  const submitorderList = async (templist) => {
+    const response = await api._post(`/api/decks/${deckId}/orderList`, {
+      templist
+  });
+    const data = await response.json();
+    console.log(data)
+
+  };
+ 
+
   // useEffect(() => {
   //   if (items) {
   //     setItemKeys(Object.cards(items)); // Initialize the keys array
   //     console.log(itemKeys)
   //   }
   // }, [items]);
+
   if (isLoading) {
     return <LoadingSpinner />
   }
@@ -310,8 +335,19 @@ function DeckPage({ publicAccess = false }) {
     const [draggedItem] = updatedItems.splice(dragging, 1);
     updatedItems.splice(index, 0, draggedItem);
     setItems(updatedItems);
+    setItemKeys(null);
+    let templist = []
+    templist=updatedItems.map(item=>parseInt(item.card_id))
+    console.log(templist)
+    setItemKeys(templist)
+    console.log(itemKeys)
+    submitorderList(templist);
     setDragging(null);
   };
+
+
+ 
+
   return (
     <>
       <div className="flex flex-row w-full h-full">
