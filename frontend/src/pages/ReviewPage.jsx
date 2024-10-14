@@ -204,6 +204,7 @@ function ReviewCard({ card, showAnswer, setShowAnswer, updateReviewedCard, chang
 
       setShowAnswer(newFlip);
       if (!changeAnimation){
+        // This is only use for question set animation because question display is always true for question set
         setDisplayQuestionOnFlipCard(true);
       }
       else{

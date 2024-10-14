@@ -6,6 +6,7 @@ import { useQuery } from "react-query";
 import { useState, useEffect } from "react";
 import { useApi } from "../hooks";
 import LoadingSpinner from "../components/LoadingSpinner";
+import MarkdownPreviewer from "../components/MarkdownPreviewer";
 
 function StatsPage() {
   const api = useApi();
@@ -138,18 +139,18 @@ function StatsPage() {
     <>
       <div>
         <div className="flex justify-between items-center mt-3 mb-3">
-          <Link to={`/decks/${deckId}`} className="rounded-lg border border-transparent px-12 py-2 text-center
-              font-semibold bg-white text-black hover:border-black active:scale-[0.97] active:bg-[#333] 
-              active:border-[#555]">back</Link>
+          <Link to={`/decks/${deckId}`}  className="rounded-lg border border-black hover:border-elMedGray hover:text-elDark 
+              dark:border-transparent dark:hover:border-black dark:hover:text-white px-10 py-2 text-center
+              font-semibold bg-elLightBlue text-white active:scale-[0.97] active:border-[#555]">back</Link>
           <div className="absolute left-1/2 mt-10 transform -translate-x-1/2">
-            <h1 className="font-bold text-center text-3xl">
+            <h1 className="font-bold text-center text-3xl text-elDark dark:text-edWhite">
               {deckCards.deck_name}
             </h1>
             <div className="flex space-x-4 mt-2">
               {timeFrames.map((timeFrame) => (
                 <button
                   key={timeFrame.value}
-                  className={`text-sm rounded-full py-2 px-2 ${selectTimeFrame === timeFrame.value
+                  className={`text-sm border border-black rounded-full py-2 px-2 ${selectTimeFrame === timeFrame.value
                       ? 'bg-blue-500 text-white'
                       : 'bg-gray-200 text-black'
                     }`}
@@ -165,26 +166,26 @@ function StatsPage() {
         <div className="flex flex-col">
           {/* The two bar graph is the upcoming and previous review graph */}
           <div className="flex justify-between">
-            <div className="rounded-lg bg-white w-[30vw] h-[30vh]">
+            <div className="rounded-lg bg-white border border-black w-[30vw] h-[30vh]">
               <Bar data={chartData} options={upcomingChartOptions} />
             </div>
-            <div className="rounded-lg bg-white w-[30vw] h-[30vh]">
+            <div className="rounded-lg bg-white border border-black w-[30vw] h-[30vh]">
               <Bar data={chartDataPrevious} options={previousChartOptions} />
             </div>
           </div>
           {/* The bar graph is the correct vs incorrect percentage graph */}
           <div className="flex flex-col justify-center mt-4">
-            <div className="bg-white w-[80vw] h-[15vh]">
+            <div className="mb-4 bg-white border-t border-r border-l rounded border-black w-[80vw] h-[15vh]">
               <Bar data={totalChartData} options={totalChartOptions} />
             </div>
 
             {/* The following two is the individual card filter and data */}
-            <div className="mt-4 mb-4 text-black">
+            <div className="mt-4 mb-4 pt-4 text-black border-t-2 border-black">
               <BucketFilter
                 selectedBucket={selectedBucket}
                 onChange={setSelectedBucket}
               />
-              <span className="ml-4 text-white">{cardCount} cards</span>
+              <span className="ml-4 text-elDark dark:text-edWhite">{cardCount} cards</span>
             </div>
             <div className="overflow-x-auto w-[80vw]">
               <div className="flex space-x-4 p-4">
@@ -221,7 +222,12 @@ const upcomingDaysFromToday = (date) => {
   const today = new Date();
   const reviewDate = new Date(date);
   const diffTime = reviewDate - today; // Time difference in milliseconds
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
+  var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
+
+  // If the review date is past (diffDays is negative), treat it as due today (index 0)
+  if (diffDays < 0) {
+    diffDays = 0;
+  }
   return diffDays;
 };
 const groupUpcomingCards = (cards, selectTimeFrame) => {
@@ -404,10 +410,46 @@ const totalChartOptions = {
   },
 };
 
-function Card({ card }) {
+function HoverPopup({ children }) {
   return (
-    <div className="w-92 h-52 border p-4 rounded-lg bg-white shadow-sm flex flex-col justify-between text-black">
-      <h2 className="truncate font-bold text-xl">Question:{card.question}</h2>
+    <div className="absolute bg-white p-4 border border-gray-300 rounded shadow-lg z-50">
+      <h1 className="font-bold">Markdown Preview:</h1>
+      {children}
+    </div>
+  );
+}
+
+function Card({ card }) {
+  const [isHovered, setIsHovered] = useState(false);
+  const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
+
+  const handleMouseEnter = (event) => {
+    setIsHovered(true);
+    // Get the position of the element to position the popup
+    const { top, left, height } = event.currentTarget.getBoundingClientRect();
+    setPopupPosition({ top: top + height + window.scrollY + 5, left: left });
+  };
+  
+  const handleMouseLeave = () => setIsHovered(false);
+
+  console.log(isHovered);
+  return (
+    <div className="max-w-92 h-52 border border-black p-4 rounded-lg bg-white shadow-sm flex flex-col justify-between text-black">
+      {/* <h2 className="truncate font-bold text-xl" >Question:{card.question}</h2> */}
+      <h2
+        className="truncate text-xl cursor-pointer"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        <strong>Question: {card.question}</strong>
+        
+        {/* Hover Popup */}
+        {isHovered && (
+        <HoverPopup style={{ top: popupPosition.top, left: popupPosition.left }}>
+          <MarkdownPreviewer content={card.question} />
+        </HoverPopup>
+        )}
+      </h2>
       <p className="truncate"><strong>Next Review:</strong> {new Date(card.next_review).toLocaleDateString()}</p>
       <p className="truncate"><strong>Last Reviewed:</strong> {new Date(card.last_reviewed).toLocaleDateString()}</p>
       <p className="truncate"><strong>Bucket: </strong>{card.bucket}</p>
@@ -424,7 +466,7 @@ function BucketFilter({ selectedBucket, onChange }) {
     <select
       value={selectedBucket}
       onChange={(e) => onChange(e.target.value)}
-      className="p-2 border rounded"
+      className="p-2 border border-black rounded"
     >
       <option value="">All Cards</option>
       {buckets.map((bucket) => (
