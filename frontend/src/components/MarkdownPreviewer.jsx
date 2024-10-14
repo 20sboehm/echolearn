@@ -92,14 +92,14 @@ function MarkdownPreviewer({ content, className }) {
       const trimmedCode = innerCodeContent.trim();
 
       if (language) {
-        return `<pre class="p-2 my-1 rounded-md bg-eBlack"><code class="language-${language}">${trimmedCode}</code></pre>`;
+        return `<pre class="p-2 my-1 rounded-md bg-edDark"><code class="language-${language}">${trimmedCode}</code></pre>`;
       } else {
-        return `<pre class="p-2 my-1 rounded-md bg-eBlack">${trimmedCode}</pre>`;
+        return `<pre class="p-2 my-1 rounded-md bg-edDark">${trimmedCode}</pre>`;
       }
     });
 
     const codePattern = /`(.*?)`/g;
-    text = text.replace(codePattern, '<code class="bg-eBlack px-1 py-0.5 rounded-md">$1</code>');
+    text = text.replace(codePattern, '<code class="bg-edDark px-1 py-0.5 rounded-md text-white">$1</code>');
 
     const header1Pattern = /^# (.*$)/gim;
     text = text.replace(header1Pattern, '<h1 class="text-[2rem]">$1</h1>');
@@ -125,7 +125,7 @@ function MarkdownPreviewer({ content, className }) {
   return (
     <>
       <div
-        className={`w-full whitespace-pre-wrap break-words ${className}`}
+        className={`w-full bg-white dark:bg-edDarkGray whitespace-pre-wrap break-words text-black dark:text-white ${className}`}
         dangerouslySetInnerHTML={{ __html: formatContent(content) }}
       ></div>
     </>

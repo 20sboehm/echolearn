@@ -34,6 +34,7 @@ export default {
 				edDark: '#1f1f1f', // check
 				edDarker: '#151515', // check
 				edGray: '#999',
+				edLightGray: '#C1C6C8',
 				edMedGray: '#666',
 				edDarkGray: '#333', // check
 				edWhite: '#ccc',

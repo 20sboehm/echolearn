@@ -6,6 +6,8 @@ import { useApi } from "../hooks";
 import editIconImg from "../assets/edit-icon.png"
 import LoadingSpinner from "../components/LoadingSpinner";
 import MarkdownPreviewer from "../components/MarkdownPreviewer";
+import { SpeakerIcon, StarIcon } from "../components/Icons";
+
 // import ReactPlayer from 'react-player';
 // import katex from 'katex';
 // import 'katex/dist/katex.min.css';
@@ -296,23 +298,14 @@ function DeckPage({ publicAccess = false }) {
             handleTakeACopy={handleTakeACopy} isModalOpen={isModalOpen} folders={folders} handleFolderSelection={handleFolderSelection}
             setModalOpen={setModalOpen} deleteMode={deleteMode} changeMode={changeMode} />
             
-            <button onClick={submitRating} id="button-preview" aria-labelledby="tooltip-1f7d89ff-668b-406b-9c3f-e3e313ecdc97" type="button" data-view-component="true" class="Button Button--iconOnly Button--secondary Button--medium">
-            {Rateresult ? (
-              <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-star-filled Button-visual">
-                <path fill="gold" d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z"></path>
-              </svg>
-            ) : (
-              <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-star Button-visual">
-                <path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Zm0 2.445L6.615 5.5a.75.75 0 0 1-.564.41l-3.097.45 2.24 2.184a.75.75 0 0 1 .216.664l-.528 3.084 2.769-1.456a.75.75 0 0 1 .698 0l2.77 1.456-.53-3.084a.75.75 0 0 1 .216-.664l2.24-2.183-3.096-.45a.75.75 0 0 1-.564-.41L8 2.694Z"></path>
-              </svg>
-
-            )}
-            {deckCards.stars}
+            <button onClick={submitRating} id="button-preview" aria-labelledby="tooltip-1f7d89ff-668b-406b-9c3f-e3e313ecdc97" type="button" data-view-component="true" className="Button Button--iconOnly Button--secondary Button--medium">
+            <StarIcon isFilled={Rateresult} />
+            <p className="text-black dark:text-edWhite">{deckCards.stars}</p>
           </button>
 
           <div className="h-[50vh] overflow-y-auto border-t border-gray-500">
             {deckCards.cards.map(card => (
-              <div className={`flex font-medium mt-4 border border-eMedGray bg-eDarker w-full ${deleteMode ? "hover:bg-[#ff000055] cursor-not-allowed" : ""}`}
+              <div className={`flex font-medium mt-4 border border-eMedGray dark:bg-edDarkGray w-full ${deleteMode ? "hover:bg-[#ff000055] cursor-not-allowed" : ""}`}
                 key={card.card_id} onClick={() => { handleCardClick(card.card_id) }}
               >
 
@@ -321,15 +314,15 @@ function DeckPage({ publicAccess = false }) {
                   <Link to={`/edit/${card.card_id}`}>
                     <img src={editIconImg} alt="Edit_Icon" className="absolute top-8 right-0.5 h-[21px] w-[28px]" />
                   </Link>
-                  <Link onClick={() => speakText(card.question)}>
-                    <SpeakerIcon className="absolute top-1 right-1" />
+                  <Link onClick={() => speakText(card.question)} className="absolute top-2 right-2">
+                    <SpeakerIcon />
                   </Link>
                 </div>
 
                 <div className="relative w-1/2 flex flex-col">
                   <MarkdownPreviewer content={card.answer} className="flex-1 p-2" />
-                  <Link onClick={() => speakText(card.answer)}>
-                    <SpeakerIcon className="absolute top-1 right-1" />
+                  <Link onClick={() => speakText(card.answer)} className="absolute top-2 right-2">
+                    <SpeakerIcon  />
                   </Link>
                 </div>
 
@@ -373,36 +366,21 @@ function DeckPage({ publicAccess = false }) {
   )
 }
 
-const SpeakerIcon = ({ width = "20px", height = "20px", fill = "#ccc", className }) => {
-  return (
-    <svg
-      fill={fill}
-      width={width}
-      height={height}
-      viewBox="-2.5 0 19 19"
-      xmlns="http://www.w3.org/2000/svg"
-      className={`cf-icon-svg ${className}`}
-    >
-      <path d="M7.365 4.785v9.63c0 .61-.353.756-.784.325l-2.896-2.896H1.708A1.112 1.112 0 0 1 .6 10.736V8.464a1.112 1.112 0 0 1 1.108-1.108h1.977L6.581 4.46c.43-.43.784-.285.784.325zm2.468 7.311a3.53 3.53 0 0 0 0-4.992.554.554 0 0 0-.784.784 2.425 2.425 0 0 1 0 3.425.554.554 0 1 0 .784.783zm1.791 1.792a6.059 6.059 0 0 0 0-8.575.554.554 0 1 0-.784.783 4.955 4.955 0 0 1 0 7.008.554.554 0 1 0 .784.784z" />
-    </svg>
-  );
-};
-
 function TopButtons({ deckCards, publicAccess, deckId, handleDeleteDeck, }) {
   return (
     <div className="flex flex-col items-start">
-      <h1 className="text-4xl font-bold my-4">{deckCards.deck_name}</h1>
+      <h1 className="text-4xl font-bold my-4 text-black dark:text-edLightGray">{deckCards.deck_name}</h1>
       {publicAccess ? (
         null
       ) : (
         <div className="flex gap-4 mb-2">
-          <Link to={`/review/${deckId}`} className={` rounded-lg border border-transparent px-12 py-2 text-center
-                font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+          <Link to={`/review/${deckId}`} className={`rounded-lg border border-transparent px-12 py-2 text-center
+                font-semibold bg-blue-500 hover:border-white text-white hover:text-black dark:text-edLightGray dark:hover:text-white active:scale-[0.97] active:bg-[#333] 
                 active:border-[#555]`} style={{ transition: "border-color 0.10s, color 0.10s" }}>
             Study
           </Link>
-          <Link to={`/review/${deckId}?studyAll=true`} className={` rounded-lg border border-transparent px-12 py-2 text-center
-                font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+          <Link to={`/review/${deckId}?studyAll=true`} className={`rounded-lg border border-transparent px-12 py-2 text-center
+                font-semibold bg-blue-500 hover:border-white text-white hover:text-black dark:text-edLightGray dark:hover:text-white active:scale-[0.97] active:bg-[#333] 
                 active:border-[#555]`} style={{ transition: "border-color 0.10s, color 0.10s" }}>
             StudyAll
           </Link>
@@ -412,7 +390,7 @@ function TopButtons({ deckCards, publicAccess, deckId, handleDeleteDeck, }) {
         null
       ) : (
         <button
-          className="mt-2 rounded-lg border border-transparent px-4 py-2 font-semibold bg-red-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] active:border-[#555]"
+          className="mt-2 rounded-lg border border-transparent px-4 py-2 font-semibold bg-red-500 hover:border-white text-white hover:text-black dark:text-edLightGray dark:hover:text-white active:scale-[0.97] active:bg-[#333] active:border-[#555]"
           style={{ transition: "border-color 0.10s, color 0.10s" }}
           onClick={handleDeleteDeck}
         >
@@ -426,12 +404,12 @@ function TopButtons({ deckCards, publicAccess, deckId, handleDeleteDeck, }) {
 function MiddleButtons({ deckCards, publicAccess, setStatus, isCreateMode, handleCreateCard, toggleCreateMode, handleCancelCreateCard,
   handleTakeACopy, isModalOpen, folders, handleFolderSelection, setModalOpen, deleteMode, changeMode }) {
   return (
-    <div className="flex flex-row items-center justify-between mt-2 mb-4 border-t border-gray-500 pt-4">
+    <div className="flex flex-row items-center text-black dark:text-edLightGray justify-between mt-2 mb-4 border-t border-gray-500 pt-4">
       <h1>{deckCards.cards.length} Cards</h1>
       <button
         disabled={publicAccess}
         className={`${deckCards.isPublic ? "bg-green-600" : "bg-red-600"}
-              ${publicAccess ? "" : "active:scale-[0.97] hover:border-white hover:text-white"}
+              ${publicAccess ? "" : "active:scale-[0.97] hover:border-white text-white hover:text-black dark:text-edLightGray dark:hover:text-white"}
               rounded-lg border border-transparent px-2 py-1 disabled:bg-gray-500 font-semibold`}
         style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={setStatus}>
         {deckCards.isPublic ? "Public" : "Private"}
@@ -442,13 +420,13 @@ function MiddleButtons({ deckCards, publicAccess, setStatus, isCreateMode, handl
       ) : (
         <div>
           <button className={`${isCreateMode ? "bg-green-500" : "bg-blue-500"} rounded-lg border border-transparent px-2 py-1 
-              font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
+              font-semibold hover:border-white text-white hover:text-black dark:text-edLightGray dark:hover:text-white active:scale-[0.97]`}
             style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={isCreateMode ? handleCreateCard : toggleCreateMode}>
             {isCreateMode ? "Done" : "Create"}
           </button>
           {isCreateMode && (
             <button className="bg-red-500 rounded-lg border border-transparent px-2 py-1 
-                font-semibold hover:border-white hover:text-white active:scale-[0.97]"
+                font-semibold hover:border-white text-white hover:text-black dark:text-edLightGray dark:hover:text-white active:scale-[0.97]"
               style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={handleCancelCreateCard}>
               Cancel
             </button>
@@ -456,15 +434,15 @@ function MiddleButtons({ deckCards, publicAccess, setStatus, isCreateMode, handl
         </div>
       )}
 
-      <div>
+      <div className="text-black dark:text-white">
         <button type="button" onClick={handleTakeACopy}>Copy Deck</button>
         {isModalOpen && (
           <div className="modal">
             <div className="modal-content">
               <h2>Select a folder </h2>
               {folders.map(folder => (
-                <button className={`bg-eBlue rounded-lg border border-transparent px-2 py-1 
-                      font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
+                <button className={`bg-edBlue rounded-lg border border-transparent px-2 py-1 
+                      font-semibold hover:border-white text-white hover:text-black dark:text-edLightGray dark:hover:text-white active:scale-[0.97]`}
                   key={folder.folder_id} onClick={() => handleFolderSelection(folder.folder_id)}>
                   {folder.name}
                 </button>
@@ -479,7 +457,7 @@ function MiddleButtons({ deckCards, publicAccess, setStatus, isCreateMode, handl
         null
       ) : (
         <button className={`${deleteMode ? "bg-red-500" : "bg-blue-500"} rounded-lg border border-transparent px-2 py-1 
-              font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
+              text-white hover:text-black dark:text-edLightGray dark:hover:text-white font-semibold hover:border-white active:scale-[0.97]`}
           style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={changeMode}>
           {deleteMode ? "Cancel" : "Delete"}
         </button>
@@ -494,13 +472,13 @@ function ProgressCircleGraph({ radius, dashLength, gapLength, strokeDashoffset, 
     <div className="flex flex-col ml-auto justify-center items-center mb-4">
       {/* JavaScript code to draw the graph */}
       <svg width="200" height="200" viewBox="0 20 200 150">
-        <circle cx="100" cy="100" r={radius} fill="none" stroke="#ECEFF1" strokeWidth="7.5" />
+        <circle cx="100" cy="100" r={radius} fill="none" className="stroke-elDarkGray dark:stroke-edLightGray" strokeWidth="7.5" />
         <circle cx="100" cy="100" r={radius} fill="none" stroke="#29A5DC" strokeWidth="7.5" strokeLinecap="round"
           strokeDasharray={`${dashLength},${gapLength}`} strokeDashoffset={strokeDashoffset}>
-          <title>Progress</title>
         </circle>
-        <text x="100" y="100" textAnchor="middle" dominantBaseline="middle" fill="white" fontSize="16">
-          {percentage}%
+        <text x="100" y="100" textAnchor="middle" className="fill-black dark:fill-edLightGray" fontSize="16">
+          <tspan x="100" dy="-3">{percentage}%</tspan>
+          <tspan x="100" dy="20">Mastery</tspan>
         </text>
       </svg>
     </div>
