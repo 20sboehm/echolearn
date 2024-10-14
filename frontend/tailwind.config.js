@@ -49,6 +49,7 @@ export default {
 				elDark: '#3f3f3f',
 				elBlue: '#0078d4',
 				elLightBlue: '#0082e6',
+				elSkyBlue: '#87CEEB',
 				elGray: '#eee',  // also use for light mode card and editor back ground <- note for easy to find if need change
 				elMedGray: '#999',
 				elDarkGray: '#666',

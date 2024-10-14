@@ -273,8 +273,7 @@ function TextBoxPreview({ label, content }) {
 function SubmitButton({ children, onSubmit }) {
   return (
     <button onSubmit={onSubmit} className="block rounded-sm sm:rounded-lg p-2 w-1/3 text-center font-medium
-                  bg-edBlue text-white hover:bg-elLightBlue active:scale-[0.97]"
-    >
+                  bg-edBlue text-white hover:bg-elLightBlue active:scale-[0.97]">
       {children}
     </button>
 
