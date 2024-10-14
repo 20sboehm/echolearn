@@ -310,7 +310,7 @@ function DeckPage({ publicAccess = false }) {
               >
 
                 <div className={`relative w-1/2 flex flex-col pr-4 border-r border-edMedGray`}>
-                  <MarkdownPreviewer content={card.question} className="flex-1 p-2 min-h-20" />
+                  <MarkdownPreviewer content={card.question} className="bg-elGray dark:bg-edDarkGray flex-1 p-2 min-h-20" />
                   <Link to={`/edit/${card.card_id}`} className="absolute top-8 right-0.5">
                     <EditIcon />
                   </Link>
@@ -320,7 +320,7 @@ function DeckPage({ publicAccess = false }) {
                 </div>
 
                 <div className="relative w-1/2 flex flex-col">
-                  <MarkdownPreviewer content={card.answer} className="flex-1 p-2" />
+                  <MarkdownPreviewer content={card.answer} className="bg-elGray dark:bg-edDarkGray flex-1 p-2" />
                   <Link onClick={() => speakText(card.answer)} className="absolute top-2 right-0.5">
                     <SpeakerIcon />
                   </Link>

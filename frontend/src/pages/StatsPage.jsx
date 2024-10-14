@@ -446,7 +446,7 @@ function Card({ card }) {
         {/* Hover Popup */}
         {isHovered && (
         <HoverPopup style={{ top: popupPosition.top, left: popupPosition.left }}>
-          <MarkdownPreviewer content={card.question} />
+          <MarkdownPreviewer className={"bg-white dark:bg-edDarkGray"} content={card.question} />
         </HoverPopup>
         )}
       </h2>
