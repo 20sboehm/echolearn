@@ -138,13 +138,12 @@ export const CurveArrowRight = () => {
       height="32px"
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
-      className="icon flat-line"
+      className="icon flat-line stroke-elDark"
     >
       <path
         d="M3,18A13.17,13.17,0,0,1,15.49,9H21"
         style={{
           fill: 'none',
-          className: "stroke-elDark dark:stroke-edWhite",
           strokeLinecap: 'round',
           strokeLinejoin: 'round',
           strokeWidth: 2,
@@ -154,7 +153,6 @@ export const CurveArrowRight = () => {
         points="18 12 21 9 18 6"
         style={{
           fill: 'none',
-          className: "stroke-elDark dark:stroke-edWhite",
           strokeLinecap: 'round',
           strokeLinejoin: 'round',
           strokeWidth: 2,
