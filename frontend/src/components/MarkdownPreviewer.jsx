@@ -69,9 +69,9 @@ function MarkdownPreviewer({ content, className }) {
       const headersArr = headers.split('|').map(h => h.trim()).filter(Boolean);
       const rowsArr = rows.trim().split('\n').map(row => row.split('|').map(cell => cell.trim()).filter(Boolean));
 
-      const thead = `<thead><tr>${headersArr.map(header => `<th class="border border-eMedGray px-2 py-1">${header}</th>`).join('')}</tr></thead>`;
+      const thead = `<thead><tr>${headersArr.map(header => `<th class="border border-edMedGray px-2 py-1">${header}</th>`).join('')}</tr></thead>`;
 
-      const tbody = `<tbody>${rowsArr.map(row => `<tr>${row.map(cell => `<td class="border border-eMedGray px-2 py-1">${cell}</td>`).join('')}</tr>`).join('')}</tbody>`;
+      const tbody = `<tbody>${rowsArr.map(row => `<tr>${row.map(cell => `<td class="border border-edMedGray px-2 py-1">${cell}</td>`).join('')}</tr>`).join('')}</tbody>`;
 
       return `<table class="border-collapse w-full">${thead}${tbody}</table>`;
     });
@@ -92,9 +92,9 @@ function MarkdownPreviewer({ content, className }) {
       const trimmedCode = innerCodeContent.trim();
 
       if (language) {
-        return `<pre class="p-2 my-1 rounded-md bg-edDark"><code class="language-${language}">${trimmedCode}</code></pre>`;
+        return `<pre class="p-2 my-1 rounded-md bg-elMedGray dark:bg-edDark"><code class="language-${language}">${trimmedCode}</code></pre>`;
       } else {
-        return `<pre class="p-2 my-1 rounded-md bg-edDark">${trimmedCode}</pre>`;
+        return `<pre class="p-2 my-1 rounded-md bg-elMedGray text-white dark:bg-edDark">${trimmedCode}</pre>`;
       }
     });
 

@@ -211,11 +211,11 @@ export const StarIcon = ({ isFilled = false, className }) => {
 
 export const BoldIcon = () => (
   <svg
-    fill="#FFF"
     width="14px"
     height="14px"
     viewBox="0 0 1920 1920"
     xmlns="http://www.w3.org/2000/svg"
+    className="fill-elDark dark:fill-edWhite"
   >
     <path d="M480.286 822.857h548.571c151.269 0 274.286-123.017 274.286-274.286 0-151.268-123.017-274.285-274.286-274.285H480.286v548.571Zm0 822.857H1166c151.269 0 274.286-123.017 274.286-274.285 0-151.269-123.017-274.286-274.286-274.286H480.286v548.571ZM1166 1920H206V0h822.857c302.537 0 548.572 246.034 548.572 548.571 0 134.263-48.549 257.418-128.778 352.732 159.223 96.137 265.92 270.994 265.92 470.126 0 302.537-246.034 548.571-548.571 548.571Z" fillRule="evenodd" />
   </svg>
@@ -223,11 +223,11 @@ export const BoldIcon = () => (
 
 export const ItalicIcon = () => (
   <svg
-    fill="#FFF"
     width="14px"
     height="14px"
     viewBox="0 0 1920 1920"
     xmlns="http://www.w3.org/2000/svg"
+    className="fill-elDark dark:fill-edWhite"
   >
     <path d="M738.077 0v147.692h348.554L680.477 1772.308H295V1920h886.302v-147.692H832.748l406.006-1624.616h385.477V0z" fillRule="evenodd" />
   </svg>
@@ -242,7 +242,7 @@ export const UnderlineIcon = () => (
     xmlns="http://www.w3.org/2000/svg"
   >
     <g id="Page-1" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
-      <g id="Dribbble-Light-Preview" transform="translate(-420.000000, -5199.000000)" fill="#FFF">
+      <g id="Dribbble-Light-Preview" transform="translate(-420.000000, -5199.000000)" className="fill-elDark dark:fill-edWhite">
         <g id="icons" transform="translate(56.000000, 160.000000)">
           <path
             d="M364,5059 L384,5059 L384,5057 L364,5057 L364,5059 Z M366,5046 L366,5039 L368,5039 L368,5046 C368,5055.333 380,5055.333 380,5046 L380,5039 L382,5039 L382,5046 C382,5058 366,5058 366,5046 L366,5046 Z"

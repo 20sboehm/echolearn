@@ -305,7 +305,7 @@ function DeckPage({ publicAccess = false }) {
 
           <div className="h-[50vh] overflow-y-auto border-t border-gray-500">
             {deckCards.cards.map(card => (
-              <div className={`flex font-medium mt-4 border border-eMedGray dark:bg-edDarkGray w-full ${deleteMode ? "hover:bg-[#ff000055] cursor-not-allowed" : ""}`}
+              <div className={`flex font-medium mt-4 border border-eMedGray bg-elGray dark:bg-edDarkGray w-full ${deleteMode ? "hover:bg-[#ff000055] cursor-not-allowed" : ""}`}
                 key={card.card_id} onClick={() => { handleCardClick(card.card_id) }}
               >
 

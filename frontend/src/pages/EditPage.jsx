@@ -37,10 +37,10 @@ function EditPage() {
 
     if (isSuccess) {
       setPopupText("Card updated");
-      setPopupColor("bg-eGreen");
+      setPopupColor("bg-edGreen");
     } else {
       setPopupText("Something went wrong");
-      setPopupColor("bg-eRed");
+      setPopupColor("bg-edRed");
     }
 
     popupTimerRef.current = setTimeout(() => {
@@ -177,8 +177,8 @@ function EditPage() {
       <div className="flex w-full h-full">
         <Sidebar onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
         <div className="w-1/2 flex flex-col mx-auto">
-          <div className="flex justify-between border-b border-eMedGray mb-4 mt-8 pb-1">
-            <h1 className="text-lg font-medium">Edit Card</h1>
+          <div className="flex justify-between border-b border-edMedGray mb-4 mt-8 pb-1">
+            <h1 className="text-lg text-elDark dark:text-edWhite font-medium">Edit Card</h1>
           </div>
 
           <form onSubmit={handleSubmit}>
@@ -199,7 +199,7 @@ function EditPage() {
             <div className="flex flex-col items-center mt-8">
               <SubmitButton>Edit Card</SubmitButton>
               <button type="button" onClick={() => { navigate(`/decks/${card.deck_id}`); }} className="block rounded-sm sm:rounded-lg p-[7px] w-1/3 text-center font-medium
-              border border-eGray text-eWhite hover:bg-eHLT active:scale-[0.97] mt-2"> Back</button>
+              border border-edGray text-black dark:text-edWhite hover:bg-edHLT active:scale-[0.97] mt-2"> Back</button>
             </div>
           </form>
         </div>
@@ -216,16 +216,16 @@ function TextBox({ label, reference, content, inputHandler, handleTextEditingBut
   return (
     <>
       <button type="button" onClick={() => { setTextBoxOpen(!textBoxOpen) }} className="flex items-center">
-        <ChevronIcon isOpen={textBoxOpen} color="#ccc" />
-        <p>{label}</p>
+        <ChevronIcon isOpen={textBoxOpen} />
+        <p className="text-elDark dark:text-edGray">{label}</p>
       </button>
-      <div className="bg-eDarker w-full h-8 border-x border-t border-eDarkGray flex items-center pl-2">
+      <div className="dark:bg-edDarker w-full h-8 border-x border-t border-edDarkGray flex items-center pl-2">
         <TextEditingIcon handleTextEditingButton={handleTextEditingButton} type="bold" forQuestionBox={forQuestionBox} />
         <TextEditingIcon handleTextEditingButton={handleTextEditingButton} type="italic" forQuestionBox={forQuestionBox} />
         <TextEditingIcon handleTextEditingButton={handleTextEditingButton} type="underline" forQuestionBox={forQuestionBox} />
       </div>
       {textBoxOpen && (
-        <textarea value={content} ref={reference} onInput={inputHandler} className="bg-eDarker w-full min-h-20 h-[10vh] p-2 border border-eDarkGray focus:outline-none custom-scrollbar"></textarea>
+        <textarea value={content} ref={reference} onInput={inputHandler} className="text-black dark:text-white dark:bg-edDarker w-full min-h-20 h-[10vh] p-2 border border-edDarkGray focus:outline-none custom-scrollbar"></textarea>
       )}
     </>
   );
@@ -247,9 +247,9 @@ function TextEditingIcon({ handleTextEditingButton, type, forQuestionBox }) {
 function DividerLine() {
   return (
     <div className="flex flex-row justify-center items-center my-1 w-full" >
-      <span className="flex-grow border-b border-eGray h-1"></span>
-      <p className="self-center text-eGray mx-2">Preview</p>
-      <span className="flex-grow border-b border-eGray h-1"></span>
+      <span className="flex-grow border-b border-edMedGray dark:border-edGray h-1"></span>
+      <p className="self-center text-black dark:text-edGray mx-2">Preview</p>
+      <span className="flex-grow border-b border-edGray h-1"></span>
     </div >
   )
 }
@@ -260,11 +260,11 @@ function TextBoxPreview({ label, content }) {
   return (
     <>
       <button type="button" onClick={() => { setTextBoxPreviewOpen(!textBoxPreviewOpen) }} className="flex items-center">
-        <ChevronIcon isOpen={textBoxPreviewOpen} color="#999" />
-        <p className="text-eGray">{label}</p>
+        <ChevronIcon isOpen={textBoxPreviewOpen} />
+        <p className="text-elDark dark:text-edGray">{label}</p>
       </button>
       {textBoxPreviewOpen && (
-        <MarkdownPreviewer content={content} className="border border-eDarkGray bg-eDarker p-2 min-h-[10vh]" />
+        <MarkdownPreviewer content={content} className="border border-edDarkGray bg-edDarker p-2 min-h-[10vh]" />
       )}
     </>
   )
@@ -273,7 +273,7 @@ function TextBoxPreview({ label, content }) {
 function SubmitButton({ children, onSubmit }) {
   return (
     <button onSubmit={onSubmit} className="block rounded-sm sm:rounded-lg p-2 w-1/3 text-center font-medium
-                  bg-eBlue text-eWhite hover:bg-eLightBlue active:scale-[0.97]"
+                  bg-edBlue text-white hover:bg-elLightBlue active:scale-[0.97]"
     >
       {children}
     </button>
