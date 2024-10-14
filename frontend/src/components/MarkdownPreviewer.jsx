@@ -125,7 +125,7 @@ function MarkdownPreviewer({ content, className }) {
   return (
     <>
       <div
-        className={`w-full bg-white dark:bg-edDarkGray whitespace-pre-wrap break-words text-black dark:text-white ${className}`}
+        className={`w-full bg-elGray dark:bg-edDarkGray whitespace-pre-wrap break-words text-black dark:text-white ${className}`}
         dangerouslySetInnerHTML={{ __html: formatContent(content) }}
       ></div>
     </>

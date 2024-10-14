@@ -5,8 +5,8 @@ import Sidebar from "../components/SideBar";
 import { useApi } from "../hooks";
 import partyPopperImg from '../assets/party-popper.png';
 import partyPopperFlipImg from '../assets/party-popper-flip.png';
-import card from '../assets/reviewSwitch2.png';
-import set from '../assets/reviewSwitch.png';
+import set from '../assets/reviewSwitch2.png';
+import card from '../assets/reviewSwitch.png';
 import "./ReviewPage.css";
 import LoadingSpinner from "../components/LoadingSpinner";
 import MarkdownPreviewer from "../components/MarkdownPreviewer";
@@ -154,7 +154,7 @@ function ReviewPage() {
           <div className="flex mx-auto items-center border-b border-black dark:border-edWhite pb-[1rem] w-[40vw]">
             <Link to={`/decks/${deckId}`} className="rounded-lg border border-black hover:border-elMedGray hover:text-elMedGray 
               dark:border-transparent dark:hover:border-black dark:hover:text-black px-10 py-2 text-center
-              font-semibold dark:bg-white text-black active:scale-[0.97] active:border-[#555]">back</Link>
+              font-semibold bg-elGray dark:bg-white text-black active:scale-[0.97] active:border-[#555]">back</Link>
             <h2 className="text-[2em] text-elDark dark:text-edWhite mx-auto">{reviews.deck_name}</h2>
             <button className="border border-black w-[12%] ml-auto" onClick={switchAnimation}>
               <img src={currImage}></img>
@@ -232,8 +232,8 @@ function ReviewCard({ card, showAnswer, setShowAnswer, updateReviewedCard, chang
 function QuestionCard({ card, setShowAnswer }) {
   if (card) {
     return (
-      <div className={`mt-8 bg-eDarker overflow-x-hidden overflow-y-auto`}>
-        <div className={`h-[30vh] text-[1.2rem] flex flex-col border border-eMedGray`}>
+      <div className={`mt-8 overflow-x-hidden overflow-y-auto`}>
+        <div className={`h-[30vh] text-[1.2rem] flex flex-col border border-edMedGray`}>
           <MarkdownPreviewer content={card.question} className="flex-1 p-3 h-full" />
         </div >
       </div>
@@ -244,8 +244,8 @@ function QuestionCard({ card, setShowAnswer }) {
 function AnswerCard({ card, flip, showAnswer, displayQuestion }) {
   if (card) {
     return (
-      <div className={`mt-8 bg-eDarker duration-300 ${showAnswer ? "mt-8 opacity-100" : "mt-12 opacity-0"}`}>
-        <div className={`h-[30vh] text-[1.2rem] flex flex-col border border-eMedGray`}>
+      <div className={`mt-8 duration-300 ${showAnswer ? "mt-8 opacity-100" : "mt-12 opacity-0"}`}>
+        <div className={`h-[30vh] text-[1.2rem] flex flex-col border border-edMedGray`}>
           {/* If flip=false (The card is at or flipping towards 'question position') AND we're set to display answer 
           (meaning we're still in the 1/2 animation time delay for setting `displayQuestion`), set content to blank 
           so we dont give away the answer to the next question */}
@@ -332,20 +332,20 @@ function ShowAnswerButtons({ card, showAnswer, updateReviewedCard, toggleFlip })
   return (
     // <div className="fixed bottom-8 left-0 right-0 mx-auto w-[100vw] flex justify-center">
     <div className="flex justify-center mt-8 mb-8">
-      {!showAnswer && <button className="mt-8 border rounded-md w-[20%] min-w-[16rem]" onClick={toggleFlip}>Reveal Answer</button>}
+      {!showAnswer && <button className="mt-8 border border-black text-elDark bg-elGray dark:bg-edGray dark:border-edWhite dark:text-edWhite rounded-md w-[20%] min-w-[16rem]" onClick={toggleFlip}>Reveal Answer</button>}
       {
         showAnswer && (
           <div className="flex justify-center mt-8 flex-wrap">
-            <ResultButton customStyles="mr-4 bg-red-600 hover:bg-red-700" confidenceLevel={1}
+            <ResultButton customStyles="mr-4 border border-black bg-red-600 hover:bg-red-700" confidenceLevel={1}
               clickEvent={updateReviewedCardAndDisplay} timeUntil={timeUntilNextReview}>Again</ResultButton>
 
-            <ResultButton customStyles="mr-4 bg-yellow-400 hover:bg-yellow-500" confidenceLevel={2}
+            <ResultButton customStyles="mr-4 border border-black bg-yellow-400 hover:bg-yellow-500" confidenceLevel={2}
               clickEvent={updateReviewedCardAndDisplay} timeUntil={timeUntilNextReview}>Hard</ResultButton>
 
-            <ResultButton customStyles="mr-4 bg-green-700 hover:bg-green-800" confidenceLevel={3}
+            <ResultButton customStyles="mr-4 border border-black bg-green-700 hover:bg-green-800" confidenceLevel={3}
               clickEvent={updateReviewedCardAndDisplay} timeUntil={timeUntilNextReview}>Good</ResultButton>
 
-            <ResultButton customStyles="bg-green-400 hover:bg-green-500" confidenceLevel={4}
+            <ResultButton customStyles="border border-black bg-green-400 hover:bg-green-500" confidenceLevel={4}
               clickEvent={updateReviewedCardAndDisplay} timeUntil={timeUntilNextReview}>Easy</ResultButton>
           </div>
         )
