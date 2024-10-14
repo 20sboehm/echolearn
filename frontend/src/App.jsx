@@ -10,7 +10,6 @@ import Header from "./components/Header";
 import LandingPage from "./pages/LandingPage"
 import HomePage from "./pages/HomePage";
 import CreateCard from "./pages/CreateCard";
-// import CreateDeck from "./pages/CreateDeck";
 import ReviewPage from "./pages/ReviewPage";
 import HelpPage from "./pages/HelpPage";
 import DeckPage from './pages/DeckPage';
@@ -22,6 +21,7 @@ import AboutPage from './pages/AboutPage';
 import ProfilePage from './pages/ProfilePage';
 import StatsPage from './pages/StatsPage';
 import CommunityPage from './pages/community'
+import QuizletParserPage from './pages/QuizletParserPage'
 
 const queryClient = new QueryClient();
 
@@ -39,7 +39,7 @@ function AuthenticatedRoutes() {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/cards" element={<CreateCard />} />
-      {/* <Route path="/decks" element={<CreateDeck />} /> */}
+      <Route path="/quizletparser" element={<QuizletParserPage />} />
       <Route path="/review/:deckId" element={<ReviewPage />} />
       <Route path="/help" element={<HelpPage />} />
       <Route path="/edit/:cardId" element={<EditPage />} />
@@ -48,7 +48,6 @@ function AuthenticatedRoutes() {
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/stats/:deckId" element={<StatsPage />} />
       <Route path="/community" element={<CommunityPage />} />
-      {/* <Route path="*" element={<Navigate to="/error/404/Page%20Not%20Found" />} /> */}
       <Route path="*" element={<ErrorPage statusCode="404" errorMessage="Page not found" />} />
     </Routes>
   );
@@ -73,14 +72,14 @@ function Main() {
   console.log("token: " + !!token);
 
   const api = useApi();
-  
+
   useEffect(() => {
     const fetchUserSettings = async () => {
       if (isLoggedIn) {
         try {
           const response = await api._get('/api/profile/me');
           const data = await response.json();
-  
+
           // Apply the theme globally based on user preference
           if (data.light_mode === false) {
             document.documentElement.classList.add('dark');
@@ -98,10 +97,10 @@ function Main() {
         document.documentElement.classList.remove('theme-pending');
       }
     };
-  
+
     fetchUserSettings();
   }, [isLoggedIn, api]);
-  
+
 
   return (
     <main className="w-full h-full flex flex-col items-center">

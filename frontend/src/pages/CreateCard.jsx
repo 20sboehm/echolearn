@@ -5,14 +5,15 @@ import { ChevronIcon } from "../components/Icons";
 import MarkdownPreviewer from "../components/MarkdownPreviewer";
 import { useQuery } from "react-query";
 import LoadingSpinner from "../components/LoadingSpinner";
-import { BoldIcon, ItalicIcon, UnderlineIcon, MicIcon ,MicIconListening} from "../components/Icons";
-import { useNavigate } from "react-router-dom";
+import { BoldIcon, ItalicIcon, UnderlineIcon, MicIcon, MicIconListening } from "../components/Icons";
+import { useNavigate, useLocation } from "react-router-dom";
 
 function CreateCard() {
   const api = useApi();
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const [deckId, setDeckId] = useState("");
+  const [deckId, setDeckId] = useState(location.state?.deckId);
 
   const questionRef = useRef(null);
   const answerRef = useRef(null);
@@ -28,9 +29,6 @@ function CreateCard() {
   const popupTimerRef = useRef(null); // Ref to hold the popup timer
 
   const [sidebarWidth, setSidebarWidth] = useState(250);
-  const [quizletInput, setquizletInput] = useState("")
-  const [preview, setPreview] = useState([])
-  const [quizletRequired, setquizletRequired] = useState(false)
 
   const [questionisListening, setquestionIsListening] = useState(false);
   const [answerisListening, setanswerIsListening] = useState(false);
@@ -95,11 +93,11 @@ function CreateCard() {
         setquestionIsListening(prevState => !prevState)
         break;
       case "answermicIcon":
-          setanswerIsListening(prevState => !prevState)
-          break;
+        setanswerIsListening(prevState => !prevState)
+        break;
       case "answermicIconlistening":
-          setanswerIsListening(prevState => !prevState)
-            break;
+        setanswerIsListening(prevState => !prevState)
+        break;
     }
 
     let selStart = textarea.selectionStart;
@@ -133,19 +131,7 @@ function CreateCard() {
       answerRef.current.focus();
     }
   }, [answerSelection]);
-  // show preview for quizlet parser
-  useEffect(() => {
-    let spaceChoice = "|";
-    let lineChoice = "{|}";
 
-    const lines = quizletInput.split(lineChoice).filter(line => line.trim());
-    const formattedPreview = lines.map(line => {
-      const parts = line.split(spaceChoice).map(part => part.trim());
-      return { question: parts[0], answer: parts[1] };
-    });
-    setPreview(formattedPreview);
-  }, [quizletInput]);
-  
   // voice input for question part
   useEffect(() => {
     const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
@@ -158,7 +144,7 @@ function CreateCard() {
       const transcript = event.results[current][0].transcript;
       if (event.results[current].isFinal) {
         recognition.stop(); // Stop recognition while processing
-        updateQuestionWithTranscript(transcript ).then(() => {
+        updateQuestionWithTranscript(transcript).then(() => {
           if (!questionisListening) {
             recognition.start(); // Restart recognition after update
           }
@@ -189,7 +175,7 @@ function CreateCard() {
       const transcript = event.results[current][0].transcript;
       if (event.results[current].isFinal) {
         recognition.stop(); // Stop recognition while processing
-        updateAnswerWithTranscript(transcript ).then(() => {
+        updateAnswerWithTranscript(transcript).then(() => {
           if (!answerisListening) {
             recognition.start(); // Restart recognition after update
           }
@@ -260,72 +246,10 @@ function CreateCard() {
       displayPopup(true);
     }
   }
-  // create multiple cards
-  const handlequizletparser = async (e) => {
-    e.preventDefault();
-    console.log(quizletInput)
-    let lineChoice = "{|}";
-    let spaceChoice = "|";
-
-    const lines = (quizletInput).trim().split(lineChoice).filter(line => line.trim());
-    console.log(lines)
-    const newCards = lines.map(async line => {
-      const parts = line.split(spaceChoice);
-      console.log(parts[0], parts[1])
-      const question = parts[0]
-      const answer = parts[1]
-      const cardData = {
-        deck_id: deckId,
-        question: question,
-        answer: answer,
-      }
-      const response = await api._post('/api/cards', cardData);
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Error creating card: ", errorData);
-        displayPopup(false);
-      } else {
-        console.log("Card created successfully");
-        displayPopup(true);
-      }
-    });
-
-    if (quizletInput !== null) {
-      setquizletInput('')
-    }
-
-  };
-  const handlebackButton = () => {
-    // if (multipleRequired) {
-    //   if (multipleInput) {
-    //     const shouldLeave = window.confirm("You have stuff did not save. Do you still want to leave?");
-    //     if (shouldLeave) {
-    //       setMultipleInput("")
-    //       setmultipleRequired(false)
-    //     }
-    //   }
-    //  else{
-    //   setmultipleRequired(false)
-    //  }
-    // }
-    if (quizletRequired) {
-      if (quizletInput) {
-        const shouldLeave = window.confirm("You have stuff did not save. Do you still want to leave?");
-        if (shouldLeave) {
-          setQuizletInput("")
-          setquizletRequired(false)
-        }
-      }
-      else {
-        setquizletRequired(false)
-      }
-    }
-  }
 
   const updateQuestionWithTranscript = async (newTranscript) => {
     // Indicate an update is in progress
-    setQuestionIsUpdating(true); 
+    setQuestionIsUpdating(true);
     // Append new transcript to the existing content
     const combinedText = questionText + ' ' + newTranscript;
     await new Promise(resolve => {
@@ -333,11 +257,11 @@ function CreateCard() {
       setTimeout(resolve, 1); // Resolve the promise on the next tick, allowing state to update
     });
     // Update is complete
-    setQuestionIsUpdating(false); 
+    setQuestionIsUpdating(false);
   };
 
   const updateAnswerWithTranscript = async (newTranscript) => {
-     // Indicate an update is in progress
+    // Indicate an update is in progress
     setAnswerIsUpdating(true);
     // Append new transcript to the existing content
     const combinedText = answerText + ' ' + newTranscript;
@@ -346,7 +270,7 @@ function CreateCard() {
       setTimeout(resolve, 1);
     });
     // Update is complete
-    setAnswerIsUpdating(false); 
+    setAnswerIsUpdating(false);
   };
 
 
@@ -364,70 +288,31 @@ function CreateCard() {
               ))}
             </select>
           </div>
-          
-          {quizletRequired == true && (
-            <form onSubmit={handlequizletparser} className='flex flex-col items-center'>
-              <button type='button' onClick={handlebackButton} className="rounded-lg border border-black hover:border-elMedGray hover:text-elDark 
-              dark:border-transparent dark:hover:border-black dark:hover:text-black px-10 py-2 text-center
-              font-semibold bg-elLightBlue text-white dark:text-black dark:bg-white active:scale-[0.97] active:border-[#555]" >
-                Back
-              </button>
-              <p className="text-elDark dark:text-edWhite">
-                To export from Quizlet, you need to go to "your library", then select the set you want to copy, then click on the triple dots and select export.
-                <br />
-                In the pop-up window, input "<code>|</code>" for customizing the separator between term and definition and input "<code>&#123;|&#125;</code>" for customizing the separator between rows.
-              </p>
-              <div className="mb-2 flex flex-col">
-                <textarea value={quizletInput} onChange={(e) => setquizletInput(e.target.value)} className="text-black dark:text-white dark:bg-edDarker w-full min-h-20 h-40 p-2 border border-edDarkGray focus:outline-none custom-scrollbar"></textarea>
-              </div>
-              <button type='submit' className="rounded-lg border border-black hover:border-elMedGray hover:text-elDark 
-              dark:border-transparent dark:hover:border-black dark:hover:text-black px-10 py-2 text-center
-              font-semibold bg-elLightBlue text-white dark:text-black dark:bg-white active:scale-[0.97] active:border-[#555]" >
-                Submit
-              </button>
 
-              <h3 className="text-elDark dark:text-edWhite">Preview</h3>
-              <div className="h-[50vh] overflow-y-auto">
-                {preview.map((item, index) => (
-                  <div className="grid grid-cols-2 gap-4 font-medium px-2" key={index}>
-                    <div className="border bg-white text-black mt-2 px-2 py-2">
-                      <p>Question: {item.question}</p>
-                    </div>
-                    <div className="border bg-white text-black mt-2 px-2 py-2 relative">
-                      <p>Answer: {item.answer}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </form>
-          )}
-          {quizletRequired == false && (
-
-            <form onSubmit={handleSubmit}>
-              <button type="button" onClick={() => setquizletRequired(true)} className="rounded-lg border border-black hover:border-elMedGray hover:text-elDark 
+          <form onSubmit={handleSubmit}>
+            <button type="button" onClick={() => navigate("/quizletparser", { state: { deckId: deckId } })} className="rounded-lg border border-black hover:border-elMedGray hover:text-elDark 
               dark:border-transparent dark:hover:border-black dark:hover:text-white px-10 py-2 text-center
               font-semibold bg-elLightBlue text-white active:scale-[0.97] active:border-[#555]">quizlet parser</button>
-              <div className="mb-2 flex flex-col">
-                <TextBox label="Front" reference={questionRef} content={questionText} inputHandler={(e) => { setQuestionText(e.target.value) }}
-                  handleTextEditingButton={handleTextEditingButton} forQuestionBox={true} questionisListening={questionisListening} />
-              </div>
-              <TextBox label="Back" reference={answerRef} content={answerText} inputHandler={(e) => { setAnswerText(e.target.value) }}
-                handleTextEditingButton={handleTextEditingButton} forQuestionBox={false}  answerisListening={answerisListening}/>
+            <div className="mb-2 flex flex-col">
+              <TextBox label="Front" reference={questionRef} content={questionText} inputHandler={(e) => { setQuestionText(e.target.value) }}
+                handleTextEditingButton={handleTextEditingButton} forQuestionBox={true} questionisListening={questionisListening} />
+            </div>
+            <TextBox label="Back" reference={answerRef} content={answerText} inputHandler={(e) => { setAnswerText(e.target.value) }}
+              handleTextEditingButton={handleTextEditingButton} forQuestionBox={false} answerisListening={answerisListening} />
 
-              <DividerLine />
+            <DividerLine />
 
-              <div className="mb-2 flex flex-col">
-                <TextBoxPreview label="Question Preview" content={questionText} />
-              </div>
-              <TextBoxPreview label="Answer Preview" content={answerText} />
+            <div className="mb-2 flex flex-col">
+              <TextBoxPreview label="Question Preview" content={questionText} />
+            </div>
+            <TextBoxPreview label="Answer Preview" content={answerText} />
 
-              <div className="flex flex-col items-center mt-8">
-                <SubmitButton>Create Card</SubmitButton>
-                <button type="button" onClick={() => { navigate(`/`); }} className="block rounded-sm sm:rounded-lg p-[7px] w-1/3 text-center font-medium
+            <div className="flex flex-col items-center mt-8">
+              <SubmitButton>Create Card</SubmitButton>
+              <button type="button" onClick={() => { navigate(`/`); }} className="block rounded-sm sm:rounded-lg p-[7px] w-1/3 text-center font-medium
               border border-edGray text-black dark:text-edWhite hover:bg-edHLT active:scale-[0.97] mt-2"> Back</button>
-              </div>
-            </form>
-          )}
+            </div>
+          </form>
         </div>
         <div className={`width-20 p-3 absolute top-20 right-5 rounded-[1.4rem] text-white ${popupColor}
           transition-opacity duration-200 ${popupActive ? 'opacity-100' : 'opacity-0'}`}>{popupText}</div>
@@ -436,7 +321,7 @@ function CreateCard() {
   )
 }
 
-function TextBox({ label, reference, content, inputHandler, handleTextEditingButton, forQuestionBox ,questionisListening, answerisListening}) {
+function TextBox({ label, reference, content, inputHandler, handleTextEditingButton, forQuestionBox, questionisListening, answerisListening }) {
   const [textBoxOpen, setTextBoxOpen] = useState(true);
 
   return (
@@ -450,17 +335,17 @@ function TextBox({ label, reference, content, inputHandler, handleTextEditingBut
         <TextEditingIcon handleTextEditingButton={handleTextEditingButton} type="bold" forQuestionBox={forQuestionBox} />
         <TextEditingIcon handleTextEditingButton={handleTextEditingButton} type="italic" forQuestionBox={forQuestionBox} />
         <TextEditingIcon handleTextEditingButton={handleTextEditingButton} type="underline" forQuestionBox={forQuestionBox} />
-        {questionisListening == false &&(
-        <TextEditingIcon handleTextEditingButton={handleTextEditingButton} type="questionmicIcon" forQuestionBox={forQuestionBox} />
+        {questionisListening == false && (
+          <TextEditingIcon handleTextEditingButton={handleTextEditingButton} type="questionmicIcon" forQuestionBox={forQuestionBox} />
         )}
-        {answerisListening == false &&(
-        <TextEditingIcon handleTextEditingButton={handleTextEditingButton} type="answermicIcon" forQuestionBox={forQuestionBox} />
+        {answerisListening == false && (
+          <TextEditingIcon handleTextEditingButton={handleTextEditingButton} type="answermicIcon" forQuestionBox={forQuestionBox} />
         )}
-        {questionisListening == true &&(
-        <TextEditingIcon handleTextEditingButton={handleTextEditingButton} type="questionmicIconlistening" forQuestionBox={forQuestionBox} />
+        {questionisListening == true && (
+          <TextEditingIcon handleTextEditingButton={handleTextEditingButton} type="questionmicIconlistening" forQuestionBox={forQuestionBox} />
         )}
-        {answerisListening == true &&(
-        <TextEditingIcon handleTextEditingButton={handleTextEditingButton} type="answermicIconlistening" forQuestionBox={forQuestionBox} />
+        {answerisListening == true && (
+          <TextEditingIcon handleTextEditingButton={handleTextEditingButton} type="answermicIconlistening" forQuestionBox={forQuestionBox} />
         )}
       </div>
       {textBoxOpen && (
