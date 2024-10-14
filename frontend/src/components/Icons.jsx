@@ -231,7 +231,7 @@ export const StarIcon = ({ isFilled = false, className }) => {
 export const EditIcon = () => (
   <svg
     width="20px"
-    height="px"
+    height="20px"
     viewBox="0 0 24 24"
     xmlns="http://www.w3.org/2000/svg"
     className="edit-icon"

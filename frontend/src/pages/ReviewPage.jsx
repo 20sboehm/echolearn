@@ -65,8 +65,8 @@ function ReviewPage() {
       prev === set ? card : set
     );
     setAnimation(!changeAnimation);
-    // setShowAnswer(false); these don't need to be set to false i think?
-    // setFlip(false);
+    setShowAnswer(false); // these don't need to be set to false i think?
+    setFlip(false);
   }
 
   // Fetch reviews info
@@ -203,22 +203,32 @@ function ReviewCard({ card, showAnswer, setShowAnswer, updateReviewedCard, chang
       const newFlip = !prevFlip
 
       setShowAnswer(newFlip);
-
-      // Switch question/answer halfway through the flip
-      setTimeout(() => {
-        setDisplayQuestionOnFlipCard(!newFlip);
-      }, 150);
+      if (!changeAnimation){
+        // This is only use for question set animation because question display is always true for question set
+        setDisplayQuestionOnFlipCard(true);
+      }
+      else{
+        // Switch question/answer halfway through the flip
+        setTimeout(() => {
+          setDisplayQuestionOnFlipCard(!newFlip);
+        }, 150);
+      }
 
       return newFlip; // Update flip state
     });
   }
+  
+  useEffect(() => {
+    // Whenever we switch animation, reset displayQuestionOnFlipCard to show the question
+    setDisplayQuestionOnFlipCard(true);
+  }, [changeAnimation]);
 
   return (
     <>
       <div className="flex flex-col items-center">
         <div className={`flex flex-col items-center h-auto w-[35vw] min-w-[16rem] mx-auto`}>
           <div className="w-full">
-            {!changeAnimation && (<QuestionCard card={card}></QuestionCard>)}
+            {!changeAnimation && (<QuestionCard card={card} showAnswer={showAnswer} setShowAnswer={setShowAnswer}></QuestionCard>)}
             {!changeAnimation && (<AnswerCard card={card} flip={flip} showAnswer={showAnswer} displayQuestion={displayQuestionOnFlipCard}></AnswerCard>)}
             {changeAnimation && (<FlipFlashcard card={card} flip={flip} toggleFlip={toggleFlip} displayQuestion={displayQuestionOnFlipCard}></FlipFlashcard>)}
           </div>
@@ -229,11 +239,11 @@ function ReviewCard({ card, showAnswer, setShowAnswer, updateReviewedCard, chang
   );
 }
 
-function QuestionCard({ card, setShowAnswer }) {
+function QuestionCard({ card, showAnswer, setShowAnswer }) {
   if (card) {
     return (
-      <div className={`mt-8 overflow-x-hidden overflow-y-auto`}>
-        <div className={`h-[30vh] text-[1.2rem] flex flex-col border border-edMedGray`}>
+      <div className={`mt-8 overflow-x-hidden overflow-y-auto bg-black`} onClick={() => setShowAnswer(!showAnswer)}>
+        <div className={`h-[25vh] text-[1.2rem] flex flex-col border border-edMedGray overflow-x-hidden overflow-y-auto`}>
           <MarkdownPreviewer content={card.question} className="flex-1 p-3 h-full" />
         </div >
       </div>
@@ -244,12 +254,12 @@ function QuestionCard({ card, setShowAnswer }) {
 function AnswerCard({ card, flip, showAnswer, displayQuestion }) {
   if (card) {
     return (
-      <div className={`mt-8 duration-300 ${showAnswer ? "mt-8 opacity-100" : "mt-12 opacity-0"}`}>
-        <div className={`h-[30vh] text-[1.2rem] flex flex-col border border-edMedGray`}>
+      <div className={`mt-8 ${showAnswer ? "mt-4 opacity-100" : "mt-8 opacity-0"}`}>
+        <div className={`h-[25vh] text-[1.2rem] flex flex-col border border-edMedGray overflow-x-hidden overflow-y-auto`}>
           {/* If flip=false (The card is at or flipping towards 'question position') AND we're set to display answer 
           (meaning we're still in the 1/2 animation time delay for setting `displayQuestion`), set content to blank 
           so we dont give away the answer to the next question */}
-          <MarkdownPreviewer content={!flip && !displayQuestion ? "" : card.answer} className="flex-1 p-3 h-full" />
+          <MarkdownPreviewer content={!flip && !displayQuestion ? "what?" : card.answer} className="flex-1 p-3 h-full" />
         </div >
       </div>
     )
@@ -259,7 +269,7 @@ function AnswerCard({ card, flip, showAnswer, displayQuestion }) {
 function FlipFlashcard({ card, flip, toggleFlip, displayQuestion }) {
   return (
     <div className={`mt-8 flashCard ${flip ? 'flip' : ''}`} onClick={toggleFlip}>
-      <div className="h-[50vh] text-[1.2rem] bg-dDarker border border-edMedGray text-edWhite flex flex-col justify-center items-center 
+      <div className="h-[50vh] text-[1.2rem] bg-edDarker border border-edMedGray text-edWhite flex flex-col justify-center items-center 
           overflow-x-hidden overflow-y-auto"
       >
         <MarkdownPreviewer
@@ -329,6 +339,29 @@ function ShowAnswerButtons({ card, showAnswer, updateReviewedCard, toggleFlip })
     return formattedTime.trim(); // Trim any trailing whitespace (which is left to account for a possible next unit, ex: "2d 3h")
   }
 
+  const keyToConfidenceMap = {
+    '1': 1, // "Again"
+    '2': 2, // "Hard"
+    '3': 3, // "Good"
+    '4': 4, // "Easy"
+  };
+  const handleKeyPress = (e) => {
+    if (showAnswer === false) return;
+    const confidenceLevel = keyToConfidenceMap[e.key];
+    if (confidenceLevel) {
+      updateReviewedCardAndDisplay(confidenceLevel);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyPress);
+
+    // Cleanup the event listener when component unmounts
+    return () => {
+      window.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [showAnswer]);
+  
   return (
     // <div className="fixed bottom-8 left-0 right-0 mx-auto w-[100vw] flex justify-center">
     <div className="flex justify-center mt-8 mb-8">
