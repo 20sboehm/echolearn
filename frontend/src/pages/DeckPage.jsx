@@ -1,6 +1,6 @@
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { useQuery} from "react-query";
-import { useState,useEffect } from "react";
+import { useQuery } from "react-query";
+import { useState, useEffect } from "react";
 import Sidebar from "../components/SideBar";
 import { useApi } from "../hooks";
 import editIconImg from "../assets/edit-icon.png"
@@ -37,7 +37,7 @@ function DeckPage({ publicAccess = false }) {
   const [newAnswer, setNewAnswer] = useState("");
 
   const [sidebarWidth, setSidebarWidth] = useState(250);
-  const [Rateresult,setRateresult] = useState(false)
+  const [Rateresult, setRateresult] = useState(false)
   const { data: deckCards, isLoading, error, refetch } = useQuery({
     queryKey: ['deckCards', deckId], // Unique key based on deckId
     queryFn: async () => {
@@ -78,7 +78,7 @@ function DeckPage({ publicAccess = false }) {
   let reviewedCardsCount = 0;
   // Check if 'cards' property exists and is an array
   if (deckCards.cards && Array.isArray(deckCards.cards)) {
-    
+
     reviewedCardsCount = deckCards.cards.filter(card => card.next_review && Date.parse(card.next_review) >= Date.now()).length;
   }
 
@@ -255,22 +255,22 @@ function DeckPage({ publicAccess = false }) {
     speechSynthesis.speak(outputVoice);
   };
 
-    const fetchRatingData = async () => {
-      try {
-        const response = await api._get(`/api/decks/${deckId}/ratedOrnot`);
-        const json = await response.json();
-        console.log(json)
-        if(json === true){
-          setRateresult(true)
-        }
-        else{
-          setRateresult(false)
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
+  const fetchRatingData = async () => {
+    try {
+      const response = await api._get(`/api/decks/${deckId}/ratedOrnot`);
+      const json = await response.json();
+      console.log(json)
+      if (json === true) {
+        setRateresult(true)
       }
-    };
-    fetchRatingData();
+      else {
+        setRateresult(false)
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+  fetchRatingData();
 
   const submitRating = async () => {
     const response = await api._post(`/api/decks/${deckId}/ratings`);
@@ -297,8 +297,8 @@ function DeckPage({ publicAccess = false }) {
             handleCreateCard={handleCreateCard} toggleCreateMode={toggleCreateMode} handleCancelCreateCard={handleCancelCreateCard}
             handleTakeACopy={handleTakeACopy} isModalOpen={isModalOpen} folders={folders} handleFolderSelection={handleFolderSelection}
             setModalOpen={setModalOpen} deleteMode={deleteMode} changeMode={changeMode} />
-            
-            <button onClick={submitRating} id="button-preview" aria-labelledby="tooltip-1f7d89ff-668b-406b-9c3f-e3e313ecdc97" type="button" data-view-component="true" className="Button Button--iconOnly Button--secondary Button--medium">
+
+          <button onClick={submitRating} id="button-preview" aria-labelledby="tooltip-1f7d89ff-668b-406b-9c3f-e3e313ecdc97" type="button" data-view-component="true" className="Button Button--iconOnly Button--secondary Button--medium">
             <StarIcon isFilled={Rateresult} />
             <p className="text-black dark:text-edWhite">{deckCards.stars}</p>
           </button>
@@ -309,20 +309,20 @@ function DeckPage({ publicAccess = false }) {
                 key={card.card_id} onClick={() => { handleCardClick(card.card_id) }}
               >
 
-                <div className={`relative w-1/2 flex flex-col pr-4 border-r border-edMedGray`}>
+                <div className={`relative w-1/2 flex flex-col border-r border-edMedGray`}>
                   <MarkdownPreviewer content={card.question} className="flex-1 p-2 min-h-20" />
-                  <Link to={`/edit/${card.card_id}`} className="absolute top-8 right-0.5">
-                   <EditIcon />
+                  <Link to={`/edit/${card.card_id}`} className="absolute top-8 right-1">
+                    <EditIcon />
                   </Link>
-                  <Link onClick={() => speakText(card.question)} className="absolute top-2 right-0.5">
+                  <Link onClick={() => speakText(card.question)} className="absolute top-2 right-1">
                     <SpeakerIcon />
                   </Link>
                 </div>
 
                 <div className="relative w-1/2 flex flex-col">
                   <MarkdownPreviewer content={card.answer} className="flex-1 p-2" />
-                  <Link onClick={() => speakText(card.answer)} className="absolute top-2 right-0.5">
-                    <SpeakerIcon  />
+                  <Link onClick={() => speakText(card.answer)} className="absolute top-2 right-1">
+                    <SpeakerIcon />
                   </Link>
                 </div>
 

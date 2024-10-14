@@ -9,11 +9,11 @@ import { useApi } from './hooks';
 import Header from "./components/Header";
 import LandingPage from "./pages/LandingPage"
 import HomePage from "./pages/HomePage";
-import CreateCard from "./pages/CreateCard";
+import CreateCardPage from "./pages/CreateCardPage";
 import ReviewPage from "./pages/ReviewPage";
 import HelpPage from "./pages/HelpPage";
 import DeckPage from './pages/DeckPage';
-import EditPage from './pages/EditPage';
+import EditCardPage from './pages/EditCardPage';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import FeaturePage from './pages/FeaturesPage';
@@ -38,11 +38,11 @@ function AuthenticatedRoutes() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
-      <Route path="/cards" element={<CreateCard />} />
+      <Route path="/cards" element={<CreateCardPage />} />
       <Route path="/quizletparser" element={<QuizletParserPage />} />
       <Route path="/review/:deckId" element={<ReviewPage />} />
       <Route path="/help" element={<HelpPage />} />
-      <Route path="/edit/:cardId" element={<EditPage />} />
+      <Route path="/edit/:cardId" element={<EditCardPage />} />
       <Route path="/decks/:deckId" element={<DeckPage />} />
       <Route path="/decks/public/:deckId" element={<DeckPage publicAccess={true} />} />
       <Route path="/profile" element={<ProfilePage />} />

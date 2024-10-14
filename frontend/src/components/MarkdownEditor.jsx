@@ -1,34 +1,17 @@
 import { useApi } from "../hooks";
 import { useState, useRef, useEffect, Children } from "react";
-import Sidebar from "../components/SideBar";
 import { ChevronIcon } from "../components/Icons";
 import MarkdownPreviewer from "../components/MarkdownPreviewer";
-import { useQuery } from "react-query";
-import LoadingSpinner from "../components/LoadingSpinner";
 import { BoldIcon, ItalicIcon, UnderlineIcon, MicIcon, MicIconListening } from "../components/Icons";
-import { useNavigate, useLocation } from "react-router-dom";
 
-function CreateCard() {
+function MarkdownEditor({ requestType, submitButtonText, questionText, setQuestionText, answerText, setAnswerText, deckId, cardId }) {
   const api = useApi();
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const [deckId, setDeckId] = useState(location.state?.deckId);
 
   const questionRef = useRef(null);
   const answerRef = useRef(null);
-  const [questionText, setQuestionText] = useState("");
-  const [answerText, setAnswerText] = useState("");
 
   const [questionSelection, setQuestionSelection] = useState({ start: 0, end: 0 }); // Cursor position
   const [answerSelection, setAnswerSelection] = useState({ start: 0, end: 0 });
-
-  const [popupActive, setPopupActive] = useState(false);
-  const [popupText, setPopupText] = useState("");
-  const [popupColor, setPopupColor] = useState("");
-  const popupTimerRef = useRef(null); // Ref to hold the popup timer
-
-  const [sidebarWidth, setSidebarWidth] = useState(250);
 
   const [questionisListening, setquestionIsListening] = useState(false);
   const [answerisListening, setanswerIsListening] = useState(false);
@@ -36,7 +19,12 @@ function CreateCard() {
   const [isQuestionUpdating, setQuestionIsUpdating] = useState(false);
   const [isAnswerUpdating, setAnswerIsUpdating] = useState(false);
 
-  const displayPopup = (isSuccess) => {
+  const [popupActive, setPopupActive] = useState(false);
+  const [popupText, setPopupText] = useState("");
+  const [popupColor, setPopupColor] = useState("");
+  const popupTimerRef = useRef(null); // Ref to hold the popup timer
+
+  const triggerPopup = (isSuccess) => {
     // Clear the old timer if it is still active
     if (popupTimerRef.current) {
       clearTimeout(popupTimerRef.current);
@@ -44,7 +32,11 @@ function CreateCard() {
     setPopupActive(true);
 
     if (isSuccess) {
-      setPopupText("Card created");
+      if (requestType === "post") {
+        setPopupText("Card created");
+      } else if (requestType === "patch") {
+        setPopupText("Card updated");
+      }
       setPopupColor("bg-eGreen");
     } else {
       setPopupText("Something went wrong");
@@ -195,58 +187,6 @@ function CreateCard() {
     };
   }, [answerisListening, isAnswerUpdating]);
 
-  // Fetch decks
-  const { data: decks, isLoading, error } = useQuery({
-    queryKey: ['decks'],
-    queryFn: async () => {
-      let response = await api._get('/api/decks');
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        const message = errorData.detail || 'An error occurred';
-        throw new Error(`${response.status}: ${message}`);
-      }
-
-      return response.json();
-    }
-  });
-
-  if (isLoading) {
-    return <LoadingSpinner />
-  }
-
-  if (error) {
-    const [status, message] = error.message.split(': ');
-
-    return (
-      <>
-        <h1 className="mt-20 text-[3rem] font-bold">{status}</h1>
-        <p className="mt-2 text-[1.5rem]">{message}</p>
-      </>
-    );
-  }
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const cardData = {
-      deck_id: deckId,
-      question: questionText,
-      answer: answerText,
-    }
-
-    const response = await api._post('/api/cards', cardData);
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error("Error creating card: ", errorData);
-      displayPopup(false);
-    } else {
-      console.log("Card created successfully");
-      displayPopup(true);
-    }
-  }
-
   const updateQuestionWithTranscript = async (newTranscript) => {
     // Indicate an update is in progress
     setQuestionIsUpdating(true);
@@ -273,50 +213,66 @@ function CreateCard() {
     setAnswerIsUpdating(false);
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // const cardData = {
+    //   deck_id: deckId,
+    //   question: questionText,
+    //   answer: answerText,
+    // }
+
+    let response = undefined;
+    console.log("yo: " + requestType);
+
+    if (requestType === "post") {
+      const cardData = {
+        deck_id: deckId,
+        question: questionText,
+        answer: answerText,
+      }
+
+      response = await api._post('/api/cards', cardData);
+    }
+    else if (requestType === "patch") {
+      const cardData = {
+        question: questionText,
+        answer: answerText,
+      }
+
+      response = await api._patch(`/api/cards/${cardId}`, cardData);
+    }
+
+    if (!response.ok) {
+      triggerPopup(false);
+    } else {
+      triggerPopup(true);
+    }
+  }
 
   return (
     <>
-      <div className='flex w-full h-full'>
-        <Sidebar onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
-        <div className="w-1/2 flex flex-col mx-auto">
-          <div className="flex justify-between border-b-2 border-edMedGray mb-4 mt-8 pb-1">
-            <h1 className="text-xl text-elDark dark:text-edWhite font-medium">New Card</h1>
-            <select id="selectDeck" value={deckId} onChange={(e) => setDeckId(e.target.value)} className='text-black bg-elGray border border-black dark:bg-edDarker dark:text-edWhite focus:outline-none' >
-              <option key='select-deck-key' value=''>Select a deck</option>
-              {decks.map((deck) => (
-                <option key={deck.deck_id} value={deck.deck_id}>{deck.name}</option>
-              ))}
-            </select>
-          </div>
-
-          <form onSubmit={handleSubmit}>
-            <button type="button" onClick={() => navigate("/quizletparser", { state: { deckId: deckId } })} className="rounded-lg border border-black hover:border-elMedGray hover:text-elDark 
-              dark:border-transparent dark:hover:border-black dark:hover:text-white px-10 py-2 text-center
-              font-semibold bg-elLightBlue text-white active:scale-[0.97] active:border-[#555]">quizlet parser</button>
-            <div className="mb-2 flex flex-col">
-              <TextBox label="Front" reference={questionRef} content={questionText} inputHandler={(e) => { setQuestionText(e.target.value) }}
-                handleTextEditingButton={handleTextEditingButton} forQuestionBox={true} questionisListening={questionisListening} />
-            </div>
-            <TextBox label="Back" reference={answerRef} content={answerText} inputHandler={(e) => { setAnswerText(e.target.value) }}
-              handleTextEditingButton={handleTextEditingButton} forQuestionBox={false} answerisListening={answerisListening} />
-
-            <DividerLine />
-
-            <div className="mb-2 flex flex-col">
-              <TextBoxPreview label="Question Preview" content={questionText} />
-            </div>
-            <TextBoxPreview label="Answer Preview" content={answerText} />
-
-            <div className="flex flex-col items-center mt-8">
-              <SubmitButton>Create Card</SubmitButton>
-              <button type="button" onClick={() => { navigate(`/`); }} className="block rounded-sm sm:rounded-lg p-[7px] w-1/3 text-center font-medium
-              border border-edGray text-black dark:text-edWhite hover:bg-edHLT active:scale-[0.97] mt-2"> Back</button>
-            </div>
-          </form>
+      <form onSubmit={handleSubmit}>
+        <div className="mb-2 flex flex-col">
+          <TextBox label="Front" reference={questionRef} content={questionText} inputHandler={(e) => { setQuestionText(e.target.value) }}
+            handleTextEditingButton={handleTextEditingButton} forQuestionBox={true} questionisListening={questionisListening} />
         </div>
-        <div className={`width-20 p-3 absolute top-20 right-5 rounded-[1.4rem] text-white ${popupColor}
+        <TextBox label="Back" reference={answerRef} content={answerText} inputHandler={(e) => { setAnswerText(e.target.value) }}
+          handleTextEditingButton={handleTextEditingButton} forQuestionBox={false} answerisListening={answerisListening} />
+
+        <DividerLine />
+
+        <div className="mb-2 flex flex-col">
+          <TextBoxPreview label="Question Preview" content={questionText} />
+        </div>
+        <TextBoxPreview label="Answer Preview" content={answerText} />
+
+        <div className="flex flex-col items-center mt-8">
+          <SubmitButton>{submitButtonText}</SubmitButton>
+        </div>
+      </form>
+      <div className={`width-20 p-3 absolute top-20 right-5 rounded-[1.4rem] text-white ${popupColor}
           transition-opacity duration-200 ${popupActive ? 'opacity-100' : 'opacity-0'}`}>{popupText}</div>
-      </div>
     </>
   )
 }
@@ -402,13 +358,13 @@ function TextBoxPreview({ label, content }) {
   )
 }
 
-function SubmitButton({ children, onSubmit }) {
+function SubmitButton({ children }) {
   return (
-    <button onSubmit={onSubmit} className="block rounded-sm sm:rounded-lg p-2 w-1/3 text-center font-medium
+    <button className="block rounded-sm sm:rounded-lg p-2 w-1/3 text-center font-medium
                   bg-edBlue text-white hover:bg-elLightBlue active:scale-[0.97]">
       {children}
     </button>
   )
 }
 
-export default CreateCard;
+export default MarkdownEditor;
