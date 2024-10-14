@@ -36,28 +36,42 @@ function DeckPage({ publicAccess = false }) {
 
   const [sidebarWidth, setSidebarWidth] = useState(250);
   const [Rateresult,setRateresult] = useState(false)
-  const { data: deckCards, isLoading, error, refetch } = useQuery({
-    queryKey: ['deckCards', deckId], // Unique key based on deckId
-    queryFn: async () => {
+
+  const [dragging, setDragging] = useState(null);
+  const [items, setItems] = useState([]);
+  const [itemKeys, setItemKeys] = useState([]);
+  const { data: deckCards, isLoading, error, refetch } = useQuery(
+    ['deckCards', deckId], // Unique key based on deckId
+    async () => { // This function is queryFn
       let response = null;
       if (publicAccess) {
         response = await api._get(`/api/decks/public/${deckId}/cards`);
-      }
-      else {
+      } else {
         response = await api._get(`/api/decks/${deckId}/cards`);
       }
-
+  
       if (!response.ok) {
         const errorData = await response.json();
-        const message = errorData.detail || 'An error occurred';
-        throw new Error(`${response.status}: ${message}`);
+        throw new Error(`${response.status}: ${errorData.detail || 'An error occurred'}`);
       }
-
+  
       return response.json();
-    },
-    retry: false // Disable automatic retry
-  });
-
+    }, 
+    { // This is the configuration object for useQuery
+      onSuccess: (data) => {
+        setItems(data.cards)
+        // You can add logic here to handle successful data fetching
+        console.log('Data fetched successfully:', data.cards);
+      },
+      retry: false
+    }
+  );
+  // useEffect(() => {
+  //   if (items) {
+  //     setItemKeys(Object.cards(items)); // Initialize the keys array
+  //     console.log(itemKeys)
+  //   }
+  // }, [items]);
   if (isLoading) {
     return <LoadingSpinner />
   }
@@ -280,6 +294,23 @@ function DeckPage({ publicAccess = false }) {
 
     refetch();
   };
+
+  const handleDragStart = (e, index) => {
+    setDragging(index);
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault(); // Necessary to allow dropping
+  };
+  const handleDrop = (e, index) => {
+    e.preventDefault();
+    const updatedItems = [...items];
+    const [draggedItem] = updatedItems.splice(dragging, 1);
+    updatedItems.splice(index, 0, draggedItem);
+    setItems(updatedItems);
+    setDragging(null);
+  };
   return (
     <>
       <div className="flex flex-row w-full h-full">
@@ -310,25 +341,30 @@ function DeckPage({ publicAccess = false }) {
             {deckCards.stars}
           </button>
 
-          <div className="h-[50vh] overflow-y-auto border-t border-gray-500">
-            {deckCards.cards.map(card => (
+          <div className="h-[50vh] overflow-y-auto border-t border-gray-500" >
+
+            {items.map(item=> (
               <div className={`flex font-medium mt-4 border border-eMedGray bg-eDarker w-full ${deleteMode ? "hover:bg-[#ff000055] cursor-not-allowed" : ""}`}
-                key={card.card_id} onClick={() => { handleCardClick(card.card_id) }}
+                key={item.card_id} onClick={() => { handleCardClick(item.card_id) }}
+                draggable
+                onDragStart={(e) => handleDragStart(e, item.card_id)}
+                onDragOver={handleDragOver}
+                onDrop={(e) => handleDrop(e, item.card_id)}
               >
 
                 <div className={`relative w-1/2 flex flex-col pr-4 border-r border-eMedGray`}>
-                  <MarkdownPreviewer content={card.question} className="flex-1 p-2 min-h-20" />
-                  <Link to={`/edit/${card.card_id}`}>
+                  <MarkdownPreviewer content={item.question} className="flex-1 p-2 min-h-20" />
+                  <Link to={`/edit/${item.card_id}`}>
                     <img src={editIconImg} alt="Edit_Icon" className="absolute top-8 right-0.5 h-[21px] w-[28px]" />
                   </Link>
-                  <Link onClick={() => speakText(card.question)}>
+                  <Link onClick={() => speakText(item.question)}>
                     <SpeakerIcon className="absolute top-1 right-1" />
                   </Link>
                 </div>
 
                 <div className="relative w-1/2 flex flex-col">
-                  <MarkdownPreviewer content={card.answer} className="flex-1 p-2" />
-                  <Link onClick={() => speakText(card.answer)}>
+                  <MarkdownPreviewer content={item.answer} className="flex-1 p-2" />
+                  <Link onClick={() => speakText(item.answer)}>
                     <SpeakerIcon className="absolute top-1 right-1" />
                   </Link>
                 </div>
@@ -361,6 +397,7 @@ function DeckPage({ publicAccess = false }) {
               </div>
             )}
           </div>
+
         </div>
       </div >
       {showPopup && (
