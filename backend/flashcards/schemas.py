@@ -18,6 +18,9 @@ class GetUser(Schema):
     age: Optional[int] = None
     country: Optional[str] = None
 
+    class Config:
+        orm_mode = True
+
 class UserLogin(Schema):
     username: str
     userpassword: str

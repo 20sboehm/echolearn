@@ -73,12 +73,21 @@ class SharedDeck(models.Model):
 # -----------------------------------------------
 
 class Friendship(models.Model):
+    PENDING = 'pending'
+    ACCEPTED = 'accepted'
+
+    STATUS_CHOICES = [
+        (PENDING, 'Pending'),
+        (ACCEPTED, 'Accepted'),
+    ]
+
     user = models.ForeignKey(CustomUser, related_name='friends', on_delete=models.CASCADE)
     friend = models.ForeignKey(CustomUser, related_name='friends_of', on_delete=models.CASCADE)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=PENDING)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         unique_together = ('user', 'friend')
 
     def __str__(self):
-        return f"Friendship between {self.user.username} and {self.friend.username}"
+        return f"Friendship ({self.status}) between {self.user.username} and {self.friend.username}"
