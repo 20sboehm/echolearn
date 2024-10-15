@@ -2,7 +2,10 @@ import { useApi } from "../hooks";
 import { useState, useRef, useEffect, Children } from "react";
 import { ChevronIcon } from "../components/Icons";
 import MarkdownPreviewer from "../components/MarkdownPreviewer";
-import { BoldIcon, ItalicIcon, UnderlineIcon, MicIcon, MicIconListening } from "../components/Icons";
+import {
+  BoldIcon, ItalicIcon, UnderlineIcon, CodeIcon, CodeBlockIcon, HeaderIcon1, HeaderIcon2, HeaderIcon3,
+  HeaderIcon4, PageBreakIcon, ImageLinkIcon, LinkIcon, TableIcon, MicIcon, MicIconListening
+} from "../components/Icons";
 
 function MarkdownEditor({ requestType, submitButtonText, questionText, setQuestionText, answerText, setAnswerText, deckId, cardId }) {
   const api = useApi();
@@ -216,12 +219,6 @@ function MarkdownEditor({ requestType, submitButtonText, questionText, setQuesti
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // const cardData = {
-    //   deck_id: deckId,
-    //   question: questionText,
-    //   answer: answerText,
-    // }
-
     let response = undefined;
     console.log("yo: " + requestType);
 
@@ -288,20 +285,32 @@ function TextBox({ label, reference, content, inputHandler, handleTextEditingBut
       </button>
       {/* add a bg color for light mode? */}
       <div className="dark:bg-edDarker w-full h-8 border-x border-t border-edDarkGray flex items-center pl-2">
-        <TextEditingIcon handleTextEditingButton={handleTextEditingButton} type="bold" forQuestionBox={forQuestionBox} />
-        <TextEditingIcon handleTextEditingButton={handleTextEditingButton} type="italic" forQuestionBox={forQuestionBox} />
-        <TextEditingIcon handleTextEditingButton={handleTextEditingButton} type="underline" forQuestionBox={forQuestionBox} />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "bold"); }} Icon={BoldIcon} />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "italic"); }} Icon={ItalicIcon} />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "underline"); }} Icon={UnderlineIcon} />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "code"); }} Icon={CodeIcon} />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "codeBlock"); }} Icon={CodeBlockIcon} />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header1"); }} Icon={HeaderIcon1} />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header2"); }} Icon={HeaderIcon2} />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header3"); }} Icon={HeaderIcon3} />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header4"); }} Icon={HeaderIcon4} />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "pageBreak"); }} Icon={PageBreakIcon} />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "imageLink"); }} Icon={ImageLinkIcon} />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "link"); }} Icon={LinkIcon} />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "table"); }} Icon={TableIcon} />
+
         {questionisListening == false && (
-          <TextEditingIcon handleTextEditingButton={handleTextEditingButton} type="questionmicIcon" forQuestionBox={forQuestionBox} />
-        )}
-        {answerisListening == false && (
-          <TextEditingIcon handleTextEditingButton={handleTextEditingButton} type="answermicIcon" forQuestionBox={forQuestionBox} />
+          <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "questionmicIcon"); }} Icon={MicIcon} />
         )}
         {questionisListening == true && (
-          <TextEditingIcon handleTextEditingButton={handleTextEditingButton} type="questionmicIconlistening" forQuestionBox={forQuestionBox} />
+          <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "questionmicIconlistening"); }} Icon={MicIconListening} />
+        )}
+
+        {answerisListening == false && (
+          <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "answermicIcon"); }} Icon={MicIcon} />
         )}
         {answerisListening == true && (
-          <TextEditingIcon handleTextEditingButton={handleTextEditingButton} type="answermicIconlistening" forQuestionBox={forQuestionBox} />
+          <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "answermicIconlistening"); }} Icon={MicIconListening} />
         )}
       </div>
       {textBoxOpen && (
@@ -311,25 +320,8 @@ function TextBox({ label, reference, content, inputHandler, handleTextEditingBut
   );
 }
 
-function TextEditingIcon({ handleTextEditingButton, type, forQuestionBox }) {
-  switch (type) {
-    case "bold":
-      return <button type='button' onClick={() => { handleTextEditingButton(forQuestionBox, type); }} className='mr-2'><BoldIcon /></button>;
-    case "italic":
-      return <button type='button' onClick={() => { handleTextEditingButton(forQuestionBox, type); }} className='mr-2'><ItalicIcon /></button>;
-    case "underline":
-      return <button type='button' onClick={() => { handleTextEditingButton(forQuestionBox, type); }} className='mr-2'><UnderlineIcon /></button>;
-    case "questionmicIcon":
-      return <button type='button' onClick={() => { handleTextEditingButton(forQuestionBox, type); }} className='mr-2'><MicIcon /></button>;
-    case "questionmicIconlistening":
-      return <button type='button' onClick={() => { handleTextEditingButton(forQuestionBox, type); }} className='mr-2'><MicIconListening /></button>;
-    case "answermicIcon":
-      return <button type='button' onClick={() => { handleTextEditingButton(forQuestionBox, type); }} className='mr-2'><MicIcon /></button>;
-    case "answermicIconlistening":
-      return <button type='button' onClick={() => { handleTextEditingButton(forQuestionBox, type); }} className='mr-2'><MicIconListening /></button>;
-    default:
-      return null;
-  }
+function TextEditingIcon({ clickHandler, Icon }) {
+  return <button type='button' onClick={clickHandler} className='mr-3'><Icon /></button>;
 }
 
 function DividerLine() {
