@@ -286,7 +286,7 @@ export const EditIcon = () => (
 // --------------------------------------------------
 
 export const BoldIcon = () => (
-  <svg width="16px" height="16px" viewBox="2 3 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" className="stroke-elDark dark:stroke-edWhite">
+  <svg width="18px" height="18px" viewBox="2 3 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" className="stroke-elDark dark:stroke-edWhite">
     <g id="Edit / Bold">
       <path id="Vector" d="M8 12H12.5M8 12V5H12.5C14.433 5 16 6.567 16 8.5C16 10.433 14.433 12 12.5 12M8 12V19H13.5C15.433 19 17 17.433 17 15.5C17 13.567 15.433 12 13.5 12H12.5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </g>
@@ -294,15 +294,15 @@ export const BoldIcon = () => (
 );
 
 export const ItalicIcon = () => (
-  <svg width="16px" height="16px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="stroke-elDark dark:stroke-edWhite">
+  <svg width="18px" height="18px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="stroke-elDark dark:stroke-edWhite">
     <path d="M10 3H20M4 21H14M15 3L9 21" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
 export const UnderlineIcon = () => (
   <svg
-    width="16px"
-    height="16px"
+    width="18px"
+    height="18px"
     viewBox="0 -1 22 22"
     version="1.1"
     xmlns="http://www.w3.org/2000/svg"
@@ -321,37 +321,37 @@ export const UnderlineIcon = () => (
 );
 
 export const CodeIcon = () => (
-  <svg width="16px" height="16px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" className="fill-elDark dark:fill-edWhite">
+  <svg width="18px" height="18px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" className="fill-elDark dark:fill-edWhite">
     <path d="M8.01005 0.858582L6.01005 14.8586L7.98995 15.1414L9.98995 1.14142L8.01005 0.858582Z" />
     <path d="M12.5 11.5L11.0858 10.0858L13.1716 8L11.0858 5.91422L12.5 4.5L16 8L12.5 11.5Z" />
     <path d="M2.82843 8L4.91421 10.0858L3.5 11.5L0 8L3.5 4.5L4.91421 5.91422L2.82843 8Z" />
   </svg>
-)
+);
 
 export const CodeBlockIcon = () => (
-  <svg width="16px" height="16px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" className="fill-elDark dark:fill-edWhite">
+  <svg width="18px" height="18px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" className="fill-elDark dark:fill-edWhite">
     <path fillRule="evenodd" clipRule="evenodd" d="M15 1H1V15H15V1ZM6 5L7.41421 6.41421L5.82843 8L7.41421 9.58579L6 11L3 8L6 5ZM10 5L8.58579 6.41421L10.1716 8L8.58579 9.58579L10 11L13 8L10 5Z" />
   </svg>
-)
+);
 
 export const HeaderIcon1 = () => (
-  <svg className="fill-elDark dark:fill-edWhite" width="16px" height="16px" viewBox="-2 -2 15 15" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin"><path d='M2 4h4V1a1 1 0 1 1 2 0v8a1 1 0 1 1-2 0V6H2v3a1 1 0 1 1-2 0V1a1 1 0 1 1 2 0v3zm9.52.779H10V3h3.36v7h-1.84V4.779z' /></svg>
-)
+  <svg className="fill-elDark dark:fill-edWhite" width="18px" height="18px" viewBox="-2 -2 15 15" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin"><path d='M2 4h4V1a1 1 0 1 1 2 0v8a1 1 0 1 1-2 0V6H2v3a1 1 0 1 1-2 0V1a1 1 0 1 1 2 0v3zm9.52.779H10V3h3.36v7h-1.84V4.779z' /></svg>
+);
 
 export const HeaderIcon2 = () => (
-  <svg className="fill-elDark dark:fill-edWhite" width="16px" height="16px" viewBox="-0 -2 15 15" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin" ><path d='M2 4h4V1a1 1 0 1 1 2 0v8a1 1 0 1 1-2 0V6H2v3a1 1 0 1 1-2 0V1a1 1 0 1 1 2 0v3zm12.88 4.352V10H10V8.986l.1-.246 1.785-1.913c.43-.435.793-.77.923-1.011.124-.23.182-.427.182-.587 0-.14-.04-.242-.127-.327a.469.469 0 0 0-.351-.127.443.443 0 0 0-.355.158c-.105.117-.165.288-.173.525l-.012.338h-1.824l.016-.366c.034-.735.272-1.33.718-1.77.446-.44 1.02-.66 1.703-.66.424 0 .805.091 1.14.275.336.186.606.455.806.8.198.343.3.7.3 1.063 0 .416-.23.849-.456 1.307-.222.45-.534.876-1.064 1.555l-.116.123-.254.229h1.938z' /></svg>
-)
+  <svg className="fill-elDark dark:fill-edWhite" width="18px" height="18px" viewBox="-0 -2 15 15" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin" ><path d='M2 4h4V1a1 1 0 1 1 2 0v8a1 1 0 1 1-2 0V6H2v3a1 1 0 1 1-2 0V1a1 1 0 1 1 2 0v3zm12.88 4.352V10H10V8.986l.1-.246 1.785-1.913c.43-.435.793-.77.923-1.011.124-.23.182-.427.182-.587 0-.14-.04-.242-.127-.327a.469.469 0 0 0-.351-.127.443.443 0 0 0-.355.158c-.105.117-.165.288-.173.525l-.012.338h-1.824l.016-.366c.034-.735.272-1.33.718-1.77.446-.44 1.02-.66 1.703-.66.424 0 .805.091 1.14.275.336.186.606.455.806.8.198.343.3.7.3 1.063 0 .416-.23.849-.456 1.307-.222.45-.534.876-1.064 1.555l-.116.123-.254.229h1.938z' /></svg>
+);
 
 export const HeaderIcon3 = () => (
-  <svg className="fill-elDark dark:fill-edWhite" width="16px" height="16px" viewBox="-0 -2 15 15" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin" ><path d='M2 4h4V1a1 1 0 1 1 2 0v8a1 1 0 1 1-2 0V6H2v3a1 1 0 1 1-2 0V1a1 1 0 1 1 2 0v3zm12.453 2.513l.043.055c.254.334.38.728.38 1.172 0 .637-.239 1.187-.707 1.628-.466.439-1.06.658-1.763.658-.671 0-1.235-.209-1.671-.627-.436-.418-.673-.983-.713-1.676L10 7.353h1.803l.047.295c.038.238.112.397.215.49.1.091.23.137.402.137a.566.566 0 0 0 .422-.159.5.5 0 0 0 .158-.38c0-.163-.067-.295-.224-.419-.17-.134-.438-.21-.815-.215l-.345-.004v-1.17l.345-.004c.377-.004.646-.08.815-.215.157-.124.224-.255.224-.418a.5.5 0 0 0-.158-.381.566.566 0 0 0-.422-.159.568.568 0 0 0-.402.138c-.103.092-.177.251-.215.489l-.047.295H10l.022-.37c.04-.693.277-1.258.713-1.675.436-.419 1-.628 1.67-.628.704 0 1.298.22 1.764.658.468.441.708.991.708 1.629a1.892 1.892 0 0 1-.424 1.226z' /></svg>
-)
+  <svg className="fill-elDark dark:fill-edWhite" width="18px" height="18px" viewBox="-0 -2 15 15" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin" ><path d='M2 4h4V1a1 1 0 1 1 2 0v8a1 1 0 1 1-2 0V6H2v3a1 1 0 1 1-2 0V1a1 1 0 1 1 2 0v3zm12.453 2.513l.043.055c.254.334.38.728.38 1.172 0 .637-.239 1.187-.707 1.628-.466.439-1.06.658-1.763.658-.671 0-1.235-.209-1.671-.627-.436-.418-.673-.983-.713-1.676L10 7.353h1.803l.047.295c.038.238.112.397.215.49.1.091.23.137.402.137a.566.566 0 0 0 .422-.159.5.5 0 0 0 .158-.38c0-.163-.067-.295-.224-.419-.17-.134-.438-.21-.815-.215l-.345-.004v-1.17l.345-.004c.377-.004.646-.08.815-.215.157-.124.224-.255.224-.418a.5.5 0 0 0-.158-.381.566.566 0 0 0-.422-.159.568.568 0 0 0-.402.138c-.103.092-.177.251-.215.489l-.047.295H10l.022-.37c.04-.693.277-1.258.713-1.675.436-.419 1-.628 1.67-.628.704 0 1.298.22 1.764.658.468.441.708.991.708 1.629a1.892 1.892 0 0 1-.424 1.226z' /></svg>
+);
 
 export const HeaderIcon4 = () => (
-  <svg className="fill-elDark dark:fill-edWhite" width="16px" height="16px" viewBox="-0 -2 15 15" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin" ><path d='M2 4h4V1a1 1 0 1 1 2 0v8a1 1 0 1 1-2 0V6H2v3a1 1 0 1 1-2 0V1a1 1 0 1 1 2 0v3zm10.636 4.74H10V7.302l.06-.198 2.714-4.11h1.687v3.952h.538V8.74h-.538V10h-1.825V8.74zm.154-1.283V5.774l-1.1 1.683h1.1z' /></svg>
-)
+  <svg className="fill-elDark dark:fill-edWhite" width="18px" height="18px" viewBox="-0 -2 15 15" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin" ><path d='M2 4h4V1a1 1 0 1 1 2 0v8a1 1 0 1 1-2 0V6H2v3a1 1 0 1 1-2 0V1a1 1 0 1 1 2 0v3zm10.636 4.74H10V7.302l.06-.198 2.714-4.11h1.687v3.952h.538V8.74h-.538V10h-1.825V8.74zm.154-1.283V5.774l-1.1 1.683h1.1z' /></svg>
+);
 
 export const PageBreakIcon = () => (
-  <svg width="16px" height="16px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="fill-elDark dark:fill-edWhite">
+  <svg width="18px" height="18px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="fill-elDark dark:fill-edWhite">
     <path d="M2.5 12C2.5 11.5858 2.83579 11.25 3.25 11.25H4.75C5.16421 11.25 5.5 11.5858 5.5 12C5.5 12.4142 5.16421 12.75 4.75 12.75H3.25C2.83579 12.75 2.5 12.4142 2.5 12Z" />
     <path d="M6.5 12C6.5 11.5858 6.83579 11.25 7.25 11.25H8.75C9.16421 11.25 9.5 11.5858 9.5 12C9.5 12.4142 9.16421 12.75 8.75 12.75H7.25C6.83579 12.75 6.5 12.4142 6.5 12Z" />
     <path d="M10.5 12C10.5 11.5858 10.8358 11.25 11.25 11.25H12.75C13.1642 11.25 13.5 11.5858 13.5 12C13.5 12.4142 13.1642 12.75 12.75 12.75H11.25C10.8358 12.75 10.5 12.4142 10.5 12Z" />
@@ -360,10 +360,10 @@ export const PageBreakIcon = () => (
     <path d="M5 2C4.44772 2 4 2.44772 4 3V7C4 8.104 4.896 9 6 9H18C19.104 9 20 8.104 20 7V3C20 2.44772 19.5523 2 19 2H5Z" />
     <path d="M19 22C19.5523 22 20 21.5523 20 21V17C20 15.896 19.104 15 18 15L6 15C4.896 15 4 15.896 4 17L4 21C4 21.5523 4.44772 22 5 22L19 22Z" />
   </svg>
-)
+);
 
 export const ImageLinkIcon = () => (
-  <svg height="16px" width="16px" version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" className="fill-elDark dark:fill-edWhite"
+  <svg height="18px" width="18px" version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" className="fill-elDark dark:fill-edWhite"
     viewBox="0 0 512 512" xmlSpace="preserve">
     <g>
       <path className="st0" d="M378.413,0H208.297h-13.168l-9.314,9.314L57.02,138.102l-9.314,9.314v13.176v265.514
@@ -387,27 +387,40 @@ export const ImageLinkIcon = () => (
 		C364.238,296.654,361.39,293.806,356.363,293.806z"/>
     </g>
   </svg>
-)
+);
 
 export const LinkIcon = () => (
-  <svg width="16px" height="16px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="stroke-elDark dark:stroke-edWhite" fill="none">
+  <svg width="18px" height="18px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="stroke-elDark dark:stroke-edWhite" fill="none">
     <path d="M14 12C14 14.7614 11.7614 17 9 17H7C4.23858 17 2 14.7614 2 12C2 9.23858 4.23858 7 7 7H7.5M10 12C10 9.23858 12.2386 7 15 7H17C19.7614 7 22 9.23858 22 12C22 14.7614 19.7614 17 17 17H16.5" strokeWidth="2" strokeLinecap="round" />
   </svg >
-)
+);
 
 export const TableIcon = () => (
-  <svg width="16px" height="16px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="stroke-elDark dark:stroke-edWhite" aria-labelledby="tableHorizontalIconTitle" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" color="#000000"> <title id="tableHorizontalIconTitle">Data table</title> <path d="M22 4V19H2L2 4L22 4Z" /> <line x1="22" y1="9" x2="2" y2="9" /> <line x1="22" y1="14" x2="2" y2="14" /> <path d="M12 19L12 4" /> </svg>
-)
+  <svg width="18px" height="18px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="stroke-elDark dark:stroke-edWhite" aria-labelledby="tableHorizontalIconTitle" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" color="#000000"> <title id="tableHorizontalIconTitle">Data table</title> <path d="M22 4V19H2L2 4L22 4Z" /> <line x1="22" y1="9" x2="2" y2="9" /> <line x1="22" y1="14" x2="2" y2="14" /> <path d="M12 19L12 4" /> </svg>
+);
+
+export const LatexIcon = () => (
+  <svg width="18px" height="18px" viewBox="0 -3 24 24" xmlns="http://www.w3.org/2000/svg" className="fill-elDark dark:fill-edWhite">
+    <path d="M14 16.5c0 .83-.67 1.5-1.5 1.5h-7c-.83 0-1.5-.67-1.5-1.5 0-.293.095-.566.25-.814.443-.707.855-1.433 1.272-2.157l1.38-2.405c.364-.636.73-1.27 1.088-1.91.02-.038.256-.385.23-.425l-.443-.72-1.045-1.697-1.22-1.986-.84-1.36c-.246-.4-.578-.815-.65-1.292-.05-.338.01-.695.185-.992C4.49.258 5.02-.003 5.572 0H13c.55 0 1 .45 1 1s-.45 1-1 1H7.57l.59.983c.415.693.83 1.387 1.247 2.08l1.13 1.887c.197.33.472.673.454 1.074-.01.27-.13.517-.273.74-.35.55-.672 1.12-1.004 1.68L8.275 12.87l-1.092 1.84c-.016.025-.142.29-.173.29h5.49c.83 0 1.5.67 1.5 1.5z" />
+    <path d="M4.83 11.55c-.19.29-.51.45-.83.45-.19 0-.38-.05-.55-.17l-3-2c-.01-.01-.02-.01-.02-.02-.1-.06-.19-.15-.26-.26-.31-.45-.18-1.08.28-1.38l3-2c.45-.31 1.07-.18 1.382.28.31.45.18 1.08-.28 1.38L2.8 9l1.75 1.17c.46.3.59.92.28 1.38zM13.17 11.55c.19.29.51.45.83.45.19 0 .38-.05.55-.17l3-2c.01-.01.02-.01.02-.02.1-.06.19-.15.26-.26.31-.45.18-1.08-.28-1.38l-3-2c-.45-.31-1.07-.18-1.382.28-.31.45-.18 1.08.28 1.38L15.198 9l-1.75 1.17c-.46.3-.59.92-.28 1.38z" />
+  </svg>
+);
+
+export const LatexBlockIcon = () => (
+  <svg width="18px" height="18px" viewBox="0 -3 24 24" xmlns="http://www.w3.org/2000/svg" className="fill-elDark dark:fill-edWhite">
+    <path d="M18 16.5c0 .83-.67 1.5-1.5 1.5h-7c-.83 0-1.5-.67-1.5-1.5 0-.293.095-.566.25-.814.443-.707.855-1.433 1.272-2.157l1.38-2.405c.364-.636.73-1.27 1.088-1.91.02-.038.256-.385.23-.425l-.443-.72-1.045-1.697L9.51 4.388l-.838-1.36c-.247-.4-.58-.815-.65-1.292-.05-.34.01-.696.185-.993C8.49.258 9.02-.003 9.572 0H17c.55 0 1 .45 1 1s-.45 1-1 1h-5.43l.59.983c.415.694.83 1.387 1.247 2.08l1.13 1.887c.197.33.472.673.454 1.074-.01.27-.13.517-.273.74-.35.55-.672 1.12-1.004 1.68l-1.438 2.425-1.092 1.84c-.016.025-.142.29-.173.29h5.49c.83 0 1.5.67 1.5 1.5zM1 18c-.08 0-.16-.01-.243-.03-.536-.134-.86-.677-.728-1.212l4-16c.134-.536.678-.862 1.213-.728s.86.677.727 1.213l-4 16c-.114.454-.52.757-.97.757z" />
+  </svg>
+);
 
 export const MicIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-mic-fill" viewBox="0 0 16 16">
+  <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill="currentColor" className="bi bi-mic-fill" viewBox="0 0 16 16">
     <path d="M5 3a3 3 0 0 1 6 0v5a3 3 0 0 1-6 0z" />
     <path d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 .5-.5" />
   </svg>
 );
 
 export const MicIconListening = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="grey" className="bi bi-mic-fill" viewBox="0 0 16 16">
+  <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill="grey" className="bi bi-mic-fill" viewBox="0 0 16 16">
     <path d="M5 3a3 3 0 0 1 6 0v5a3 3 0 0 1-6 0z" />
     <path d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 .5-.5" />
   </svg>

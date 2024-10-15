@@ -4,7 +4,7 @@ import { ChevronIcon } from "../components/Icons";
 import MarkdownPreviewer from "../components/MarkdownPreviewer";
 import {
   BoldIcon, ItalicIcon, UnderlineIcon, CodeIcon, CodeBlockIcon, HeaderIcon1, HeaderIcon2, HeaderIcon3,
-  HeaderIcon4, PageBreakIcon, ImageLinkIcon, LinkIcon, TableIcon, MicIcon, MicIconListening
+  HeaderIcon4, PageBreakIcon, ImageLinkIcon, LinkIcon, TableIcon, LatexIcon, LatexBlockIcon, MicIcon, MicIconListening
 } from "../components/Icons";
 
 function MarkdownEditor({ requestType, submitButtonText, questionText, setQuestionText, answerText, setAnswerText, deckId, cardId }) {
@@ -68,6 +68,7 @@ function MarkdownEditor({ requestType, submitButtonText, questionText, setQuesti
 
     let insertionChar = "";
     let cursorAdjustment = 0;
+    let insertionType = "symmetrical";
     switch (type) {
       case "bold":
         insertionChar = "**";
@@ -80,6 +81,57 @@ function MarkdownEditor({ requestType, submitButtonText, questionText, setQuesti
       case "underline":
         insertionChar = "__";
         cursorAdjustment = 2;
+        break;
+      case "code":
+        insertionChar = "`";
+        cursorAdjustment = 1;
+        break;
+      case "latex":
+        insertionChar = "$";
+        cursorAdjustment = 1;
+        break;
+      case "latexBlock":
+        insertionChar = "$$";
+        cursorAdjustment = 2;
+        break;
+      case "pageBreak":
+        insertionChar = "\n---\n";
+        cursorAdjustment = 5;
+        insertionType = 'one-sided';
+        break;
+      case "header1":
+        insertionChar = "# ";
+        cursorAdjustment = 2;
+        insertionType = 'one-sided';
+        break;
+      case "header2":
+        insertionChar = "## ";
+        cursorAdjustment = 3;
+        insertionType = 'one-sided';
+        break;
+      case "header3":
+        insertionChar = "### ";
+        cursorAdjustment = 4;
+        insertionType = 'one-sided';
+        break;
+      case "header4":
+        insertionChar = "#### ";
+        cursorAdjustment = 5;
+        insertionType = 'one-sided';
+        break;
+      case "codeBlock":
+        cursorAdjustment = 4;
+        insertionType = 'codeBlock';
+        break;
+      case "imageLink":
+        cursorAdjustment = 9;
+        insertionType = 'imageLink';
+        break;
+      case "link":
+        insertionType = 'link';
+        break;
+      case "table":
+        insertionType = 'table';
         break;
       case "questionmicIcon":
         setquestionIsListening(prevState => !prevState)
@@ -102,7 +154,37 @@ function MarkdownEditor({ requestType, submitButtonText, questionText, setQuesti
     const selection = text.substring(selStart, selEnd)
     const secondHalf = text.substring(selEnd);
 
-    let newText = firstHalf + insertionChar + selection + insertionChar + secondHalf;
+    let newText = ""
+    if (insertionType === "symmetrical") {
+      newText = firstHalf + insertionChar + selection + insertionChar + secondHalf;
+    }
+    else if (insertionType === "one-sided") {
+      newText = firstHalf + insertionChar + selection + secondHalf;
+    }
+    else if (insertionType === "codeBlock") {
+      newText = firstHalf + "```\n" + selection + "\n```" + secondHalf;
+    }
+    else if (insertionType === "imageLink") {
+      newText = firstHalf + "![Image](" + selection + ")" + secondHalf;
+    }
+    else if (insertionType === "link") {
+      if (selection) {
+        cursorAdjustment = 1;
+        newText = firstHalf + "[" + selection + "](" + selection + ")" + secondHalf;
+      } else {
+        cursorAdjustment = 7;
+        newText = firstHalf + "[" + "link" + "](" + selection + ")" + secondHalf;
+      }
+    }
+    else if (insertionType === "table") {
+      selEnd = selStart;
+      selEnd += 70;
+      cursorAdjustment = 0;
+      newText = firstHalf + "| Header | Header |" + "\n" + "|------| ------ |" + "\n" + "| Data | Data |" + "\n" + "| Data | Data |" + "\n" + secondHalf;
+    }
+    else if (insertionType === "latex") {
+
+    }
 
     if (forQuestionBox) {
       setQuestionText(newText);
@@ -290,14 +372,16 @@ function TextBox({ label, reference, content, inputHandler, handleTextEditingBut
         <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "underline"); }} Icon={UnderlineIcon} />
         <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "code"); }} Icon={CodeIcon} />
         <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "codeBlock"); }} Icon={CodeBlockIcon} />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header1"); }} Icon={HeaderIcon1} />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header2"); }} Icon={HeaderIcon2} />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header3"); }} Icon={HeaderIcon3} />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header4"); }} Icon={HeaderIcon4} />
         <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "pageBreak"); }} Icon={PageBreakIcon} />
         <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "imageLink"); }} Icon={ImageLinkIcon} />
         <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "link"); }} Icon={LinkIcon} />
         <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "table"); }} Icon={TableIcon} />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "latex"); }} Icon={LatexIcon} />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "latexBlock"); }} Icon={LatexBlockIcon} />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header1"); }} Icon={HeaderIcon1} />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header2"); }} Icon={HeaderIcon2} />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header3"); }} Icon={HeaderIcon3} />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header4"); }} Icon={HeaderIcon4} />
 
         {questionisListening == false && (
           <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "questionmicIcon"); }} Icon={MicIcon} />
