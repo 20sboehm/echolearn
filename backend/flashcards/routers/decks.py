@@ -177,7 +177,6 @@ def generate_share_link(request, deck_id):
     deck = get_object_or_404(Deck, deck_id=deck_id)
     if deck:
         link = f'localhost:5173/decks/{deck_id}'
-        print(link)
         return JsonResponse({
             "link": link
         }, status=200)
@@ -188,7 +187,7 @@ def generate_share_link(request, deck_id):
 def store_new_order_list(request, deck_id):
     deck = get_object_or_404(Deck, deck_id=deck_id)
     data = json.loads(request.body)
-    print(data)
+   
     if deck:
         print("The type of body is", type(data['templist']))
         print(data['templist'])
