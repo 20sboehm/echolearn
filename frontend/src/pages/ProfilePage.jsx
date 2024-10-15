@@ -8,19 +8,26 @@ import userPic from "../assets/defaltUser.png"
 
 function ProfilePage() {
   const { _get, _patch } = api();
+  // profile
   const [profile, setProfile] = useState({ username: '', age: '', country: '', email: '', flip_mode: true, sidebar_open: false, light_mode: false });
-  const [folders, setFolders] = useState([]);
   const [error, setError] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
   const [editableUsername, setEditableUsername] = useState('');
   const [editableEmail, setEditableEmail] = useState('');
   const [editableAge, setEditableAge] = useState('');
   const [editableCountry, setEditableCountry] = useState('');
+
+  // Setting
   const [flipOrSet, setFlipOrSet] = useState(true);
   const [sidebarClosed, setSidebarClosed] = useState(false);
   const [lightMode, setLightMode] = useState(false);
-  const [RatedDeck, setRatedDeck] = useState([]);
 
+  // Tabs (other info)
+  const [folders, setFolders] = useState([]);
+  const [RatedDeck, setRatedDeck] = useState([]);
+  const [activeTab, setActiveTab] = useState('folders');
+
+  const selectedTabClassName = "bg-elSkyBlue text-white dark:bg-edMedGray";
+  const unselectedTabClassName = "bg-elLightGray text-elDarkGray dark:bg-edDarkGray dark:text-white";
   const [isEditingField, setIsEditingField] = useState({
     username: false,
     email: false,
@@ -111,7 +118,6 @@ function ProfilePage() {
       default:
         return;
     }
-    console.log(updatedData);
     try {
       const response = await _patch('/api/profile/me', updatedData);
       const data = await response.json();
@@ -129,6 +135,32 @@ function ProfilePage() {
   if (error) {
     return <p>{error}</p>;
   }
+
+  const handleCancelClick = (field) => {
+    switch (field) {
+      case 'username':
+        setEditableUsername(profile.username);
+        break;
+      case 'email':
+        setEditableEmail(profile.email);
+        break;
+      case 'age':
+        setEditableAge(profile.age);
+        break;
+      case 'country':
+        setEditableCountry(profile.country);
+        break;
+      default:
+        return;
+    }
+
+    // Reset the editing state
+    setIsEditingField((prevState) => ({
+      ...prevState,
+      [field]: false,
+    }));
+  };
+
 
 
   const handleFlipOrSetChange = async () => {
@@ -171,7 +203,7 @@ function ProfilePage() {
   return (
     <div className="ml-0 w-3/4 text-left flex mt-4">
       {/* Left column: User Profile Information */}
-      <div className="w-1/2">
+      <div className="w-2/3 h-1/2 ml-4">
         {/* Profile header */}
         <div className="flex items-center mb-6">
           <div className="w-24 h-24 rounded-full overflow-hidden">
@@ -183,66 +215,112 @@ function ProfilePage() {
           </div>
         </div>
 
-        {/* Profile Details Section */}
-        <div className="bg-gray-700 p-4 rounded-lg">
-          {/* Username */}
-          <EditableField
-            label="Name"
-            value={editableUsername}
-            isEditing={isEditingField.username}
-            onEdit={() => handleEditClick('username')}
-            onSave={() => handleSaveClick('username')}
-            onChange={(newVal) => setEditableUsername(newVal)}
-          />
+        <div className='w-[95%]'>
+          {/* Profile Details Section */}
+          <div className="bg-elDarkGray dark:bg-edDarker p-4 rounded-lg">
+            {/* Username */}
+            <EditableField
+              label="Name"
+              value={editableUsername}
+              isEditing={isEditingField.username}
+              onEdit={() => handleEditClick('username')}
+              onSave={() => handleSaveClick('username')}
+              onCancel={() => handleCancelClick('username')}
+              onChange={(newVal) => setEditableUsername(newVal)}
+            />
 
-          {/* Email */}
-          <EditableField
-            label="Email:"
-            value={editableEmail}
-            isEditing={isEditingField.email}
-            onEdit={() => handleEditClick('email')}
-            onSave={() => handleSaveClick('email')}
-            onChange={(newVal) => setEditableEmail(newVal)}
-          />
+            {/* Email */}
+            <EditableField
+              label="Email"
+              value={editableEmail}
+              isEditing={isEditingField.email}
+              onEdit={() => handleEditClick('email')}
+              onSave={() => handleSaveClick('email')}
+              onCancel={() => handleCancelClick('email')}
+              onChange={(newVal) => setEditableEmail(newVal)}
+            />
 
-          {/* Age */}
-          <EditableField
-            label="Age:"
-            value={editableAge}
-            isEditing={isEditingField.age}
-            inputType="number"
-            onEdit={() => handleEditClick('age')}
-            onSave={() => handleSaveClick('age')}
-            onChange={(newVal) => setEditableAge(Number(newVal))}
-          />
+            {/* Age */}
+            <EditableField
+              label="Age"
+              value={editableAge}
+              isEditing={isEditingField.age}
+              inputType="number"
+              onEdit={() => handleEditClick('age')}
+              onSave={() => handleSaveClick('age')}
+              onCancel={() => handleCancelClick('age')}
+              onChange={(newVal) => setEditableAge(Number(newVal))}
+            />
 
-          {/* Country */}
-          <EditableField
-            label="Country"
-            value={editableCountry}
-            isEditing={isEditingField.country}
-            inputType="select"
-            options={countries}
-            onEdit={() => handleEditClick('country')}
-            onSave={() => handleSaveClick('country')}
-            onChange={(newVal) => setEditableCountry(newVal)}
-          />
+            {/* Country */}
+            <EditableField
+              label="Country"
+              value={editableCountry}
+              isEditing={isEditingField.country}
+              inputType="select"
+              options={countries}
+              onEdit={() => handleEditClick('country')}
+              onSave={() => handleSaveClick('country')}
+              onCancel={() => handleCancelClick('country')}
+              onChange={(newVal) => setEditableCountry(newVal)}
+            />
 
+          </div>
         </div>
 
-        {/* Display Folders and Decks */}
-        <div className="mt-8">
-          <h2 className="text-xl font-bold text-elDark dark:text-edWhite">Folders and Decks</h2>
-          {folders.length > 0 ? (
-            folders.map((folder) => <Folder key={folder.folder_id} folder={folder} />)
-          ) : (
-            <p>No folders or decks available</p>
+        <div className='h-1/2 mt-2 text-elDark dark:text-edWhite'>
+          {/* Tab Buttons */}
+          <div className="flex space-x">
+            <button
+              className={`py-2 px-4 rounded-lg ${activeTab === 'folders' ? `${selectedTabClassName}` : `${unselectedTabClassName}`}`}
+              onClick={() => setActiveTab('folders')}
+            >
+              Folders
+            </button>
+            <button
+              className={`py-2 px-4 rounded-lg ${activeTab === 'ratedDecks' ? `${selectedTabClassName}` : `${unselectedTabClassName}`}`}
+              onClick={() => setActiveTab('ratedDecks')}
+            >
+              Rated Decks
+            </button>
+          </div>
+          
+          {/* Container for Tabs and Content */}
+          <div className="w-[95%] bg-elSkyBlue dark:bg-edMedGray rounded-lg p-4 shadow-md overflow-x-auto max-h-60">
+  
+          {/* Display Content Based on Active Tab */}
+          {activeTab === 'folders' && (
+            <div className="mt-4">
+              <h2 className="text-xl font-bold text-white">Folders and Decks</h2>
+              {folders.length > 0 ? (
+                folders.map((folder) => <Folder key={folder.folder_id} folder={folder} />)
+              ) : (
+                <p>No folders or decks available</p>
+              )}
+            </div>
           )}
+
+          {activeTab === 'ratedDecks' && (
+            <div className="mt-4">
+              <h2 className="text-xl font-bold text-white">Rated Decks</h2>
+              {RatedDeck.length > 0 ? (
+                RatedDeck.map((rDeck) => (
+                  <Link key={rDeck.deck_id} to={`/decks/${rDeck.deck_id}`} style={{ display: 'flex', alignItems: 'center' }}>
+                    <span className="mr-2">📚</span>
+                    <p className="overflow-x-auto whitespace-nowrap">{rDeck.name}</p>
+                  </Link>
+                ))
+              ) : (
+                <p className='text-gray-500'>No Rated decks available</p>
+              )}
+            </div>
+          )}
+        </div>
         </div>
       </div>
 
-      <div className="w-1/2 pl-10 border border-elDark dark:border-edWhite rounded-lg">
-        <h2 className="text-2xl font-bold text-elDark dark:text-edWhite">Settings</h2>
+      <div className="w-1/3 pl-10 border border-elDark dark:border-edWhite rounded-lg">
+        <h2 className="text-2xl mt-2 font-bold text-elDark dark:text-edWhite">Settings</h2>
         {/* Review Animation */}
         <ToggleSetting
           label="Review animation:"
@@ -269,21 +347,6 @@ function ProfilePage() {
           value={lightMode}
           onChange={handleLightMode}
         />
-      </div>
-
-      {/* Display Rated Decks */}
-      <div className="mt-8">
-        <h2 className="text-xl font-bold">Rated decks</h2>
-        {RatedDeck.length > 0 ? (
-          RatedDeck.map((rDeck) => (
-            <Link to={`/decks/${rDeck.deck_id}`} style={{ display: "flex", alignItems: "center" }}>
-              <span className="mr-2">📚</span>
-              <p className="overflow-x-auto whitespace-nowrap">{rDeck.name}</p>
-            </Link>
-          ))
-        ) : (
-          <p className='eWhite'>No Rated decks available</p>
-        )}
       </div>
     </div>
   );
@@ -327,7 +390,7 @@ const Folder = ({ folder, onRightClick }) => {
         onContextMenu={(e) => onRightClick(e, folder)}
         className="cursor-pointer eWhite flex"
       >
-        <span className="w-6 h-6 ml-2 mr-2">{openFolder ? "📂" : "📁"}</span>
+        <span className="w-6 h-6 ml-2">{openFolder ? "📂" : "📁"}</span>
         <p className="overflow-x-auto">{folder.name}</p>
       </div>
 
@@ -337,20 +400,20 @@ const Folder = ({ folder, onRightClick }) => {
           {/* Displays decks in the folder */}
           {folder.decks.length > 0 ? (
             folder.decks.map((deck) => (
-              <div key={deck.deck_id} className="eWhite flex items-center" onContextMenu={(e) => onRightClick(e, deck)}>
+              <div key={deck.deck_id} className="flex items-center ml-2" onContextMenu={(e) => onRightClick(e, deck)}>
                 <Link to={`/decks/${deck.deck_id}`} style={{ display: "flex", alignItems: "center" }}>
                   <span className="mr-2">📚</span>
                   <p className="overflow-x-auto whitespace-nowrap">{deck.name}</p>
                 </Link>
               </div>
             ))
-          ) : (
-            <p className='eWhite'>No decks in this folder</p>
-          )}
+          ) : 
+          // (<p className=''>No decks in this folder</p>)
+          null }
 
           {/* Show subfolders */}
           {folder.children && folder.children.length > 0 && (
-            <div className="ml-6">
+            <div className="ml-3">
               {folder.children.map((childFolder) => (
                 <Folder key={childFolder.folder_id} folder={childFolder} onRightClick={onRightClick} />
               ))}
@@ -363,12 +426,13 @@ const Folder = ({ folder, onRightClick }) => {
 };
 
 
-const EditableField = ({ label, value, isEditing, inputType = 'text', options = [], onEdit, onSave, onChange }) => {
+const EditableField = ({ label, value, isEditing, inputType = 'text', options = [], onEdit, onSave, onCancel, onChange }) => {
   return (
     <div className="flex justify-between items-center py-2">
       <div>
         <strong className="mr-2">{label}:</strong>
         {isEditing ? (
+          // select will be use for Country
           inputType === 'select' ? (
             <select
               value={value}
@@ -396,12 +460,20 @@ const EditableField = ({ label, value, isEditing, inputType = 'text', options = 
 
       {/* Save or Edit button */}
       {isEditing ? (
-        <button
-          className="bg-green-500 px-4 py-2 rounded hover:bg-green-600 transition"
-          onClick={onSave}
-        >
-          Save
-        </button>
+        <div>
+          <button
+            className="bg-green-500 px-4 py-2 rounded hover:bg-green-600 transition mr-2"
+            onClick={onSave}
+          >
+            Save
+          </button>
+          <button
+            className="bg-red-500 px-4 py-2 rounded hover:bg-red-600 transition"
+            onClick={onCancel}
+          >
+            Cancel
+          </button>
+        </div>
       ) : (
         <button
           className="bg-gray-600 px-4 py-2 rounded hover:bg-gray-500 transition"
@@ -415,54 +487,3 @@ const EditableField = ({ label, value, isEditing, inputType = 'text', options = 
 };
 
 export default ProfilePage;
-
-
-{/* <h1 className="text-2xl font-bold text-elDark dark:text-edWhite">User Profile</h1>
-<p className='text-elDark dark:text-edWhite'><strong>Username:</strong> {profile.username}</p>
-<p className='text-elDark dark:text-edWhite'><strong>Email:</strong> {profile.email}</p> */}
-
-{/* Age */}
-{/* <p className='text-elDark dark:text-edWhite'>
-  <strong>Age:</strong>
-  {isEditing ? (
-    <input
-      type="number"
-      value={editableAge}
-      onChange={(e) => setEditableAge(Number(e.target.value))}
-      className="border border-black rounded dark:border-edWhite dark:bg-edDarker ml-1"
-    />
-  ) : (
-    ` ${profile.age}`
-  )}
-</p> */}
-
-{/* Country */}
-{/* <p className='text-elDark dark:text-edWhite'>
-  <strong>Country:</strong>
-  {isEditing ? (
-    <select
-      value={editableCountry}
-      onChange={(e) => setEditableCountry(e.target.value)}
-      className="border border-black rounded dark:border-edWhite dark:bg-edDarker ml-1"
-    >
-      {countries.map((country, index) => (
-        <option key={index} value={country}>
-          {country}
-        </option>
-      ))}
-    </select>
-  ) : (
-    ` ${profile.country}`
-  )}
-</p> */}
-
-{/* Edit and Save button */}
-// {isEditing ? (
-//   <button onClick={handleSaveClick} className="mt-2 border px-4 py-2 rounded bg-green-500 text-white hover:bg-green-600">
-//     Save
-//   </button>
-// ) : (
-//   <button onClick={handleEditClick} className="mt-2 border px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600">
-//     Edit
-//   </button>
-// )}
