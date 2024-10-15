@@ -117,12 +117,16 @@ function ReviewPage() {
       next_review: formatTime(nextReviewTime),
       last_reviewed: formatTime(today)
     };
+    console.log(card);
+    console.log(card.correct_count);
 
     if (wasCorrect) {
       updatedCardData.correct_count = (card.correct_count || 0) + 1;
     } else {
       updatedCardData.incorrect_count = (card.incorrect_count || 0) + 1;
     }
+    console.log(updatedCardData);
+
     api._patch(
       `/api/cards/${card.card_id}`, updatedCardData)
       .then(response => {
@@ -253,7 +257,7 @@ function AnswerCard({ card, flip, showAnswer, displayQuestion }) {
           {/* If flip=false (The card is at or flipping towards 'question position') AND we're set to display answer 
           (meaning we're still in the 1/2 animation time delay for setting `displayQuestion`), set content to blank 
           so we dont give away the answer to the next question */}
-          <MarkdownPreviewer content={!flip && !displayQuestion ? "what?" : card.answer} className="flex-1 p-3 h-full bg-elGray dark:bg-edDarkGray" />
+          <MarkdownPreviewer content={!flip && !displayQuestion ? "" : card.answer} className="flex-1 p-3 h-full bg-elGray dark:bg-edDarkGray" />
         </div >
       </div>
     )

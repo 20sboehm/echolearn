@@ -138,6 +138,8 @@ class Cards(Schema):
     # answerimagelink:str
     # questionlatex:str
     # answerlatex:str
+    correct_count: int = None
+    incorrect_count: int = None
     next_review: datetime
 
 class ReviewCards(Schema):
