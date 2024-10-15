@@ -61,6 +61,7 @@ function FriendsPage() {
       const response = await _delete(`/api/friends/${friendId}/delete`);
       if (response.ok) {
         setFriends(friends.filter(friend => friend.id !== friendId));
+        updateSearchResultStatus(friendId, 'none');
       } else {
         setError('Failed to remove friend');
       }
@@ -132,7 +133,7 @@ function FriendsPage() {
 
       {pendingRequests.length > 0 && (
         <div className="mt-8">
-          <h2 className="text-xl font-bold">Pending Friend Requests</h2>
+          <h2 className="text-xl font-bold">Pending Friends</h2>
           <ul className="mt-4">
             {pendingRequests.map(request => (
               <li key={request.id} className="flex justify-between mb-2">
@@ -215,7 +216,7 @@ function FriendsPage() {
                 >
                   {user.status === 'pending_sent'
                     ? 'Pending'
-                    : 'Send Friend Request'}
+                    : 'Add'}
                 </button>
               )}
             </li>
