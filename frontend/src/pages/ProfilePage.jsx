@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import folderOpenImg from "../assets/folder-open.png";
 import folderCloseImg from "../assets/folder-close.png";
 import decksImg from "../assets/decks.png";
+import userPic from "../assets/defaltUser.png"
 
 function ProfilePage() {
   const { _get, _patch } = api();
@@ -11,12 +12,22 @@ function ProfilePage() {
   const [folders, setFolders] = useState([]);
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [editableUsername, setEditableUsername] = useState('');
+  const [editableEmail, setEditableEmail] = useState('');
   const [editableAge, setEditableAge] = useState('');
   const [editableCountry, setEditableCountry] = useState('');
   const [flipOrSet, setFlipOrSet] = useState(true);
   const [sidebarClosed, setSidebarClosed] = useState(false);
   const [lightMode, setLightMode] = useState(false);
   const [RatedDeck, setRatedDeck] = useState([]);
+
+  const [isEditingField, setIsEditingField] = useState({
+    username: false,
+    email: false,
+    phoneNumber: false,
+    age: false,
+    country: false,
+  });
 
   const countries = [
     "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia",
@@ -48,6 +59,8 @@ function ProfilePage() {
         const response = await _get('/api/profile/me');
         const data = await response.json();
         setProfile(data);
+        setEditableUsername(data.username);
+        setEditableEmail(data.email);
         setEditableAge(data.age);
         setEditableCountry(data.country);
         setFlipOrSet(data.flip_mode);
@@ -63,7 +76,6 @@ function ProfilePage() {
         setFolders(foldersData);
         const RatedResponse = await _get('/api/profile/ALLRatedDecks');
         const RatedDeck = await RatedResponse.json();
-        console.log(RatedDeck)
         setRatedDeck(RatedDeck);
       } catch (error) {
         setError('Failed to fetch profile data');
@@ -74,22 +86,41 @@ function ProfilePage() {
   }, []);
 
   // Edit handle here
-  const handleEditClick = () => {
-    setEditableAge(profile.age);
-    setEditableCountry(profile.country);
-    setIsEditing(true);
+  const handleEditClick = (field) => {
+    setIsEditingField((prev) => ({ ...prev, [field]: true }));
   };
 
   // Save handle here
-  const handleSaveClick = async () => {
+  const handleSaveClick = async (field) => {
+    const updatedData = {};
+
+    // Determine which fields need to be updated based on the current field being edited
+    switch (field) {
+      case 'username':
+        updatedData.username = editableUsername;
+        break;
+      case 'email':
+        updatedData.email = editableEmail;
+        break;
+      case 'age':
+        updatedData.age = editableAge;
+        break;
+      case 'country':
+        updatedData.country = editableCountry;
+        break;
+      default:
+        return;
+    }
+    console.log(updatedData);
     try {
-      const response = await _patch('/api/profile/me', {
-        age: editableAge,
-        country: editableCountry
-      });
+      const response = await _patch('/api/profile/me', updatedData);
       const data = await response.json();
       setProfile(data);
-      setIsEditing(false);
+      // Reset the editing state for the specific field
+      setIsEditingField((prevState) => ({
+        ...prevState,
+        [field]: false,
+      }));
     } catch (error) {
       setError('Failed to update profile');
     }
@@ -141,55 +172,63 @@ function ProfilePage() {
     <div className="ml-0 w-3/4 text-left flex mt-4">
       {/* Left column: User Profile Information */}
       <div className="w-1/2">
-        <h1 className="text-2xl font-bold text-elDark dark:text-edWhite">User Profile</h1>
-        <p className='text-elDark dark:text-edWhite'><strong>Username:</strong> {profile.username}</p>
-        <p className='text-elDark dark:text-edWhite'><strong>Email:</strong> {profile.email}</p>
+        {/* Profile header */}
+        <div className="flex items-center mb-6">
+          <div className="w-24 h-24 rounded-full overflow-hidden">
+            {/* {profile.avatar || userPic} */}
+            <img src={userPic} alt="User avatar" className="object-cover w-full h-full" />
+          </div>
+          <div className="ml-4">
+            <h1 className="text-3xl font-bold text-elDark dark:text-edWhite">{profile.username}</h1>
+          </div>
+        </div>
 
-        {/* Age */}
-        <p className='text-elDark dark:text-edWhite'>
-          <strong>Age:</strong>
-          {isEditing ? (
-            <input
-              type="number"
-              value={editableAge}
-              onChange={(e) => setEditableAge(Number(e.target.value))}
-              className="border border-black rounded dark:border-edWhite dark:bg-edDarker ml-1"
-            />
-          ) : (
-            ` ${profile.age}`
-          )}
-        </p>
+        {/* Profile Details Section */}
+        <div className="bg-gray-700 p-4 rounded-lg">
+          {/* Username */}
+          <EditableField
+            label="Name"
+            value={editableUsername}
+            isEditing={isEditingField.username}
+            onEdit={() => handleEditClick('username')}
+            onSave={() => handleSaveClick('username')}
+            onChange={(newVal) => setEditableUsername(newVal)}
+          />
 
-        {/* Country */}
-        <p className='text-elDark dark:text-edWhite'>
-          <strong>Country:</strong>
-          {isEditing ? (
-            <select
-              value={editableCountry}
-              onChange={(e) => setEditableCountry(e.target.value)}
-              className="border border-black rounded dark:border-edWhite dark:bg-edDarker ml-1"
-            >
-              {countries.map((country, index) => (
-                <option key={index} value={country}>
-                  {country}
-                </option>
-              ))}
-            </select>
-          ) : (
-            ` ${profile.country}`
-          )}
-        </p>
+          {/* Email */}
+          <EditableField
+            label="Email:"
+            value={editableEmail}
+            isEditing={isEditingField.email}
+            onEdit={() => handleEditClick('email')}
+            onSave={() => handleSaveClick('email')}
+            onChange={(newVal) => setEditableEmail(newVal)}
+          />
 
-        {/* Edit and Save button */}
-        {isEditing ? (
-          <button onClick={handleSaveClick} className="mt-2 border px-4 py-2 rounded bg-green-500 text-white hover:bg-green-600">
-            Save
-          </button>
-        ) : (
-          <button onClick={handleEditClick} className="mt-2 border px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600">
-            Edit
-          </button>
-        )}
+          {/* Age */}
+          <EditableField
+            label="Age:"
+            value={editableAge}
+            isEditing={isEditingField.age}
+            inputType="number"
+            onEdit={() => handleEditClick('age')}
+            onSave={() => handleSaveClick('age')}
+            onChange={(newVal) => setEditableAge(Number(newVal))}
+          />
+
+          {/* Country */}
+          <EditableField
+            label="Country"
+            value={editableCountry}
+            isEditing={isEditingField.country}
+            inputType="select"
+            options={countries}
+            onEdit={() => handleEditClick('country')}
+            onSave={() => handleSaveClick('country')}
+            onChange={(newVal) => setEditableCountry(newVal)}
+          />
+
+        </div>
 
         {/* Display Folders and Decks */}
         <div className="mt-8">
@@ -238,8 +277,8 @@ function ProfilePage() {
         {RatedDeck.length > 0 ? (
           RatedDeck.map((rDeck) => (
             <Link to={`/decks/${rDeck.deck_id}`} style={{ display: "flex", alignItems: "center" }}>
-            <span className="mr-2">📚</span>
-            <p className="overflow-x-auto whitespace-nowrap">{rDeck.name}</p>
+              <span className="mr-2">📚</span>
+              <p className="overflow-x-auto whitespace-nowrap">{rDeck.name}</p>
             </Link>
           ))
         ) : (
@@ -323,4 +362,107 @@ const Folder = ({ folder, onRightClick }) => {
   );
 };
 
+
+const EditableField = ({ label, value, isEditing, inputType = 'text', options = [], onEdit, onSave, onChange }) => {
+  return (
+    <div className="flex justify-between items-center py-2">
+      <div>
+        <strong className="mr-2">{label}:</strong>
+        {isEditing ? (
+          inputType === 'select' ? (
+            <select
+              value={value}
+              onChange={(e) => onChange(e.target.value)}
+              className="bg-gray-800 p-2 rounded"
+            >
+              {options.map((option, index) => (
+                <option key={index} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <input
+              type={inputType}
+              value={value}
+              onChange={(e) => onChange(e.target.value)}
+              className="bg-gray-800 p-2 rounded"
+            />
+          )
+        ) : (
+          value
+        )}
+      </div>
+
+      {/* Save or Edit button */}
+      {isEditing ? (
+        <button
+          className="bg-green-500 px-4 py-2 rounded hover:bg-green-600 transition"
+          onClick={onSave}
+        >
+          Save
+        </button>
+      ) : (
+        <button
+          className="bg-gray-600 px-4 py-2 rounded hover:bg-gray-500 transition"
+          onClick={onEdit}
+        >
+          Edit
+        </button>
+      )}
+    </div>
+  );
+};
+
 export default ProfilePage;
+
+
+{/* <h1 className="text-2xl font-bold text-elDark dark:text-edWhite">User Profile</h1>
+<p className='text-elDark dark:text-edWhite'><strong>Username:</strong> {profile.username}</p>
+<p className='text-elDark dark:text-edWhite'><strong>Email:</strong> {profile.email}</p> */}
+
+{/* Age */}
+{/* <p className='text-elDark dark:text-edWhite'>
+  <strong>Age:</strong>
+  {isEditing ? (
+    <input
+      type="number"
+      value={editableAge}
+      onChange={(e) => setEditableAge(Number(e.target.value))}
+      className="border border-black rounded dark:border-edWhite dark:bg-edDarker ml-1"
+    />
+  ) : (
+    ` ${profile.age}`
+  )}
+</p> */}
+
+{/* Country */}
+{/* <p className='text-elDark dark:text-edWhite'>
+  <strong>Country:</strong>
+  {isEditing ? (
+    <select
+      value={editableCountry}
+      onChange={(e) => setEditableCountry(e.target.value)}
+      className="border border-black rounded dark:border-edWhite dark:bg-edDarker ml-1"
+    >
+      {countries.map((country, index) => (
+        <option key={index} value={country}>
+          {country}
+        </option>
+      ))}
+    </select>
+  ) : (
+    ` ${profile.country}`
+  )}
+</p> */}
+
+{/* Edit and Save button */}
+// {isEditing ? (
+//   <button onClick={handleSaveClick} className="mt-2 border px-4 py-2 rounded bg-green-500 text-white hover:bg-green-600">
+//     Save
+//   </button>
+// ) : (
+//   <button onClick={handleEditClick} className="mt-2 border px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600">
+//     Edit
+//   </button>
+// )}

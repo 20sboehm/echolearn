@@ -25,11 +25,17 @@ def get_profile(request):
 def update_profile(request, data: UpdateUser):
     user = request.auth
 
+    if data.username is not None:
+        user.username = data.username
+    
+    if data.email is not None:
+        user.email = data.email
+
     if data.age is not None:
         user.age = data.age
     
     if data.country is not None:
-        user.country = data.country if data.country != "" else None
+        user.country = data.country if data.country != " " else None
 
     if data.flip_mode is not None:
         user.flip_mode = data.flip_mode

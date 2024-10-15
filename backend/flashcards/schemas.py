@@ -25,6 +25,8 @@ class UserLogin(Schema):
     userpassword: str
 
 class UpdateUser(Schema):
+    username: Optional[str] = None
+    email: Optional[str] = None
     age: Optional[int] = None
     country: Optional[str] = None
     flip_mode: Optional[bool] = None
