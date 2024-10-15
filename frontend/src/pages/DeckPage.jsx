@@ -1,6 +1,6 @@
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { useQuery} from "react-query";
-import { useState,useEffect } from "react";
+import { useQuery } from "react-query";
+import { useState, useEffect } from "react";
 import Sidebar from "../components/SideBar";
 import { useApi } from "../hooks";
 import editIconImg from "../assets/edit-icon.png"
@@ -37,7 +37,7 @@ function DeckPage({ publicAccess = false }) {
   const [newAnswer, setNewAnswer] = useState("");
 
   const [sidebarWidth, setSidebarWidth] = useState(250);
-  const [Rateresult,setRateresult] = useState(false)
+  const [Rateresult, setRateresult] = useState(false)
 
   const [dragging, setDragging] = useState(null);
   const [items, setItems] = useState([]);
@@ -117,7 +117,7 @@ function DeckPage({ publicAccess = false }) {
   let reviewedCardsCount = 0;
   // Check if 'cards' property exists and is an array
   if (deckCards.cards && Array.isArray(deckCards.cards)) {
-    
+
     reviewedCardsCount = deckCards.cards.filter(card => card.next_review && Date.parse(card.next_review) >= Date.now()).length;
   }
 
@@ -294,22 +294,22 @@ function DeckPage({ publicAccess = false }) {
     speechSynthesis.speak(outputVoice);
   };
 
-    const fetchRatingData = async () => {
-      try {
-        const response = await api._get(`/api/decks/${deckId}/ratedOrnot`);
-        const json = await response.json();
-        console.log(json)
-        if(json === true){
-          setRateresult(true)
-        }
-        else{
-          setRateresult(false)
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
+  const fetchRatingData = async () => {
+    try {
+      const response = await api._get(`/api/decks/${deckId}/ratedOrnot`);
+      const json = await response.json();
+      console.log(json)
+      if (json === true) {
+        setRateresult(true)
       }
-    };
-    fetchRatingData();
+      else {
+        setRateresult(false)
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+  fetchRatingData();
 
   const submitRating = async () => {
     const response = await api._post(`/api/decks/${deckId}/ratings`);
@@ -358,15 +358,15 @@ function DeckPage({ publicAccess = false }) {
           <div className="flex flex-row">
             <TopButtons deckCards={deckCards} publicAccess={publicAccess} deckId={deckId} handleDeleteDeck={handleDeleteDeck} />
 
-            <ProgressCircleGraph radius={radius} dashLength={dashLength} gapLength={gapLength} strokeDashoffset={strokeDashoffset} percentage={percentage} />
+            <ProgressCircleGraph radius={radius} dashLength={dashLength} gapLength={gapLength} strokeDashoffset={strokeDashoffset} percentage={percentage} deckId={deckId} />
           </div>
 
           <MiddleButtons deckCards={deckCards} publicAccess={publicAccess} setStatus={setStatus} isCreateMode={isCreateMode}
             handleCreateCard={handleCreateCard} toggleCreateMode={toggleCreateMode} handleCancelCreateCard={handleCancelCreateCard}
             handleTakeACopy={handleTakeACopy} isModalOpen={isModalOpen} folders={folders} handleFolderSelection={handleFolderSelection}
             setModalOpen={setModalOpen} deleteMode={deleteMode} changeMode={changeMode} />
-            
-            <button onClick={submitRating} id="button-preview" aria-labelledby="tooltip-1f7d89ff-668b-406b-9c3f-e3e313ecdc97" type="button" data-view-component="true" className="Button Button--iconOnly Button--secondary Button--medium">
+
+          <button onClick={submitRating} id="button-preview" aria-labelledby="tooltip-1f7d89ff-668b-406b-9c3f-e3e313ecdc97" type="button" data-view-component="true" className="Button Button--iconOnly Button--secondary Button--medium">
             <StarIcon isFilled={Rateresult} />
             <p className="text-black dark:text-edWhite">{deckCards.stars}</p>
           </button>
@@ -383,9 +383,9 @@ function DeckPage({ publicAccess = false }) {
               >
 
                 <div className={`relative w-1/2 flex flex-col pr-4 border-r border-edMedGray`}>
-                  <MarkdownPreviewer content={item.question} className="flex-1 p-2 min-h-20" />
+                  <MarkdownPreviewer content={item.question} className="bg-elGray dark:bg-edDarkGray flex-1 p-2 min-h-20" />
                   <Link to={`/edit/${item.card_id}`} className="absolute top-8 right-0.5">
-                   <EditIcon />
+                    <EditIcon />
                   </Link>
                   <Link onClick={() => speakText(item.question)} className="absolute top-2 right-0.5">
                     <SpeakerIcon />
@@ -393,9 +393,9 @@ function DeckPage({ publicAccess = false }) {
                 </div>
 
                 <div className="relative w-1/2 flex flex-col">
-                  <MarkdownPreviewer content={item.answer} className="flex-1 p-2" />
+                  <MarkdownPreviewer content={item.answer} className="bg-elGray dark:bg-edDarkGray flex-1 p-2" />
                   <Link onClick={() => speakText(item.answer)} className="absolute top-2 right-0.5">
-                    <SpeakerIcon  />
+                    <SpeakerIcon />
                   </Link>
                 </div>
 
@@ -541,7 +541,7 @@ function MiddleButtons({ deckCards, publicAccess, setStatus, isCreateMode, handl
   )
 }
 
-function ProgressCircleGraph({ radius, dashLength, gapLength, strokeDashoffset, percentage }) {
+function ProgressCircleGraph({ radius, dashLength, gapLength, strokeDashoffset, percentage, deckId }) {
   return (
     <div className="flex flex-col ml-auto justify-center items-center mb-4">
       {/* JavaScript code to draw the graph */}
@@ -555,6 +555,12 @@ function ProgressCircleGraph({ radius, dashLength, gapLength, strokeDashoffset, 
           <tspan x="100" dy="20">Mastery</tspan>
         </text>
       </svg>
+      <Link to={`/stats/${deckId}`}>
+        <button className={`rounded-lg border border-transparent px-4 py-2 text-center
+          font-semibold bg-blue-500 hover:border-white text-white hover:text-black dark:text-edLightGray dark:hover:text-white active:scale-[0.97] active:bg-[#333] 
+          active:border-[#555]`} style={{ transition: "border-color 0.10s, color 0.10s" }}>
+          More Statistics</button>
+      </Link>
     </div>
   )
 }
