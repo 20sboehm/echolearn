@@ -16,8 +16,10 @@ import MarkdownPreviewer from "../components/MarkdownPreviewer";
 // import katex from 'katex';
 
 // Two layers in order to maintain border rounding with active scrollbar
-const cardOuterCSS = "border border-elDarkGray bg-white rounded-md overflow-hidden"
-const cardInnerCSS = "h-[30vh] px-4 py-2 text-black flex flex-col items-center overflow-x-hidden overflow-y-auto text-[1.4em] py-4"
+// const cardOuterCSS = "border border-elDarkGray bg-white rounded-md overflow-hidden"
+// const cardInnerCSS = "h-[30vh] px-4 py-2 text-black flex flex-col items-center overflow-x-hidden overflow-y-auto text-[1.4em] py-4"
+
+var FLASHCARD_IMAGE = card;
 
 function ReviewPage() {
   const api = useApi();
@@ -203,17 +205,9 @@ function ReviewCard({ card, showAnswer, setShowAnswer, updateReviewedCard, chang
       const newFlip = !prevFlip
 
       setShowAnswer(newFlip);
-      if (!changeAnimation){
-        // This is only use for question set animation because question display is always true for question set
-        setDisplayQuestionOnFlipCard(true);
-      }
-      else{
-        // Switch question/answer halfway through the flip
-        setTimeout(() => {
-          setDisplayQuestionOnFlipCard(!newFlip);
-        }, 150);
-      }
-
+      setTimeout(() => {
+        setDisplayQuestionOnFlipCard(!newFlip);
+      }, 150);
       return newFlip; // Update flip state
     });
   }
@@ -244,7 +238,7 @@ function QuestionCard({ card, showAnswer, setShowAnswer }) {
     return (
       <div className={`mt-8 overflow-x-hidden overflow-y-auto bg-black`} onClick={() => setShowAnswer(!showAnswer)}>
         <div className={`h-[25vh] text-[1.2rem] flex flex-col border border-edMedGray overflow-x-hidden overflow-y-auto`}>
-          <MarkdownPreviewer content={card.question} className="flex-1 p-3 h-full" />
+          <MarkdownPreviewer content={card.question} className="flex-1 p-3 h-full bg-elGray dark:bg-edDarkGray" />
         </div >
       </div>
     )
@@ -259,7 +253,7 @@ function AnswerCard({ card, flip, showAnswer, displayQuestion }) {
           {/* If flip=false (The card is at or flipping towards 'question position') AND we're set to display answer 
           (meaning we're still in the 1/2 animation time delay for setting `displayQuestion`), set content to blank 
           so we dont give away the answer to the next question */}
-          <MarkdownPreviewer content={!flip && !displayQuestion ? "what?" : card.answer} className="flex-1 p-3 h-full" />
+          <MarkdownPreviewer content={!flip && !displayQuestion ? "what?" : card.answer} className="flex-1 p-3 h-full bg-elGray dark:bg-edDarkGray" />
         </div >
       </div>
     )
@@ -274,7 +268,7 @@ function FlipFlashcard({ card, flip, toggleFlip, displayQuestion }) {
       >
         <MarkdownPreviewer
           content={!flip && !displayQuestion ? "" : (displayQuestion ? card.question : card.answer)}
-          className={`flex-1 p-3 h-full ${displayQuestion ? "" : "flashCardBack"}`} // This has to be 'displayQuestion' instead of flip and I'm not sure why
+          className={`flex-1 p-3 h-full bg-elGray dark:bg-edDarkGray ${displayQuestion ? "" : "flashCardBack"}`} // This has to be 'displayQuestion' instead of flip and I'm not sure why
         />
       </div>
     </div>
@@ -346,7 +340,15 @@ function ShowAnswerButtons({ card, showAnswer, updateReviewedCard, toggleFlip })
     '4': 4, // "Easy"
   };
   const handleKeyPress = (e) => {
+    // Check for spacebar (key code 32) and toggle the answer or flip the card
+    if (e.key === 'Space' || e.keyCode === 32) {
+      e.preventDefault();
+      toggleFlip();
+      return;
+    }
+
     if (showAnswer === false) return;
+    
     const confidenceLevel = keyToConfidenceMap[e.key];
     if (confidenceLevel) {
       updateReviewedCardAndDisplay(confidenceLevel);
