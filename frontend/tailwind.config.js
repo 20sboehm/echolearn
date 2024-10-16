@@ -25,6 +25,7 @@ export default {
 				edDarkGray: '#333', // check
 				edWhite: '#ccc',
 				edBlue: '#0078d4',
+				edLightBlue: '#33a7ff',
 				edRed: '#D2042D',
 				edHLT: '#ffffff10', // Highlight
 				edStrongHLT: '#ffffff20', // Strong highlight
