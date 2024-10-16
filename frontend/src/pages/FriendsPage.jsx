@@ -110,7 +110,7 @@ function FriendsPage() {
 
   return (
     <div className="ml-0 w-3/4 text-left">
-      <h1 className="text-2xl font-bold text-elDark dark:text-white">Friends List</h1>
+      <h1 className="text-2xl font-bold text-white">Friends List</h1>
       {error && <p className='text-elDark dark:text-white'>{error}</p>}
 
       {friends.length > 0 ? (
@@ -158,8 +158,8 @@ function FriendsPage() {
         </div>
       )}
 
-      <div className="mt-8">
-        <h2 className="text-xl font-bold text-elDark dark:text-white">Add New Friend</h2>
+      <div className="mt-4">
+        <h2 className="text-xl font-bold text-white">Add New Friend</h2>
         <input
           type="text"
           value={searchQuery}

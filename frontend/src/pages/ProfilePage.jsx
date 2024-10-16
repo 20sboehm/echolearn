@@ -297,7 +297,7 @@ function ProfilePage() {
 
             {/* Display Content Based on Active Tab */}
             {activeTab === 'folders' && (
-              <div className="mt-4">
+              <div>
                 <h2 className="text-xl font-bold text-white">Folders and Decks</h2>
                 {folders.length > 0 ? (
                   folders.map((folder) => <Folder key={folder.folder_id} folder={folder} />)
@@ -308,7 +308,7 @@ function ProfilePage() {
             )}
 
             {activeTab === 'ratedDecks' && (
-              <div className="mt-4">
+              <div>
                 <h2 className="text-xl font-bold text-white">favorite Decks</h2>
                 {RatedDeck.length > 0 ? (
                   RatedDeck.map((rDeck) => (
@@ -325,7 +325,7 @@ function ProfilePage() {
 
             {/* Friends Tab Content */}
             {activeTab === 'friends' && (
-              <div className="mt-4">
+              <div>
                 <FriendsPage />
               </div>
             )}
