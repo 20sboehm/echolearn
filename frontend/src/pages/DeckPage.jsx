@@ -1,8 +1,6 @@
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "react-query";
 import { useState, useEffect } from "react";
-import { useQuery } from "react-query";
-import { useState, useEffect } from "react";
 import Sidebar from "../components/SideBar";
 import { useApi } from "../hooks";
 import editIconImg from "../assets/edit-icon.png"
@@ -52,7 +50,7 @@ function DeckPage({ publicAccess = false }) {
       if (publicAccess) {
         response = await api._get(`/api/decks/public/${deckId}/cards`);
       } else {
-        response = await api._get(`/api/decks/${deckId}/cards`);
+        response = await api._get(`/api/decks/${deckId}/cards`); // If the ordered list is empty this will automatically create one
       }
 
       if (!response.ok) {
@@ -72,6 +70,7 @@ function DeckPage({ publicAccess = false }) {
       retry: false
     }
   );
+
   const reorderItems = (cards, orderList) => {
     if (!orderList)
       return cards;
@@ -85,7 +84,9 @@ function DeckPage({ publicAccess = false }) {
     });
     return orderedCards
   };
+
   const submitorderList = async (templist) => {
+    console.log("SUBMITTING ORDER LIST")
     const response = await api._post(`/api/decks/${deckId}/orderList`, {
       templist
     });
@@ -93,7 +94,6 @@ function DeckPage({ publicAccess = false }) {
     console.log(data)
 
   };
-
 
   // useEffect(() => {
   //   if (items) {
@@ -196,7 +196,6 @@ function DeckPage({ publicAccess = false }) {
 
   const strokeDashoffset = circumference / 4;
 
-
   const changeMode = () => {
     setDeleteMode(!deleteMode);
   };
@@ -211,7 +210,6 @@ function DeckPage({ publicAccess = false }) {
       setTimeout(() => setShowPopup(false), 1000); // Give it 1 second to fade
     }, 1000); // Stay fully visible for 1 second
   }
-
 
   const setStatus = async () => {
     try {
@@ -292,28 +290,11 @@ function DeckPage({ publicAccess = false }) {
 
   const speakText = (question) => {
     // setQuestion(e.card.question);
-    console.log('what')
     const outputVoice = new SpeechSynthesisUtterance(question);
     outputVoice.lang = "en";
     speechSynthesis.speak(outputVoice);
   };
 
-  const fetchRatingData = async () => {
-    try {
-      const response = await api._get(`/api/decks/${deckId}/ratedOrnot`);
-      const json = await response.json();
-      console.log(json)
-      if (json === true) {
-        setRateresult(true)
-      }
-      else {
-        setRateresult(false)
-      }
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
-  fetchRatingData();
   const fetchRatingData = async () => {
     try {
       const response = await api._get(`/api/decks/${deckId}/ratedOrnot`);
@@ -351,6 +332,7 @@ function DeckPage({ publicAccess = false }) {
   const handleDragOver = (e) => {
     e.preventDefault(); // Necessary to allow dropping
   };
+
   const handleDrop = (e, index) => {
     e.preventDefault();
     const updatedItems = [...items];
@@ -366,9 +348,6 @@ function DeckPage({ publicAccess = false }) {
     submitorderList(templist);
     setDragging(null);
   };
-
-
-
 
   return (
     <>

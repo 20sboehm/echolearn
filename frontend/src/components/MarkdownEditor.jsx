@@ -189,9 +189,6 @@ function MarkdownEditor({ requestType, submitButtonText, questionText, setQuesti
       cursorAdjustment = 0;
       newText = firstHalf + "| Header | Header |" + "\n" + "|------| ------ |" + "\n" + "| Data | Data |" + "\n" + "| Data | Data |" + "\n" + secondHalf;
     }
-    else if (insertionType === "latex") {
-
-    }
 
     if (forQuestionBox) {
       setQuestionText(newText);
@@ -203,18 +200,18 @@ function MarkdownEditor({ requestType, submitButtonText, questionText, setQuesti
   }
 
   useEffect(() => {
-    if (questionRef.current) {
-      questionRef.current.setSelectionRange(questionSelection.start, questionSelection.end);
-      questionRef.current.focus();
-    }
-  }, [questionSelection]);
-
-  useEffect(() => {
     if (answerRef.current) {
       answerRef.current.setSelectionRange(answerSelection.start, answerSelection.end);
       answerRef.current.focus();
     }
   }, [answerSelection]);
+
+  useEffect(() => {
+    if (questionRef.current) {
+      questionRef.current.setSelectionRange(questionSelection.start, questionSelection.end);
+      questionRef.current.focus();
+    }
+  }, [questionSelection]);
 
   // voice input for question part
   useEffect(() => {
@@ -407,7 +404,9 @@ function TextBox({ label, reference, content, inputHandler, handleTextEditingBut
         )}
       </div>
       {textBoxOpen && (
-        <textarea value={content} ref={reference} onInput={inputHandler} className="text-black dark:text-white dark:bg-edDarker w-full min-h-20 h-[10vh] p-2 border border-edDarkGray focus:outline-none custom-scrollbar"></textarea>
+        <textarea value={content} ref={reference} onInput={inputHandler}
+          className="text-black dark:text-white dark:bg-edDarker w-full min-h-20 h-[10vh] p-2 border 
+          border-edDarkGray focus:outline-none custom-scrollbar"></textarea>
       )}
     </>
   );

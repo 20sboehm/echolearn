@@ -30,7 +30,7 @@ def get_deck(request, deck_id: int):
     return deck
 
 @decks_router.get("/public/{deck_id}/cards", response={200: sc.DeckCards, 404: str}, auth=JWTAuth())
-def get_cards_from_deck(request, deck_id: int):
+def get_cards_from_deck_public(request, deck_id: int):
     deck = get_object_or_404(Deck, deck_id=deck_id)
 
     if deck.isPublic == False:
