@@ -5,7 +5,7 @@ import { ChevronIcon } from "../components/Icons";
 import MarkdownPreviewer from "../components/MarkdownPreviewer";
 import { useQuery } from "react-query";
 import LoadingSpinner from "../components/LoadingSpinner";
-import { BoldIcon, ItalicIcon, UnderlineIcon, MicIcon ,MicIconListening} from "../components/Icons";
+import { BoldIcon, ItalicIcon, UnderlineIcon, MicIcon, MicIconListening } from "../components/Icons";
 import { useNavigate } from "react-router-dom";
 
 function CreateCard() {
@@ -95,11 +95,11 @@ function CreateCard() {
         setquestionIsListening(prevState => !prevState)
         break;
       case "answermicIcon":
-          setanswerIsListening(prevState => !prevState)
-          break;
+        setanswerIsListening(prevState => !prevState)
+        break;
       case "answermicIconlistening":
-          setanswerIsListening(prevState => !prevState)
-            break;
+        setanswerIsListening(prevState => !prevState)
+        break;
     }
 
     let selStart = textarea.selectionStart;
@@ -145,7 +145,7 @@ function CreateCard() {
     });
     setPreview(formattedPreview);
   }, [quizletInput]);
-  
+
   // voice input for question part
   useEffect(() => {
     const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
@@ -158,7 +158,7 @@ function CreateCard() {
       const transcript = event.results[current][0].transcript;
       if (event.results[current].isFinal) {
         recognition.stop(); // Stop recognition while processing
-        updateQuestionWithTranscript(transcript ).then(() => {
+        updateQuestionWithTranscript(transcript).then(() => {
           if (!questionisListening) {
             recognition.start(); // Restart recognition after update
           }
@@ -189,7 +189,7 @@ function CreateCard() {
       const transcript = event.results[current][0].transcript;
       if (event.results[current].isFinal) {
         recognition.stop(); // Stop recognition while processing
-        updateAnswerWithTranscript(transcript ).then(() => {
+        updateAnswerWithTranscript(transcript).then(() => {
           if (!answerisListening) {
             recognition.start(); // Restart recognition after update
           }
@@ -296,6 +296,37 @@ function CreateCard() {
     }
 
   };
+
+  const submitMultipleCards = async (e) => {
+    e.preventDefault();
+    let lineChoice = "{|}";
+    let spaceChoice = "|";
+
+    const lines = (quizletInput).trim().split(lineChoice).filter(line => line.trim());
+    // Prepare card data array
+    const cards = lines.map(lines => {
+      const parts = lines.split(spaceChoice);
+      return {
+        deck_id: deckId,
+        question: parts[0],
+        answer: parts[1]
+      };
+    });
+
+    const dataToSend = {
+      cards: cards
+    };
+
+    console.log(dataToSend)
+    const response = await api._post('/api/cards/create/multiple', dataToSend);
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Error creating cards: ", errorData);
+    } else {
+      console.log("All cards created successfully.");
+    }
+
+  }
   const handlebackButton = () => {
     // if (multipleRequired) {
     //   if (multipleInput) {
@@ -325,7 +356,7 @@ function CreateCard() {
 
   const updateQuestionWithTranscript = async (newTranscript) => {
     // Indicate an update is in progress
-    setQuestionIsUpdating(true); 
+    setQuestionIsUpdating(true);
     // Append new transcript to the existing content
     const combinedText = questionText + ' ' + newTranscript;
     await new Promise(resolve => {
@@ -333,11 +364,11 @@ function CreateCard() {
       setTimeout(resolve, 1); // Resolve the promise on the next tick, allowing state to update
     });
     // Update is complete
-    setQuestionIsUpdating(false); 
+    setQuestionIsUpdating(false);
   };
 
   const updateAnswerWithTranscript = async (newTranscript) => {
-     // Indicate an update is in progress
+    // Indicate an update is in progress
     setAnswerIsUpdating(true);
     // Append new transcript to the existing content
     const combinedText = answerText + ' ' + newTranscript;
@@ -346,7 +377,7 @@ function CreateCard() {
       setTimeout(resolve, 1);
     });
     // Update is complete
-    setAnswerIsUpdating(false); 
+    setAnswerIsUpdating(false);
   };
 
 
@@ -364,9 +395,9 @@ function CreateCard() {
               ))}
             </select>
           </div>
-          
+
           {quizletRequired == true && (
-            <form onSubmit={handlequizletparser} className='flex flex-col items-center'>
+            <form onSubmit={submitMultipleCards} className='flex flex-col items-center'>
               <button type='button' onClick={handlebackButton} className="rounded-lg border border-black hover:border-elMedGray hover:text-elDark 
               dark:border-transparent dark:hover:border-black dark:hover:text-black px-10 py-2 text-center
               font-semibold bg-elLightBlue text-white dark:text-black dark:bg-white active:scale-[0.97] active:border-[#555]" >
@@ -412,7 +443,7 @@ function CreateCard() {
                   handleTextEditingButton={handleTextEditingButton} forQuestionBox={true} questionisListening={questionisListening} />
               </div>
               <TextBox label="Back" reference={answerRef} content={answerText} inputHandler={(e) => { setAnswerText(e.target.value) }}
-                handleTextEditingButton={handleTextEditingButton} forQuestionBox={false}  answerisListening={answerisListening}/>
+                handleTextEditingButton={handleTextEditingButton} forQuestionBox={false} answerisListening={answerisListening} />
 
               <DividerLine />
 
@@ -436,7 +467,7 @@ function CreateCard() {
   )
 }
 
-function TextBox({ label, reference, content, inputHandler, handleTextEditingButton, forQuestionBox ,questionisListening, answerisListening}) {
+function TextBox({ label, reference, content, inputHandler, handleTextEditingButton, forQuestionBox, questionisListening, answerisListening }) {
   const [textBoxOpen, setTextBoxOpen] = useState(true);
 
   return (
@@ -450,17 +481,17 @@ function TextBox({ label, reference, content, inputHandler, handleTextEditingBut
         <TextEditingIcon handleTextEditingButton={handleTextEditingButton} type="bold" forQuestionBox={forQuestionBox} />
         <TextEditingIcon handleTextEditingButton={handleTextEditingButton} type="italic" forQuestionBox={forQuestionBox} />
         <TextEditingIcon handleTextEditingButton={handleTextEditingButton} type="underline" forQuestionBox={forQuestionBox} />
-        {questionisListening == false &&(
-        <TextEditingIcon handleTextEditingButton={handleTextEditingButton} type="questionmicIcon" forQuestionBox={forQuestionBox} />
+        {questionisListening == false && (
+          <TextEditingIcon handleTextEditingButton={handleTextEditingButton} type="questionmicIcon" forQuestionBox={forQuestionBox} />
         )}
-        {answerisListening == false &&(
-        <TextEditingIcon handleTextEditingButton={handleTextEditingButton} type="answermicIcon" forQuestionBox={forQuestionBox} />
+        {answerisListening == false && (
+          <TextEditingIcon handleTextEditingButton={handleTextEditingButton} type="answermicIcon" forQuestionBox={forQuestionBox} />
         )}
-        {questionisListening == true &&(
-        <TextEditingIcon handleTextEditingButton={handleTextEditingButton} type="questionmicIconlistening" forQuestionBox={forQuestionBox} />
+        {questionisListening == true && (
+          <TextEditingIcon handleTextEditingButton={handleTextEditingButton} type="questionmicIconlistening" forQuestionBox={forQuestionBox} />
         )}
-        {answerisListening == true &&(
-        <TextEditingIcon handleTextEditingButton={handleTextEditingButton} type="answermicIconlistening" forQuestionBox={forQuestionBox} />
+        {answerisListening == true && (
+          <TextEditingIcon handleTextEditingButton={handleTextEditingButton} type="answermicIconlistening" forQuestionBox={forQuestionBox} />
         )}
       </div>
       {textBoxOpen && (

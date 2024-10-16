@@ -157,7 +157,9 @@ class DeckCards(Schema):
 class EditCards(Schema):
     question: Optional[str] = None
     answer: Optional[str] = None
-
+    
+class CreateMultipleCard(Schema):
+    cards: list[CreateCard]
 # -----------------------------------------------
 # ------------------ Sidebar --------------------
 # -----------------------------------------------

@@ -64,6 +64,7 @@ function DeckPage({ publicAccess = false }) {
       onSuccess: (data) => {
         setItemKeys(data.order_List)
         setItems(reorderItems(data.cards, data.order_List));
+        console.log(data.order_List)
         console.log('Data fetched successfully:', items);
       },
       retry: false
@@ -84,7 +85,7 @@ function DeckPage({ publicAccess = false }) {
 };
   const submitorderList = async (templist) => {
     const response = await api._post(`/api/decks/${deckId}/orderList`, {
-      templist
+     templist
   });
     const data = await response.json();
     console.log(data)
