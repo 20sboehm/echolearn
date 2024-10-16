@@ -40,10 +40,10 @@ function MarkdownEditor({ requestType, submitButtonText, questionText, setQuesti
       } else if (requestType === "patch") {
         setPopupText("Card updated");
       }
-      setPopupColor("bg-eGreen");
+      setPopupColor("bg-edGreen");
     } else {
       setPopupText("Something went wrong");
-      setPopupColor("bg-eRed");
+      setPopupColor("bg-edRed");
     }
 
     popupTimerRef.current = setTimeout(() => {

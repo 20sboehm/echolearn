@@ -27,6 +27,7 @@ export default {
 				edBlue: '#0078d4',
 				edLightBlue: '#33a7ff',
 				edRed: '#D2042D',
+				edGreen: '#009355',
 				edHLT: '#ffffff10', // Highlight
 				edStrongHLT: '#ffffff20', // Strong highlight
 
@@ -42,7 +43,6 @@ export default {
 				elMedGray: '#999',
 				elDarkGray: '#374151', // bg-gray-700
 				elBlack: '#9f9f9f',
-				elRed: '#D2042D',
 				elLavender: '#DBD3EB', // Sidebar Light mode Highlight
 				elHLT: '#00000010', // Highlight
 				elStrongHLT: '#00000020', // Strong highlight

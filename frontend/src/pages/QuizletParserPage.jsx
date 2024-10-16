@@ -32,10 +32,10 @@ function QuizletParserPage() {
 
     if (isSuccess) {
       setPopupText("Card created");
-      setPopupColor("bg-eGreen");
+      setPopupColor("bg-edGreen");
     } else {
       setPopupText("Something went wrong");
-      setPopupColor("bg-eRed");
+      setPopupColor("bg-edRed");
     }
 
     popupTimerRef.current = setTimeout(() => {
