@@ -10,6 +10,10 @@
     }
 }
 
+html.theme-pending {
+    visibility: hidden;
+}
+
 /* :root {
     color-scheme: light dark;
 } */

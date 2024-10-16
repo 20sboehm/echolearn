@@ -1,15 +1,16 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { QueryClient, QueryClientProvider } from "react-query";
 import { BrowserRouter, Navigate, Routes, Route, useParams } from "react-router-dom";
 
 import { useAuth } from "./hooks";
 import { AuthProvider } from "./context/auth";
+import { useApi } from './hooks';
 
 import Header from "./components/Header";
 import LandingPage from "./pages/LandingPage"
 import HomePage from "./pages/HomePage";
 import CreateCard from "./pages/CreateCard";
-import CreateDeck from "./pages/CreateDeck";
+// import CreateDeck from "./pages/CreateDeck";
 import ReviewPage from "./pages/ReviewPage";
 import HelpPage from "./pages/HelpPage";
 import DeckPage from './pages/DeckPage';
@@ -39,7 +40,7 @@ function AuthenticatedRoutes() {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/cards" element={<CreateCard />} />
-      <Route path="/decks" element={<CreateDeck />} />
+      {/* <Route path="/decks" element={<CreateDeck />} /> */}
       <Route path="/review/:deckId" element={<ReviewPage />} />
       <Route path="/help" element={<HelpPage />} />
       <Route path="/edit/:cardId" element={<EditPage />} />
@@ -73,6 +74,37 @@ function Main() {
   console.log("isLoggedIn: " + isLoggedIn);
   console.log("token: " + !!token);
 
+  const api = useApi();
+  
+  useEffect(() => {
+    const fetchUserSettings = async () => {
+      if (isLoggedIn) {
+        try {
+          const response = await api._get('/api/profile/me');
+          const data = await response.json();
+  
+          // Apply the theme globally based on user preference
+          if (data.light_mode === false) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (error) {
+          console.error('Failed to fetch user settings', error);
+        } finally {
+          // Remove the 'theme-pending' class once the theme is applied
+          document.documentElement.classList.remove('theme-pending');
+        }
+      } else {
+        // If the user isn't logged in, just remove the class
+        document.documentElement.classList.remove('theme-pending');
+      }
+    };
+  
+    fetchUserSettings();
+  }, [isLoggedIn, api]);
+  
+
   return (
     <main className="w-full h-full flex flex-col items-center">
       {isLoggedIn ?
@@ -88,7 +120,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <BrowserRouter>
-          <div className="min-w-screen min-h-screen flex flex-col font-base text-eWhite bg-eBase">
+          <div className="min-w-screen min-h-screen flex flex-col font-base text-edWhite bg-elBase dark:bg-edBase">
             <Header />
             <Main />
           </div>

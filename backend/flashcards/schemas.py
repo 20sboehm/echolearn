@@ -17,6 +17,9 @@ class GetUser(Schema):
     email: Optional[str] = None
     age: Optional[int] = None
     country: Optional[str] = None
+    flip_mode: Optional[bool] = None
+    sidebar_open: Optional[bool] = None
+    light_mode: Optional[bool] = None
 
     class Config:
         orm_mode = True
@@ -26,8 +29,11 @@ class UserLogin(Schema):
     userpassword: str
 
 class UpdateUser(Schema):
-    age: Union[int, None]
+    age: Optional[int] = None
     country: Optional[str] = None
+    flip_mode: Optional[bool] = None
+    sidebar_open: Optional[bool] = None
+    light_mode: Optional[bool] = None
 
 # class GetUser(Schema):
     
@@ -65,7 +71,8 @@ class GetDeck(Schema):
     created_at: datetime
     last_edited: datetime
     isPublic:bool
-
+    order_List: list[int]
+    
 class CreateDeck(Schema):
     folder_id: int
     name: str
@@ -75,6 +82,9 @@ class UpdateDeck(Schema):
     name: Optional[str] = None
     description: Optional[str] = None
     folder_id: Optional[int] = None
+
+
+
 
 # -----------------------------------------------
 # -------------------- Cards --------------------
@@ -145,7 +155,9 @@ class DeckCards(Schema):
     isPublic:bool
     deck_name: str
     cards: list[GetCard]
-
+    stars:int
+    order_List: list[int]
+    
 class EditCards(Schema):
     question: Optional[str] = None
     answer: Optional[str] = None

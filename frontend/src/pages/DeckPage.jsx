@@ -1,11 +1,13 @@
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "react-query";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "../components/SideBar";
 import { useApi } from "../hooks";
 import editIconImg from "../assets/edit-icon.png"
 import LoadingSpinner from "../components/LoadingSpinner";
 import MarkdownPreviewer from "../components/MarkdownPreviewer";
+import { SpeakerIcon, StarIcon, EditIcon } from "../components/Icons";
+
 // import ReactPlayer from 'react-player';
 // import katex from 'katex';
 // import 'katex/dist/katex.min.css';
@@ -35,28 +37,67 @@ function DeckPage({ publicAccess = false }) {
   const [newAnswer, setNewAnswer] = useState("");
 
   const [sidebarWidth, setSidebarWidth] = useState(250);
+  const [Rateresult, setRateresult] = useState(false)
 
-  const { data: deckCards, isLoading, error, refetch } = useQuery({
-    queryKey: ['deckCards', deckId], // Unique key based on deckId
-    queryFn: async () => {
+  const [dragging, setDragging] = useState(null);
+  const [items, setItems] = useState([]);
+  const [itemKeys, setItemKeys] = useState([]);
+
+  const { data: deckCards, isLoading, error, refetch } = useQuery(
+    ['deckCards', deckId], // Unique key based on deckId
+    async () => { // This function is queryFn
       let response = null;
       if (publicAccess) {
         response = await api._get(`/api/decks/public/${deckId}/cards`);
-      }
-      else {
+      } else {
         response = await api._get(`/api/decks/${deckId}/cards`);
       }
-
+  
       if (!response.ok) {
         const errorData = await response.json();
-        const message = errorData.detail || 'An error occurred';
-        throw new Error(`${response.status}: ${message}`);
+        throw new Error(`${response.status}: ${errorData.detail || 'An error occurred'}`);
       }
-
+  
       return response.json();
-    },
-    retry: false // Disable automatic retry
+    }, 
+    { 
+      onSuccess: (data) => {
+        setItemKeys(data.order_List)
+        setItems(reorderItems(data.cards, data.order_List));
+        console.log('Data fetched successfully:', items);
+      },
+      retry: false
+    }
+  );
+  const reorderItems = (cards, orderList) => {
+    if (!orderList) 
+      return cards; 
+    const orderedCards = new Array(cards.length).fill(null);
+    // Place each card in its new position according to orderList
+    orderList.forEach((cardId, index) => {
+        const card = cards.find(card => card.card_id === cardId);
+        if (card) {
+            orderedCards[index] = card;
+        }
+    });
+    return orderedCards
+};
+  const submitorderList = async (templist) => {
+    const response = await api._post(`/api/decks/${deckId}/orderList`, {
+      templist
   });
+    const data = await response.json();
+    console.log(data)
+
+  };
+ 
+
+  // useEffect(() => {
+  //   if (items) {
+  //     setItemKeys(Object.cards(items)); // Initialize the keys array
+  //     console.log(itemKeys)
+  //   }
+  // }, [items]);
 
   if (isLoading) {
     return <LoadingSpinner />
@@ -76,6 +117,7 @@ function DeckPage({ publicAccess = false }) {
   let reviewedCardsCount = 0;
   // Check if 'cards' property exists and is an array
   if (deckCards.cards && Array.isArray(deckCards.cards)) {
+
     reviewedCardsCount = deckCards.cards.filter(card => card.next_review && Date.parse(card.next_review) >= Date.now()).length;
   }
 
@@ -252,6 +294,61 @@ function DeckPage({ publicAccess = false }) {
     speechSynthesis.speak(outputVoice);
   };
 
+  const fetchRatingData = async () => {
+    try {
+      const response = await api._get(`/api/decks/${deckId}/ratedOrnot`);
+      const json = await response.json();
+      console.log(json)
+      if (json === true) {
+        setRateresult(true)
+      }
+      else {
+        setRateresult(false)
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+  fetchRatingData();
+
+  const submitRating = async () => {
+    const response = await api._post(`/api/decks/${deckId}/ratings`);
+    const data = await response.json();
+    if (data.status == "removed")
+      setRateresult(false)
+    else if (data.status == "updated")
+      setRateresult(true)
+
+    refetch();
+  };
+
+  const handleDragStart = (e, index) => {
+    setDragging(index);
+    console.log(index)
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault(); // Necessary to allow dropping
+  };
+  const handleDrop = (e, index) => {
+    e.preventDefault();
+    const updatedItems = [...items];
+    const [draggedItem] = updatedItems.splice(dragging, 1);
+    updatedItems.splice(index, 0, draggedItem);
+    setItems(updatedItems);
+    setItemKeys(null);
+    let templist = []
+    templist=updatedItems.map(item=>parseInt(item.card_id))
+    console.log(templist)
+    setItemKeys(templist)
+    console.log(itemKeys)
+    submitorderList(templist);
+    setDragging(null);
+  };
+
+
+ 
 
   return (
     <>
@@ -261,7 +358,7 @@ function DeckPage({ publicAccess = false }) {
           <div className="flex flex-row">
             <TopButtons deckCards={deckCards} publicAccess={publicAccess} deckId={deckId} handleDeleteDeck={handleDeleteDeck} />
 
-            <ProgressCircleGraph radius={radius} dashLength={dashLength} gapLength={gapLength} strokeDashoffset={strokeDashoffset} percentage={percentage} />
+            <ProgressCircleGraph radius={radius} dashLength={dashLength} gapLength={gapLength} strokeDashoffset={strokeDashoffset} percentage={percentage} deckId={deckId} />
           </div>
 
           <MiddleButtons deckCards={deckCards} publicAccess={publicAccess} setStatus={setStatus} isCreateMode={isCreateMode}
@@ -269,26 +366,36 @@ function DeckPage({ publicAccess = false }) {
             handleTakeACopy={handleTakeACopy} isModalOpen={isModalOpen} folders={folders} handleFolderSelection={handleFolderSelection}
             setModalOpen={setModalOpen} deleteMode={deleteMode} changeMode={changeMode} />
 
-          <div className="h-[50vh] overflow-y-auto border-t border-gray-500">
-            {deckCards.cards.map(card => (
-              <div className={`flex font-medium mt-4 border border-eMedGray bg-eDarker w-full ${deleteMode ? "hover:bg-[#ff000055] cursor-not-allowed" : ""}`}
-                key={card.card_id} onClick={() => { handleCardClick(card.card_id) }}
+          <button onClick={submitRating} id="button-preview" aria-labelledby="tooltip-1f7d89ff-668b-406b-9c3f-e3e313ecdc97" type="button" data-view-component="true" className="Button Button--iconOnly Button--secondary Button--medium">
+            <StarIcon isFilled={Rateresult} />
+            <p className="text-black dark:text-edWhite">{deckCards.stars}</p>
+          </button>
+
+          <div className="h-[50vh] overflow-y-auto border-t border-gray-500" >
+
+            {items.map((item,index)=> (
+              <div className={`flex font-medium mt-4 border border-edMedGray bg-elGray dark:bg-edDarkGray w-full ${deleteMode ? "hover:bg-[#ff000055] cursor-not-allowed" : ""}`}
+                key={item.card_id} onClick={() => { handleCardClick(item.card_id) }}
+                draggable
+                onDragStart={(e) => handleDragStart(e, index)}
+                onDragOver={handleDragOver}
+                onDrop={(e) => handleDrop(e, index)}
               >
 
-                <div className={`relative w-1/2 flex flex-col pr-4 border-r border-eMedGray`}>
-                  <MarkdownPreviewer content={card.question} className="flex-1 p-2 min-h-20" />
-                  <Link to={`/edit/${card.card_id}`}>
-                    <img src={editIconImg} alt="Edit_Icon" className="absolute top-8 right-0.5 h-[21px] w-[28px]" />
+                <div className={`relative w-1/2 flex flex-col pr-4 border-r border-edMedGray`}>
+                  <MarkdownPreviewer content={item.question} className="bg-elGray dark:bg-edDarkGray flex-1 p-2 min-h-20" />
+                  <Link to={`/edit/${item.card_id}`} className="absolute top-8 right-0.5">
+                    <EditIcon />
                   </Link>
-                  <Link onClick={() => speakText(card.question)}>
-                    <SpeakerIcon className="absolute top-1 right-1" />
+                  <Link onClick={() => speakText(item.question)} className="absolute top-2 right-0.5">
+                    <SpeakerIcon />
                   </Link>
                 </div>
 
                 <div className="relative w-1/2 flex flex-col">
-                  <MarkdownPreviewer content={card.answer} className="flex-1 p-2" />
-                  <Link onClick={() => speakText(card.answer)}>
-                    <SpeakerIcon className="absolute top-1 right-1" />
+                  <MarkdownPreviewer content={item.answer} className="bg-elGray dark:bg-edDarkGray flex-1 p-2" />
+                  <Link onClick={() => speakText(item.answer)} className="absolute top-2 right-0.5">
+                    <SpeakerIcon />
                   </Link>
                 </div>
 
@@ -320,6 +427,7 @@ function DeckPage({ publicAccess = false }) {
               </div>
             )}
           </div>
+
         </div>
       </div >
       {showPopup && (
@@ -332,36 +440,21 @@ function DeckPage({ publicAccess = false }) {
   )
 }
 
-const SpeakerIcon = ({ width = "20px", height = "20px", fill = "#ccc", className }) => {
-  return (
-    <svg
-      fill={fill}
-      width={width}
-      height={height}
-      viewBox="-2.5 0 19 19"
-      xmlns="http://www.w3.org/2000/svg"
-      className={`cf-icon-svg ${className}`}
-    >
-      <path d="M7.365 4.785v9.63c0 .61-.353.756-.784.325l-2.896-2.896H1.708A1.112 1.112 0 0 1 .6 10.736V8.464a1.112 1.112 0 0 1 1.108-1.108h1.977L6.581 4.46c.43-.43.784-.285.784.325zm2.468 7.311a3.53 3.53 0 0 0 0-4.992.554.554 0 0 0-.784.784 2.425 2.425 0 0 1 0 3.425.554.554 0 1 0 .784.783zm1.791 1.792a6.059 6.059 0 0 0 0-8.575.554.554 0 1 0-.784.783 4.955 4.955 0 0 1 0 7.008.554.554 0 1 0 .784.784z" />
-    </svg>
-  );
-};
-
 function TopButtons({ deckCards, publicAccess, deckId, handleDeleteDeck, }) {
   return (
     <div className="flex flex-col items-start">
-      <h1 className="text-4xl font-bold my-4">{deckCards.deck_name}</h1>
+      <h1 className="text-4xl font-bold my-4 text-black dark:text-edLightGray">{deckCards.deck_name}</h1>
       {publicAccess ? (
         null
       ) : (
         <div className="flex gap-4 mb-2">
-          <Link to={`/review/${deckId}`} className={` rounded-lg border border-transparent px-12 py-2 text-center
-                font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+          <Link to={`/review/${deckId}`} className={`rounded-lg border border-transparent px-12 py-2 text-center
+                font-semibold bg-blue-500 hover:border-white text-white hover:text-black dark:text-edLightGray dark:hover:text-white active:scale-[0.97] active:bg-[#333] 
                 active:border-[#555]`} style={{ transition: "border-color 0.10s, color 0.10s" }}>
             Study
           </Link>
-          <Link to={`/review/${deckId}?studyAll=true`} className={` rounded-lg border border-transparent px-12 py-2 text-center
-                font-semibold bg-blue-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] 
+          <Link to={`/review/${deckId}?studyAll=true`} className={`rounded-lg border border-transparent px-12 py-2 text-center
+                font-semibold bg-blue-500 hover:border-white text-white hover:text-black dark:text-edLightGray dark:hover:text-white active:scale-[0.97] active:bg-[#333] 
                 active:border-[#555]`} style={{ transition: "border-color 0.10s, color 0.10s" }}>
             StudyAll
           </Link>
@@ -371,7 +464,7 @@ function TopButtons({ deckCards, publicAccess, deckId, handleDeleteDeck, }) {
         null
       ) : (
         <button
-          className="mt-2 rounded-lg border border-transparent px-4 py-2 font-semibold bg-red-500 hover:border-white hover:text-white active:scale-[0.97] active:bg-[#333] active:border-[#555]"
+          className="mt-2 rounded-lg border border-transparent px-4 py-2 font-semibold bg-red-500 hover:border-white text-white hover:text-black dark:text-edLightGray dark:hover:text-white active:scale-[0.97] active:bg-[#333] active:border-[#555]"
           style={{ transition: "border-color 0.10s, color 0.10s" }}
           onClick={handleDeleteDeck}
         >
@@ -385,12 +478,12 @@ function TopButtons({ deckCards, publicAccess, deckId, handleDeleteDeck, }) {
 function MiddleButtons({ deckCards, publicAccess, setStatus, isCreateMode, handleCreateCard, toggleCreateMode, handleCancelCreateCard,
   handleTakeACopy, isModalOpen, folders, handleFolderSelection, setModalOpen, deleteMode, changeMode }) {
   return (
-    <div className="flex flex-row items-center justify-between mt-2 mb-4 border-t border-gray-500 pt-4">
+    <div className="flex flex-row items-center text-black dark:text-edLightGray justify-between mt-2 mb-4 border-t border-gray-500 pt-4">
       <h1>{deckCards.cards.length} Cards</h1>
       <button
         disabled={publicAccess}
         className={`${deckCards.isPublic ? "bg-green-600" : "bg-red-600"}
-              ${publicAccess ? "" : "active:scale-[0.97] hover:border-white hover:text-white"}
+              ${publicAccess ? "" : "active:scale-[0.97] hover:border-white text-white hover:text-black dark:text-edLightGray dark:hover:text-white"}
               rounded-lg border border-transparent px-2 py-1 disabled:bg-gray-500 font-semibold`}
         style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={setStatus}>
         {deckCards.isPublic ? "Public" : "Private"}
@@ -401,13 +494,13 @@ function MiddleButtons({ deckCards, publicAccess, setStatus, isCreateMode, handl
       ) : (
         <div>
           <button className={`${isCreateMode ? "bg-green-500" : "bg-blue-500"} rounded-lg border border-transparent px-2 py-1 
-              font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
+              font-semibold hover:border-white text-white hover:text-black dark:text-edLightGray dark:hover:text-white active:scale-[0.97]`}
             style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={isCreateMode ? handleCreateCard : toggleCreateMode}>
             {isCreateMode ? "Done" : "Create"}
           </button>
           {isCreateMode && (
             <button className="bg-red-500 rounded-lg border border-transparent px-2 py-1 
-                font-semibold hover:border-white hover:text-white active:scale-[0.97]"
+                font-semibold hover:border-white text-white hover:text-black dark:text-edLightGray dark:hover:text-white active:scale-[0.97]"
               style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={handleCancelCreateCard}>
               Cancel
             </button>
@@ -415,15 +508,15 @@ function MiddleButtons({ deckCards, publicAccess, setStatus, isCreateMode, handl
         </div>
       )}
 
-      <div>
+      <div className="text-black dark:text-white">
         <button type="button" onClick={handleTakeACopy}>Copy Deck</button>
         {isModalOpen && (
           <div className="modal">
             <div className="modal-content">
               <h2>Select a folder </h2>
               {folders.map(folder => (
-                <button className={`bg-eBlue rounded-lg border border-transparent px-2 py-1 
-                      font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
+                <button className={`bg-edBlue rounded-lg border border-transparent px-2 py-1 
+                      font-semibold hover:border-white text-white hover:text-black dark:text-edLightGray dark:hover:text-white active:scale-[0.97]`}
                   key={folder.folder_id} onClick={() => handleFolderSelection(folder.folder_id)}>
                   {folder.name}
                 </button>
@@ -438,7 +531,7 @@ function MiddleButtons({ deckCards, publicAccess, setStatus, isCreateMode, handl
         null
       ) : (
         <button className={`${deleteMode ? "bg-red-500" : "bg-blue-500"} rounded-lg border border-transparent px-2 py-1 
-              font-semibold hover:border-white hover:text-white active:scale-[0.97]`}
+              text-white hover:text-black dark:text-edLightGray dark:hover:text-white font-semibold hover:border-white active:scale-[0.97]`}
           style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={changeMode}>
           {deleteMode ? "Cancel" : "Delete"}
         </button>
@@ -448,20 +541,26 @@ function MiddleButtons({ deckCards, publicAccess, setStatus, isCreateMode, handl
   )
 }
 
-function ProgressCircleGraph({ radius, dashLength, gapLength, strokeDashoffset, percentage }) {
+function ProgressCircleGraph({ radius, dashLength, gapLength, strokeDashoffset, percentage, deckId }) {
   return (
     <div className="flex flex-col ml-auto justify-center items-center mb-4">
       {/* JavaScript code to draw the graph */}
       <svg width="200" height="200" viewBox="0 20 200 150">
-        <circle cx="100" cy="100" r={radius} fill="none" stroke="#ECEFF1" strokeWidth="7.5" />
+        <circle cx="100" cy="100" r={radius} fill="none" className="stroke-elDarkGray dark:stroke-edLightGray" strokeWidth="7.5" />
         <circle cx="100" cy="100" r={radius} fill="none" stroke="#29A5DC" strokeWidth="7.5" strokeLinecap="round"
           strokeDasharray={`${dashLength},${gapLength}`} strokeDashoffset={strokeDashoffset}>
-          <title>Progress</title>
         </circle>
-        <text x="100" y="100" textAnchor="middle" dominantBaseline="middle" fill="white" fontSize="16">
-          {percentage}%
+        <text x="100" y="100" textAnchor="middle" className="fill-black dark:fill-edLightGray" fontSize="16">
+          <tspan x="100" dy="-3">{percentage}%</tspan>
+          <tspan x="100" dy="20">Mastery</tspan>
         </text>
       </svg>
+      <Link to={`/stats/${deckId}`}>
+        <button className={`rounded-lg border border-transparent px-4 py-2 text-center
+          font-semibold bg-blue-500 hover:border-white text-white hover:text-black dark:text-edLightGray dark:hover:text-white active:scale-[0.97] active:bg-[#333] 
+          active:border-[#555]`} style={{ transition: "border-color 0.10s, color 0.10s" }}>
+          More Statistics</button>
+      </Link>
     </div>
   )
 }
