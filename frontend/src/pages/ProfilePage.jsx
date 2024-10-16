@@ -5,6 +5,7 @@ import folderOpenImg from "../assets/folder-open.png";
 import folderCloseImg from "../assets/folder-close.png";
 import decksImg from "../assets/decks.png";
 import userPic from "../assets/defaltUser.png"
+import FriendsPage from './FriendsPage';
 
 function ProfilePage() {
   const { _get, _patch } = api();
@@ -281,85 +282,95 @@ function ProfilePage() {
               className={`py-2 px-4 rounded-lg ${activeTab === 'ratedDecks' ? `${selectedTabClassName}` : `${unselectedTabClassName}`}`}
               onClick={() => setActiveTab('ratedDecks')}
             >
-              Rated Decks
+              Favorite Decks
             </button>
-          </div>
-          
-          {/* Container for Tabs and Content */}
-          <div className="w-[95%] bg-elSkyBlue dark:bg-edMedGray rounded-lg p-4 shadow-md overflow-x-auto max-h-64">
-  
-          {/* Display Content Based on Active Tab */}
-          {activeTab === 'folders' && (
-            <div className="mt-4">
-              <h2 className="text-xl font-bold text-white">Folders and Decks</h2>
-              {folders.length > 0 ? (
-                folders.map((folder) => <Folder key={folder.folder_id} folder={folder} />)
-              ) : (
-                <p>No folders or decks available</p>
-              )}
-            </div>
-          )}
-
-          {activeTab === 'ratedDecks' && (
-            <div className="mt-4">
-              <h2 className="text-xl font-bold text-white">favorite Decks</h2>
-              {RatedDeck.length > 0 ? (
-                RatedDeck.map((rDeck) => (
-                  <Link key={rDeck.deck_id} to={`/decks/${rDeck.deck_id}`} style={{ display: 'flex', alignItems: 'center' }}>
-                    <span className="mr-2">📚</span>
-                    <p className="overflow-x-auto whitespace-nowrap">{rDeck.name}</p>
-                  </Link>
-                ))
-              ) : (
-                <p className='text-gray-500'>No Rated decks available</p>
-              )}
-            </div>
-          )}
-                  <div>
-          <Link to="/friends">
-            <button className="mt-2 border px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 ml-auto">
+            <button
+              className={`py-2 px-4 rounded-lg ${activeTab === 'friends' ? selectedTabClassName : unselectedTabClassName}`}
+              onClick={() => setActiveTab('friends')}
+            >
               Friends
             </button>
-          </Link>
-        </div>
-        </div>
-        
+          </div>
+
+          {/* Container for Tabs and Content */}
+          <div className="w-[95%] bg-elSkyBlue dark:bg-edMedGray rounded-lg p-4 shadow-md overflow-x-auto max-h-64">
+
+            {/* Display Content Based on Active Tab */}
+            {activeTab === 'folders' && (
+              <div className="mt-4">
+                <h2 className="text-xl font-bold text-white">Folders and Decks</h2>
+                {folders.length > 0 ? (
+                  folders.map((folder) => <Folder key={folder.folder_id} folder={folder} />)
+                ) : (
+                  <p>No folders or decks available</p>
+                )}
+              </div>
+            )}
+
+            {activeTab === 'ratedDecks' && (
+              <div className="mt-4">
+                <h2 className="text-xl font-bold text-white">favorite Decks</h2>
+                {RatedDeck.length > 0 ? (
+                  RatedDeck.map((rDeck) => (
+                    <Link key={rDeck.deck_id} to={`/decks/${rDeck.deck_id}`} style={{ display: 'flex', alignItems: 'center' }}>
+                      <span className="mr-2">📚</span>
+                      <p className="overflow-x-auto whitespace-nowrap">{rDeck.name}</p>
+                    </Link>
+                  ))
+                ) : (
+                  <p className='text-elDark dark:text-white'>No favorite deck</p>
+                )}
+              </div>
+            )}
+
+            {/* Friends Tab Content */}
+            {activeTab === 'friends' && (
+              <div className="mt-4">
+                <FriendsPage />
+              </div>
+            )}
+          </div>
+
         </div>
       </div>
 
-      <div className="w-1/3 pl-10 border border-elDark dark:border-edWhite rounded-lg">
-        <h2 className="text-2xl mt-2 font-bold text-elDark dark:text-edWhite">Settings</h2>
-        {/* Review Animation */}
-        <ToggleSetting
-          label="Review animation:"
-          leftLabel="Flash card"
-          rightLabel="Question set"
-          value={flipOrSet}
-          onChange={handleFlipOrSetChange}
-        />
+      <div className="w-1/3">
+        <div className='pl-10 pb-4 border border-elDark dark:border-edWhite rounded-lg'>
+          <h2 className="text-2xl mt-2 font-bold text-elDark dark:text-edWhite">Settings</h2>
+          {/* Review Animation */}
+          <ToggleSetting
+            label="Review animation:"
+            leftLabel="Flash card"
+            rightLabel="Question set"
+            value={flipOrSet}
+            onChange={handleFlipOrSetChange}
+          />
 
-        {/* Sidebar default setting */}
-        <ToggleSetting
-          label="Sidebar default state:"
-          leftLabel="Open"
-          rightLabel="Close"
-          value={sidebarClosed}
-          onChange={handleSidebarChange}
-        />
+          {/* Sidebar default setting */}
+          <ToggleSetting
+            label="Sidebar default state:"
+            leftLabel="Open"
+            rightLabel="Close"
+            value={sidebarClosed}
+            onChange={handleSidebarChange}
+          />
 
-        {/* light mode setting */}
-        <ToggleSetting
-          label="Color theme:"
-          leftLabel="Light mode"
-          rightLabel="Dark mode"
-          value={lightMode}
-          onChange={handleLightMode}
-        />
+          {/* light mode setting */}
+          <ToggleSetting
+            label="Color theme:"
+            leftLabel="Light mode"
+            rightLabel="Dark mode"
+            value={lightMode}
+            onChange={handleLightMode}
+          />
+        </div>
       </div>
     </div>
   );
 }
 
+
+//  Starting from down here is helper methods to make the code look nicer
 const ToggleSetting = ({ label, leftLabel, rightLabel, value, onChange }) => {
   return (
     <div className="flex flex-col mt-4">
@@ -415,9 +426,9 @@ const Folder = ({ folder, onRightClick }) => {
                 </Link>
               </div>
             ))
-          ) : 
-          // (<p className=''>No decks in this folder</p>)
-          null }
+          ) :
+            // (<p className=''>No decks in this folder</p>)
+            null}
 
           {/* Show subfolders */}
           {folder.children && folder.children.length > 0 && (
