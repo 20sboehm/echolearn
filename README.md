@@ -7,10 +7,11 @@ http://localhost:5173/cards/{card_id}
 
 ## --- Example links and markdown ---
 
-https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExZ2wzdnhhYmE5bzhrZDVncTVpczJnbXluZnkzMDQzeG5wOG9jbXd0cyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/lXiRm5H49zYmHr3i0/giphy.gif
-https://upload.wikimedia.org/wikipedia/commons/e/eb/Ash_Tree_-_geograph.org.uk_-_590710.jpg
-https://shorturl.at/rCOHA
-$$x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$$
+LINK:   facebook.com
+IMAGE:  https://upload.wikimedia.org/wikipedia/commons/e/eb/Ash_Tree_-_geograph.org.uk_-_590710.jpg
+GIF:    https://shorturl.at/rCOHA
+VIDEO:  https://www.youtube.com/watch?v=UXA-Af-JeCE
+LATEX   x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
 
 ## --- Frontend ---
 

@@ -4,7 +4,7 @@ import { ChevronIcon } from "../components/Icons";
 import MarkdownPreviewer from "../components/MarkdownPreviewer";
 import {
   BoldIcon, ItalicIcon, UnderlineIcon, CodeIcon, CodeBlockIcon, HeaderIcon1, HeaderIcon2, HeaderIcon3,
-  HeaderIcon4, PageBreakIcon, ImageLinkIcon, LinkIcon, TableIcon, LatexIcon, LatexBlockIcon, MicIcon, MicIconListening
+  HeaderIcon4, PageBreakIcon, ImageLinkIcon, VideoLinkIcon, LinkIcon, TableIcon, LatexIcon, LatexBlockIcon, MicIcon, MicIconListening
 } from "../components/Icons";
 
 function MarkdownEditor({ requestType, submitButtonText, questionText, setQuestionText, answerText, setAnswerText, deckId, cardId }) {
@@ -123,12 +123,16 @@ function MarkdownEditor({ requestType, submitButtonText, questionText, setQuesti
         cursorAdjustment = 4;
         insertionType = 'codeBlock';
         break;
+      case "link":
+        insertionType = 'link';
+        break;
       case "imageLink":
         cursorAdjustment = 9;
         insertionType = 'imageLink';
         break;
-      case "link":
-        insertionType = 'link';
+      case "videoLink":
+        cursorAdjustment = 3;
+        insertionType = 'videoLink';
         break;
       case "table":
         insertionType = 'table';
@@ -164,9 +168,6 @@ function MarkdownEditor({ requestType, submitButtonText, questionText, setQuesti
     else if (insertionType === "codeBlock") {
       newText = firstHalf + "```\n" + selection + "\n```" + secondHalf;
     }
-    else if (insertionType === "imageLink") {
-      newText = firstHalf + "![Image](" + selection + ")" + secondHalf;
-    }
     else if (insertionType === "link") {
       if (selection) {
         cursorAdjustment = 1;
@@ -175,6 +176,12 @@ function MarkdownEditor({ requestType, submitButtonText, questionText, setQuesti
         cursorAdjustment = 7;
         newText = firstHalf + "[" + "link" + "](" + selection + ")" + secondHalf;
       }
+    }
+    else if (insertionType === "imageLink") {
+      newText = firstHalf + "![Image](" + selection + ")" + secondHalf;
+    }
+    else if (insertionType === "videoLink") {
+      newText = firstHalf + "!!(" + selection + ")" + secondHalf;
     }
     else if (insertionType === "table") {
       selEnd = selStart;
@@ -373,8 +380,9 @@ function TextBox({ label, reference, content, inputHandler, handleTextEditingBut
         <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "code"); }} Icon={CodeIcon} />
         <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "codeBlock"); }} Icon={CodeBlockIcon} />
         <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "pageBreak"); }} Icon={PageBreakIcon} />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "imageLink"); }} Icon={ImageLinkIcon} />
         <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "link"); }} Icon={LinkIcon} />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "imageLink"); }} Icon={ImageLinkIcon} />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "videoLink"); }} Icon={VideoLinkIcon} />
         <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "table"); }} Icon={TableIcon} />
         <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "latex"); }} Icon={LatexIcon} />
         <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "latexBlock"); }} Icon={LatexBlockIcon} />
@@ -382,6 +390,7 @@ function TextBox({ label, reference, content, inputHandler, handleTextEditingBut
         <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header2"); }} Icon={HeaderIcon2} />
         <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header3"); }} Icon={HeaderIcon3} />
         <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header4"); }} Icon={HeaderIcon4} />
+
 
         {questionisListening == false && (
           <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "questionmicIcon"); }} Icon={MicIcon} />

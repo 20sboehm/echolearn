@@ -152,6 +152,15 @@ function MarkdownPreviewer({ content, className }) {
       }
     });
 
+    const videoPattern = /!!\((.*?)\)/g;
+    text = text.replace(videoPattern, (fullStringMatch, link) => {
+      if (link.includes("/watch?v=")) {
+        link = link.replace("/watch?v=", "/embed/");
+      }
+
+      return `<iframe class="max-w-60 max-h-60" src="${link}"></iframe >`;
+    });
+
     return text;
   };
 

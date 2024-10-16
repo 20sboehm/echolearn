@@ -389,6 +389,12 @@ export const ImageLinkIcon = () => (
   </svg>
 );
 
+export const VideoLinkIcon = () => (
+  <svg width="16px" height="16px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" className="fill-elDark dark:fill-edWhite">
+    <path fillRule="evenodd" clipRule="evenodd" d="M16 2H0V14H16V2ZM6.5 5V11H7.5L11 8L7.5 5H6.5Z" />
+  </svg>
+);
+
 export const LinkIcon = () => (
   <svg width="18px" height="18px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="stroke-elDark dark:stroke-edWhite" fill="none">
     <path d="M14 12C14 14.7614 11.7614 17 9 17H7C4.23858 17 2 14.7614 2 12C2 9.23858 4.23858 7 7 7H7.5M10 12C10 9.23858 12.2386 7 15 7H17C19.7614 7 22 9.23858 22 12C22 14.7614 19.7614 17 17 17H16.5" strokeWidth="2" strokeLinecap="round" />
