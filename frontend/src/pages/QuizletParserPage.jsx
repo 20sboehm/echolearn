@@ -64,28 +64,52 @@ function QuizletParserPage() {
     let spaceChoice = "|";
 
     const lines = (quizletInput).trim().split(lineChoice).filter(line => line.trim());
-    console.log(lines)
-    const newCards = lines.map(async line => {
-      const parts = line.split(spaceChoice);
-      console.log(parts[0], parts[1])
-      const question = parts[0]
-      const answer = parts[1]
-      const cardData = {
-        deck_id: deckId,
-        question: question,
-        answer: answer,
-      }
-      const response = await api._post('/api/cards', cardData);
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Error creating card: ", errorData);
-        displayPopup(false);
-      } else {
-        console.log("Card created successfully");
-        displayPopup(true);
-      }
+    console.log(lines)
+
+    // const newCards = lines.map(async line => {
+    //   const parts = line.split(spaceChoice);
+    //   console.log(parts[0], parts[1])
+    //   const question = parts[0]
+    //   const answer = parts[1]
+    //   const cardData = {
+    //     deck_id: deckId,
+    //     question: question,
+    //     answer: answer,
+    //   }
+    //   const response = await api._post('/api/cards', cardData);
+
+    //   if (!response.ok) {
+    //     const errorData = await response.json();
+    //     console.error("Error creating card: ", errorData);
+    //     displayPopup(false);
+    //   } else {
+    //     console.log("Card created successfully");
+    //     displayPopup(true);
+    //   }
+    // });
+    
+    const cards = lines.map(line => {
+      const parts = line.split(spaceChoice);
+      return {
+        deck_id: deckId,
+        question: parts[0],
+        answer: parts[1]
+      };
     });
+    const dataToSend = {
+      cards: cards
+    };
+
+    const response = await api._post('/api/cards/create/multiple', dataToSend);
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Error creating cards: ", errorData);
+      displayPopup(false);
+    } else {
+      console.log("All cards created successfully.");
+      displayPopup(true);
+    }
 
     if (quizletInput !== null) {
       setquizletInput('')
@@ -162,7 +186,7 @@ function QuizletParserPage() {
             In the pop-up window, input "<code>|</code>" for customizing the separator between term and definition and input "<code>&#123;|&#125;</code>" for customizing the separator between rows.
           </p>
           <div className="mb-2 flex flex-col w-full">
-            <textarea value={quizletInput} onChange={(e) => setquizletInput(e.target.value)} className="text-black dark:text-white dark:bg-edDarker w-full min-h-20 h-40 p-2 border border-edDarkGray focus:outline-none custom-scrollbar" 
+            <textarea value={quizletInput} onChange={(e) => setquizletInput(e.target.value)} className="text-black dark:text-white dark:bg-edDarker w-full min-h-20 h-40 p-2 border border-edDarkGray focus:outline-none custom-scrollbar"
               placeholder="question | answer {|}"></textarea>
           </div>
           <button type='submit' className="rounded-lg border border-black hover:border-elMedGray hover:text-elDark 

@@ -37,7 +37,7 @@ def create_multiple_cards(request,payload:sc.CreateMultipleCard):
     data = json.loads(request.body)
     card_data = data['cards']
 
-
+    
     for card in card_data:
         deck_id = card_data[0]["deck_id"]
         deck = Deck.objects.get(pk=deck_id)
