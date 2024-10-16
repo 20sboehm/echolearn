@@ -6,7 +6,7 @@ import { useApi } from "../hooks";
 import editIconImg from "../assets/edit-icon.png"
 import LoadingSpinner from "../components/LoadingSpinner";
 import MarkdownPreviewer from "../components/MarkdownPreviewer";
-import { SpeakerIcon, StarIcon, EditIcon } from "../components/Icons";
+import { SpeakerIcon, StarIcon, HeartIcon, EditIcon } from "../components/Icons";
 
 // import ReactPlayer from 'react-player';
 // import katex from 'katex';
@@ -298,8 +298,8 @@ function DeckPage({ publicAccess = false }) {
             handleTakeACopy={handleTakeACopy} isModalOpen={isModalOpen} folders={folders} handleFolderSelection={handleFolderSelection}
             setModalOpen={setModalOpen} deleteMode={deleteMode} changeMode={changeMode} />
 
-          <button onClick={submitRating} id="button-preview" aria-labelledby="tooltip-1f7d89ff-668b-406b-9c3f-e3e313ecdc97" type="button" data-view-component="true" className="Button Button--iconOnly Button--secondary Button--medium">
-            <StarIcon isFilled={Rateresult} />
+          <button onClick={submitRating} id="button-preview" aria-labelledby="tooltip-1f7d89ff-668b-406b-9c3f-e3e313ecdc97" type="button" data-view-component="true" className="w-[5vw] Button Button--iconOnly Button--secondary Button--medium inline-flex items-center space-x-2 p-2">
+            <HeartIcon isFilled={Rateresult} />
             <p className="text-black dark:text-edWhite">{deckCards.stars}</p>
           </button>
 
