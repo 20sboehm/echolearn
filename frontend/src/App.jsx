@@ -21,6 +21,7 @@ import FeaturePage from './pages/FeaturesPage';
 import AboutPage from './pages/AboutPage';
 import ProfilePage from './pages/ProfilePage';
 import StatsPage from './pages/StatsPage';
+import FriendsPage from './pages/FriendsPage';
 import CommunityPage from './pages/community'
 
 const queryClient = new QueryClient();
@@ -50,6 +51,7 @@ function AuthenticatedRoutes() {
       <Route path="/community" element={<CommunityPage />} />
       {/* <Route path="*" element={<Navigate to="/error/404/Page%20Not%20Found" />} /> */}
       <Route path="*" element={<ErrorPage statusCode="404" errorMessage="Page not found" />} />
+      <Route path="/friends" element={<FriendsPage />} />
     </Routes>
   );
 }

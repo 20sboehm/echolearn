@@ -191,6 +191,14 @@ function ProfilePage() {
           </button>
         )}
 
+        <div>
+          <Link to="/friends">
+            <button className="mt-2 border px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 ml-auto">
+              Friends
+            </button>
+          </Link>
+        </div>
+
         {/* Display Folders and Decks */}
         <div className="mt-8">
           <h2 className="text-xl font-bold text-elDark dark:text-edWhite">Folders and Decks</h2>

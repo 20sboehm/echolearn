@@ -11,6 +11,7 @@ def get_profile(request):
     user = request.auth
 
     return {
+        "id": user.id,
         "username": user.username,
         "email": user.email,
         "age": user.age,
