@@ -28,6 +28,8 @@ def get_reviews(request, deck_id: int, studyAll: bool = False):
                 "question": card.question,
                 "answer": card.answer,
                 "bucket": card.bucket,
+                "correct_count": card.correct_count,
+                "incorrect_count": card.incorrect_count,
                 "next_review": card.next_review
             })
 
