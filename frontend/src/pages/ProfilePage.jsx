@@ -201,11 +201,11 @@ function ProfilePage() {
   };
 
   return (
-    <div className="ml-0 w-3/4 text-left flex mt-4">
+    <div className=" w-3/4 text-left flex mt-4">
       {/* Left column: User Profile Information */}
       <div className="w-2/3 h-1/2 ml-4">
         {/* Profile header */}
-        <div className="flex items-center mb-6">
+        <div className="flex items-center -mt-2">
           <div className="w-24 h-24 rounded-full overflow-hidden">
             {/* {profile.avatar || userPic} */}
             <img src={userPic} alt="User avatar" className="object-cover w-full h-full" />
@@ -217,7 +217,7 @@ function ProfilePage() {
 
         <div className='w-[95%]'>
           {/* Profile Details Section */}
-          <div className="bg-elDarkGray dark:bg-edDarker p-4 rounded-lg">
+          <div className="bg-elDarkGray dark:bg-edDarker p-4 rounded-lg mt-4">
             {/* Username */}
             <EditableField
               label="Name"
@@ -268,7 +268,7 @@ function ProfilePage() {
           </div>
         </div>
 
-        <div className='h-1/2 mt-2 text-elDark dark:text-edWhite'>
+        <div className='h-2/3 mt-2 text-elDark dark:text-edWhite'>
           {/* Tab Buttons */}
           <div className="flex space-x">
             <button
@@ -286,7 +286,7 @@ function ProfilePage() {
           </div>
           
           {/* Container for Tabs and Content */}
-          <div className="w-[95%] bg-elSkyBlue dark:bg-edMedGray rounded-lg p-4 shadow-md overflow-x-auto max-h-60">
+          <div className="w-[95%] bg-elSkyBlue dark:bg-edMedGray rounded-lg p-4 shadow-md overflow-x-auto max-h-64">
   
           {/* Display Content Based on Active Tab */}
           {activeTab === 'folders' && (
@@ -302,7 +302,7 @@ function ProfilePage() {
 
           {activeTab === 'ratedDecks' && (
             <div className="mt-4">
-              <h2 className="text-xl font-bold text-white">Rated Decks</h2>
+              <h2 className="text-xl font-bold text-white">favorite Decks</h2>
               {RatedDeck.length > 0 ? (
                 RatedDeck.map((rDeck) => (
                   <Link key={rDeck.deck_id} to={`/decks/${rDeck.deck_id}`} style={{ display: 'flex', alignItems: 'center' }}>
@@ -428,7 +428,7 @@ const Folder = ({ folder, onRightClick }) => {
 
 const EditableField = ({ label, value, isEditing, inputType = 'text', options = [], onEdit, onSave, onCancel, onChange }) => {
   return (
-    <div className="flex justify-between items-center py-2">
+    <div className="flex justify-between items-center">
       <div>
         <strong className="mr-2">{label}:</strong>
         {isEditing ? (
@@ -462,13 +462,13 @@ const EditableField = ({ label, value, isEditing, inputType = 'text', options = 
       {isEditing ? (
         <div>
           <button
-            className="bg-green-500 px-4 py-2 rounded hover:bg-green-600 transition mr-2"
+            className="bg-green-500 px-4 my-2 rounded hover:bg-green-600 transition mr-2 text-white"
             onClick={onSave}
           >
             Save
           </button>
           <button
-            className="bg-red-500 px-4 py-2 rounded hover:bg-red-600 transition"
+            className="bg-red-500 px-4 my-2 rounded hover:bg-red-600 transition text-white"
             onClick={onCancel}
           >
             Cancel
@@ -476,7 +476,7 @@ const EditableField = ({ label, value, isEditing, inputType = 'text', options = 
         </div>
       ) : (
         <button
-          className="bg-gray-600 px-4 py-2 rounded hover:bg-gray-500 transition"
+          className="bg-gray-600 px-4 my-2 rounded hover:bg-gray-500 transition"
           onClick={onEdit}
         >
           Edit
