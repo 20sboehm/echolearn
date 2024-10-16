@@ -20,7 +20,7 @@ class Folder(models.Model):
     folder_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE) 
-    created_at= models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     last_edited = models.DateTimeField(auto_now_add=True)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
 
@@ -52,12 +52,6 @@ class Card(models.Model):
     deck = models.ForeignKey(Deck, on_delete=models.CASCADE)
     question = models.TextField(max_length=255)
     answer = models.TextField(max_length=255)
-    # questionvideolink = models.TextField(max_length=255)
-    # answervideolink = models.TextField(max_length=255)
-    # questionimagelink = models.TextField(max_length=255)
-    # answerimagelink = models.TextField(max_length=255)
-    # questionlatex = models.TextField(max_length=255)
-    # answerlatex = models.TextField(max_length=255)
     bucket = models.IntegerField(default=0)
     last_reviewed = models.DateTimeField(auto_now_add=True)
     next_review = models.DateTimeField(auto_now_add=True)
@@ -81,3 +75,27 @@ class SharedDeck(models.Model):
 
     def __str__(self):
         return f"share_id={self.share_id}, deck={self.deck}, shared_with={self.shared_with}"
+
+# -----------------------------------------------
+# ------------------ Friend list ----------------
+# -----------------------------------------------
+
+class Friendship(models.Model):
+    PENDING = 'pending'
+    ACCEPTED = 'accepted'
+
+    STATUS_CHOICES = [
+        (PENDING, 'Pending'),
+        (ACCEPTED, 'Accepted'),
+    ]
+
+    user = models.ForeignKey(CustomUser, related_name='friends', on_delete=models.CASCADE)
+    friend = models.ForeignKey(CustomUser, related_name='friends_of', on_delete=models.CASCADE)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=PENDING)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'friend')
+
+    def __str__(self):
+        return f"Friendship ({self.status}) between {self.user.username} and {self.friend.username}"

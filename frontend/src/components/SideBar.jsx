@@ -317,7 +317,7 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
       {contextMenu && (
         <div
           ref={popupRef}
-          className="absolute bg-edDarker text-eWhite p-2 z-[9999] flex flex-col rounded-md border border-eGray"
+          className="absolute bg-edDarker text-white p-2 z-[9999] flex flex-col rounded-md border border-eGray"
           style={{
             top: `${contextMenu.y}px`,
             left: `${contextMenu.x}px`,

@@ -37,8 +37,9 @@ export default {
 				elLightBlue: '#0082e6',
 				elSkyBlue: '#87CEEB',
 				elGray: '#eee',  // also use for light mode card and editor back ground <- note for easy to find if need change
+				elLightGray: '#e5e5e5',
 				elMedGray: '#999',
-				elDarkGray: '#666',
+				elDarkGray: '#374151', // bg-gray-700
 				elBlack: '#9f9f9f',
 				elRed: '#D2042D',
 				elLavender: '#DBD3EB', // Sidebar Light mode Highlight

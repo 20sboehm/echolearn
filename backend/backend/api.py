@@ -9,6 +9,7 @@ from flashcards.routers.reviews import review_router
 from flashcards.routers.signup import signup_router
 from flashcards.routers.users import users_router
 from flashcards.routers.profile import profile_router
+from flashcards.routers.friends import friends_router
 
 
 api = NinjaExtraAPI()
@@ -24,3 +25,4 @@ api.add_router("/sidebar", sidebar_router)
 api.add_router("/reviews", review_router)
 api.add_router("/signup", signup_router)
 api.add_router("/profile", profile_router)
+api.add_router("/friends", friends_router)
