@@ -110,14 +110,14 @@ function FriendsPage() {
 
   return (
     <div className="ml-0 w-3/4 text-left">
-      <h1 className="text-2xl font-bold">Friends List</h1>
-      {error && <p>{error}</p>}
+      <h1 className="text-2xl font-bold text-elDark dark:text-edWhite">Friends List</h1>
+      {error && <p className='text-elDark dark:text-edWhite'>{error}</p>}
 
       {friends.length > 0 ? (
         <ul className="mt-4">
           {friends.map(friend => (
             <li key={friend.id} className="flex justify-between mb-2">
-              <span>{friend.username}</span>
+              <span className='text-elDark dark:text-edWhite'>{friend.username}</span>
               <button
                 className="bg-red-500 text-white px-2 py-1 rounded"
                 onClick={() => handleRemoveFriend(friend.id)}
@@ -128,16 +128,16 @@ function FriendsPage() {
           ))}
         </ul>
       ) : (
-        <p>No friends yet.</p>
+        <p className='text-elDark dark:text-edWhite'>No friends yet.</p>
       )}
 
       {pendingRequests.length > 0 && (
         <div className="mt-8">
-          <h2 className="text-xl font-bold">Pending Friends</h2>
+          <h2 className="text-xl font-bold text-elDark dark:text-edWhite">Pending Friends</h2>
           <ul className="mt-4">
             {pendingRequests.map(request => (
               <li key={request.id} className="flex justify-between mb-2">
-                <span>{request.username}</span>
+                <span className='text-elDark dark:text-edWhite'>{request.username}</span>
                 <div>
                   <button
                     className="bg-green-500 text-white px-2 py-1 rounded mr-2"
@@ -159,13 +159,13 @@ function FriendsPage() {
       )}
 
       <div className="mt-8">
-        <h2 className="text-xl font-bold">Add New Friend</h2>
+        <h2 className="text-xl font-bold text-elDark dark:text-edWhite">Add New Friend</h2>
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search by username"
-          className="border rounded px-2 py-1"
+          className="border rounded px-2 py-1 text-elDark dark:text-edWhite"
         />
         <button
           onClick={handleSearch}
@@ -179,7 +179,7 @@ function FriendsPage() {
         <ul className="mt-4">
           {searchResults.map(user => (
             <li key={user.id} className="flex justify-between mb-2">
-              <span>{user.username}</span>
+              <span className='text-elDark dark:text-edWhite'>{user.username}</span>
               {user.status === 'friend' ? (
                 <button
                   className="px-2 py-1 rounded bg-gray-500 text-white cursor-not-allowed"
