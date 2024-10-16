@@ -66,7 +66,7 @@ function CreateCardPage() {
           </div>
 
           <button type="button" onClick={() => navigate("/quizletparser", { state: { deckId: deckId } })} className="rounded-lg border border-black hover:border-elMedGray hover:text-elDark 
-              dark:border-transparent dark:hover:border-black dark:hover:text-white px-10 py-2 text-center w-1/4 mb-2
+              dark:border-transparent dark:hover:border-black dark:hover:text-white py-2 text-center w-1/4 mb-2
               font-semibold bg-elLightBlue text-white active:scale-[0.97] active:border-[#555]">quizlet parser</button>
 
           <MarkdownEditor requestType="post" submitButtonText="Create Card" questionText={questionText} setQuestionText={setQuestionText}

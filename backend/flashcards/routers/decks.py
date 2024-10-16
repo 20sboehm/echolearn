@@ -95,6 +95,9 @@ def copy_deck(request, deck_id:int,folder_id:int):
         newcard.deck = newdeck
         newcard.created_at = datetime.datetime.now
         newcard.last_edited = datetime.datetime.now
+        newcard.bucket = 0
+        newcard.correct_count = 0
+        newcard.incorrect_count = 0
         newcard.save()
     return 201, deck
 

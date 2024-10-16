@@ -152,8 +152,8 @@ function QuizletParserPage() {
 
         <form onSubmit={handleQuizletParser} className='flex flex-col items-center'>
           <button type='button' onClick={handleBackButton} className="rounded-lg border border-black hover:border-elMedGray hover:text-elDark 
-              dark:border-transparent dark:hover:border-black dark:hover:text-black px-10 py-2 text-center self-start
-              font-semibold bg-elLightBlue text-white dark:text-black dark:bg-white active:scale-[0.97] active:border-[#555]" >
+              dark:border-transparent dark:hover:border-black dark:hover:text-white py-2 text-center self-start w-1/4 mb-2
+              font-semibold bg-elLightBlue text-white active:scale-[0.97] active:border-[#555]">
             Back
           </button>
           <p className="text-elDark dark:text-edWhite">
@@ -162,11 +162,12 @@ function QuizletParserPage() {
             In the pop-up window, input "<code>|</code>" for customizing the separator between term and definition and input "<code>&#123;|&#125;</code>" for customizing the separator between rows.
           </p>
           <div className="mb-2 flex flex-col w-full">
-            <textarea value={quizletInput} onChange={(e) => setquizletInput(e.target.value)} className="text-black dark:text-white dark:bg-edDarker w-full min-h-20 h-40 p-2 border border-edDarkGray focus:outline-none custom-scrollbar"></textarea>
+            <textarea value={quizletInput} onChange={(e) => setquizletInput(e.target.value)} className="text-black dark:text-white dark:bg-edDarker w-full min-h-20 h-40 p-2 border border-edDarkGray focus:outline-none custom-scrollbar" 
+              placeholder="question | answer {|}"></textarea>
           </div>
           <button type='submit' className="rounded-lg border border-black hover:border-elMedGray hover:text-elDark 
-              dark:border-transparent dark:hover:border-black dark:hover:text-black px-10 py-2 text-center
-              font-semibold bg-elLightBlue text-white dark:text-black dark:bg-white active:scale-[0.97] active:border-[#555]" >
+              dark:border-transparent dark:hover:border-black dark:hover:text-white py-2 text-center w-1/4 mb-2
+              font-semibold bg-elLightBlue text-white active:scale-[0.97] active:border-[#555]">
             Submit
           </button>
 
