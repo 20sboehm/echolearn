@@ -10,10 +10,6 @@ import card from '../assets/reviewSwitch.png';
 import "./ReviewPage.css";
 import LoadingSpinner from "../components/LoadingSpinner";
 import MarkdownPreviewer from "../components/MarkdownPreviewer";
-// import ReactPlayer from 'react-player';
-// import { BlockMath } from 'react-katex'; // we might need this here
-// import sanitizeHtml from 'sanitize-html'; // we might need this here
-// import katex from 'katex';
 
 // Two layers in order to maintain border rounding with active scrollbar
 const cardOuterCSS = "border border-elDarkGray bg-white rounded-md overflow-hidden"
@@ -223,6 +219,21 @@ function ReviewCard({ card, showAnswer, setShowAnswer, updateReviewedCard, chang
     setDisplayQuestionOnFlipCard(true);
   }, [changeAnimation]);
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === ' ' && !e.repeat) {
+        e.preventDefault(); // Prevent page scrolling
+        toggleFlip(); // Trigger flip on spacebar press
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [toggleFlip]);
+
   return (
     <>
       <div className="flex flex-col items-center">
@@ -395,31 +406,5 @@ function ResultButton({ customStyles, confidenceLevel, clickEvent, timeUntil, ch
     </button>
   )
 }
-
-// const changeShowAnswer = () => {
-//   setShowAnswer(true);
-// };
-
-// const KatexOutput = ({ latex }) => {
-//   const html = katex.renderToString(latex, {
-//     throwOnError: false,
-//     output: "html"
-//   });
-
-//   return <div dangerouslySetInnerHTML={{ __html: html }} />;
-// };
-
-// const changeShowAnswer = () => {
-//   setShowAnswer(true);
-//   setFlip(!flip);
-// };
-
-// const KatexOutput = ({ latex }) => {
-//   const html = katex.renderToString(latex, {
-//     throwOnError: false,
-//     output: "html"
-//   });
-//   return <div dangerouslySetInnerHTML={{ __html: html }} />;
-// };
 
 export default ReviewPage
