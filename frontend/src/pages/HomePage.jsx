@@ -80,7 +80,7 @@ function DeckRow({ deck, cards }) {
   return (
     <li className="flex px-2 py-2 text-elDark hover:bg-elStrongHLT dark:text-edWhite dark:hover:bg-edHLT dark:border-edMedGray border-t">
       <div className="flex items-center w-[45%]">
-        <Link to={`/decks/${deck.deck_id}`} className="hover:text-eBlue hover:border-eBlue">{deck.name}</Link>
+        <Link to={`/decks/${deck.deck_id}`} className="hover:text-eBlue hover:text-elSkyBlue dark:hover:text-edLightBlue">{deck.name}</Link>
       </div>
       <div className="flex items-center w-[15%]">{newCardsCount}</div>
       <div className="flex items-center w-[15%]">{reviewCardsCount}</div>

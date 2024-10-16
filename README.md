@@ -5,6 +5,14 @@
 Start BOTH the frontend server from /frontend (`npm run dev`) and the backend server from /backend (`python manage.py runserver`) then visit this URL to view a card with a particular ID:
 http://localhost:5173/cards/{card_id}
 
+## --- Example links and markdown ---
+
+LINK:   facebook.com
+IMAGE:  https://upload.wikimedia.org/wikipedia/commons/e/eb/Ash_Tree_-_geograph.org.uk_-_590710.jpg
+GIF:    https://shorturl.at/rCOHA
+VIDEO:  https://www.youtube.com/watch?v=UXA-Af-JeCE
+LATEX   x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+
 ## --- Frontend ---
 
 Create app using vite:

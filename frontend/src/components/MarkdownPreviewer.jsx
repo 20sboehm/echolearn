@@ -1,7 +1,9 @@
 import { useEffect } from "react";
 import hljs from 'highlight.js';
 import './MarkdownPreviewer.css'
-import voiceIconImg from "../assets/voice.png"
+import katex from 'katex';
+import 'katex/dist/katex.min.css';
+// import voiceIconImg from "../assets/voice.png"
 
 function MarkdownPreviewer({ content, className }) {
   // ------------------------------------------------
@@ -10,10 +12,10 @@ function MarkdownPreviewer({ content, className }) {
 
   /*
   Table (NOT limited to a finite # of columns/rows):
-  | Header | Header |
-  | ------ | ------ |
-  | Data   | Data   |
-  | Data   | Data   |
+| Header | Header |
+| ------ | ------ |
+| Data   | Data   |
+| Data   | Data   |
 
   Bold: **bold**
   Italic: *italic*
@@ -85,6 +87,27 @@ function MarkdownPreviewer({ content, className }) {
     const underlinePattern = /__(.*?)__/g;
     text = text.replace(underlinePattern, '<u>$1</u>');
 
+    const blockMathPattern = /\$\$(.*?)\$\$/g;
+    text = text.replace(blockMathPattern, (match, p1) => {
+      try {
+        return katex.renderToString(p1, { displayMode: true });
+      } catch (error) {
+        return `<span class="">${error.message}</span>`;
+      }
+    });
+
+    const inlineMathPattern = /\$(.*?)\$/g;
+    text = text.replace(inlineMathPattern, (match, p1) => {
+      try {
+        return katex.renderToString(p1, { displayMode: false });
+      } catch (error) {
+        return `<span class="text-red-500">${error.message}</span>`;
+      }
+    });
+
+    const sameLineCodeBlockPattern = /```(.*?)```/g;
+    text = text.replace(sameLineCodeBlockPattern, '<pre class="p-2 my-1 rounded-md bg-elMedGray text-white dark:bg-edDark">$1</pre>');
+
     const codeBlockPattern = /```([A-Za-z]*\n)((.|\n)*?)```/g;
     text = text.replace(codeBlockPattern, (fullStringMatch, language, innerCodeContent) => {
       language = language.toLowerCase().trim();
@@ -110,6 +133,9 @@ function MarkdownPreviewer({ content, className }) {
     const header3Pattern = /^### (.*$)/gim;
     text = text.replace(header3Pattern, '<h3 class="text-[1.2rem] font-semibold">$1</h3>');
 
+    const header4Pattern = /^#### (.*$)/gim;
+    text = text.replace(header4Pattern, '<h4 class="text-[1rem] font-semibold">$1</h4>');
+
     const pageBreakPattern = /---/g;
     text = text.replace(pageBreakPattern, '<hr>')
 
@@ -117,7 +143,23 @@ function MarkdownPreviewer({ content, className }) {
     text = text.replace(imagePattern, '<img src="$2" alt="$1" class="max-w-60 max-h-60" />');
 
     const linkPattern = /\[(.*?)\]\((.*?)\)/g;
-    text = text.replace(linkPattern, '<a href="$2">$1</a>');
+    text = text.replace(linkPattern, (fullStringMatch, text, link) => {
+      if (link.includes("http")) {
+        return `<a class="text-blue-400" target="_blank" href="${link}">${text}</a>`;
+      }
+      else {
+        return `<a class="text-blue-400" target="_blank" href="https://${link}">${text}</a>`;
+      }
+    });
+
+    const videoPattern = /!!\((.*?)\)/g;
+    text = text.replace(videoPattern, (fullStringMatch, link) => {
+      if (link.includes("/watch?v=")) {
+        link = link.replace("/watch?v=", "/embed/");
+      }
+
+      return `<iframe class="max-w-60 max-h-60" src="${link}"></iframe >`;
+    });
 
     return text;
   };

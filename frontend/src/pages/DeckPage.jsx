@@ -1,6 +1,8 @@
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "react-query";
 import { useState, useEffect } from "react";
+import { useQuery } from "react-query";
+import { useState, useEffect } from "react";
 import Sidebar from "../components/SideBar";
 import { useApi } from "../hooks";
 import editIconImg from "../assets/edit-icon.png"
@@ -52,15 +54,15 @@ function DeckPage({ publicAccess = false }) {
       } else {
         response = await api._get(`/api/decks/${deckId}/cards`);
       }
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(`${response.status}: ${errorData.detail || 'An error occurred'}`);
       }
-  
+
       return response.json();
-    }, 
-    { 
+    },
+    {
       onSuccess: (data) => {
         setItemKeys(data.order_List)
         setItems(reorderItems(data.cards, data.order_List));
@@ -71,27 +73,27 @@ function DeckPage({ publicAccess = false }) {
     }
   );
   const reorderItems = (cards, orderList) => {
-    if (!orderList) 
-      return cards; 
+    if (!orderList)
+      return cards;
     const orderedCards = new Array(cards.length).fill(null);
     // Place each card in its new position according to orderList
     orderList.forEach((cardId, index) => {
-        const card = cards.find(card => card.card_id === cardId);
-        if (card) {
-            orderedCards[index] = card;
-        }
+      const card = cards.find(card => card.card_id === cardId);
+      if (card) {
+        orderedCards[index] = card;
+      }
     });
     return orderedCards
-};
+  };
   const submitorderList = async (templist) => {
     const response = await api._post(`/api/decks/${deckId}/orderList`, {
-     templist
-  });
+      templist
+    });
     const data = await response.json();
     console.log(data)
 
   };
- 
+
 
   // useEffect(() => {
   //   if (items) {
@@ -118,6 +120,7 @@ function DeckPage({ publicAccess = false }) {
   let reviewedCardsCount = 0;
   // Check if 'cards' property exists and is an array
   if (deckCards.cards && Array.isArray(deckCards.cards)) {
+
 
     reviewedCardsCount = deckCards.cards.filter(card => card.next_review && Date.parse(card.next_review) >= Date.now()).length;
   }
@@ -311,6 +314,22 @@ function DeckPage({ publicAccess = false }) {
     }
   };
   fetchRatingData();
+  const fetchRatingData = async () => {
+    try {
+      const response = await api._get(`/api/decks/${deckId}/ratedOrnot`);
+      const json = await response.json();
+      console.log(json)
+      if (json === true) {
+        setRateresult(true)
+      }
+      else {
+        setRateresult(false)
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+  fetchRatingData();
 
   const submitRating = async () => {
     const response = await api._post(`/api/decks/${deckId}/ratings`);
@@ -340,7 +359,7 @@ function DeckPage({ publicAccess = false }) {
     setItems(updatedItems);
     setItemKeys(null);
     let templist = []
-    templist=updatedItems.map(item=>parseInt(item.card_id))
+    templist = updatedItems.map(item => parseInt(item.card_id))
     console.log(templist)
     setItemKeys(templist)
     console.log(itemKeys)
@@ -349,7 +368,7 @@ function DeckPage({ publicAccess = false }) {
   };
 
 
- 
+
 
   return (
     <>
@@ -374,7 +393,7 @@ function DeckPage({ publicAccess = false }) {
 
           <div className="h-[50vh] overflow-y-auto border-t border-gray-500" >
 
-            {items.map((item,index)=> (
+            {items.map((item, index) => (
               <div className={`flex font-medium mt-4 border border-edMedGray bg-elGray dark:bg-edDarkGray w-full ${deleteMode ? "hover:bg-[#ff000055] cursor-not-allowed" : ""}`}
                 key={item.card_id} onClick={() => { handleCardClick(item.card_id) }}
                 draggable
