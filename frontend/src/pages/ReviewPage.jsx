@@ -10,6 +10,7 @@ import card from '../assets/reviewSwitch.png';
 import "./ReviewPage.css";
 import LoadingSpinner from "../components/LoadingSpinner";
 import MarkdownPreviewer from "../components/MarkdownPreviewer";
+import './Buttons.css';
 
 // Two layers in order to maintain border rounding with active scrollbar
 // const cardOuterCSS = "border border-elDarkGray bg-white rounded-md overflow-hidden"
@@ -154,9 +155,8 @@ function ReviewPage() {
         <Sidebar onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
         <div className="rounded-lg mt-[2%] flex flex-col flex-grow min-w-[16rem] mx-auto overflow-x-auto">
           <div className="flex mx-auto items-center border-b border-black dark:border-edWhite pb-[1rem] w-[40vw]">
-            <Link to={`/decks/${deckId}`} className="rounded-lg border border-black hover:border-elMedGray hover:text-elDark 
-              dark:border-transparent dark:hover:border-black dark:hover:text-white px-10 py-2 text-center
-              font-semibold bg-elLightBlue text-white active:scale-[0.97] active:border-[#555]">back</Link>
+            <Link to={`/decks/${deckId}`} className="button-common button-blue px-10 py-2 text-center
+              font-semibold">back</Link>
             <h2 className="text-[2em] text-elDark dark:text-edWhite mx-auto">{reviews.deck_name}</h2>
             <button className="border border-black w-[12%] ml-auto" onClick={switchAnimation}>
               <img src={currImage}></img>
@@ -187,7 +187,7 @@ function FinishView(deckId) {
       <div className="flex flex-col justify-center items-center mx-4">
         <h3 className="h-[25vh] flex justify-center items-center w-full border-black bg-white rounded-md p-5 text-2xl text-black my-4">You have studied all the cards in this deck</h3>
         <Link to={`/decks/${deckId.deckId}`}>
-          <button className="border rounded-md px-2 py-1">Back to deck</button>
+          <button className="button-common button-blue border rounded-md px-2 py-1">Back to deck</button>
         </Link>
       </div>
       <img className="w-40 h-40 mt-[-10vh]" src={partyPopperImg} alt="Party Popper" />

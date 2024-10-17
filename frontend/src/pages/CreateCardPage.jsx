@@ -5,6 +5,7 @@ import { useQuery } from "react-query";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { useNavigate, useLocation } from "react-router-dom";
 import MarkdownEditor from "../components/MarkdownEditor";
+import './Buttons.css';
 
 function CreateCardPage() {
   const api = useApi();
@@ -65,9 +66,7 @@ function CreateCardPage() {
             </select>
           </div>
 
-          <button type="button" onClick={() => navigate("/quizletparser", { state: { deckId: deckId } })} className="rounded-lg border border-black hover:border-elMedGray hover:text-elDark 
-              dark:border-transparent dark:hover:border-black dark:hover:text-white py-2 text-center w-1/4 mb-2
-              font-semibold bg-elLightBlue text-white active:scale-[0.97] active:border-[#555]">quizlet parser</button>
+          <button type="button" onClick={() => navigate("/quizletparser", { state: { deckId: deckId } })} className="button-common button-blue py-2 text-center w-1/4 mb-2 font-semibold">quizlet parser</button>
 
           <MarkdownEditor requestType="post" submitButtonText="Create Card" questionText={questionText} setQuestionText={setQuestionText}
             answerText={answerText} setAnswerText={setAnswerText} deckId={deckId} />

@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { useApi } from "../hooks";
 import LoadingSpinner from "../components/LoadingSpinner";
 import MarkdownPreviewer from "../components/MarkdownPreviewer";
+import './Buttons.css';
 
 function StatsPage() {
   const api = useApi();
@@ -139,9 +140,8 @@ function StatsPage() {
     <>
       <div>
         <div className="flex justify-between items-center mt-3 mb-3">
-          <Link to={`/decks/${deckId}`}  className="rounded-lg border border-black hover:border-elMedGray hover:text-elDark 
-              dark:border-transparent dark:hover:border-black dark:hover:text-white px-10 py-2 text-center
-              font-semibold bg-elLightBlue text-white active:scale-[0.97] active:border-[#555]">back</Link>
+          <Link to={`/decks/${deckId}`}  className="button-common button-blue px-10 py-2 text-center
+              font-semibold">back</Link>
           <div className="absolute left-1/2 mt-10 transform -translate-x-1/2">
             <h1 className="font-bold text-center text-3xl text-elDark dark:text-edWhite">
               {deckCards.deck_name}
