@@ -358,7 +358,7 @@ function DeckPage({ publicAccess = false }) {
           <div className="flex flex-row">
             <TopButtons deckCards={deckCards} publicAccess={publicAccess} deckId={deckId} handleDeleteDeck={handleDeleteDeck} />
 
-            <ProgressCircleGraph radius={radius} dashLength={dashLength} gapLength={gapLength} strokeDashoffset={strokeDashoffset} percentage={percentage} deckId={deckId} />
+            <ProgressCircleGraph radius={radius} dashLength={dashLength} gapLength={gapLength} strokeDashoffset={strokeDashoffset} percentage={percentage} deckId={deckId} publicAccess={publicAccess} />
           </div>
 
           <MiddleButtons deckCards={deckCards} publicAccess={publicAccess} setStatus={setStatus} isCreateMode={isCreateMode}
@@ -371,7 +371,7 @@ function DeckPage({ publicAccess = false }) {
             <p className="text-black dark:text-edWhite">{deckCards.stars}</p>
           </button>
 
-          <div className="h-[50vh] overflow-y-auto border-t border-gray-500" >
+          <div className={`${publicAccess ? 'h-[70vh]' : 'h-[50vh]'} overflow-y-auto border-t border-gray-500`}>
 
             {items.map((item, index) => (
               <div className={`flex font-medium mt-4 border border-edMedGray bg-elGray dark:bg-edDarker w-full ${deleteMode ? "hover:bg-[#ff000055] cursor-not-allowed" : ""}`}
@@ -479,7 +479,7 @@ function MiddleButtons({ deckCards, publicAccess, setStatus, isCreateMode, handl
         disabled={publicAccess}
         className={`button-common ${deckCards.isPublic ? "button-green" : "button-red"}
             ${publicAccess ? "" : ""}`}
-            onClick={setStatus}>
+        onClick={setStatus}>
         {deckCards.isPublic ? "Public" : "Private"}
       </button>
 
@@ -487,12 +487,12 @@ function MiddleButtons({ deckCards, publicAccess, setStatus, isCreateMode, handl
         null
       ) : (
         <div>
-          <button className={`button-common ${isCreateMode ? "button-green" : "button-blue"}`} 
+          <button className={`button-common ${isCreateMode ? "button-green" : "button-blue"}`}
             onClick={isCreateMode ? handleCreateCard : toggleCreateMode}>
             {isCreateMode ? "Done" : "Create"}
           </button>
           {isCreateMode && (
-            <button className={`button-common button-red`} 
+            <button className={`button-common button-red`}
               onClick={handleCancelCreateCard}>
               Cancel
             </button>
@@ -530,7 +530,11 @@ function MiddleButtons({ deckCards, publicAccess, setStatus, isCreateMode, handl
   )
 }
 
-function ProgressCircleGraph({ radius, dashLength, gapLength, strokeDashoffset, percentage, deckId }) {
+function ProgressCircleGraph({ radius, dashLength, gapLength, strokeDashoffset, percentage, deckId, publicAccess }) {
+  if (publicAccess) {
+    return null;
+  }
+
   return (
     <div className="flex flex-col ml-auto justify-center items-center mb-4">
       {/* JavaScript code to draw the graph */}

@@ -35,7 +35,7 @@ const teamInfo = [
 function AboutPage() {
   return (
     <>
-      <div className="flex flex-col items-center w-full h-full bg-gradient-to-t from-customBlue to-featureBackground">
+      <div className="flex flex-col items-center w-full h-screen bg-gradient-to-t from-customBlue to-featureBackground">
         <div className="flex flex-row h-24 items-center mt-4 mb-8">
           <h1 className="text-4xl font-bold text-white mr-4">Team Echolearn</h1>
           <img src={logoImg} className="w-16 h-16"></img>
