@@ -211,7 +211,7 @@ function ReviewCard({ card, showAnswer, setShowAnswer, updateReviewedCard, chang
       return newFlip; // Update flip state
     });
   }
-  
+
   useEffect(() => {
     // Whenever we switch animation, reset displayQuestionOnFlipCard to show the question
     setDisplayQuestionOnFlipCard(true);
@@ -253,7 +253,7 @@ function QuestionCard({ card, showAnswer, setShowAnswer }) {
     return (
       <div className={`mt-8 overflow-x-hidden overflow-y-auto bg-black`} onClick={() => setShowAnswer(!showAnswer)}>
         <div className={`h-[25vh] text-[1.2rem] flex flex-col border border-edMedGray overflow-x-hidden overflow-y-auto`}>
-          <MarkdownPreviewer content={card.question} className="flex-1 p-3 h-full bg-elGray dark:bg-edDarkGray" />
+          <MarkdownPreviewer content={card.question} className="flex-1 p-3 h-full bg-elGray dark:bg-edDarker" />
         </div >
       </div>
     )
@@ -268,7 +268,7 @@ function AnswerCard({ card, flip, showAnswer, displayQuestion }) {
           {/* If flip=false (The card is at or flipping towards 'question position') AND we're set to display answer 
           (meaning we're still in the 1/2 animation time delay for setting `displayQuestion`), set content to blank 
           so we dont give away the answer to the next question */}
-          <MarkdownPreviewer content={!flip && !displayQuestion ? "" : card.answer} className="flex-1 p-3 h-full bg-elGray dark:bg-edDarkGray" />
+          <MarkdownPreviewer content={!flip && !displayQuestion ? "" : card.answer} className="flex-1 p-3 h-full bg-elGray dark:bg-edDarker" />
         </div >
       </div>
     )
@@ -278,12 +278,12 @@ function AnswerCard({ card, flip, showAnswer, displayQuestion }) {
 function FlipFlashcard({ card, flip, toggleFlip, displayQuestion }) {
   return (
     <div className={`mt-8 flashCard ${flip ? 'flip' : ''}`} onClick={toggleFlip}>
-      <div className="h-[50vh] text-[1.2rem] bg-edDarker border border-edMedGray text-edWhite flex flex-col justify-center items-center 
+      <div className="h-[50vh] text-[1.2rem] border border-edMedGray text-edWhite flex flex-col justify-center items-center 
           overflow-x-hidden overflow-y-auto"
       >
         <MarkdownPreviewer
           content={!flip && !displayQuestion ? "" : (displayQuestion ? card.question : card.answer)}
-          className={`flex-1 p-3 h-full bg-elGray dark:bg-edDarkGray ${displayQuestion ? "" : "flashCardBack"}`} // This has to be 'displayQuestion' instead of flip and I'm not sure why
+          className={`flex-1 p-3 h-full bg-elGray dark:bg-edDarker ${displayQuestion ? "" : "flashCardBack"}`} // This has to be 'displayQuestion' instead of flip and I'm not sure why
         />
       </div>
     </div>
@@ -363,7 +363,7 @@ function ShowAnswerButtons({ card, showAnswer, updateReviewedCard, toggleFlip })
     }
 
     if (showAnswer === false) return;
-    
+
     const confidenceLevel = keyToConfidenceMap[e.key];
     if (confidenceLevel) {
       updateReviewedCardAndDisplay(confidenceLevel);
@@ -378,7 +378,7 @@ function ShowAnswerButtons({ card, showAnswer, updateReviewedCard, toggleFlip })
       window.removeEventListener('keydown', handleKeyPress);
     };
   }, [showAnswer]);
-  
+
   return (
     // <div className="fixed bottom-8 left-0 right-0 mx-auto w-[100vw] flex justify-center">
     <div className="flex justify-center mt-8 mb-8">

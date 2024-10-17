@@ -138,7 +138,8 @@ export const CurveArrowRight = () => {
       height="32px"
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
-      className="icon flat-line stroke-elDark"
+      // className="icon flat-line stroke-elDark"
+      className="icon flat-line stroke-elDark dark:stroke-edWhite"
     >
       <path
         d="M3,18A13.17,13.17,0,0,1,15.49,9H21"

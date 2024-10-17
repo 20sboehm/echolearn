@@ -373,7 +373,7 @@ function DeckPage({ publicAccess = false }) {
           <div className="h-[50vh] overflow-y-auto border-t border-gray-500" >
 
             {items.map((item, index) => (
-              <div className={`flex font-medium mt-4 border border-edMedGray bg-elGray dark:bg-edDarkGray w-full ${deleteMode ? "hover:bg-[#ff000055] cursor-not-allowed" : ""}`}
+              <div className={`flex font-medium mt-4 border border-edMedGray bg-elGray dark:bg-edDarker w-full ${deleteMode ? "hover:bg-[#ff000055] cursor-not-allowed" : ""}`}
                 key={item.card_id} onClick={() => { handleCardClick(item.card_id) }}
                 draggable
                 onDragStart={(e) => handleDragStart(e, index)}
@@ -382,7 +382,7 @@ function DeckPage({ publicAccess = false }) {
               >
 
                 <div className={`relative w-1/2 flex flex-col pr-4 border-r border-edMedGray`}>
-                  <MarkdownPreviewer content={item.question} className="bg-elGray dark:bg-edDarkGray flex-1 p-2 min-h-20" />
+                  <MarkdownPreviewer content={item.question} className="bg-elGray dark:bg-edDarker flex-1 p-2 min-h-20" />
                   <Link to={`/edit/${item.card_id}`} className="absolute top-8 right-0.5">
                     <EditIcon />
                   </Link>
@@ -392,7 +392,7 @@ function DeckPage({ publicAccess = false }) {
                 </div>
 
                 <div className="relative w-1/2 flex flex-col">
-                  <MarkdownPreviewer content={item.answer} className="bg-elGray dark:bg-edDarkGray flex-1 p-2" />
+                  <MarkdownPreviewer content={item.answer} className="bg-elGray dark:bg-edDarker flex-1 p-2" />
                   <Link onClick={() => speakText(item.answer)} className="absolute top-2 right-0.5">
                     <SpeakerIcon />
                   </Link>
