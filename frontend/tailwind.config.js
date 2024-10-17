@@ -25,6 +25,7 @@ export default {
 				edDarkGray: '#333', // check
 				edWhite: '#ccc',
 				edBlue: '#0078d4',
+				edSoftBlue: '#407196',
 				edLightBlue: '#33a7ff',
 				edRed: '#D2042D',
 				edGreen: '#009355',
