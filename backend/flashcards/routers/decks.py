@@ -47,12 +47,21 @@ def get_deck(request, deck_id: int):
 def get_cards_from_deck_public(request, deck_id: int):
     deck = get_object_or_404(Deck, deck_id=deck_id)
 
-    if deck.isPublic == False:
-        raise HttpError(403, "You are not authorized to access this deck")
-
+    # Check if the deck is public
+    if deck.isPublic:
+        # Public decks can be accessed by anyone, including guest users
+        publicAccess = True
+    else:
+        # For private decks, check if the user is the owner
+        if deck.owner == request.user:
+            publicAccess = False  # User owns the deck, so they have access
+        else:
+            # User is not the owner and the deck is not public
+            raise HttpError(403, "You are not authorized to access this deck")
+    
     card_list = Card.objects.filter(deck_id=deck_id)
     
-    return {"deck_id": deck.deck_id, "isPublic": deck.isPublic, "deck_name": deck.name, "cards": card_list,"stars":deck.stars, "order_List":deck.order_List}
+    return {"deck_id": deck.deck_id, "isPublic": deck.isPublic, "deck_name": deck.name, "cards": card_list,"stars": deck.stars, "order_List": deck.order_List, "publicAccess": publicAccess}
 
 @decks_router.get("/{deck_id}/cards", response={200: sc.DeckCards, 404: str}, auth=JWTAuth())
 def get_cards_from_deck(request, deck_id: int):

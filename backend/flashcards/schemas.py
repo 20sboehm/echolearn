@@ -170,6 +170,7 @@ class DeckCards(Schema):
     cards: list[GetCard]
     stars:int
     order_List: list[int]
+    publicAccess: Optional[bool] = None
     
 class EditCards(Schema):
     question: Optional[str] = None

@@ -20,6 +20,7 @@ function DeckPage({ publicAccess = false }) {
 
   const [deleteMode, setDeleteMode] = useState(false);
   const { deckId } = useParams();
+  const [isPublicAccess, setIsPublicAccess] = useState(publicAccess);
 
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState('');
@@ -63,8 +64,9 @@ function DeckPage({ publicAccess = false }) {
     },
     {
       onSuccess: (data) => {
-        setItemKeys(data.order_List)
+        setItemKeys(data.order_List);
         setItems(reorderItems(data.cards, data.order_List));
+        setIsPublicAccess(data.publicAccess);
         console.log(data.order_List)
         console.log('Data fetched successfully:', items);
       },
@@ -356,12 +358,12 @@ function DeckPage({ publicAccess = false }) {
         <Sidebar refetchTrigger={refetchTrigger} onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
         <div className="w-[65vw] flex flex-col flex-grow transition-transform mx-[5vh] overflow-x-auto">
           <div className="flex flex-row">
-            <TopButtons deckCards={deckCards} publicAccess={publicAccess} deckId={deckId} handleDeleteDeck={handleDeleteDeck} />
+            <TopButtons deckCards={deckCards} publicAccess={isPublicAccess} deckId={deckId} handleDeleteDeck={handleDeleteDeck} />
 
-            <ProgressCircleGraph radius={radius} dashLength={dashLength} gapLength={gapLength} strokeDashoffset={strokeDashoffset} percentage={percentage} deckId={deckId} publicAccess={publicAccess} />
+            <ProgressCircleGraph radius={radius} dashLength={dashLength} gapLength={gapLength} strokeDashoffset={strokeDashoffset} percentage={percentage} deckId={deckId} publicAccess={isPublicAccess} />
           </div>
 
-          <MiddleButtons deckCards={deckCards} publicAccess={publicAccess} setStatus={setStatus} isCreateMode={isCreateMode}
+          <MiddleButtons deckCards={deckCards} publicAccess={isPublicAccess} setStatus={setStatus} isCreateMode={isCreateMode}
             handleCreateCard={handleCreateCard} toggleCreateMode={toggleCreateMode} handleCancelCreateCard={handleCancelCreateCard}
             handleTakeACopy={handleTakeACopy} isModalOpen={isModalOpen} folders={folders} handleFolderSelection={handleFolderSelection}
             setModalOpen={setModalOpen} deleteMode={deleteMode} changeMode={changeMode} />
@@ -371,7 +373,7 @@ function DeckPage({ publicAccess = false }) {
             <p className="text-black dark:text-edWhite">{deckCards.stars}</p>
           </button>
 
-          <div className={`${publicAccess ? 'h-[70vh]' : 'h-[50vh]'} overflow-y-auto border-t border-gray-500`}>
+          <div className={`${isPublicAccess ? 'h-[70vh]' : 'h-[50vh]'} overflow-y-auto border-t border-gray-500`}>
 
             {items.map((item, index) => (
               <div className={`flex font-medium mt-4 border border-edMedGray bg-elGray dark:bg-edDarker w-full ${deleteMode ? "hover:bg-[#ff000055] cursor-not-allowed" : ""}`}
@@ -460,7 +462,7 @@ function TopButtons({ deckCards, publicAccess, deckId, handleDeleteDeck, }) {
         null
       ) : (
         <button
-          button className="button-topDelete"
+          className="button-topDelete"
           onClick={handleDeleteDeck}
         >
           Delete Deck
