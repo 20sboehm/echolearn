@@ -19,10 +19,24 @@ def get_decks(request):
     decks = Deck.objects.filter(owner_id=request.user.id)
     return decks
 
-@decks_router.get("/AllPublicDecks", response={200: List[sc.GetDeck]}, auth=JWTAuth())
+@decks_router.get("/AllPublicDecks", response={200: List[sc.GetPublicDeck]}, auth=JWTAuth())
 def get_ALL_decks(request):
-    decks = Deck.objects.filter(isPublic = True)
-    return decks
+    decks = Deck.objects.filter(isPublic=True).select_related("owner")
+    
+    result = []
+    for deck in decks:
+        print(deck)
+        result.append({
+            "deck_id": deck.deck_id,
+            "owner_username": deck.owner.get_username(),
+            "name": deck.name,
+            "description": deck.description,
+            "created_at": deck.created_at.strftime("%d %B %Y"),
+            "last_edited": deck.last_edited.strftime("%d %B %Y"),
+            "favorites": deck.stars,
+        })
+    
+    return result
 
 @decks_router.get("/{deck_id}", response={200: sc.GetDeck, 404: str}, auth=JWTAuth())
 def get_deck(request, deck_id: int):

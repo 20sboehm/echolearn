@@ -21,7 +21,7 @@ import AboutPage from './pages/AboutPage';
 import ProfilePage from './pages/ProfilePage';
 import StatsPage from './pages/StatsPage';
 import FriendsPage from './pages/FriendsPage';
-import CommunityPage from './pages/community'
+import CommunityPage from './pages/CommunityPage'
 import QuizletParserPage from './pages/QuizletParserPage'
 
 const queryClient = new QueryClient();

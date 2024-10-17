@@ -74,6 +74,15 @@ class GetDeck(Schema):
     last_edited: datetime
     isPublic:bool
     order_List: list[int]
+
+class GetPublicDeck(Schema):
+    deck_id: int
+    owner_username: str
+    name: str
+    description: str
+    created_at: str
+    last_edited: str
+    favorites: int
     
 class CreateDeck(Schema):
     folder_id: int
