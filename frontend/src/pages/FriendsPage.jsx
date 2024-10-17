@@ -9,6 +9,7 @@ function FriendsPage() {
   const [searchResults, setSearchResults] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [error, setError] = useState(null);
+  const [searchPerformed, setSearchPerformed] = useState(false);
 
   const fetchFriends = async () => {
     try {
@@ -32,6 +33,7 @@ function FriendsPage() {
   const handleSearch = async () => {
     try {
       const response = await _get(`/api/friends/search/${searchQuery}`);
+      setSearchPerformed(true);
       if (response.ok) {
         const data = await response.json();
         setSearchResults(data);
@@ -174,6 +176,10 @@ function FriendsPage() {
           Search
         </button>
       </div>
+
+      {searchPerformed && searchResults.length === 0 && (
+        <p className='text-elDark dark:text-white mt-4'>No User Found</p>
+      )}
 
       {searchResults.length > 0 && (
         <ul className="mt-4">
