@@ -7,6 +7,7 @@ import editIconImg from "../assets/edit-icon.png"
 import LoadingSpinner from "../components/LoadingSpinner";
 import MarkdownPreviewer from "../components/MarkdownPreviewer";
 import { SpeakerIcon, StarIcon, HeartIcon, EditIcon } from "../components/Icons";
+import './Buttons.css';
 
 // import ReactPlayer from 'react-player';
 // import katex from 'katex';
@@ -447,14 +448,10 @@ function TopButtons({ deckCards, publicAccess, deckId, handleDeleteDeck, }) {
         null
       ) : (
         <div className="flex gap-4 mb-2">
-          <Link to={`/review/${deckId}`} className={`rounded-lg border border-transparent px-12 py-2 text-center
-                font-semibold bg-blue-500 hover:border-white text-white hover:text-black dark:text-edLightGray dark:hover:text-white active:scale-[0.97] active:bg-[#333] 
-                active:border-[#555]`} style={{ transition: "border-color 0.10s, color 0.10s" }}>
+          <Link to={`/review/${deckId}`} className="button-top">
             Study
           </Link>
-          <Link to={`/review/${deckId}?studyAll=true`} className={`rounded-lg border border-transparent px-12 py-2 text-center
-                font-semibold bg-blue-500 hover:border-white text-white hover:text-black dark:text-edLightGray dark:hover:text-white active:scale-[0.97] active:bg-[#333] 
-                active:border-[#555]`} style={{ transition: "border-color 0.10s, color 0.10s" }}>
+          <Link to={`/review/${deckId}?studyAll=true`} className="button-top">
             StudyAll
           </Link>
         </div>
@@ -463,8 +460,7 @@ function TopButtons({ deckCards, publicAccess, deckId, handleDeleteDeck, }) {
         null
       ) : (
         <button
-          className="mt-2 rounded-lg border border-transparent px-4 py-2 font-semibold bg-red-500 hover:border-white text-white hover:text-black dark:text-edLightGray dark:hover:text-white active:scale-[0.97] active:bg-[#333] active:border-[#555]"
-          style={{ transition: "border-color 0.10s, color 0.10s" }}
+          button className="button-topDelete"
           onClick={handleDeleteDeck}
         >
           Delete Deck
@@ -481,10 +477,9 @@ function MiddleButtons({ deckCards, publicAccess, setStatus, isCreateMode, handl
       <h1>{deckCards.cards.length} Cards</h1>
       <button
         disabled={publicAccess}
-        className={`${deckCards.isPublic ? "bg-green-600" : "bg-red-600"}
-              ${publicAccess ? "" : "active:scale-[0.97] hover:border-white text-white hover:text-black dark:text-edLightGray dark:hover:text-white"}
-              rounded-lg border border-transparent px-2 py-1 disabled:bg-gray-500 font-semibold`}
-        style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={setStatus}>
+        className={`button-common ${deckCards.isPublic ? "button-green" : "button-red"}
+            ${publicAccess ? "" : ""}`}
+            onClick={setStatus}>
         {deckCards.isPublic ? "Public" : "Private"}
       </button>
 
@@ -492,15 +487,13 @@ function MiddleButtons({ deckCards, publicAccess, setStatus, isCreateMode, handl
         null
       ) : (
         <div>
-          <button className={`${isCreateMode ? "bg-green-500" : "bg-blue-500"} rounded-lg border border-transparent px-2 py-1 
-              font-semibold hover:border-white text-white hover:text-black dark:text-edLightGray dark:hover:text-white active:scale-[0.97]`}
-            style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={isCreateMode ? handleCreateCard : toggleCreateMode}>
+          <button className={`button-common ${isCreateMode ? "button-green" : "button-blue"}`} 
+            onClick={isCreateMode ? handleCreateCard : toggleCreateMode}>
             {isCreateMode ? "Done" : "Create"}
           </button>
           {isCreateMode && (
-            <button className="bg-red-500 rounded-lg border border-transparent px-2 py-1 
-                font-semibold hover:border-white text-white hover:text-black dark:text-edLightGray dark:hover:text-white active:scale-[0.97]"
-              style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={handleCancelCreateCard}>
+            <button className={`button-common button-red`} 
+              onClick={handleCancelCreateCard}>
               Cancel
             </button>
           )}
@@ -508,19 +501,18 @@ function MiddleButtons({ deckCards, publicAccess, setStatus, isCreateMode, handl
       )}
 
       <div className="text-black dark:text-white">
-        <button type="button" onClick={handleTakeACopy}>Copy Deck</button>
+        <button type="button" className="button-common button-blue" onClick={handleTakeACopy}>Copy Deck</button>
         {isModalOpen && (
           <div className="modal">
             <div className="modal-content">
               <h2>Select a folder </h2>
               {folders.map(folder => (
-                <button className={`bg-edBlue rounded-lg border border-transparent px-2 py-1 
-                      font-semibold hover:border-white text-white hover:text-black dark:text-edLightGray dark:hover:text-white active:scale-[0.97]`}
+                <button className="button-common button-blue"
                   key={folder.folder_id} onClick={() => handleFolderSelection(folder.folder_id)}>
                   {folder.name}
                 </button>
               ))}
-              <button onClick={() => setModalOpen(false)}>Close</button>
+              <button className={`button-common button-red`} onClick={() => setModalOpen(false)}>Close</button>
             </div>
           </div>
         )}
@@ -529,9 +521,7 @@ function MiddleButtons({ deckCards, publicAccess, setStatus, isCreateMode, handl
       {publicAccess ? (
         null
       ) : (
-        <button className={`${deleteMode ? "bg-red-500" : "bg-blue-500"} rounded-lg border border-transparent px-2 py-1 
-              text-white hover:text-black dark:text-edLightGray dark:hover:text-white font-semibold hover:border-white active:scale-[0.97]`}
-          style={{ transition: "border-color 0.10s, color 0.10s" }} onClick={changeMode}>
+        <button className={`button-common ${deleteMode ? "button-red" : "button-blue"}`} onClick={changeMode}>
           {deleteMode ? "Cancel" : "Delete"}
         </button>
       )}
@@ -555,9 +545,7 @@ function ProgressCircleGraph({ radius, dashLength, gapLength, strokeDashoffset, 
         </text>
       </svg>
       <Link to={`/stats/${deckId}`}>
-        <button className={`rounded-lg border border-transparent px-4 py-2 text-center
-          font-semibold bg-blue-500 hover:border-white text-white hover:text-black dark:text-edLightGray dark:hover:text-white active:scale-[0.97] active:bg-[#333] 
-          active:border-[#555]`} style={{ transition: "border-color 0.10s, color 0.10s" }}>
+        <button className="button-top">
           More Statistics</button>
       </Link>
     </div>

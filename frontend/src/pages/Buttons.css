@@ -1,0 +1,97 @@
+/* Big ones*/
+.button-top {
+    border-radius: 0.5rem;
+    border: 1px solid transparent;
+    padding: 0.5rem 3rem;
+    text-align: center;
+    font-weight: 600;
+    background-color: #0078d4; /* edBlue */
+    color: #f7f7f7;
+    transition: background-color 0.10s, border-color 0.10s, color 0.10s;
+}
+
+.button-top:hover {
+    transform: scale(0.97);
+    background-color: #0082e6; /* elLightBlue */
+}
+
+.button-top:active {
+    transform: scale(0.97);
+}
+
+.button-topDelete {
+    border-radius: 0.5rem;
+    border: 1px solid transparent;
+    padding: 0.5rem 1.5rem;
+    text-align: center;
+    font-weight: 600;
+    background-color: #D2042D; /* edRed */
+    color: #f7f7f7;
+    transition: background-color 0.10s, border-color 0.10s, color 0.10s;
+}
+
+.button-topDelete:hover {
+    transform: scale(0.97);
+    background-color: #f30535;
+}
+
+.button-topDelete:active {
+    transform: scale(0.97);
+}
+
+  /* Small ones */
+  .button-common {
+    border-radius: 0.5rem;
+    border: 1px solid transparent;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    transition: background-color 0.10s, border-color 0.10s, color 0.10s;
+    text-align: center;
+    color: #f7f7f7;
+    background-color: #0078d4;
+}
+
+.button-common:hover {
+    transform: scale(0.97);
+    background-color: #0082e6;
+}
+
+.button-common:active {
+    transform: scale(0.97);
+}
+
+.button-common:disabled {
+    background-color: #999;
+}
+
+.button-common:disabled:hover {
+    transform: scale(1);
+    background-color: #999;
+}
+
+.button-green {
+    background-color: #009355;
+}
+
+.button-green:hover {
+    transform: scale(0.97);
+    background-color: #01b86c;
+}
+
+.button-red {
+    background-color: #D2042D;
+}
+
+.button-red:hover {
+    transform: scale(0.97);
+    background-color: #f30535;
+}
+
+.button-blue {
+    background-color: #0078d4;
+}
+
+.button-blue:hover {
+    transform: scale(0.97);
+    background-color: #0082e6;
+}

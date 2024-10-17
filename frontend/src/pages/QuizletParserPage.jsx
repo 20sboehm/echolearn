@@ -5,6 +5,7 @@ import MarkdownPreviewer from "../components/MarkdownPreviewer";
 import { useQuery } from "react-query";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { useNavigate, useLocation } from "react-router-dom";
+import './Buttons.css';
 
 function QuizletParserPage() {
   const api = useApi();
@@ -175,9 +176,7 @@ function QuizletParserPage() {
         </div>
 
         <form onSubmit={handleQuizletParser} className='flex flex-col items-center'>
-          <button type='button' onClick={handleBackButton} className="rounded-lg border border-black hover:border-elMedGray hover:text-elDark 
-              dark:border-transparent dark:hover:border-black dark:hover:text-white py-2 text-center self-start w-1/4 mb-2
-              font-semibold bg-elLightBlue text-white active:scale-[0.97] active:border-[#555]">
+          <button type='button' onClick={handleBackButton} className="rounded-lg button-common button-blue text-center self-start w-1/4 mb-2 font-semibold">
             Back
           </button>
           <p className="text-elDark dark:text-edWhite">
@@ -189,9 +188,8 @@ function QuizletParserPage() {
             <textarea value={quizletInput} onChange={(e) => setquizletInput(e.target.value)} className="text-black dark:text-white dark:bg-edDarker w-full min-h-20 h-40 p-2 border border-edDarkGray focus:outline-none custom-scrollbar"
               placeholder="question | answer {|}"></textarea>
           </div>
-          <button type='submit' className="rounded-lg border border-black hover:border-elMedGray hover:text-elDark 
-              dark:border-transparent dark:hover:border-black dark:hover:text-white py-2 text-center w-1/4 mb-2
-              font-semibold bg-elLightBlue text-white active:scale-[0.97] active:border-[#555]">
+          <button type='submit' className="button-common button-blue font-semibold py-2 text-center w-1/4 mb-2
+              font-semibold">
             Submit
           </button>
 
