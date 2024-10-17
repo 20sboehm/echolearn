@@ -1,6 +1,6 @@
 from ninja import Schema
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
 from typing import Union
 
 """
@@ -12,18 +12,30 @@ Schemas are used to define the structure of the data that your API endpoints can
 # -----------------------------------------------
 
 class GetUser(Schema):
+    id: int
     username: str
     email: Optional[str] = None
     age: Optional[int] = None
     country: Optional[str] = None
+    flip_mode: Optional[bool] = None
+    sidebar_open: Optional[bool] = None
+    light_mode: Optional[bool] = None
+
+    class Config:
+        orm_mode = True
 
 class UserLogin(Schema):
     username: str
     userpassword: str
 
 class UpdateUser(Schema):
-    age: Union[int, None]
+    username: Optional[str] = None
+    email: Optional[str] = None
+    age: Optional[int] = None
     country: Optional[str] = None
+    flip_mode: Optional[bool] = None
+    sidebar_open: Optional[bool] = None
+    light_mode: Optional[bool] = None
 
 # class GetUser(Schema):
     
@@ -61,7 +73,8 @@ class GetDeck(Schema):
     created_at: datetime
     last_edited: datetime
     isPublic:bool
-
+    order_List: list[int]
+    
 class CreateDeck(Schema):
     folder_id: int
     name: str
@@ -72,6 +85,9 @@ class UpdateDeck(Schema):
     description: Optional[str] = None
     folder_id: Optional[int] = None
 
+
+
+
 # -----------------------------------------------
 # -------------------- Cards --------------------
 # -----------------------------------------------
@@ -81,12 +97,12 @@ class GetCard(Schema):
     deck_id: int
     question: str
     answer: str
-    questionvideolink:str
-    answervideolink:str
-    questionimagelink:str
-    answerimagelink:str
-    questionlatex:str
-    answerlatex:str
+    # questionvideolink: str
+    # answervideolink: str
+    # questionimagelink: str
+    # answerimagelink: str
+    # questionlatex: str
+    # answerlatex: str
     bucket: int
     last_reviewed: datetime
     next_review: datetime
@@ -95,6 +111,7 @@ class GetCard(Schema):
     is_new: bool
     correct_count: int
     incorrect_count: int
+    review_history: list[datetime]
 
 class UpdateCard(Schema):
     question: Optional[str] = None
@@ -102,37 +119,34 @@ class UpdateCard(Schema):
     bucket: Optional[int] = None
     next_review: Optional[datetime] = None
     last_reviewed: Optional[datetime] = None
-    questionvideolink: Optional[str] = None
-    answervideolink: Optional[str] = None
-    questionimagelink: Optional[str] = None
-    answerimagelink: Optional[str] = None
-    questionlatex: Optional[str] = None
-    answerlatex: Optional[str] = None
+    # questionvideolink: Optional[str] = None
+    # answervideolink: Optional[str] = None
+    # questionimagelink: Optional[str] = None
+    # answerimagelink: Optional[str] = None
+    # questionlatex: Optional[str] = None
+    # answerlatex: Optional[str] = None
     correct_count: Optional[int] = None
     incorrect_count: Optional[int] = None
+    review_history: Optional[list[datetime]] = None
 
 class CreateCard(Schema):
     deck_id: int
     question: str
     answer: str
-    questionvideolink:str
-    answervideolink:str
-    questionimagelink:str
-    answerimagelink:str
-    questionlatex:str
-    answerlatex:str
 
 class Cards(Schema):
     card_id: int
     question: str
     answer: str
     bucket: int
-    questionvideolink:str
-    answervideolink:str
-    questionimagelink:str
-    answerimagelink:str
-    questionlatex:str
-    answerlatex:str
+    # questionvideolink:str
+    # answervideolink:str
+    # questionimagelink:str
+    # answerimagelink:str
+    # questionlatex:str
+    # answerlatex:str
+    correct_count: int = None
+    incorrect_count: int = None
     next_review: datetime
 
 class ReviewCards(Schema):
@@ -145,11 +159,15 @@ class DeckCards(Schema):
     isPublic:bool
     deck_name: str
     cards: list[GetCard]
-
+    stars:int
+    order_List: list[int]
+    
 class EditCards(Schema):
     question: Optional[str] = None
     answer: Optional[str] = None
-
+    
+class CreateMultipleCard(Schema):
+    cards: list[CreateCard]
 # -----------------------------------------------
 # ------------------ Sidebar --------------------
 # -----------------------------------------------
@@ -167,3 +185,16 @@ class FolderInfo(Schema):
 
 class GetSidebar(Schema):
     folders: list[FolderInfo]
+
+# -----------------------------------------------
+# ------------------ Friend list ----------------
+# -----------------------------------------------
+
+class Friend(Schema):
+    username: str
+    email: Optional[str] = None
+    age: Optional[int] = None
+    country: Optional[str] = None
+
+class GetFriends(Schema):
+    friends: List[Friend]

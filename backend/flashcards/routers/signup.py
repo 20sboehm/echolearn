@@ -19,7 +19,15 @@ def sign_up(request):
 
         if not username:
             print("No username provided.")
-            return JsonResponse({"detail": "Username is required."}, status=409)
+            return JsonResponse({"detail": "No name."}, status=409)
+        
+        if not email:
+            print("No email provided")
+            return JsonResponse({"detail": "Empty email."}, status=409)
+        
+        if not password:
+            print("No password provid")
+            return JsonResponse({"detail": "Require password."}, status=409)
 
         if CustomUser.objects.filter(username=username).exists():
             print("Username already exists.")
@@ -46,18 +54,21 @@ def sign_up(request):
             folder=default_foler
         )
 
-        Card.objects.create(
+        card1 = Card.objects.create(
             deck=default_deck,
             question="question1",
             answer="answer1"
         )
 
-        Card.objects.create(
+        card2 = Card.objects.create(
             deck=default_deck,
             question="question2",
             answer="answer2"
         )
 
+        default_deck.order_List=[card1.card_id, card2.card_id]
+        default_deck.save()
+        
         print(f"**User created successfully: {user.username}")
 
         return JsonResponse({

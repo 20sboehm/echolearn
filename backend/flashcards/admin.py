@@ -7,7 +7,7 @@ class CardAdmin(admin.ModelAdmin):
     list_display = ('card_id', 'deck', 'question', 'answer', 'bucket', 'last_reviewed', 'next_review', 'created_at', 'last_edited')
 
 class DeckAdmin(admin.ModelAdmin):
-    list_display = ('deck_id', 'folder', 'owner', 'name', 'description', 'statistics', 'created_at', 'last_edited')
+    list_display = ('deck_id', 'folder', 'owner', 'name', 'description', 'statistics', 'created_at', 'last_edited', 'order_List')
 
 class FolderAdmin(admin.ModelAdmin):
     list_display = ('folder_id', 'name', 'owner', 'created_at', 'last_edited')

@@ -1,5 +1,5 @@
 from ninja import Router
-from flashcards.models import CustomUser, Folder, Deck
+from flashcards.models import CustomUser, Folder, Deck, Rating
 from flashcards.schemas import GetUser, UpdateUser, FolderInfo, DeckInfo
 from ninja_jwt.authentication import JWTAuth
 
@@ -11,10 +11,14 @@ def get_profile(request):
     user = request.auth
 
     return {
+        "id": user.id,
         "username": user.username,
         "email": user.email,
         "age": user.age,
-        "country": user.country
+        "country": user.country,
+        "flip_mode": user.flip_mode,
+        "sidebar_open": user.sidebar_open,
+        "light_mode": user.light_mode,
     }
 
 # Edit profile
@@ -22,12 +26,27 @@ def get_profile(request):
 def update_profile(request, data: UpdateUser):
     user = request.auth
 
+    if data.username is not None:
+        user.username = data.username
+    
+    if data.email is not None:
+        user.email = data.email
+
     if data.age is not None:
         user.age = data.age
     
     if data.country is not None:
-        user.country = data.country if data.country != "" else None
+        user.country = data.country if data.country != " " else None
+
+    if data.flip_mode is not None:
+        user.flip_mode = data.flip_mode
     
+    if data.sidebar_open is not None:
+        user.sidebar_open = data.sidebar_open
+
+    if data.light_mode is not None:
+        user.light_mode = data.light_mode
+
     user.save()
     return user
 
@@ -67,3 +86,18 @@ def get_folders_and_decks(request):
         folder_list.append(get_folder_data(folder, user))
     
     return folder_list
+
+@profile_router.get("/ALLRatedDecks", response=list[dict], auth=JWTAuth())
+def ALL_rated_deck(request):
+    user = request.user
+    rate_existed = Rating.objects.filter(user=user)
+    rated_decks = []
+    for rating in rate_existed:
+        deck = Deck.objects.get(deck_id = rating.deck.deck_id)
+        rated_decks.append({
+            "deck_id":deck.deck_id,
+            "Owner":deck.owner_id,
+            "Description":deck.description,
+            "name":deck.name
+        })
+    return 200,rated_decks

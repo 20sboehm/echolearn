@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { useApi, useApiWithoutToken } from '../hooks';
-import { FormInputButton, FormInputBox, FormInputLabel } from './FormInput';
+import { FormInputButton, FormInputBox, FormInputLabel } from '../components/FormInput';
 
 function SignUp() {
   const [username, setUsername] = useState('');
@@ -72,9 +72,15 @@ function SignUp() {
 
         console.log("*error*:" + error.message)
         if (error.message.includes("Username")) {
-          popupDetails('Registration failed: Username already exists.', 'red');
-        } else if (error.message.includes("Email")) {
-          popupDetails('Registration failed: Email already exists.', 'red');
+          popupDetails('Username already exists.', 'red');
+        } else if (error.message.includes("Email already exists")) {
+          popupDetails('Email already exists.', 'red');
+        } else if (error.message.includes("No")) {
+          popupDetails('Please provid username.', 'red');
+        } else if (error.message.includes("Empty")) {
+          popupDetails('Please provid email.', 'red');
+        } else if (error.message.includes("password")) {
+          popupDetails('Please provid password.', 'red');
         } else {
           popupDetails('Registration failed: An unknown error occurred.', 'red');
         }
@@ -86,23 +92,23 @@ function SignUp() {
 
   return (
     <>
-      <form onSubmit={handleSubmit} className='flex flex-col items-start mt-20 p-10 bg-eBlack'>
+      <form onSubmit={handleSubmit} className='flex flex-col items-start mt-20 p-10 bg-edDarker'>
         <h1 className=' mb-5 text-3xl font-bold self-center'>Sign up</h1>
 
         <FormInputLabel htmlFor="email">Email</FormInputLabel>
-        <FormInputBox idAndName="email" value={email} onChange={e => setEmail(e.target.value)} autoFocus={true} placeholder="Email"></FormInputBox>
+        <FormInputBox idAndName="email" value={email} type="email" onChange={e => setEmail(e.target.value)} autoFocus={true} placeholder="Email" required ></FormInputBox>
 
         <FormInputLabel htmlFor="username">Username</FormInputLabel>
-        <FormInputBox idAndName="username" value={username} onChange={e => setUsername(e.target.value)} placeholder="Username"></FormInputBox>
+        <FormInputBox idAndName="username" value={username} type="text" onChange={e => setUsername(e.target.value)} placeholder="Username" required ></FormInputBox>
 
         <FormInputLabel htmlFor="password">Password</FormInputLabel>
-        <FormInputBox idAndName="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password"></FormInputBox>
+        <FormInputBox idAndName="password" value={password} type="password" onChange={e => setPassword(e.target.value)} placeholder="Password" required ></FormInputBox>
 
         <FormInputButton isPrimaryButton={true}>Register</FormInputButton>
         <div className='flex flex-row justify-center items-center mt-4 w-full'>
-          <span className='flex-grow border-b border-eGray h-1'></span>
-          <p className='self-center text-eGray mx-2'>or</p>
-          <span className='flex-grow border-b border-eGray h-1'></span>
+          <span className='flex-grow border-b border-edGray h-1'></span>
+          <p className='self-center text-edGray mx-2'>or</p>
+          <span className='flex-grow border-b border-edGray h-1'></span>
         </div>
         <FormInputButton navigateTo="/login">Log in</FormInputButton>
       </form>
