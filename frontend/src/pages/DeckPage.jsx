@@ -376,7 +376,7 @@ function DeckPage({ publicAccess = false }) {
                     </Link>
                     <Link to={`/stats/${deckId}`}>
                       <button className="button-top">
-                        More Statistics</button>
+                        Statistics</button>
                     </Link>
                     <button disabled={publicAccess} className={`button-top ${deckCards.isPublic ? "button-green" : "button-red"} ${publicAccess ? "" : ""}`}
                       onClick={setStatus}> {deckCards.isPublic ? "Public" : "Private"} </button>
