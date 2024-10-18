@@ -55,10 +55,11 @@ function CreateCardPage() {
     <>
       <div className='flex w-full h-full'>
         <Sidebar onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
-        <div className="w-1/2 flex flex-col mx-auto">
-          <div className="flex justify-between border-b-2 border-edMedGray mb-4 mt-8 pb-1">
-            <h1 className="text-xl text-elDark dark:text-edWhite font-medium">New Card</h1>
-            <select id="selectDeck" value={deckId} onChange={(e) => setDeckId(e.target.value)} className='text-black bg-elGray border border-black dark:bg-edDarker dark:text-edWhite focus:outline-none' >
+        <div className="w-full flex flex-col mx-[15%]">
+          <div className="flex justify-between items-end border-b border-elDividerGray dark:border-edDividerGray mb-4 mt-8 pb-2">
+            <h1 className="text-[2rem] text-elDark dark:text-edWhite font-medium">New Card</h1>
+            <select id="selectDeck" value={deckId} onChange={(e) => setDeckId(e.target.value)}
+              className='text-black bg-elGray dark:bg-edDarker dark:text-edWhite focus:outline-none h-8 mb-1' >
               <option key='select-deck-key' value=''>Select a deck</option>
               {decks.map((deck) => (
                 <option key={deck.deck_id} value={deck.deck_id}>{deck.name}</option>
@@ -66,7 +67,7 @@ function CreateCardPage() {
             </select>
           </div>
 
-          <button type="button" onClick={() => navigate("/quizletparser", { state: { deckId: deckId } })} className="button-common button-blue py-2 text-center w-1/4 mb-2 font-semibold">quizlet parser</button>
+          <button type="button" onClick={() => navigate("/quizletparser", { state: { deckId: deckId } })} className="button-common button-blue py-2 text-center w-1/4 mb-4 font-semibold">quizlet parser</button>
 
           <MarkdownEditor requestType="post" submitButtonText="Create Card" questionText={questionText} setQuestionText={setQuestionText}
             answerText={answerText} setAnswerText={setAnswerText} deckId={deckId} />

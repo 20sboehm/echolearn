@@ -46,10 +46,11 @@ function CommunityPage() {
       <>
         <div className='flex w-full h-full'>
           <Sidebar onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
-          <div className="flex flex-col items-center flex-grow">
+          {/* <div className="flex flex-col items-center flex-grow"> */}
+          <div className="w-full flex flex-col mx-[15%]">
             {decks && decks.length > 0 ? (
-              <div className="h-full overflow-y-hidden w-[70%]">
-                <h1 className="text-xl text-elDark dark:text-edWhite font-medium mt-8 mb-4 border-b border-edMedGray">Public Decks</h1>
+              <>
+                <h1 className="text-[2rem] text-elDark dark:text-edWhite font-medium mt-8 mb-4 border-b border-elDividerGray dark:border-edDividerGray pb-1">Public Decks</h1>
                 <input
                   type="text"
                   value={searchQuery}
@@ -57,7 +58,7 @@ function CommunityPage() {
                   placeholder="Filter by deck title..."
                   className="mb-4 p-2 rounded-md w-full focus:outline-none bg-elCloudWhite text-black dark:bg-edDarker dark:text-edWhite"
                 />
-                <div className="overflow-y-auto border-b border-eMedGray max-h-[calc(100vh-16rem)] grid grid-cols-3 gap-4">
+                <div className="overflow-y-auto border-b-4 border-elDividerGray dark:border-edDividerGray max-h-[calc(100vh-16rem)] grid grid-cols-3 gap-4">
                   {filteredDecks.map(deck => (
                     <div key={deck.deck_id} className="h-[30vh] rounded-xl bg-elCloudWhite text-black dark:bg-edDarker 
                     dark:text-edWhite mt-2 p-3 relative border border-edDarker" style={{ minHeight: '100px' }}>
@@ -83,7 +84,7 @@ function CommunityPage() {
                   ))}
                 </div>
 
-              </div>
+              </>
             ) : (
               <div>Loading...</div>
             )}

@@ -15,7 +15,7 @@ function HomePage() {
         <Sidebar onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
         <div className="flex flex-col flex-grow mt-10 overflow-x-auto items-center">
           <div className="mx-auto">
-            <h1 className="font-bold text-[2rem] mb-6 text-elDark border-b border-elDarkGray dark:text-edWhite dark:border-edMedGray">Today's Task List</h1>
+            <h1 className="font-bold text-[2rem] mb-6 text-elDark border-b border-elDarkGray dark:text-edWhite dark:border-edDividerGray">Today's Task List</h1>
             <TaskList />
           </div>
         </div>
@@ -51,14 +51,14 @@ function TaskList() {
 
   if (decks && cards) {
     return (
-      <div className="text-2xl text-left border border-edMedGray rounded-md">
+      <div className="text-2xl text-left border border-elDividerGray dark:border-edMedGray rounded-md">
         <ul className="w-[80vw] sm:[75vw] md:w-[50vw] text-xs sm:text-sm lg:text-xl">
-          <li className="flex font-semibold border-eGray px-2 py-3 rounded-t-lg text-elCloudWhite bg-elLightBlue dark:bg-edDark dark:text-edWhite">
+          <li className="flex font-semibold px-2 py-3 rounded-t-lg text-elCloudWhite bg-elLightBlue dark:bg-edDark dark:text-edWhite">
             <div className="w-[45%]">Deck</div>
             <div className="w-[15%]">New</div>
             <div className="w-[15%]">Review</div>
           </li>
-          <ScrollContainer className="border">
+          <ScrollContainer>
             {decks.map((deck) => {
               return <DeckRow key={deck.deck_id} deck={deck} cards={cards} />
             })}
@@ -78,7 +78,7 @@ function DeckRow({ deck, cards }) {
   }
 
   return (
-    <li className="flex px-2 py-2 text-elDark hover:bg-elStrongHLT dark:text-edWhite dark:hover:bg-edHLT dark:border-edMedGray border-t">
+    <li className="flex px-2 py-2 text-elDark hover:bg-elStrongHLT dark:text-edWhite dark:hover:bg-edHLT dark:border-edDividerGray border-t">
       <div className="flex items-center w-[45%]">
         <Link to={`/decks/${deck.deck_id}`} className="hover:text-eBlue hover:text-elSkyBlue dark:hover:text-edLightBlue">{deck.name}</Link>
       </div>

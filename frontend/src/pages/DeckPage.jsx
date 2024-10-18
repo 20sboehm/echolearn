@@ -356,27 +356,102 @@ function DeckPage({ publicAccess = false }) {
     <>
       <div className="flex flex-row w-full h-full">
         <Sidebar refetchTrigger={refetchTrigger} onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
-        <div className="w-[65vw] flex flex-col flex-grow transition-transform mx-[5vh] overflow-x-auto">
-          <div className="flex flex-row">
-            <TopButtons deckCards={deckCards} publicAccess={isPublicAccess} deckId={deckId} handleDeleteDeck={handleDeleteDeck} />
+        <div className="w-full flex flex-col mx-[15%] max-h-[calc(100vh-5rem)] border-b border-elDividerGray dark:border-edDividerGray">
+          <h1 className="text-[2rem] text-elDark dark:text-edWhite font-medium mt-8 mb-4 
+          border-b w-full border-elDividerGray dark:border-edDividerGray pb-1">
+            {deckCards.deck_name} <span className="font-normal text-xl">({deckCards.cards.length} Cards)</span></h1>
+          <div className="flex">
+            {/* <TopButtons deckCards={deckCards} publicAccess={isPublicAccess} deckId={deckId} handleDeleteDeck={handleDeleteDeck} /> */}
+            <div className="flex flex-col">
+              {publicAccess ? (
+                null
+              ) : (
+                <div className="flex items-start mb-4 pb-4 gap-2 border-b border-elDividerGray dark:border-edDividerGray">
+                  <>
+                    <Link to={`/review/${deckId}`} className="button-top">
+                      Study
+                    </Link>
+                    <Link to={`/review/${deckId}?studyAll=true`} className="button-top">
+                      StudyAll
+                    </Link>
+                    <Link to={`/stats/${deckId}`}>
+                      <button className="button-top">
+                        More Statistics</button>
+                    </Link>
+                    <button disabled={publicAccess} className={`button-top ${deckCards.isPublic ? "button-green" : "button-red"} ${publicAccess ? "" : ""}`}
+                      onClick={setStatus}> {deckCards.isPublic ? "Public" : "Private"} </button>
+                    <button
+                      className="button-topDelete"
+                      onClick={handleDeleteDeck}
+                    >
+                      Delete Deck
+                    </button>
 
-            <ProgressCircleGraph radius={radius} dashLength={dashLength} gapLength={gapLength} strokeDashoffset={strokeDashoffset} percentage={percentage} deckId={deckId} publicAccess={isPublicAccess} />
+                  </>
+                </div>
+              )}
+              <div className="flex flex-row items-start text-black dark:text-edLightGray gap-2 mb-4">
+                {!publicAccess ? (
+                  null
+                ) : (
+                  <div className="text-black dark:text-white">
+                    <button type="button" className="button-common button-blue" onClick={handleTakeACopy}>Copy Deck</button>
+                    {isModalOpen && (
+                      <div className="modal">
+                        <div className="modal-content">
+                          <h2>Select a folder </h2>
+                          {folders.map(folder => (
+                            <button className="button-common p-1 button-blue mr-1"
+                              key={folder.folder_id} onClick={() => handleFolderSelection(folder.folder_id)}>
+                              {folder.name}
+                            </button>
+                          ))}
+                          <button className={`button-common p-1 button-red`} onClick={() => setModalOpen(false)}>Close</button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+                {publicAccess ? (
+                  null
+                ) : (
+                  <>
+                    <div>
+                      <button className={`button-common ${isCreateMode ? "button-green" : "button-blue"}`}
+                        onClick={isCreateMode ? handleCreateCard : toggleCreateMode}>
+                        {isCreateMode ? "Done" : "Create Card"}
+                      </button>
+                      {isCreateMode && (
+                        <button className={`button-common button-red mx-2`} onClick={handleCancelCreateCard}> Cancel </button>
+                      )}
+                    </div>
+                    <button className={`button-common ${deleteMode ? "button-red" : "button-blue"}`} onClick={changeMode}>
+                      {deleteMode ? "Cancel" : "Delete Card"}
+                    </button>
+                  </>
+                )}
+                <button onClick={submitRating} id="button-preview" aria-labelledby="tooltip-1f7d89ff-668b-406b-9c3f-e3e313ecdc97" type="button" data-view-component="true" className="w-[5vw] Button Button--iconOnly Button--secondary Button--medium inline-flex items-center space-x-2 p-2">
+                  <HeartIcon isFilled={Rateresult} />
+                  <p className="text-black dark:text-edWhite">{deckCards.stars}</p>
+                </button>
+              </div>
+            </div>
+            {publicAccess ? (
+              null
+            ) : (
+              <ProgressCircleGraph radius={radius} dashLength={dashLength} gapLength={gapLength} strokeDashoffset={strokeDashoffset} percentage={percentage} deckId={deckId} publicAccess={isPublicAccess} />
+            )}
           </div>
 
-          <MiddleButtons deckCards={deckCards} publicAccess={isPublicAccess} setStatus={setStatus} isCreateMode={isCreateMode}
+          {/* <MiddleButtons deckCards={deckCards} publicAccess={isPublicAccess} setStatus={setStatus} isCreateMode={isCreateMode}
             handleCreateCard={handleCreateCard} toggleCreateMode={toggleCreateMode} handleCancelCreateCard={handleCancelCreateCard}
             handleTakeACopy={handleTakeACopy} isModalOpen={isModalOpen} folders={folders} handleFolderSelection={handleFolderSelection}
-            setModalOpen={setModalOpen} deleteMode={deleteMode} changeMode={changeMode} />
+            setModalOpen={setModalOpen} deleteMode={deleteMode} changeMode={changeMode} /> */}
 
-          <button onClick={submitRating} id="button-preview" aria-labelledby="tooltip-1f7d89ff-668b-406b-9c3f-e3e313ecdc97" type="button" data-view-component="true" className="w-[5vw] Button Button--iconOnly Button--secondary Button--medium inline-flex items-center space-x-2 p-2">
-            <HeartIcon isFilled={Rateresult} />
-            <p className="text-black dark:text-edWhite">{deckCards.stars}</p>
-          </button>
-
-          <div className={`${isPublicAccess ? 'h-[70vh]' : 'h-[50vh]'} overflow-y-auto border-t border-gray-500`}>
+          <div className={`flex flex-col items-center flex-grow overflow-y-auto border-t border-elDividerGray dark:border-edDividerGray`}>
 
             {items.map((item, index) => (
-              <div className={`flex font-medium mt-4 border border-edMedGray bg-elGray dark:bg-edDarker w-full ${deleteMode ? "hover:bg-[#ff000055] cursor-not-allowed" : ""}`}
+              <div className={`flex font-medium mt-4 border border-elDividerGray dark:border-edDividerGray rounded-2xl bg-elGray dark:bg-edDarker w-[99%] ${deleteMode ? "hover:bg-[#ff000055] cursor-not-allowed" : ""}`}
                 key={item.card_id} onClick={() => { handleCardClick(item.card_id) }}
                 draggable
                 onDragStart={(e) => handleDragStart(e, index)}
@@ -384,19 +459,19 @@ function DeckPage({ publicAccess = false }) {
                 onDrop={(e) => handleDrop(e, index)}
               >
 
-                <div className={`relative w-1/2 flex flex-col pr-4 border-r border-edMedGray`}>
-                  <MarkdownPreviewer content={item.question} className="bg-elGray dark:bg-edDarker flex-1 p-2 min-h-20" />
-                  <Link to={`/edit/${item.card_id}`} className="absolute top-8 right-0.5">
+                <div className={`relative w-1/2 flex flex-col pr-4 border-r border-elDividerGray dark:border-edDividerGray`}>
+                  <MarkdownPreviewer content={item.question} className="bg-elGray dark:bg-edDarker flex-1 p-2 min-h-20 rounded-2xl" />
+                  <Link to={`/edit/${item.card_id}`} className="absolute top-8 right-2">
                     <EditIcon />
                   </Link>
-                  <Link onClick={() => speakText(item.question)} className="absolute top-2 right-0.5">
+                  <Link onClick={() => speakText(item.question)} className="absolute top-2 right-2">
                     <SpeakerIcon />
                   </Link>
                 </div>
 
                 <div className="relative w-1/2 flex flex-col">
-                  <MarkdownPreviewer content={item.answer} className="bg-elGray dark:bg-edDarker flex-1 p-2" />
-                  <Link onClick={() => speakText(item.answer)} className="absolute top-2 right-0.5">
+                  <MarkdownPreviewer content={item.answer} className="bg-elGray dark:bg-edDarker flex-1 p-2 rounded-2xl" />
+                  <Link onClick={() => speakText(item.answer)} className="absolute top-2 right-2">
                     <SpeakerIcon />
                   </Link>
                 </div>
@@ -442,95 +517,89 @@ function DeckPage({ publicAccess = false }) {
   )
 }
 
-function TopButtons({ deckCards, publicAccess, deckId, handleDeleteDeck, }) {
-  return (
-    <div className="flex flex-col items-start">
-      <h1 className="text-4xl font-bold my-4 text-black dark:text-edLightGray">{deckCards.deck_name}</h1>
-      {publicAccess ? (
-        null
-      ) : (
-        <div className="flex gap-4 mb-2">
-          <Link to={`/review/${deckId}`} className="button-top">
-            Study
-          </Link>
-          <Link to={`/review/${deckId}?studyAll=true`} className="button-top">
-            StudyAll
-          </Link>
-        </div>
-      )}
-      {publicAccess ? (
-        null
-      ) : (
-        <button
-          className="button-topDelete"
-          onClick={handleDeleteDeck}
-        >
-          Delete Deck
-        </button>
-      )}
-    </div>
-  )
-}
+// function TopButtons({ deckCards, publicAccess, deckId, handleDeleteDeck, }) {
+//   return (
+//     <div className="flex flex-col items-start">
+//       {/* <h1 className="text-4xl font-bold my-4 text-black dark:text-edLightGray">{deckCards.deck_name}</h1> */}
+//       <h1 className="text-[2rem] text-elDark dark:text-edWhite font-medium mt-8 mb-4 border-b w-[40vw] border-elDividerGray dark:border-edDividerGray pb-1">{deckCards.deck_name}</h1>
+//       {publicAccess ? (
+//         null
+//       ) : (
+//         <div className="flex gap-4 mb-2">
+//           <Link to={`/review/${deckId}`} className="button-top">
+//             Study
+//           </Link>
+//           <Link to={`/review/${deckId}?studyAll=true`} className="button-top">
+//             StudyAll
+//           </Link>
+//         </div>
+//       )}
+//       {publicAccess ? (
+//         null
+//       ) : (
+//         <button
+//           className="button-topDelete"
+//           onClick={handleDeleteDeck}
+//         >
+//           Delete Deck
+//         </button>
+//       )}
+//     </div>
+//   )
+// }
 
-function MiddleButtons({ deckCards, publicAccess, setStatus, isCreateMode, handleCreateCard, toggleCreateMode, handleCancelCreateCard,
-  handleTakeACopy, isModalOpen, folders, handleFolderSelection, setModalOpen, deleteMode, changeMode }) {
-  return (
-    <div className="flex flex-row items-center text-black dark:text-edLightGray justify-between mt-2 mb-4 border-t border-gray-500 pt-4">
-      <h1>{deckCards.cards.length} Cards</h1>
-      <button
-        disabled={publicAccess}
-        className={`button-common ${deckCards.isPublic ? "button-green" : "button-red"}
-            ${publicAccess ? "" : ""}`}
-        onClick={setStatus}>
-        {deckCards.isPublic ? "Public" : "Private"}
-      </button>
+// function MiddleButtons({ deckCards, publicAccess, setStatus, isCreateMode, handleCreateCard, toggleCreateMode, handleCancelCreateCard,
+//   handleTakeACopy, isModalOpen, folders, handleFolderSelection, setModalOpen, deleteMode, changeMode }) {
+//   return (
+//     <div className="flex flex-row items-center text-black dark:text-edLightGray justify-between mt-2 mb-4 border-t border-gray-500 pt-4">
+//       <h1>{deckCards.cards.length} Cards</h1>
 
-      {publicAccess ? (
-        null
-      ) : (
-        <div>
-          <button className={`button-common ${isCreateMode ? "button-green" : "button-blue"}`}
-            onClick={isCreateMode ? handleCreateCard : toggleCreateMode}>
-            {isCreateMode ? "Done" : "Create"}
-          </button>
-          {isCreateMode && (
-            <button className={`button-common button-red`}
-              onClick={handleCancelCreateCard}>
-              Cancel
-            </button>
-          )}
-        </div>
-      )}
+//       {publicAccess ? (
+//         null
+//       ) : (
+//         <div>
+//           <button className={`button-common ${isCreateMode ? "button-green" : "button-blue"}`}
+//             onClick={isCreateMode ? handleCreateCard : toggleCreateMode}>
+//             {isCreateMode ? "Done" : "Create"}
+//           </button>
+//           {isCreateMode && (
+//             <button className={`button-common button-red`}
+//               onClick={handleCancelCreateCard}>
+//               Cancel
+//             </button>
+//           )}
+//         </div>
+//       )}
 
-      <div className="text-black dark:text-white">
-        <button type="button" className="button-common button-blue" onClick={handleTakeACopy}>Copy Deck</button>
-        {isModalOpen && (
-          <div className="modal">
-            <div className="modal-content">
-              <h2>Select a folder </h2>
-              {folders.map(folder => (
-                <button className="button-common button-blue"
-                  key={folder.folder_id} onClick={() => handleFolderSelection(folder.folder_id)}>
-                  {folder.name}
-                </button>
-              ))}
-              <button className={`button-common button-red`} onClick={() => setModalOpen(false)}>Close</button>
-            </div>
-          </div>
-        )}
-      </div>
+//       <div className="text-black dark:text-white">
+//         <button type="button" className="button-common button-blue" onClick={handleTakeACopy}>Copy Deck</button>
+//         {isModalOpen && (
+//           <div className="modal">
+//             <div className="modal-content">
+//               <h2>Select a folder </h2>
+//               {folders.map(folder => (
+//                 <button className="button-common button-blue"
+//                   key={folder.folder_id} onClick={() => handleFolderSelection(folder.folder_id)}>
+//                   {folder.name}
+//                 </button>
+//               ))}
+//               <button className={`button-common button-red`} onClick={() => setModalOpen(false)}>Close</button>
+//             </div>
+//           </div>
+//         )}
+//       </div>
 
-      {publicAccess ? (
-        null
-      ) : (
-        <button className={`button-common ${deleteMode ? "button-red" : "button-blue"}`} onClick={changeMode}>
-          {deleteMode ? "Cancel" : "Delete"}
-        </button>
-      )}
+//       {publicAccess ? (
+//         null
+//       ) : (
+//         <button className={`button-common ${deleteMode ? "button-red" : "button-blue"}`} onClick={changeMode}>
+//           {deleteMode ? "Cancel" : "Delete"}
+//         </button>
+//       )}
 
-    </div>
-  )
-}
+//     </div>
+//   )
+// }
 
 function ProgressCircleGraph({ radius, dashLength, gapLength, strokeDashoffset, percentage, deckId, publicAccess }) {
   if (publicAccess) {
@@ -540,7 +609,7 @@ function ProgressCircleGraph({ radius, dashLength, gapLength, strokeDashoffset, 
   return (
     <div className="flex flex-col ml-auto justify-center items-center mb-4">
       {/* JavaScript code to draw the graph */}
-      <svg width="200" height="200" viewBox="0 20 200 150">
+      <svg width="144" height="144" viewBox="34 34 132 132">
         <circle cx="100" cy="100" r={radius} fill="none" className="stroke-elDarkGray dark:stroke-edLightGray" strokeWidth="7.5" />
         <circle cx="100" cy="100" r={radius} fill="none" stroke="#29A5DC" strokeWidth="7.5" strokeLinecap="round"
           strokeDasharray={`${dashLength},${gapLength}`} strokeDashoffset={strokeDashoffset}>
@@ -550,10 +619,6 @@ function ProgressCircleGraph({ radius, dashLength, gapLength, strokeDashoffset, 
           <tspan x="100" dy="20">Mastery</tspan>
         </text>
       </svg>
-      <Link to={`/stats/${deckId}`}>
-        <button className="button-top">
-          More Statistics</button>
-      </Link>
     </div>
   )
 }

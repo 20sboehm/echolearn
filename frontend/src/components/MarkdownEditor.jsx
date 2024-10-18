@@ -330,13 +330,35 @@ function MarkdownEditor({ requestType, submitButtonText, questionText, setQuesti
       triggerPopup(false);
     } else {
       triggerPopup(true);
+      if (requestType === "post") {
+        setQuestionText("");
+        setAnswerText("");
+      }
     }
   }
 
   return (
     <>
       <form onSubmit={handleSubmit}>
-        <div className="mb-2 flex flex-col">
+        <div className="flex justify-between">
+          <div className="flex flex-col max-w-[516px]">
+            <TextBox label="Question" reference={questionRef} content={questionText} inputHandler={(e) => { setQuestionText(e.target.value) }}
+              handleTextEditingButton={handleTextEditingButton} forQuestionBox={true} questionisListening={questionisListening} />
+            <TextBoxPreview label="Question Preview" content={questionText} />
+          </div>
+
+          <div className="w-0 h-[30vh] border border-elDividerGray dark:border-edDividerGray mt-2"></div>
+
+          <div className="flex flex-col max-w-[516px]">
+            <TextBox label="Answer" reference={answerRef} content={answerText} inputHandler={(e) => { setAnswerText(e.target.value) }}
+              handleTextEditingButton={handleTextEditingButton} forQuestionBox={false} answerisListening={answerisListening} />
+            <TextBoxPreview label="Answer Preview" content={answerText} />
+          </div>
+        </div>
+
+
+
+        {/* <div className="mb-2 flex flex-col">
           <TextBox label="Front" reference={questionRef} content={questionText} inputHandler={(e) => { setQuestionText(e.target.value) }}
             handleTextEditingButton={handleTextEditingButton} forQuestionBox={true} questionisListening={questionisListening} />
         </div>
@@ -349,7 +371,7 @@ function MarkdownEditor({ requestType, submitButtonText, questionText, setQuesti
           <TextBoxPreview label="Question Preview" content={questionText} />
         </div>
         <TextBoxPreview label="Answer Preview" content={answerText} />
-
+        */}
         <div className="flex flex-col items-center mt-8">
           <SubmitButton>{submitButtonText}</SubmitButton>
         </div>
@@ -370,7 +392,7 @@ function TextBox({ label, reference, content, inputHandler, handleTextEditingBut
         <p className="text-elDark dark:text-edGray">{label}</p>
       </button>
       {/* add a bg color for light mode? */}
-      <div className="dark:bg-edDarker w-full h-8 border-x border-t border-edDarkGray flex items-center pl-2">
+      <div className="dark:bg-edDarker w-full border-x border-t border-edDarkGray flex items-center flex-wrap pl-2 py-1.5">
         <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "bold"); }} Icon={BoldIcon} />
         <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "italic"); }} Icon={ItalicIcon} />
         <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "underline"); }} Icon={UnderlineIcon} />
@@ -405,7 +427,7 @@ function TextBox({ label, reference, content, inputHandler, handleTextEditingBut
       </div>
       {textBoxOpen && (
         <textarea value={content} ref={reference} onInput={inputHandler}
-          className="text-black dark:text-white dark:bg-edDarker w-full min-h-20 h-[10vh] p-2 border 
+          className="text-black dark:text-white dark:bg-edDarker w-full min-h-20 h-[18vh] p-2 border 
           border-edDarkGray focus:outline-none custom-scrollbar"></textarea>
       )}
     </>
@@ -416,17 +438,17 @@ function TextEditingIcon({ clickHandler, Icon }) {
   return <button type='button' onClick={clickHandler} className='mr-3'><Icon /></button>;
 }
 
-function DividerLine() {
-  return (
-    <div className="flex flex-row justify-center items-center my-1 w-full" >
-      <span className="flex-grow border-b border-edMedGray dark:border-edGray h-1"></span>
-      <p className="self-center text-black dark:text-edGray mx-2">Preview</p>
-      <span className="flex-grow border-b border-edGray h-1"></span>
-    </div >
-  )
-}
+// function DividerLine() {
+//   return (
+//     <div className="flex flex-row justify-center items-center my-1 w-full" >
+//       <span className="flex-grow border-b border-edMedGray dark:border-edGray h-1"></span>
+//       <p className="self-center text-black dark:text-edGray mx-2">Preview</p>
+//       <span className="flex-grow border-b border-edGray h-1"></span>
+//     </div >
+//   )
+// }
 
-function TextBoxPreview({ label, content }) {
+function TextBoxPreview({ label, content, className }) {
   const [textBoxPreviewOpen, setTextBoxPreviewOpen] = useState(true);
 
   return (
@@ -436,7 +458,7 @@ function TextBoxPreview({ label, content }) {
         <p className="text-elDark dark:text-edGray">{label}</p>
       </button>
       {textBoxPreviewOpen && (
-        <MarkdownPreviewer content={content} className="border border-edDarkGray bg-white dark:bg-edDarker text-black dark:text-white p-2 min-h-[10vh]" />
+        <MarkdownPreviewer content={content} className={`border border-edDarkGray bg-white dark:bg-edDarker text-black dark:text-white p-2 min-h-[12vh] ${className}`} />
       )}
     </>
   )
