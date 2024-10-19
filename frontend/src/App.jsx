@@ -47,6 +47,7 @@ function AuthenticatedRoutes() {
       <Route path="/decks/:deckId" element={<DeckPage />} />
       <Route path="/decks/public/:deckId" element={<DeckPage publicAccess={true} />} />
       <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/profile/:userId" element={<ProfilePage />} />
       <Route path="/stats/:deckId" element={<StatsPage />} />
       <Route path="/community" element={<CommunityPage />} />
       <Route path="*" element={<ErrorPage statusCode="404" errorMessage="Page not found" />} />

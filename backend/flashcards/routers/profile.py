@@ -1,3 +1,6 @@
+from typing import Optional
+from django.shortcuts import get_object_or_404
+from fastapi import HTTPException
 from ninja import Router
 from flashcards.models import CustomUser, Folder, Deck, Rating
 from flashcards.schemas import GetUser, UpdateUser, FolderInfo, DeckInfo
@@ -9,6 +12,21 @@ profile_router = Router(tags=["Profile"])
 @profile_router.get("/me", response=GetUser, auth=JWTAuth())
 def get_profile(request):
     user = request.auth
+
+    return {
+        "id": user.id,
+        "username": user.username,
+        "email": user.email,
+        "age": user.age,
+        "country": user.country,
+        "flip_mode": user.flip_mode,
+        "sidebar_open": user.sidebar_open,
+        "light_mode": user.light_mode,
+    }
+
+@profile_router.get("/{user_id}", response=GetUser, auth=JWTAuth())
+def get_user_profile(request, user_id: int):
+    user = get_object_or_404(CustomUser, id=user_id)
 
     return {
         "id": user.id,

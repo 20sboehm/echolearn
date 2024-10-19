@@ -481,7 +481,7 @@ const Folder = ({ folder, onRightClick, folderStates, toggleFolder, setContextMe
         <p className="overflow-x-auto">{folder.name}</p>
       </div>
       {folderStates[folder.folder_id] && (
-        <div className="ml-2 border-l border-eGray">
+        <div className="ml-2 border-l border-edGray">
           {folder.decks.map((deck, index) => (
             <div key={index} className="text-elDark dark:text-edWhite flex items-center select-none ml-2 mt-2" onContextMenu={(e) => onRightClick(e, deck)}>
               <Link to={`/decks/${deck.deck_id}`}>

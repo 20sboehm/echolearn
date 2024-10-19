@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../utils/api';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import folderOpenImg from "../assets/folder-open.png";
 import folderCloseImg from "../assets/folder-close.png";
 import decksImg from "../assets/decks.png";
@@ -10,6 +10,7 @@ import FriendsPage from './FriendsPage';
 function ProfilePage() {
   const { _get, _patch } = api();
   // profile
+  const { userId } = useParams();
   const [profile, setProfile] = useState({ username: '', age: '', country: '', email: '', flip_mode: true, sidebar_open: false, light_mode: false });
   const [error, setError] = useState(null);
   const [editableUsername, setEditableUsername] = useState('');
@@ -64,7 +65,8 @@ function ProfilePage() {
   useEffect(() => {
     async function fetchProfile() {
       try {
-        const response = await _get('/api/profile/me');
+        const endpoint = userId ? `/api/profile/${userId}` : '/api/profile/me';
+        const response = await _get(endpoint);
         const data = await response.json();
         setProfile(data);
         setEditableUsername(data.username);
