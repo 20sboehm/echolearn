@@ -64,8 +64,8 @@ function ReviewPage() {
       prev === set ? card : set
     );
     setAnimation(!changeAnimation);
-    setShowAnswer(false); // these don't need to be set to false i think?
-    setFlip(false);
+    // setShowAnswer(false); // these don't need to be set to false i think?
+    // setFlip(false);
   }
 
   // Fetch reviews info
@@ -211,11 +211,6 @@ function ReviewCard({ card, showAnswer, setShowAnswer, updateReviewedCard, chang
       return newFlip; // Update flip state
     });
   }
-
-  useEffect(() => {
-    // Whenever we switch animation, reset displayQuestionOnFlipCard to show the question
-    setDisplayQuestionOnFlipCard(true);
-  }, [changeAnimation]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
