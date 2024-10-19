@@ -2,6 +2,7 @@ import { useApi } from "../hooks";
 import { useState, useRef, useEffect, Children } from "react";
 import { ChevronIcon } from "../components/Icons";
 import MarkdownPreviewer from "../components/MarkdownPreviewer";
+import { Link } from "react-router-dom";
 import {
   BoldIcon, ItalicIcon, UnderlineIcon, CodeIcon, CodeBlockIcon, HeaderIcon1, HeaderIcon2, HeaderIcon3,
   HeaderIcon4, PageBreakIcon, ImageLinkIcon, VideoLinkIcon, LinkIcon, TableIcon, LatexIcon, LatexBlockIcon, MicIcon, MicIconListening
@@ -23,6 +24,7 @@ function MarkdownEditor({ requestType, submitButtonText, questionText, setQuesti
   const [isAnswerUpdating, setAnswerIsUpdating] = useState(false);
 
   const [popupActive, setPopupActive] = useState(false);
+  const [popupSuccess, setPopupSuccess] = useState(false);
   const [popupText, setPopupText] = useState("");
   const [popupColor, setPopupColor] = useState("");
   const popupTimerRef = useRef(null); // Ref to hold the popup timer
@@ -40,15 +42,17 @@ function MarkdownEditor({ requestType, submitButtonText, questionText, setQuesti
       } else if (requestType === "patch") {
         setPopupText("Card updated");
       }
+      setPopupSuccess(true);
       setPopupColor("bg-edGreen");
     } else {
       setPopupText("Something went wrong");
+      setPopupSuccess(false);
       setPopupColor("bg-edRed");
     }
 
     popupTimerRef.current = setTimeout(() => {
       setPopupActive(false);
-    }, 1500)
+    }, 5000) // 1500
   }
 
   const handleTextEditingButton = (forQuestionBox, type) => {
@@ -376,8 +380,14 @@ function MarkdownEditor({ requestType, submitButtonText, questionText, setQuesti
           <SubmitButton>{submitButtonText}</SubmitButton>
         </div>
       </form>
-      <div className={`width-20 p-3 absolute top-20 right-5 rounded-[1.4rem] text-white ${popupColor}
-          transition-opacity duration-200 ${popupActive ? 'opacity-100' : 'opacity-0'}`}>{popupText}</div>
+      <div className={`flex flex-col items-center min-w-40 p-3 fixed top-20 right-5 rounded-[1.4rem] text-white ${popupColor}
+          transition-opacity duration-200 ${popupActive ? 'opacity-100' : 'opacity-0'}`}
+      >
+        {popupText}
+        {popupSuccess && (
+          <Link to={`/decks/${deckId}`} className="font-semibold bg-elStrongHLT rounded-md px-3 py-2 mt-2">Go to deck</Link>
+        )}
+      </div>
     </>
   )
 }

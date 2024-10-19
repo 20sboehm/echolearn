@@ -4,7 +4,7 @@ import Sidebar from "../components/SideBar";
 import MarkdownPreviewer from "../components/MarkdownPreviewer";
 import { useQuery } from "react-query";
 import LoadingSpinner from "../components/LoadingSpinner";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import './Buttons.css';
 
 function QuizletParserPage() {
@@ -18,6 +18,7 @@ function QuizletParserPage() {
   const [preview, setPreview] = useState([])
 
   const [popupActive, setPopupActive] = useState(false);
+  const [popupSuccess, setPopupSuccess] = useState(false);
   const [popupText, setPopupText] = useState("");
   const [popupColor, setPopupColor] = useState("");
   const popupTimerRef = useRef(null); // Ref to hold the popup timer
@@ -32,16 +33,18 @@ function QuizletParserPage() {
     setPopupActive(true);
 
     if (isSuccess) {
-      setPopupText("Card created");
+      setPopupText("Cards created");
+      setPopupSuccess(true);
       setPopupColor("bg-edGreen");
     } else {
       setPopupText("Something went wrong");
+      setPopupSuccess(true);
       setPopupColor("bg-edRed");
     }
 
     popupTimerRef.current = setTimeout(() => {
       setPopupActive(false);
-    }, 1500)
+    }, 5000)
   }
 
   // show preview for quizlet parser
@@ -208,8 +211,14 @@ function QuizletParserPage() {
           </div>
         </form>
       </div>
-      <div className={`width-20 p-3 absolute top-20 right-5 rounded-[1.4rem] text-white ${popupColor}
-          transition-opacity duration-200 ${popupActive ? 'opacity-100' : 'opacity-0'}`}>{popupText}</div>
+      <div className={`flex flex-col items-center min-w-40 p-3 fixed top-20 right-5 rounded-[1.4rem] text-white ${popupColor}
+          transition-opacity duration-200 ${popupActive ? 'opacity-100' : 'opacity-0'}`}
+      >
+        {popupText}
+        {popupSuccess && (
+          <Link to={`/decks/${deckId}`} className="font-semibold bg-elStrongHLT rounded-md px-3 py-2 mt-2">Go to deck</Link>
+        )}
+      </div>
     </div>
   );
 }

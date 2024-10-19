@@ -26,6 +26,7 @@ export default {
 				edDividerGray: '#393939',
 				edWhite: '#ccc',
 				edBlue: '#0078d4',
+				edDarkBlue: '#004880',
 				edSoftBlue: '#407196',
 				edLightBlue: '#33a7ff',
 				edRed: '#D2042D',

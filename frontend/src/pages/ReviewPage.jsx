@@ -378,7 +378,7 @@ function ShowAnswerButtons({ card, showAnswer, updateReviewedCard, toggleFlip })
   return (
     // <div className="fixed bottom-8 left-0 right-0 mx-auto w-[100vw] flex justify-center">
     <div className="flex justify-center mt-8 mb-8">
-      {!showAnswer && <button className="button-top" onClick={toggleFlip}>Reveal Answer</button>}
+      {!showAnswer && <button className="button-top relative w-[20%]" onClick={toggleFlip}>Reveal Answer <span className="absolute top-0.5 right-0.5 px-1 font-normal bg-edDarkBlue rounded-md">space</span></button>}
       {
         showAnswer && (
           <div className="flex justify-center mt-8 flex-wrap gap-4">
@@ -400,12 +400,12 @@ function ShowAnswerButtons({ card, showAnswer, updateReviewedCard, toggleFlip })
   )
 }
 
-function ResultButton({ className, confidenceLevel, clickEvent, timeUntil, children }) {
+function ResultButton({ className, confidenceLevel, clickEvent, timeUntil, hotkey, children }) {
   return (
     <div className="flex flex-col text-center">
       <span className="w-full">{timeUntil(confidenceLevel)}</span>
-      <button className={`${className} button-top`}
-        onClick={() => clickEvent(confidenceLevel)}>{children} <br />
+      <button className={`${className} button-top relative`}
+        onClick={() => clickEvent(confidenceLevel)}>{children} <span className="absolute top-0.5 right-0.5 px-1 font-normal bg-edDarkBlue rounded-md">{confidenceLevel}</span>
       </button>
     </div>
   )
