@@ -283,7 +283,7 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
         resizeHandles={['e']}
         minConstraints={[10, Infinity]} // Minimum width
         maxConstraints={[1200, Infinity]} // Maximum width
-        className="h-full bg-elGray dark:bg-edDark border-r border-edDarkGray group"
+        className="h-full bg-elGray dark:bg-edDark border-r border-elDividerGray dark:border-edDividerGray group"
         style={{ overflow: 'hidden' }}
         onResize={handleResize}
         handle={<div className="absolute top-0 right-0 h-full w-2 cursor-default hover:cursor-ew-resize bg-transparent hover:bg-edBlue z-10 transition duration-200" />}

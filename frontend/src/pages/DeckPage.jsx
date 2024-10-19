@@ -419,14 +419,15 @@ function DeckPage({ publicAccess = false }) {
                     <div>
                       <button className={`button-common ${isCreateMode ? "button-green" : "button-blue"}`}
                         onClick={isCreateMode ? handleCreateCard : toggleCreateMode}>
-                        {isCreateMode ? "Done" : "Create Card"}
+                        {isCreateMode ? "Done" : "Quick Create Card"}
                       </button>
                       {isCreateMode && (
                         <button className={`button-common button-red mx-2`} onClick={handleCancelCreateCard}> Cancel </button>
                       )}
                     </div>
+                    <button onClick={() => { navigate(`/cards`, { state: { deckId: deckId } }) }} className="button-common">Create Card</button>
                     <button className={`button-common ${deleteMode ? "button-red" : "button-blue"}`} onClick={changeMode}>
-                      {deleteMode ? "Cancel" : "Delete Card"}
+                      {deleteMode ? "Cancel" : "Toggle Delete Card"}
                     </button>
                   </>
                 )}
@@ -451,7 +452,8 @@ function DeckPage({ publicAccess = false }) {
           <div className={`flex flex-col items-center flex-grow overflow-y-auto border-t border-elDividerGray dark:border-edDividerGray`}>
 
             {items.map((item, index) => (
-              <div className={`flex font-medium mt-4 border border-elDividerGray dark:border-edDividerGray rounded-2xl bg-elGray dark:bg-edDarker w-[99%] ${deleteMode ? "hover:bg-[#ff000055] cursor-not-allowed" : ""}`}
+              <div className={`flex font-medium mt-4 border border-elDividerGray dark:border-edDividerGray rounded-2xl bg-elGray dark:bg-edDarker w-[99%] 
+                ${deleteMode ? "hover:bg-[#ff000055] hover:dark:bg-[#ff000055] cursor-not-allowed" : ""}`}
                 key={item.card_id} onClick={() => { handleCardClick(item.card_id) }}
                 draggable
                 onDragStart={(e) => handleDragStart(e, index)}
@@ -459,8 +461,8 @@ function DeckPage({ publicAccess = false }) {
                 onDrop={(e) => handleDrop(e, index)}
               >
 
-                <div className={`relative w-1/2 flex flex-col pr-4 border-r border-elDividerGray dark:border-edDividerGray`}>
-                  <MarkdownPreviewer content={item.question} className="bg-elGray dark:bg-edDarker flex-1 p-2 min-h-20 rounded-2xl" />
+                <div className={`relative w-1/2 flex flex-col pr-4 border-r border-elDividerGray dark:border-edDividerGray bg-transparent`}>
+                  <MarkdownPreviewer content={item.question} className="flex-1 p-2 min-h-20 rounded-2xl bg-transparent" />
                   <Link to={`/edit/${item.card_id}`} className="absolute top-8 right-2">
                     <EditIcon />
                   </Link>
@@ -469,8 +471,8 @@ function DeckPage({ publicAccess = false }) {
                   </Link>
                 </div>
 
-                <div className="relative w-1/2 flex flex-col">
-                  <MarkdownPreviewer content={item.answer} className="bg-elGray dark:bg-edDarker flex-1 p-2 rounded-2xl" />
+                <div className="relative w-1/2 flex flex-col bg-transparent">
+                  <MarkdownPreviewer content={item.answer} className="flex-1 p-2 rounded-2xl bg-transparent" />
                   <Link onClick={() => speakText(item.answer)} className="absolute top-2 right-2">
                     <SpeakerIcon />
                   </Link>

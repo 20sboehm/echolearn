@@ -89,7 +89,7 @@ function QuizletParserPage() {
     //     displayPopup(true);
     //   }
     // });
-    
+
     const cards = lines.map(line => {
       const parts = line.split(spaceChoice);
       return {
@@ -176,10 +176,11 @@ function QuizletParserPage() {
         </div>
 
         <form onSubmit={handleQuizletParser} className='flex flex-col items-center'>
-          <button type='button' onClick={handleBackButton} className="rounded-lg button-common button-blue text-center self-start w-1/4 mb-2 font-semibold">
+          <button type='button' onClick={handleBackButton} className="block rounded-sm sm:rounded-lg p-[7px] w-[20%] mb-4 text-center font-medium
+              border border-edGray text-black dark:text-edWhite hover:bg-edHLT active:scale-[0.97] self-start">
             Back
           </button>
-          <p className="text-elDark dark:text-edWhite">
+          <p className="text-elDark dark:text-edWhite mb-2">
             To export from Quizlet, you need to go to "your library", then select the set you want to copy, then click on the triple dots and select export.
             <br />
             In the pop-up window, input "<code>|</code>" for customizing the separator between term and definition and input "<code>&#123;|&#125;</code>" for customizing the separator between rows.
@@ -188,8 +189,7 @@ function QuizletParserPage() {
             <textarea value={quizletInput} onChange={(e) => setquizletInput(e.target.value)} className="text-black dark:text-white dark:bg-edDarker w-full min-h-20 h-40 p-2 border border-edDarkGray focus:outline-none custom-scrollbar"
               placeholder="question | answer {|}"></textarea>
           </div>
-          <button type='submit' className="button-common button-blue font-semibold py-2 text-center w-1/4 mb-2
-              font-semibold">
+          <button type='submit' className="button-common button-blue font-semibold py-2 text-center w-1/4 my-2">
             Submit
           </button>
 

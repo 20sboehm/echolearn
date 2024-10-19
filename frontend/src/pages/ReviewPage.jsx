@@ -1,6 +1,6 @@
 import { useState, useEffect, Children } from "react";
 import { useQuery } from 'react-query';
-import { Link, useParams, useSearchParams } from "react-router-dom";
+import { Link, useParams, useSearchParams, useNavigate } from "react-router-dom";
 import Sidebar from "../components/SideBar";
 import { useApi } from "../hooks";
 import partyPopperImg from '../assets/party-popper.png';
@@ -20,6 +20,7 @@ var FLASHCARD_IMAGE = card;
 
 function ReviewPage() {
   const api = useApi();
+  const navigate = useNavigate();
 
   const [cardIndex, setCardIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false); // Reveals the answer buttons as well as the 'Answer' card on the default review display setting
@@ -154,11 +155,11 @@ function ReviewPage() {
         {/* <Sidebar /> */}
         <Sidebar onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
         <div className="rounded-lg mt-[2%] flex flex-col flex-grow min-w-[16rem] mx-auto overflow-x-auto">
-          <div className="flex mx-auto items-center border-b border-black dark:border-edWhite pb-[1rem] w-[40vw]">
-            <Link to={`/decks/${deckId}`} className="button-common button-blue px-10 py-2 text-center
-              font-semibold">back</Link>
-            <h2 className="text-[2em] text-elDark dark:text-edWhite mx-auto">{reviews.deck_name}</h2>
-            <button className="border border-black w-[12%] ml-auto" onClick={switchAnimation}>
+          <div className="grid grid-cols-3 mx-auto items-center border-b border-elDividerGray dark:border-edDividerGray pb-2 w-[40vw]">
+            <button type="button" onClick={() => { navigate(-1) }} className="py-2 w-[50%] text-center block rounded-lg border border-edGray 
+            text-black dark:text-edWhite hover:bg-elHLT dark:hover:bg-edHLT">Back</button>
+            <h2 className="text-center text-[2em] grid-col text-elDark dark:text-edWhite mx-auto">{reviews.deck_name}</h2>
+            <button className="border border-black w-[40%] ml-auto" onClick={switchAnimation}>
               <img src={currImage}></img>
             </button>
           </div>
@@ -246,8 +247,8 @@ function ReviewCard({ card, showAnswer, setShowAnswer, updateReviewedCard, chang
 function QuestionCard({ card, showAnswer, setShowAnswer }) {
   if (card) {
     return (
-      <div className={`mt-8 overflow-x-hidden overflow-y-auto bg-black`} onClick={() => setShowAnswer(!showAnswer)}>
-        <div className={`h-[25vh] text-[1.2rem] flex flex-col border border-edMedGray overflow-x-hidden overflow-y-auto`}>
+      <div className={`mt-8 overflow-x-hidden overflow-y-auto`} onClick={() => setShowAnswer(!showAnswer)}>
+        <div className={`h-[25vh] text-[1.2rem] flex flex-col border border-edMedGray overflow-x-hidden overflow-y-auto rounded-md`}>
           <MarkdownPreviewer content={card.question} className="flex-1 p-3 h-full bg-elGray dark:bg-edDarker" />
         </div >
       </div>
@@ -259,7 +260,7 @@ function AnswerCard({ card, flip, showAnswer, displayQuestion }) {
   if (card) {
     return (
       <div className={`mt-8 ${showAnswer ? "mt-4 opacity-100" : "mt-8 opacity-0"}`}>
-        <div className={`h-[25vh] text-[1.2rem] flex flex-col border border-edMedGray overflow-x-hidden overflow-y-auto`}>
+        <div className={`h-[25vh] text-[1.2rem] flex flex-col border border-edMedGray overflow-x-hidden overflow-y-auto rounded-md`}>
           {/* If flip=false (The card is at or flipping towards 'question position') AND we're set to display answer 
           (meaning we're still in the 1/2 animation time delay for setting `displayQuestion`), set content to blank 
           so we dont give away the answer to the next question */}
@@ -274,7 +275,7 @@ function FlipFlashcard({ card, flip, toggleFlip, displayQuestion }) {
   return (
     <div className={`mt-8 flashCard ${flip ? 'flip' : ''}`} onClick={toggleFlip}>
       <div className="h-[50vh] text-[1.2rem] border border-edMedGray text-edWhite flex flex-col justify-center items-center 
-          overflow-x-hidden overflow-y-auto"
+          overflow-x-hidden overflow-y-auto rounded-md"
       >
         <MarkdownPreviewer
           content={!flip && !displayQuestion ? "" : (displayQuestion ? card.question : card.answer)}
@@ -377,20 +378,20 @@ function ShowAnswerButtons({ card, showAnswer, updateReviewedCard, toggleFlip })
   return (
     // <div className="fixed bottom-8 left-0 right-0 mx-auto w-[100vw] flex justify-center">
     <div className="flex justify-center mt-8 mb-8">
-      {!showAnswer && <button className="mt-8 border border-black text-white bg-elLightBlue dark:border-edWhite rounded-md w-[20%] min-w-[16rem]" onClick={toggleFlip}>Reveal Answer</button>}
+      {!showAnswer && <button className="button-top" onClick={toggleFlip}>Reveal Answer</button>}
       {
         showAnswer && (
-          <div className="flex justify-center mt-8 flex-wrap">
-            <ResultButton customStyles="mr-4 border border-black bg-red-600 hover:bg-red-700" confidenceLevel={1}
+          <div className="flex justify-center mt-8 flex-wrap gap-4">
+            <ResultButton confidenceLevel={1}
               clickEvent={updateReviewedCardAndDisplay} timeUntil={timeUntilNextReview}>Again</ResultButton>
 
-            <ResultButton customStyles="mr-4 border border-black bg-yellow-400 hover:bg-yellow-500" confidenceLevel={2}
+            <ResultButton confidenceLevel={2}
               clickEvent={updateReviewedCardAndDisplay} timeUntil={timeUntilNextReview}>Hard</ResultButton>
 
-            <ResultButton customStyles="mr-4 border border-black bg-green-700 hover:bg-green-800" confidenceLevel={3}
+            <ResultButton confidenceLevel={3}
               clickEvent={updateReviewedCardAndDisplay} timeUntil={timeUntilNextReview}>Good</ResultButton>
 
-            <ResultButton customStyles="border border-black bg-green-400 hover:bg-green-500" confidenceLevel={4}
+            <ResultButton confidenceLevel={4}
               clickEvent={updateReviewedCardAndDisplay} timeUntil={timeUntilNextReview}>Easy</ResultButton>
           </div>
         )
@@ -399,12 +400,14 @@ function ShowAnswerButtons({ card, showAnswer, updateReviewedCard, toggleFlip })
   )
 }
 
-function ResultButton({ customStyles, confidenceLevel, clickEvent, timeUntil, children }) {
+function ResultButton({ className, confidenceLevel, clickEvent, timeUntil, children }) {
   return (
-    <button className={`${customStyles} rounded-md w-24 px-4 text-black`}
-      onClick={() => clickEvent(confidenceLevel)}>{children} <br />
-      {timeUntil(confidenceLevel)}
-    </button>
+    <div className="flex flex-col text-center">
+      <span className="w-full">{timeUntil(confidenceLevel)}</span>
+      <button className={`${className} button-top`}
+        onClick={() => clickEvent(confidenceLevel)}>{children} <br />
+      </button>
+    </div>
   )
 }
 

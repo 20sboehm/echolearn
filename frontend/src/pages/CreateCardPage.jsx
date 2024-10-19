@@ -72,8 +72,8 @@ function CreateCardPage() {
           <MarkdownEditor requestType="post" submitButtonText="Create Card" questionText={questionText} setQuestionText={setQuestionText}
             answerText={answerText} setAnswerText={setAnswerText} deckId={deckId} />
 
-          <button type="button" onClick={() => { navigate(`/`); }} className="block rounded-sm sm:rounded-lg p-[7px] w-1/3 text-center font-medium
-              border border-edGray text-black dark:text-edWhite hover:bg-edHLT active:scale-[0.97] mt-2 self-center"> Back</button>
+          <button type="button" onClick={() => { navigate(-1); }} className="block rounded-sm sm:rounded-lg p-[7px] w-1/3 text-center font-medium
+              border border-edGray text-black dark:text-edWhite hover:bg-elHLT dark:hover:bg-edHLT active:scale-[0.97] mt-2 self-center"> Back</button>
         </div>
       </div>
     </>

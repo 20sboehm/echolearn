@@ -51,20 +51,23 @@ function TaskList() {
 
   if (decks && cards) {
     return (
-      <div className="text-2xl text-left border border-elDividerGray dark:border-edMedGray rounded-md">
-        <ul className="w-[80vw] sm:[75vw] md:w-[50vw] text-xs sm:text-sm lg:text-xl">
-          <li className="flex font-semibold px-2 py-3 rounded-t-lg text-elCloudWhite bg-elLightBlue dark:bg-edDark dark:text-edWhite">
-            <div className="w-[45%]">Deck</div>
-            <div className="w-[15%]">New</div>
+      <div className="text-2xl text-left">
+        <ul className=" w-[80vw] sm:[75vw] md:w-[50vw] text-xs sm:text-sm lg:text-xl">
+          <li className="overflow-y-auto flex font-semibold px-2 py-3 rounded-t-lg text-elCloudWhite bg-elLightBlue dark:bg-edDark dark:text-edWhite
+          border-x border-t border-elLightBlue dark:border-edMedGray"
+            style={{ scrollbarGutter: "stable" }}>
+            <div className="w-[50%]">Deck</div>
+            <div className="w-[17.5%]">New</div>
             <div className="w-[15%]">Review</div>
+            <div className="w-[15%] mr-4"></div>
           </li>
-          <ScrollContainer>
+          <ScrollContainer className="border-x border-b border-elDividerGray dark:border-edMedGray">
             {decks.map((deck) => {
               return <DeckRow key={deck.deck_id} deck={deck} cards={cards} />
             })}
           </ScrollContainer>
         </ul>
-      </div>
+      </div >
     );
   }
 }
@@ -79,25 +82,15 @@ function DeckRow({ deck, cards }) {
 
   return (
     <li className="flex px-2 py-2 text-elDark hover:bg-elStrongHLT dark:text-edWhite dark:hover:bg-edHLT dark:border-edDividerGray border-t">
-      <div className="flex items-center w-[45%]">
+      <div className="flex items-center w-[50%]">
         <Link to={`/decks/${deck.deck_id}`} className="hover:text-eBlue hover:text-elSkyBlue dark:hover:text-edLightBlue">{deck.name}</Link>
       </div>
-      <div className="flex items-center w-[15%]">{newCardsCount}</div>
+      <div className="flex items-center w-[17.5%]">{newCardsCount}</div>
       <div className="flex items-center w-[15%]">{reviewCardsCount}</div>
-      <div className="flex justify-center items-center w-[15%]">
-        {/*         <Link to={`/review/${deck.deck_id}`} className="block rounded-sm sm:rounded-lg px-1 py-0.5 sm:px-4 sm:py-1.5 text-center font-normal
-                  bg-eBlue text-eWhite hover:bg-eLightBlue"
-        > */}
-        <Link to={`/review/${deck.deck_id}`} className="block rounded-sm sm:rounded-lg border-2 ml-8 mr-4 px-1 py-0.5 sm:px-3 sm:py-1 text-center font-medium active:scale-[0.97]
-                  text-elDark border-elDarkGray hover:border-elLightBlue hover:text-elLightBlue dark:bg-edDarker dark:text-edBlue dark:border-edBlue dark:hover:border-edWhite dark:hover:text-edWhite">
-          Review
-        </Link>
-        <Link to={`/review/${deck.deck_id}?studyAll=true`} className="block rounded-sm sm:rounded-lg border-2 px-1 py-0.5 sm:px-3 sm:py-1 text-center font-medium active:scale-[0.97]
-                  text-elDark border-elDarkGray hover:border-elLightBlue hover:text-elLightBlue dark:bg-edDarker dark:text-edBlue dark:border-edBlue dark:hover:border-edWhite dark:hover:text-edWhite">
-          ReviewAll
-        </Link>
-      </div>
-    </li>
+      <Link to={`/review/${deck.deck_id}`} className="button-common w-[15%] mr-4 py-1">
+        Study
+      </Link>
+    </li >
   );
 }
 
