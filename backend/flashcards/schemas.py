@@ -20,6 +20,7 @@ class GetUser(Schema):
     flip_mode: Optional[bool] = None
     sidebar_open: Optional[bool] = None
     light_mode: Optional[bool] = None
+    is_owner: Optional[bool] = None
 
     class Config:
         orm_mode = True
@@ -78,6 +79,7 @@ class GetDeck(Schema):
 class GetPublicDeck(Schema):
     deck_id: int
     owner_username: str
+    owner_id: int
     name: str
     description: str
     created_at: str

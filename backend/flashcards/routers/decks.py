@@ -29,6 +29,7 @@ def get_ALL_decks(request):
         result.append({
             "deck_id": deck.deck_id,
             "owner_username": deck.owner.get_username(),
+            "owner_id": deck.owner_id,
             "name": deck.name,
             "description": deck.description,
             "created_at": deck.created_at.strftime("%d %B %Y"),

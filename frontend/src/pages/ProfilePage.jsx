@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../utils/api';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import folderOpenImg from "../assets/folder-open.png";
 import folderCloseImg from "../assets/folder-close.png";
 import decksImg from "../assets/decks.png";
@@ -10,12 +10,16 @@ import FriendsPage from './FriendsPage';
 function ProfilePage() {
   const { _get, _patch } = api();
   // profile
-  const [profile, setProfile] = useState({ username: '', age: '', country: '', email: '', flip_mode: true, sidebar_open: false, light_mode: false });
+  const [searchParams] = useSearchParams();
+  const userId = searchParams.get('userId');
+  // const [profile, setProfile] = useState({ username: '', age: '', country: '', email: '', flip_mode: true, sidebar_open: false, light_mode: false });
+  const [profile, setProfile] = useState({});
   const [error, setError] = useState(null);
   const [editableUsername, setEditableUsername] = useState('');
   const [editableEmail, setEditableEmail] = useState('');
   const [editableAge, setEditableAge] = useState('');
   const [editableCountry, setEditableCountry] = useState('');
+  const [popupText, setPopupText] = useState("");
 
   // Setting
   const [flipOrSet, setFlipOrSet] = useState(true);
@@ -64,22 +68,30 @@ function ProfilePage() {
   useEffect(() => {
     async function fetchProfile() {
       try {
-        const response = await _get('/api/profile/me');
+        const endpoint = userId ? `/api/profile/me?userId=${userId}` : '/api/profile/me';
+        const response = await _get(endpoint);
         const data = await response.json();
         setProfile(data);
         setEditableUsername(data.username);
         setEditableEmail(data.email);
         setEditableAge(data.age);
         setEditableCountry(data.country);
-        setFlipOrSet(data.flip_mode);
-        setSidebarClosed(data.sidebar_open);
-        setLightMode(data.light_mode);
+        // Only set these values if the user is not a guest
+        if (data.is_owner) {
+          console.log("what");
+          setFlipOrSet(data.flip_mode);
+          setSidebarClosed(data.sidebar_open);
+          setLightMode(data.light_mode);
 
-        if (!data.light_mode) {
-          document.documentElement.classList.add('dark');
+          if (!data.light_mode) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
         }
 
-        const foldersResponse = await _get('/api/profile/folders_decks');
+        const folderEndpoint = userId ? `/api/profile/folders_decks?userId=${userId}` : '/api/profile/folders_decks';
+        const foldersResponse = await _get(folderEndpoint);
         const foldersData = await foldersResponse.json();
         setFolders(foldersData);
         const RatedResponse = await _get('/api/profile/ALLRatedDecks');
@@ -95,6 +107,11 @@ function ProfilePage() {
 
   // Edit handle here
   const handleEditClick = (field) => {
+    if (!profile.is_owner) {
+      setPopupText("Not able to edit other user");
+      setTimeout(() => setPopupText(""), 1000);
+      return;
+    }
     setIsEditingField((prev) => ({ ...prev, [field]: true }));
   };
 
@@ -202,9 +219,9 @@ function ProfilePage() {
   };
 
   return (
-    <div className=" w-3/4 text-left flex mt-4">
+    <div className={`w-3/4 text-left flex mt-4 ${profile.is_owner ? '' : 'justify-center'}`}>
       {/* Left column: User Profile Information */}
-      <div className="w-2/3 h-1/2 ml-4">
+      <div className={`h-1/2 ml-4 ${profile.is_owner ? 'w-2/3' : 'w-2/4'}`}>
         {/* Profile header */}
         <div className="flex items-center -mt-2">
           <div className="w-24 h-24 rounded-full overflow-hidden">
@@ -274,19 +291,19 @@ function ProfilePage() {
           <div className="flex space-x">
             <button
               className={`py-2 px-4 rounded-lg ${activeTab === 'folders' ? `${selectedTabClassName}` : `${unselectedTabClassName}`}`}
-              onClick={() => setActiveTab('folders')}
+              onClick={() => profile.is_owner && setActiveTab('folders')}
             >
               Folders
             </button>
             <button
               className={`py-2 px-4 rounded-lg ${activeTab === 'ratedDecks' ? `${selectedTabClassName}` : `${unselectedTabClassName}`}`}
-              onClick={() => setActiveTab('ratedDecks')}
+              onClick={() => profile.is_owner && setActiveTab('ratedDecks')}
             >
               Favorite Decks
             </button>
             <button
               className={`py-2 px-4 rounded-lg ${activeTab === 'friends' ? selectedTabClassName : unselectedTabClassName}`}
-              onClick={() => setActiveTab('friends')}
+              onClick={() => profile.is_owner && setActiveTab('friends')}
             >
               Friends
             </button>
@@ -334,37 +351,47 @@ function ProfilePage() {
         </div>
       </div>
 
-      <div className="w-1/3">
-        <div className='pl-10 pb-4 border border-elDark dark:border-edWhite rounded-lg'>
-          <h2 className="text-2xl mt-2 font-bold text-elDark dark:text-edWhite">Settings</h2>
-          {/* Review Animation */}
-          <ToggleSetting
-            label="Review animation:"
-            leftLabel="Flash card"
-            rightLabel="Question set"
-            value={flipOrSet}
-            onChange={handleFlipOrSetChange}
-          />
+      {profile.is_owner && (
+        <div className="w-1/3">
+          <div className='pl-10 pb-4 border border-elDark dark:border-edWhite rounded-lg'>
+            <h2 className="text-2xl mt-2 font-bold text-elDark dark:text-edWhite">Settings</h2>
+            {/* Review Animation */}
+            <ToggleSetting
+              label="Review animation:"
+              leftLabel="Flash card"
+              rightLabel="Question set"
+              value={flipOrSet}
+              onChange={handleFlipOrSetChange}
+            />
 
-          {/* Sidebar default setting */}
-          <ToggleSetting
-            label="Sidebar default state:"
-            leftLabel="Open"
-            rightLabel="Close"
-            value={sidebarClosed}
-            onChange={handleSidebarChange}
-          />
+            {/* Sidebar default setting */}
+            <ToggleSetting
+              label="Sidebar default state:"
+              leftLabel="Open"
+              rightLabel="Close"
+              value={sidebarClosed}
+              onChange={handleSidebarChange}
+            />
 
-          {/* light mode setting */}
-          <ToggleSetting
-            label="Color theme:"
-            leftLabel="Light mode"
-            rightLabel="Dark mode"
-            value={lightMode}
-            onChange={handleLightMode}
-          />
+            {/* light mode setting */}
+            <ToggleSetting
+              label="Color theme:"
+              leftLabel="Light mode"
+              rightLabel="Dark mode"
+              value={lightMode}
+              onChange={handleLightMode}
+            />
+
+            {/* Possible add setting for profile visible level (public, friend only, private) */}
+          </div>
         </div>
-      </div>
+      )}
+      {/* Popup message display */}
+      {popupText && (
+        <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 mb-4 bg-edRed text-white p-2 rounded shadow-lg">
+          {popupText}
+        </div>
+      )}
     </div>
   );
 }
