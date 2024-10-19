@@ -5,6 +5,7 @@ import { BrowserRouter, Navigate, Routes, Route, useParams } from "react-router-
 import { useAuth } from "./hooks";
 import { AuthProvider } from "./context/auth";
 import { useApi } from './hooks';
+import { useLocation } from 'react-router-dom';
 
 import Header from "./components/Header";
 import LandingPage from "./pages/LandingPage"
@@ -47,7 +48,6 @@ function AuthenticatedRoutes() {
       <Route path="/decks/:deckId" element={<DeckPage />} />
       <Route path="/decks/public/:deckId" element={<DeckPage publicAccess={true} />} />
       <Route path="/profile" element={<ProfilePage />} />
-      <Route path="/profile/:userId" element={<ProfilePage />} />
       <Route path="/stats/:deckId" element={<StatsPage />} />
       <Route path="/community" element={<CommunityPage />} />
       <Route path="*" element={<ErrorPage statusCode="404" errorMessage="Page not found" />} />
@@ -73,8 +73,18 @@ function Main() {
   const { isLoggedIn, token } = useAuth();
   console.log("isLoggedIn: " + isLoggedIn);
   console.log("token: " + !!token);
-
   const api = useApi();
+
+  const location = useLocation();
+  const [bgClass, setBgClass] = useState('');
+  useEffect(() => {
+    // Set the background class based on the current location
+    if (location.pathname === '/login' || location.pathname === '/signup') {
+      setBgClass('bg-edBase');
+    } else {
+      setBgClass('bg-elBase dark:bg-edBase');
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     const fetchUserSettings = async () => {
@@ -106,7 +116,7 @@ function Main() {
 
 
   return (
-    <main className="w-full h-full flex flex-col items-center">
+    <main className={`w-full h-full flex flex-col items-center ${bgClass}`}>
       {isLoggedIn ?
         <AuthenticatedRoutes /> :
         <UnauthenticatedRoutes />
@@ -120,7 +130,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <BrowserRouter>
-          <div className="min-w-screen min-h-screen flex flex-col font-base text-edWhite bg-elBase dark:bg-edBase">
+          <div className="min-w-screen min-h-screen flex flex-col font-base text-edWhite bg-edBase">
             <Header />
             <Main />
           </div>

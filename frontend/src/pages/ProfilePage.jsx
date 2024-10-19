@@ -381,6 +381,8 @@ function ProfilePage() {
               value={lightMode}
               onChange={handleLightMode}
             />
+
+            {/* Possible add setting for profile visible level (public, friend only, private) */}
           </div>
         </div>
       )}
