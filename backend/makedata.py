@@ -119,30 +119,46 @@ def initial_data():
         ],
         "markdown_examples_deck": [
             {
-                "question": "**Bold** \n *Italic* \n __Underline__ \n ***__Combination__*** \n",
-                "answer": """
-                | Header | Header |
-                | ------ | ------ |
-                | Data   | Data   |
-                | Data   | Data   |
-                """
+                "question": "In what **year** was the *Declaration of Independence* written?",
+                "answer": "It was __written__ in __**1776**__"
             },
             {
-                "question": "Please write your code in the `main` function. You may also write it in `foo`.",
+                "question": """What is the sum of the values in column X?
+| X | Y |
+| ---- | ---- |
+| 6   | 18   |
+| 3   | 7   |
+| 20   | 12   |
+""",
+                "answer": "29"
+            },
+            {
+                "question": "Write a JavaScript function `add()` that adds two numbers `a` and `b`. Call this function from `main()` and return the result.",
                 "answer": """
-                function add(a, b) {
-                return a + b;
-                }
+```js
+function add(a, b) {
+    return a + b;
+}
 
-                function main() {
-                console.log("Hello EchoLearn!");
-                let a = 7;
-                let b = 12;
-                console.log(add(a, b));
-                }
+function main() {
+    let a = 7;
+    let b = 12;
+    console.log(add(a, b));
+}
 
-                main();
-                """
+main();
+```
+"""
+            },
+            {
+                "question": """What is this equation called?
+$$x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$$
+""",
+                "answer": "The quadratic formula."
+            },
+            {
+                "question": "Here is a video:\n!!(https://www.youtube.com/watch?v=UXA-Af-JeCE)",
+                "answer": "Here is an image:\n![Image](https://upload.wikimedia.org/wikipedia/commons/e/eb/Ash_Tree_-_geograph.org.uk_-_590710.jpg)",
             }
         ],
         "spanish_verbs_deck": [
