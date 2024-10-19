@@ -76,12 +76,18 @@ function ProfilePage() {
         setEditableEmail(data.email);
         setEditableAge(data.age);
         setEditableCountry(data.country);
-        setFlipOrSet(data.flip_mode);
-        setSidebarClosed(data.sidebar_open);
-        setLightMode(data.light_mode);
+        // Only set these values if the user is not a guest
+        if (data.is_owner) {
+          console.log("what");
+          setFlipOrSet(data.flip_mode);
+          setSidebarClosed(data.sidebar_open);
+          setLightMode(data.light_mode);
 
-        if (!data.light_mode) {
-          document.documentElement.classList.add('dark');
+          if (!data.light_mode) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
         }
 
         const folderEndpoint = userId ? `/api/profile/folders_decks?userId=${userId}` : '/api/profile/folders_decks';
@@ -147,7 +153,7 @@ function ProfilePage() {
   if (error) {
     return <p>{error}</p>;
   }
-  console.log(profile);
+
   const handleCancelClick = (field) => {
     switch (field) {
       case 'username':
