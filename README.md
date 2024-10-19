@@ -67,19 +67,12 @@ Install django ninja:
 If you run into an error like "django.db.utils.OperationalError: no such table: ...", run this command:
 `python manage.py migrate --run-syncdb`
 
-Reset the database:
-```
+// Do the first one only if you changed database schema
 python manage.py makemigrations
+
 rm db.sqlite3
 python manage.py migrate
 python makedata.py
-```
-
-python manage.py makemigrations
-rm db.sqlite3
-python manage.py migrate
-python makedata.py
-
 // Run just the bottom 3 commands to reset your data ^
 
 
