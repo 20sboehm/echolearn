@@ -65,7 +65,7 @@ function CommunityPage() {
                     <div key={deck.deck_id} className="h-[30vh] rounded-xl bg-elCloudWhite text-black dark:bg-edDarker 
                     dark:text-edWhite mt-2 p-3 relative border border-edDarker overflow-y-auto" style={{ minHeight: '100px' }}>
                       <h1 className="text-2xl font-medium text-black dark:text-edWhite">{deck.name}</h1>
-                      <p className="text-base text-elDark dark:text-edGray"> by <Link to={`/profile/${deck.owner_id}`}
+                      <p className="text-base text-elDark dark:text-edGray"> by <Link to={`/profile?userId=${deck.owner_id}`}
                         className="font-medium text-elBlue dark:text-edSoftBlue hover:underline">{deck.owner_username}</Link></p>
 
                       <div className="flex mt-2 items-center">
