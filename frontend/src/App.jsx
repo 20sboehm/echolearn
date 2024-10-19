@@ -69,14 +69,13 @@ function UnauthenticatedRoutes() {
   );
 }
 
-function Main() {
+function Main({ setBgClass }) {
   const { isLoggedIn, token } = useAuth();
   console.log("isLoggedIn: " + isLoggedIn);
   console.log("token: " + !!token);
+  const location = useLocation();
   const api = useApi();
 
-  const location = useLocation();
-  const [bgClass, setBgClass] = useState('');
   useEffect(() => {
     // Set the background class based on the current location
     if (location.pathname === '/login' || location.pathname === '/signup') {
@@ -84,7 +83,7 @@ function Main() {
     } else {
       setBgClass('bg-elBase dark:bg-edBase');
     }
-  }, [location.pathname]);
+  }, [location.pathname, setBgClass]);
 
   useEffect(() => {
     const fetchUserSettings = async () => {
@@ -116,7 +115,7 @@ function Main() {
 
 
   return (
-    <main className={`w-full h-full flex flex-col items-center ${bgClass}`}>
+    <main className="w-full h-full flex flex-col items-center">
       {isLoggedIn ?
         <AuthenticatedRoutes /> :
         <UnauthenticatedRoutes />
@@ -126,13 +125,15 @@ function Main() {
 }
 
 function App() {
+  const [bgClass, setBgClass] = useState('');
+
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <BrowserRouter>
-          <div className="min-w-screen min-h-screen flex flex-col font-base text-edWhite bg-edBase">
+          <div className={`min-w-screen min-h-screen flex flex-col font-base text-edWhite ${bgClass}`}>
             <Header />
-            <Main />
+            <Main setBgClass={setBgClass} />
           </div>
         </BrowserRouter>
       </AuthProvider>
