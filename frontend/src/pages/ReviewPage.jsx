@@ -248,8 +248,8 @@ function QuestionCard({ card, showAnswer, setShowAnswer }) {
   if (card) {
     return (
       <div className={`mt-8 overflow-x-hidden overflow-y-auto`} onClick={() => setShowAnswer(!showAnswer)}>
-        <div className={`h-[25vh] text-[1.2rem] flex flex-col border border-edMedGray overflow-x-hidden overflow-y-auto rounded-md`}>
-          <MarkdownPreviewer content={card.question} className="flex-1 p-3 h-full bg-elGray dark:bg-edDarker" />
+        <div className={`h-[25vh] text-[1.2rem] flex flex-col border border-edMedGray overflow-x-hidden rounded-md`}>
+          <MarkdownPreviewer content={card.question} className="flex-1 p-3 h-full bg-elGray dark:bg-edDarker overflow-y-auto" />
         </div >
       </div>
     )
@@ -260,11 +260,11 @@ function AnswerCard({ card, flip, showAnswer, displayQuestion }) {
   if (card) {
     return (
       <div className={`mt-8 ${showAnswer ? "mt-4 opacity-100" : "mt-8 opacity-0"}`}>
-        <div className={`h-[25vh] text-[1.2rem] flex flex-col border border-edMedGray overflow-x-hidden overflow-y-auto rounded-md`}>
+        <div className={`h-[25vh] text-[1.2rem] flex flex-col border border-edMedGray overflow-x-hidden rounded-md`}>
           {/* If flip=false (The card is at or flipping towards 'question position') AND we're set to display answer 
           (meaning we're still in the 1/2 animation time delay for setting `displayQuestion`), set content to blank 
           so we dont give away the answer to the next question */}
-          <MarkdownPreviewer content={!flip && !displayQuestion ? "" : card.answer} className="flex-1 p-3 h-full bg-elGray dark:bg-edDarker" />
+          <MarkdownPreviewer content={!flip && !displayQuestion ? "" : card.answer} className="flex-1 p-3 h-full bg-elGray dark:bg-edDarker overflow-y-auto" />
         </div >
       </div>
     )
@@ -275,11 +275,11 @@ function FlipFlashcard({ card, flip, toggleFlip, displayQuestion }) {
   return (
     <div className={`mt-8 flashCard ${flip ? 'flip' : ''}`} onClick={toggleFlip}>
       <div className="h-[50vh] text-[1.2rem] border border-edMedGray text-edWhite flex flex-col justify-center items-center 
-          overflow-x-hidden overflow-y-auto rounded-md"
+          overflow-x-hidden rounded-md"
       >
         <MarkdownPreviewer
           content={!flip && !displayQuestion ? "" : (displayQuestion ? card.question : card.answer)}
-          className={`flex-1 p-3 h-full bg-elGray dark:bg-edDarker ${displayQuestion ? "" : "flashCardBack"}`} // This has to be 'displayQuestion' instead of flip and I'm not sure why
+          className={`text-2xl flex-1 p-3 h-full bg-elGray dark:bg-edDarker overflow-y-auto ${displayQuestion ? "" : "flashCardBack"}`} // This has to be 'displayQuestion' instead of flip and I'm not sure why
         />
       </div>
     </div>

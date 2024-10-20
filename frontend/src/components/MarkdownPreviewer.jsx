@@ -122,6 +122,7 @@ function MarkdownPreviewer({ content, className }) {
     });
 
     const codePattern = /`(.*?)`/g;
+    // #2f3136 a light dark for dark mode?, elMedGray or elCloudWhite maybe for light mode?
     text = text.replace(codePattern, '<code class="bg-[#0c0c0c] border border-black px-1 py-0.5 rounded-md">$1</code>');
 
     const header1Pattern = /^# (.*$)/gim;
