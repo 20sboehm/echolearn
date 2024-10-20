@@ -49,6 +49,7 @@ function Header() {
             {/* <Link to="/decks" className="px-4 mx-2 transition duration-100 hover:text-black dark:hover:text-elLightBlue py-2">Create Deck</Link> */}
             <Link to="/help" className="px-4 mx-2 transition duration-100 hover:text-black dark:hover:text-elLightBlue py-2">Help</Link>
             <Link to="/community" className="px-4 ml-2 transition duration-100 hover:text-black dark:hover:text-elLightBlue py-2">Community</Link>
+            <Link to="/myimages" className="px-4 ml-2 transition duration-100 hover:text-black dark:hover:text-elLightBlue py-2">My Images</Link>
             <button onClick={handleLogout} className="px-4 ml-2 mr-10 transition duration-100 hover:text-black dark:hover:text-elLightBlue py-2">
               Log Out
             </button>

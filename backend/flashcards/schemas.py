@@ -37,11 +37,7 @@ class UpdateUser(Schema):
     flip_mode: Optional[bool] = None
     sidebar_open: Optional[bool] = None
     light_mode: Optional[bool] = None
-
-# class GetUser(Schema):
     
-
-
 # -------------------------------------------------
 # -------------------- Folders --------------------
 # -------------------------------------------------
@@ -96,9 +92,6 @@ class UpdateDeck(Schema):
     description: Optional[str] = None
     folder_id: Optional[int] = None
 
-
-
-
 # -----------------------------------------------
 # -------------------- Cards --------------------
 # -----------------------------------------------
@@ -108,12 +101,6 @@ class GetCard(Schema):
     deck_id: int
     question: str
     answer: str
-    # questionvideolink: str
-    # answervideolink: str
-    # questionimagelink: str
-    # answerimagelink: str
-    # questionlatex: str
-    # answerlatex: str
     bucket: int
     last_reviewed: datetime
     next_review: datetime
@@ -130,12 +117,6 @@ class UpdateCard(Schema):
     bucket: Optional[int] = None
     next_review: Optional[datetime] = None
     last_reviewed: Optional[datetime] = None
-    # questionvideolink: Optional[str] = None
-    # answervideolink: Optional[str] = None
-    # questionimagelink: Optional[str] = None
-    # answerimagelink: Optional[str] = None
-    # questionlatex: Optional[str] = None
-    # answerlatex: Optional[str] = None
     correct_count: Optional[int] = None
     incorrect_count: Optional[int] = None
     review_history: Optional[list[datetime]] = None
@@ -150,12 +131,6 @@ class Cards(Schema):
     question: str
     answer: str
     bucket: int
-    # questionvideolink:str
-    # answervideolink:str
-    # questionimagelink:str
-    # answerimagelink:str
-    # questionlatex:str
-    # answerlatex:str
     correct_count: int = None
     incorrect_count: int = None
     next_review: datetime
@@ -180,6 +155,7 @@ class EditCards(Schema):
     
 class CreateMultipleCard(Schema):
     cards: list[CreateCard]
+
 # -----------------------------------------------
 # ------------------ Sidebar --------------------
 # -----------------------------------------------
@@ -210,3 +186,12 @@ class Friend(Schema):
 
 class GetFriends(Schema):
     friends: List[Friend]
+
+# -----------------------------------------------
+# ------------------ Images ---------------------
+# -----------------------------------------------
+
+class GetImage(Schema):
+    image_id: int
+    description: str
+    link: str

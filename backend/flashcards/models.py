@@ -65,6 +65,12 @@ class Card(models.Model):
     def __str__(self):
         return f"{self.question} (id={self.card_id})"
 
+class Image(models.Model):
+    image_id = models.AutoField(primary_key=True)
+    owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    link = models.CharField(max_length=1000, default="")
+    description = models.TextField(blank=True)
+
 class SharedDeck(models.Model):
     share_id = models.AutoField(primary_key=True)
     deck = models.ForeignKey(Deck, on_delete=models.CASCADE)

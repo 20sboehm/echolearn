@@ -24,6 +24,7 @@ import StatsPage from './pages/StatsPage';
 import FriendsPage from './pages/FriendsPage';
 import CommunityPage from './pages/CommunityPage'
 import QuizletParserPage from './pages/QuizletParserPage'
+import MyImagesPage from './pages/MyImagesPage';
 
 const queryClient = new QueryClient();
 
@@ -52,6 +53,7 @@ function AuthenticatedRoutes() {
       <Route path="/community" element={<CommunityPage />} />
       <Route path="*" element={<ErrorPage statusCode="404" errorMessage="Page not found" />} />
       <Route path="/friends" element={<FriendsPage />} />
+      <Route path="/myimages" element={<MyImagesPage />} />
     </Routes>
   );
 }

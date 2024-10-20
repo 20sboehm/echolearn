@@ -32,7 +32,7 @@ def get_card(request, card_id: int):
 # -------------------- POST -------------------
 # ---------------------------------------------
 
-@cards_router.post("/create/multiple", response={200: None, 404: str})
+@cards_router.post("/create/multiple", response={200: None, 404: str}, auth=JWTAuth())
 def create_multiple_cards(request,payload:sc.CreateMultipleCard):
     data = json.loads(request.body)
     card_data = data['cards']
