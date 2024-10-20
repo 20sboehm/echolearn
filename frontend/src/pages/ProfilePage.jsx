@@ -78,7 +78,6 @@ function ProfilePage() {
         setEditableCountry(data.country);
         // Only set these values if the user is not a guest
         if (data.is_owner) {
-          console.log("what");
           setFlipOrSet(data.flip_mode);
           setSidebarClosed(data.sidebar_open);
           setLightMode(data.light_mode);
@@ -317,7 +316,7 @@ function ProfilePage() {
               <div>
                 <h2 className="text-xl font-bold text-white">Folders and Decks</h2>
                 {folders.length > 0 ? (
-                  folders.map((folder) => <Folder key={folder.folder_id} folder={folder} />)
+                  folders.map((folder) => <Folder key={folder.folder_id} folder={folder} is_owner={profile.is_owner}/>)
                 ) : (
                   <p>No folders or decks available</p>
                 )}
@@ -422,7 +421,7 @@ const ToggleSetting = ({ label, leftLabel, rightLabel, value, onChange }) => {
 };
 
 // Folder component to handle folder and nested folders
-const Folder = ({ folder, onRightClick }) => {
+const Folder = ({ folder, onRightClick, is_owner }) => {
   const [openFolder, setOpenFolder] = useState(false);
 
   const handleOpenFolder = () => {
@@ -447,7 +446,7 @@ const Folder = ({ folder, onRightClick }) => {
           {folder.decks.length > 0 ? (
             folder.decks.map((deck) => (
               <div key={deck.deck_id} className="flex items-center ml-2" onContextMenu={(e) => onRightClick(e, deck)}>
-                <Link to={`/decks/${deck.deck_id}`} style={{ display: "flex", alignItems: "center" }}>
+                <Link to={is_owner ? `/decks/${deck.deck_id}` : `/decks/public/${deck.deck_id}`} style={{ display: "flex", alignItems: "center" }}>
                   <span className="mr-2">📚</span>
                   <p className="overflow-x-auto whitespace-nowrap">{deck.name}</p>
                 </Link>
