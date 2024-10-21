@@ -79,8 +79,7 @@ function Main({ setBgClass }) {
   const api = useApi();
 
   useEffect(() => {
-    // Set the background class based on the current location
-    if (location.pathname === '/login' || location.pathname === '/signup') {
+    if (location.pathname.startsWith('/login') || location.pathname.startsWith('/signup')) {
       setBgClass('bg-edBase');
     } else {
       setBgClass('bg-elBase dark:bg-edBase');
