@@ -75,16 +75,15 @@ function Main({ setBgClass }) {
   const { isLoggedIn, token } = useAuth();
   console.log("isLoggedIn: " + isLoggedIn);
   console.log("token: " + !!token);
-  const location = useLocation();
   const api = useApi();
 
   useEffect(() => {
-    if (location.pathname.startsWith('/login') || location.pathname.startsWith('/signup')) {
+    if (!isLoggedIn) {
       setBgClass('bg-edBase');
     } else {
       setBgClass('bg-elBase dark:bg-edBase');
     }
-  }, [location.pathname, setBgClass]);
+  }, [isLoggedIn, setBgClass]);
 
   useEffect(() => {
     const fetchUserSettings = async () => {
