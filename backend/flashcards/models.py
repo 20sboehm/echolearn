@@ -69,6 +69,7 @@ class Image(models.Model):
     image_id = models.AutoField(primary_key=True)
     owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     link = models.CharField(max_length=1000, default="")
+    name = models.CharField(max_length=300)
     description = models.TextField(blank=True)
 
 class SharedDeck(models.Model):

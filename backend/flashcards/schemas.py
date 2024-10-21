@@ -195,3 +195,4 @@ class GetImage(Schema):
     image_id: int
     description: str
     link: str
+    name: str

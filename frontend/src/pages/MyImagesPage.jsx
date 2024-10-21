@@ -1,32 +1,34 @@
 import Sidebar from "../components/SideBar";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { useState, useRef } from "react";
-import { UploadIcon } from "../components/Icons";
+import { UploadIcon, DownloadIcon, DeleteIcon, CopyIcon } from "../components/Icons";
 import './Buttons.css';
 import { useApi } from "../hooks";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 
 function MyImagesPage() {
   const api = useApi();
+  const queryClient = useQueryClient();
 
   const [popupActive, setPopupActive] = useState(false);
   const [popupText, setPopupText] = useState("");
   const [popupColor, setPopupColor] = useState("");
   const popupTimerRef = useRef(null); // Ref to hold the popup timer
 
+
   const [sidebarWidth, setSidebarWidth] = useState(250);
 
-  const displayPopup = (isSuccess) => {
+  const displayPopup = (isSuccess, popupText) => {
     if (popupTimerRef.current) {
       clearTimeout(popupTimerRef.current);
     }
     setPopupActive(true);
 
     if (isSuccess) {
-      setPopupText("Image uploaded");
+      setPopupText(popupText);
       setPopupColor("bg-edGreen");
     } else {
-      setPopupText("Something went wrong");
+      setPopupText(popupText);
       setPopupColor("bg-edRed");
     }
 
@@ -44,13 +46,26 @@ function MyImagesPage() {
     if (!response.ok) {
       const errorData = await response.json();
       console.error("Error uploading file: ", errorData);
-      displayPopup(false);
+      displayPopup(false, "Something went wrong");
     } else {
-      console.error("File uploaded");
-      displayPopup(true);
+      displayPopup(true, "Image uploaded");
+      queryClient.invalidateQueries('images');
     }
 
     e.target.value = null
+  }
+
+  const handleDelete = async (image_id) => {
+    const response = await api._delete(`/api/images/delete/${image_id}`);
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Error deleting file: ", errorData);
+      displayPopup(false, "Something went wrong");
+    } else {
+      displayPopup(true, "Image deleted");
+      queryClient.invalidateQueries('images');
+    }
   }
 
   const { data: images, isLoading, error } = useQuery(
@@ -88,9 +103,9 @@ function MyImagesPage() {
         <Sidebar onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
         <div className="w-full flex flex-col mx-[15%]">
           <PageHeading handleFileUpload={handleFileUpload} />
-          <ul className="flex flex-wrap">
+          <ul className="flex flex-wrap gap-[1vw]">
             {images.map(image => (
-              <img src={image.link} alt="image" className="max-w-60 max-h-60" />
+              <ImageNode image={image} handleDelete={handleDelete} key={image.image_id} />
             ))}
           </ul>
         </div>
@@ -110,6 +125,31 @@ function PageHeading({ handleFileUpload }) {
         <input type="file" accept="image/*" className="hidden" onChange={(e) => { handleFileUpload(e); }} />
       </label>
     </div>
+  )
+}
+
+function ImageNode({ image, handleDelete }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1000); // Hide popup after 1.5 seconds
+  };
+
+  return (
+    <>
+      <div className="w-[10vw] h-[25vh] rounded-xl overflow-y-hidden bg-elCloudWhite text-black dark:bg-edDarker dark:text-edWhite 
+      mt-2 p-3 border border-elDark dark:border-edDarker flex flex-col items-center">
+        <h1 className="mb-2">{image.name}</h1>
+        <div className="relative flex gap-2 mb-2">
+          <a download={true} href={image.link} className="button-common bg-edGreen hover:bg-emerald-500 px-2"><DownloadIcon /></a>
+          <button onClick={() => { navigator.clipboard.writeText(image.link); handleCopy(); }} className="button-common px-2" ><CopyIcon /></button>
+          {copied && <div className="absolute top-10 left-5 bg-edBlue rounded-md text-white">Link copied!</div>}
+          <button onClick={() => { handleDelete(image.image_id); }} className="button-common bg-edRed hover:bg-red-500 px-2" ><DeleteIcon /></button>
+        </div>
+        <img src={image.link} alt="image" className="max-w-[80%]" />
+      </div>
+    </>
   )
 }
 

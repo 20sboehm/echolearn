@@ -66,7 +66,7 @@ function EditCardPage() {
           </div>
 
           <MarkdownEditor requestType="patch" submitButtonText="Edit Card"
-            questionText={questionText} setQuestionText={setQuestionText} answerText={answerText} setAnswerText={setAnswerText} cardId={cardId} />
+            questionText={questionText} setQuestionText={setQuestionText} answerText={answerText} setAnswerText={setAnswerText} deckId={card.deck_id} cardId={cardId} />
 
           <button type="button" onClick={() => { navigate(`/decks/${card.deck_id}`); }} className="block rounded-sm sm:rounded-lg p-[7px] w-1/3 text-center font-medium
               border border-edGray text-black dark:text-edWhite hover:bg-edHLT active:scale-[0.97] mt-2 self-center"> Back</button>
