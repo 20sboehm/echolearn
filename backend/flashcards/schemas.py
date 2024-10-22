@@ -140,6 +140,9 @@ class ReviewCards(Schema):
     deck_name: str
     cards: list[Cards]
 
+class MultipleReviewCards(Schema):
+    decks: List[ReviewCards]
+
 class DeckCards(Schema):
     deck_id: int
     isPublic:bool

@@ -50,8 +50,18 @@ function TaskList() {
   }
 
   if (decks && cards) {
+    const studyableDeckIds = decks
+      .filter((deck) => {
+        const newCardsCount = cards.filter(card => card.deck_id === deck.deck_id && card.is_new === true).length;
+        const reviewCardsCount = cards.filter(card => card.deck_id === deck.deck_id && card.is_new === false && Date.parse(card.next_review) < Date.now()).length;
+        return newCardsCount > 0 || reviewCardsCount > 0;
+      })
+      .map((deck) => deck.deck_id);
+
+      const deckIdsQueryParam = studyableDeckIds.join(',');
     return (
       <div className="text-2xl text-left">
+        <Link to={`/review?deckIds=${deckIdsQueryParam}`}><button className="mb-4 button-common">Study All</button></Link>
         <ul className=" w-[80vw] sm:[75vw] md:w-[50vw] text-xs sm:text-sm lg:text-xl">
           <li className="overflow-y-auto flex font-semibold px-2 py-3 rounded-t-lg text-elCloudWhite bg-elLightBlue dark:bg-edDark dark:text-edWhite
           border-x border-t border-elLightBlue dark:border-edMedGray"
@@ -87,7 +97,7 @@ function DeckRow({ deck, cards }) {
       </div>
       <div className="flex items-center w-[17.5%]">{newCardsCount}</div>
       <div className="flex items-center w-[15%]">{reviewCardsCount}</div>
-      <Link to={`/review/${deck.deck_id}`} className="button-common w-[15%] mr-4 py-1">
+      <Link to={`/review?deckIds=${deck.deck_id}`} className="button-common w-[15%] mr-4 py-1">
         Study
       </Link>
     </li >

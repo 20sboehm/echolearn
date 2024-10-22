@@ -43,7 +43,7 @@ function AuthenticatedRoutes() {
       <Route path="/" element={<HomePage />} />
       <Route path="/cards" element={<CreateCardPage />} />
       <Route path="/quizletparser" element={<QuizletParserPage />} />
-      <Route path="/review/:deckId" element={<ReviewPage />} />
+      <Route path="/review" element={<ReviewPage />} />
       <Route path="/help" element={<HelpPage />} />
       <Route path="/edit/:cardId" element={<EditCardPage />} />
       <Route path="/decks/:deckId" element={<DeckPage />} />
