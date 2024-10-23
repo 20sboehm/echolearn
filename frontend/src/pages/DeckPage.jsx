@@ -374,6 +374,9 @@ function DeckPage({ publicAccess = false }) {
                     <Link to={`/review?deckIds=${deckId}&studyAll=true`} className="button-top">
                       StudyAll
                     </Link>
+                    <Link to={`/quiz/${deckId}`}>
+                      <button className="button-top">quiz</button>
+                    </Link>
                     <Link to={`/stats/${deckId}`}>
                       <button className="button-top">
                         Statistics</button>
