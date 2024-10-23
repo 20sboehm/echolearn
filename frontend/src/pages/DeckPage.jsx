@@ -368,10 +368,10 @@ function DeckPage({ publicAccess = false }) {
               ) : (
                 <div className="flex items-start mb-4 pb-4 gap-2 border-b border-elDividerGray dark:border-edDividerGray">
                   <>
-                    <Link to={`/review/${deckId}`} className="button-top">
+                    <Link to={`/review?deckIds=${deckId}`} className="button-top">
                       Study
                     </Link>
-                    <Link to={`/review/${deckId}?studyAll=true`} className="button-top">
+                    <Link to={`/review?deckIds=${deckId}&studyAll=true`} className="button-top">
                       StudyAll
                     </Link>
                     <Link to={`/stats/${deckId}`}>

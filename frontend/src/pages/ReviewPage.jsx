@@ -159,6 +159,12 @@ function ReviewPage() {
     }
   };
 
+  // Check if reviews data is available
+  if (!reviews || !reviews.decks || reviews.decks.length === 0) {
+    return <div>No cards found for review.</div>;
+  }
+
+    
   return (
     <>
       <div className="flex w-full h-full">
@@ -197,7 +203,7 @@ function FinishView(deckId) {
     <div className="flex flex-row justify-center items-center mt-[10vh]">
       <img className="w-40 h-40 mt-[-10vh]" src={partyPopperFlipImg} alt="Party Popper" />
       <div className="flex flex-col justify-center items-center mx-4">
-        <h3 className="h-[25vh] flex justify-center items-center w-full border-black bg-white rounded-md p-5 text-2xl text-black my-4">You have studied all the cards in this deck</h3>
+        <h3 className="h-[25vh] flex justify-center items-center w-full border border-black bg-white rounded-md p-5 text-2xl text-black my-4">You have studied all the cards in this deck</h3>
         <Link to={`/decks/${deckId.deckId}`}>
           <button className="button-common button-blue border rounded-md px-2 py-1">Back to deck</button>
         </Link>

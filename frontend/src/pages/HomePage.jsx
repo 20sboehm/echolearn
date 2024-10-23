@@ -15,7 +15,7 @@ function HomePage() {
         <Sidebar onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
         <div className="flex flex-col flex-grow mt-10 overflow-x-auto items-center">
           <div className="mx-auto">
-            <h1 className="font-bold text-[2rem] mb-6 text-elDark border-b border-elDarkGray dark:text-edWhite dark:border-edDividerGray">Today's Task List</h1>
+            {/* <h1 className="font-bold text-[2rem] mb-6 text-elDark border-b border-elDarkGray dark:text-edWhite dark:border-edDividerGray">Today's Task List</h1> */}
             <TaskList />
           </div>
         </div>
@@ -61,7 +61,14 @@ function TaskList() {
       const deckIdsQueryParam = studyableDeckIds.join(',');
     return (
       <div className="text-2xl text-left">
-        <Link to={`/review?deckIds=${deckIdsQueryParam}`}><button className="mb-4 button-common">Study All</button></Link>
+        <div className="flex justify-between items-center border-b border-elDarkGray dark:border-edDividerGray mb-4">
+          <h1 className="font-bold text-[2rem] text-elDark dark:text-edWhite">
+            Today's Task List
+          </h1>
+          <Link to={`/review?deckIds=${deckIdsQueryParam}`}>
+            <button className="mb-2 text-xl button-common">Study All</button>
+          </Link>
+        </div>
         <ul className=" w-[80vw] sm:[75vw] md:w-[50vw] text-xs sm:text-sm lg:text-xl">
           <li className="overflow-y-auto flex font-semibold px-2 py-3 rounded-t-lg text-elCloudWhite bg-elLightBlue dark:bg-edDark dark:text-edWhite
           border-x border-t border-elLightBlue dark:border-edMedGray"
