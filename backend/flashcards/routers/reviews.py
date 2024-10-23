@@ -13,7 +13,7 @@ def get_reviews(request, deckIds: str = None, studyAll: bool = False):
     if deckIds:
         deck_ids = [int(id) for id in deckIds.split(',')]
     else:
-        raise HttpError(400, "deckIds query parameter is required")
+        raise HttpError(400, "There is no deck to study")
 
     # time.sleep(1)
 
