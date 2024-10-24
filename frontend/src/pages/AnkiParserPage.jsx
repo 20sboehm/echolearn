@@ -54,45 +54,42 @@ function QuizletParserPage() {
 
         reader.onload = (e) => {
             const text = e.target.result;
-            parseFileContent(text);
+            const lines = text.split('\n');
+
+            const startIndex = lines.findIndex(line => line.includes("#html:true")) + 1;
+            const dataLines = lines.slice(startIndex);
+
+            const data = dataLines.map(line => {
+                return line.split('\t');
+            });
+            setankiInput(data);
         };
 
         reader.readAsText(file);
     };
-    const parseFileContent = (text) => {
-        const lines = text.split('\n');
-
-        const startIndex = lines.findIndex(line => line.includes("#html:true")) + 1;
-        const dataLines = lines.slice(startIndex);
-
-        const data = dataLines.map(line => {
-            return line.split('\t'); 
-        });
-        setankiInput(data);
-    };
-
+    
     // show preview for anki parser
-      useEffect(() => {
+    useEffect(() => {
         const results = [];
         for (let i = 0; i < ankiInput.length - 1; i++) {
             const arr = ankiInput[i];
             results.push({ question: arr[0], answer: arr[1] });
         }
-        
+
         setPreview(results);
-    
-      }, [ankiInput]);
+
+    }, [ankiInput]);
 
     // create multiple cards
     const handleAnkiParser = async (e) => {
         e.preventDefault();
-       
+
         console.log(ankiInput)
 
         const results = [];
         for (let i = 0; i < ankiInput.length - 1; i++) {
             const arr = ankiInput[i];
-            results.push({ deck_id: deckId,question: arr[0], answer: arr[1] });
+            results.push({ deck_id: deckId, question: arr[0], answer: arr[1] });
         }
 
         const dataToSend = {
