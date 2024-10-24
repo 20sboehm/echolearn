@@ -25,6 +25,7 @@ import FriendsPage from './pages/FriendsPage';
 import CommunityPage from './pages/CommunityPage'
 import QuizletParserPage from './pages/QuizletParserPage'
 import MyImagesPage from './pages/MyImagesPage';
+import AnkiParserPage from './pages/AnkiParserPage'
 
 const queryClient = new QueryClient();
 
@@ -54,6 +55,7 @@ function AuthenticatedRoutes() {
       <Route path="*" element={<ErrorPage statusCode="404" errorMessage="Page not found" />} />
       <Route path="/friends" element={<FriendsPage />} />
       <Route path="/myimages" element={<MyImagesPage />} />
+      <Route path="/ankiparser" element={<AnkiParserPage />} />
     </Routes>
   );
 }
