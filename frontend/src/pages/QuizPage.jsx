@@ -60,8 +60,6 @@ function QuizPage() {
     );
   }
 
-  console.log(quizs); // For some reason, quizs is not loaded? or data didn't set?
-
   if (!quizs.quiz || quizs.quiz.length < 4) {
     return (
       <div>
@@ -100,7 +98,7 @@ function QuizPage() {
       } else {
         alert("Quiz Completed!"); // TODO - a finish view after finish all the question?
       }
-    }, 1500);
+    }, 1000);
   };
 
   return (
@@ -112,7 +110,6 @@ function QuizPage() {
           Deck: {quizs.deck_name}
         </h1>
       </div>
-
 
       <QuestionDisplay
         question={currentQuestion.question}
@@ -152,6 +149,9 @@ function AnswerChoice({ choice, index, isSelected, handleSelectAnswer, answerSta
   // Determine button color based on answer status
   let buttonClass = "h-[20vh] overflow-y-auto text-left border-2 border-elDark dark:bg-edDarker shadow-lg rounded-lg p-4 transition-colors duration-300";
   
+  // Disable button if answerStatus is set
+  const isDisabled = answerStatus === 'correct' || answerStatus === 'incorrect';
+
   if (isSelected) {
     buttonClass += answerStatus === 'correct' ? 'bg-green-500 dark:bg-green-500' : 'bg-red-500 dark:bg-red-500';
   } else {
@@ -159,10 +159,7 @@ function AnswerChoice({ choice, index, isSelected, handleSelectAnswer, answerSta
   }
 
   return (
-    <button
-      onClick={() => handleSelectAnswer(index)}
-      className={buttonClass}
-    >
+    <button onClick={() => handleSelectAnswer(index)} className={buttonClass} disabled={isDisabled}>
       <MarkdownPreviewer content={choice} className="flex-1 p-2 min-h-20 rounded-2xl bg-transparent" />
     </button>
   );
