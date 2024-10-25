@@ -9,6 +9,7 @@ quiz_router = Router(tags=["Quiz"])
 @quiz_router.get("/{deck_id}", response={200: dict, 404: str})
 def quiz(request, deck_id: int):
 
+    deck = Deck.objects.get(deck_id=deck_id)
     # Get all cards in the deck
     card_list = list(Card.objects.filter(deck_id=deck_id))
     quiz_items = []
@@ -42,10 +43,12 @@ def quiz(request, deck_id: int):
             'choices': choiceList,
             'answer': card.answer
         })
+        
+        random.shuffle(quiz_items)
 
-    return JsonResponse({'quiz': quiz_items})
+    return JsonResponse({'quiz': quiz_items, 'deck_name': deck.name})
 
-    
+
     # card_list = Card.objects.filter(deck_id = deck_id)
     # quiz_items = []
     # if(len(card_list) < 4):
