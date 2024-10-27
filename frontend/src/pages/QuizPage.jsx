@@ -187,7 +187,7 @@ function AnswerChoice({ choice, index, isSelected, handleSelectAnswer, answerSta
   const isDisabled = answerStatus === 'correct' || answerStatus === 'incorrect';
 
   if (isSelected) {
-    buttonClass += answerStatus === 'correct' ? ' bg-green-500' : ' bg-red-500';
+    buttonClass += answerStatus === 'correct' ? ' bg-green-500 dark:bg-edGreen' : ' bg-red-500 dark:bg-edRed'; // it has to need both otherwise it won't work in dark mode
   } else {
     buttonClass += ' bg-white hover:bg-elStrongHLT';
   }
