@@ -2,6 +2,7 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "react-query";
 import { useState, useEffect } from "react";
 import { useApi } from "../hooks";
+import "./QuizPage.css";
 import LoadingSpinner from "../components/LoadingSpinner";
 import MarkdownPreviewer from "../components/MarkdownPreviewer";
 
@@ -13,6 +14,11 @@ function QuizPage() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answerStatus, setAnswerStatus] = useState(null);
   const [isFetching, setIsFetching] = useState(false); // Track fetching state
+
+  const [correct, setCorrect] = useState(0);
+  const [incorrect, setIncorrect] = useState(0);
+  const [flip, setFlip] = useState(false);
+  const [fadeIn, setFadeIn] = useState(false);
 
   const { data: Questions, isLoading, error, refetch } = useQuery(
     ['quiz', deckId],
@@ -44,7 +50,21 @@ function QuizPage() {
     }
   }, [quizs, refetch, isFetching]);
 
-  
+  useEffect(() => {
+    if (fadeIn) {
+      const fadeInTimeout = setTimeout(() => setFadeIn(false), 300);
+      return () => clearTimeout(fadeInTimeout);
+    }
+  }, [fadeIn]);
+
+  const toggleFlip = () => {
+    setFlip((prevFlip) => {
+      const newFlip = !prevFlip;
+      setTimeout(() => {}, 150);
+      return newFlip;
+    });
+  };
+
   if (isLoading || isFetching) {
     return <LoadingSpinner />;
   }
@@ -85,19 +105,26 @@ function QuizPage() {
 
     // Determine if the selected answer is correct
     if (currentQuestion.choices[selectedOption] === currentQuestion.answer) {
+      setCorrect((prev) => prev + 1);
       setAnswerStatus('correct');
     } else {
+      setIncorrect((prev) => prev + 1);
       setAnswerStatus('incorrect');
     }
 
     // Move to the next question
     setTimeout(() => {
-      if (currentQuestionIndex < quizs.quiz.length - 1) {
-        setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
-        setAnswerStatus(null); // reset answer status for the next question
-      } else {
-        alert("Quiz Completed!"); // TODO - a finish view after finish all the question?
-      }
+      toggleFlip();
+      setTimeout(() => {
+        if (currentQuestionIndex < quizs.quiz.length - 1) {
+          setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
+          setAnswerStatus(null); // reset answer status for the next question
+          setFadeIn(true);
+        } else {
+          // The update for the count value will not catch up, so at this point it would miss the last count
+          alert(`Quiz Completed! Your got ${correct} correct and ${incorrect} incorrect`); // TODO - a finish view after finish all the question?
+        }
+      }, 300);
     }, 1000);
   };
 
@@ -106,9 +133,18 @@ function QuizPage() {
       <div className="flex items-center border-b border-elDark dark:border-edDividerGray pb-2 mb-4">
         <Link to={`/decks/${deckId}`} className="py-2 px-4 w-[10vw] z-10 text-center rounded-lg border border-edGray text-black dark:text-edWhite hover:bg-elHLT dark:hover:bg-edHLT">
           Back</Link>
-        <h1 className="flex-grow text-2xl text-center text-elDark dark:text-edLightGray -ml-[10vw]">
+        <h1 className="flex-grow text-2xl text-center text-elDark dark:text-edLightGray">
           Deck: {quizs.deck_name}
         </h1>
+        <div className="text-lg text-gray-700 dark:text-gray-300 ml-4">
+          Question {currentQuestionIndex + 1} of {quizs.quiz.length}
+        </div>
+      </div>
+
+      <div className={`flipCard ${flip ? 'flipped' : ''}`}>
+        <div className="flipCardInner w-[60vw] h-[40vh] border-2 text-elDark border-elDark bg-white dark:bg-edDarker rounded-lg p-4 mb-4 shadow-xl">
+          <MarkdownPreviewer content={currentQuestion.question} className="flex-1 p-2 min-h-20 rounded-2xl text-xl bg-transparent" />
+        </div>
       </div>
 
       <QuestionDisplay
@@ -117,18 +153,15 @@ function QuizPage() {
         selectedAnswer={userAnswers[currentQuestionIndex]}
         handleSelectAnswer={handleSelectAnswer}
         answerStatus={answerStatus}
+        fadeIn={fadeIn}
       />
     </div>
   );
 }
 
-function QuestionDisplay({ question, choices, selectedAnswer, handleSelectAnswer, answerStatus }) {
+function QuestionDisplay({ choices, selectedAnswer, handleSelectAnswer, answerStatus, fadeIn }) {
   return (
-    // <div className="border-2 text-elDark border-elDark bg-white rounded-lg p-6 mb-4 shadow-lg">
     <div>
-      <div className="w-[60vw] h-[40vh] border-2 text-elDark border-elDark bg-white dark:bg-edDarker rounded-lg p-4 mb-4 shadow-2xl">
-        <MarkdownPreviewer content={question} className="flex-1 p-2 min-h-20 rounded-2xl text-xl bg-transparent" />
-      </div>
       <div className="w-[60vw] grid grid-cols-2 gap-4">
         {choices.map((choice, index) => (
           <AnswerChoice
@@ -138,6 +171,7 @@ function QuestionDisplay({ question, choices, selectedAnswer, handleSelectAnswer
             isSelected={selectedAnswer === index}
             handleSelectAnswer={handleSelectAnswer}
             answerStatus={answerStatus}
+            fadeIn={fadeIn}
           />
         ))}
       </div>
@@ -145,7 +179,7 @@ function QuestionDisplay({ question, choices, selectedAnswer, handleSelectAnswer
   );
 }
 
-function AnswerChoice({ choice, index, isSelected, handleSelectAnswer, answerStatus }) {
+function AnswerChoice({ choice, index, isSelected, handleSelectAnswer, answerStatus, fadeIn }) {
   // Determine button color based on answer status
   let buttonClass = "h-[20vh] overflow-y-auto text-left border-2 border-elDark dark:bg-edDarker shadow-lg rounded-lg p-4 transition-colors duration-300";
   
@@ -153,13 +187,13 @@ function AnswerChoice({ choice, index, isSelected, handleSelectAnswer, answerSta
   const isDisabled = answerStatus === 'correct' || answerStatus === 'incorrect';
 
   if (isSelected) {
-    buttonClass += answerStatus === 'correct' ? 'bg-green-500 dark:bg-green-500' : 'bg-red-500 dark:bg-red-500';
+    buttonClass += answerStatus === 'correct' ? ' bg-green-500' : ' bg-red-500';
   } else {
-    buttonClass += ' bg-white hover:bg-gray-100';
+    buttonClass += ' bg-white hover:bg-elStrongHLT';
   }
 
   return (
-    <button onClick={() => handleSelectAnswer(index)} className={buttonClass} disabled={isDisabled}>
+    <button onClick={() => handleSelectAnswer(index)} className={`${buttonClass} ${fadeIn ? 'fade-in' : ''}`} disabled={isDisabled}>
       <MarkdownPreviewer content={choice} className="flex-1 p-2 min-h-20 rounded-2xl bg-transparent" />
     </button>
   );
