@@ -26,6 +26,7 @@ import CommunityPage from './pages/CommunityPage'
 import QuizletParserPage from './pages/QuizletParserPage'
 import MyImagesPage from './pages/MyImagesPage';
 import AnkiParserPage from './pages/AnkiParserPage'
+import AIGenerateCards from './pages/AICreateCards'
 
 const queryClient = new QueryClient();
 
@@ -56,6 +57,7 @@ function AuthenticatedRoutes() {
       <Route path="/friends" element={<FriendsPage />} />
       <Route path="/myimages" element={<MyImagesPage />} />
       <Route path="/ankiparser" element={<AnkiParserPage />} />
+      <Route path="/aigeneratecards" element={<AIGenerateCards />} />
     </Routes>
   );
 }
