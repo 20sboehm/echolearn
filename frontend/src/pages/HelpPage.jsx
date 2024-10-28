@@ -10,8 +10,8 @@ import SpaceRepeImg from "../assets/growth.png"
 
 const topics = [
   {
-    title: "TO DO list",
-    guide: "On the home page, the TO-DO list will show which decks need review, the number of cards you haven't reviewed, and the cards that need to be reviewed again. You can easily start reviewing by clicking the 'Review' button or access the deck page by clicking on the deck name.",
+    title: "Task List",
+    guide: "On the home page, the Task List shows decks needing review, the number of unreviewed cards, and cards due for a follow-up review. Start a review by clicking 'Study' or access the deck page by clicking the deck name. In the upper right, the 'Study All' option lets you study all decks listed in the Task List.",
     image: TODOImg,
   },
   {
@@ -26,7 +26,7 @@ const topics = [
   },
   {
     title: "Create Card",
-    guide: "The create card page provides two online editors. In these editors, you can bold, italicize, underline text, and enter LaTeX. Additionally, you can insert images, videos, or website URLs into the cards. You also need to select a deck to which the card will be added.",
+    guide: "The Create Card page offers two markdown editors where you can format text with bold, italics, underlining, LaTeX, and more. You can also add images, videos, or website URLs to your cards. At the top, the 'quizlet parser' will direct you to a page where you can upload your existing Quizlet decks. Please select a deck to which the card will be added before creating.",
     image: CCardImg,
   },
   {
@@ -36,13 +36,12 @@ const topics = [
   },
   {
     title: "Sidebar",
-    guide: "The sidebar displays all the folders you have created, and you can access a deck by clicking on it. You can also create, rename, or delete folders and decks by right-clicking or clicking on the three dots on the right.",
+    guide: "The sidebar displays all the folders you have created, allowing you to access a deck by clicking on it. You can create, rename, or delete folders and decks by right-clicking, or by using the 'Create Folder' and 'Create Deck' buttons at the top. To do this, you need to select a folder first. There is also an 'Expand and Collapse' button at the top to expand all your folders with one click, and collapse them with another. When you hover over the border, it will turn blue, indicating that you can drag to adjust the width of the sidebar. Additionally, a close sidebar button (represented as a left arrow) is available on the top right to close the sidebar.",
     image: SidebarImg,
   },
   {
-    title: "Deck page",
-    guide: "On the deck page, the top section displays the deck name followed by a 'Review' button, which takes you to the review page. The graph on the right shows your mastery level, and you can click 'More Statistics' to view additional data. At the bottom, all the cards in the deck are displayed. You can click the edit button in the top corner of a card to edit the card. Clicking the 'Delete' button activates delete mode, allowing you to delete the cards you want.",
-    image: DeckViewImg,
+    title: "Deck Page",
+    guide: "On the Deck Page, the top section displays the deck name, followed by buttons for 'Study' and 'Study All,' which take you to the review page. The 'Quiz' button leads you to the quiz page, while 'Statistics' takes you to the statistics page, which shows additional data about your deck. The 'Public/Private' indicator shows whether your current deck is public or private to the community. The 'Delete Deck' button will delete the entire deck. The graph on the right illustrates your mastery level. The 'Quick Create Card' option provides a small area for entering simple text to create a quick card. Alternatively, you can click 'Create Card' to go to the create card page for more complex card creation. Clicking the 'Toggle Delete Card' button activates delete mode, allowing you to remove the cards you wish to delete. At the bottom, all the cards in the deck are displayed, and you can click the edit icon to edit the card or click the speaker icon to let the computer speak the card for you.",
   },
   {
     title: "Review page",
@@ -168,6 +167,7 @@ function HelpPage() {
 
           return (
             <div
+            // key={`$index}-${i}`} could avoid the error but would lost the animation???
               key={index}
               style={calculateCardStyle(positionFromCenter, isSelected)} // Pass isSelected to calculate card style
               className={`absolute w-full p-4 dark:bg-white dark:text-black border-2 shadow-xl border-black rounded-lg bg-white flex flex-col items-center ${isSelected ? "shadow-xl h-[90vh]" : ""}`}
