@@ -1,9 +1,14 @@
 from typing import Optional
 from django.shortcuts import get_object_or_404
-from ninja import Router
+from ninja import Router, File
 from flashcards.models import CustomUser, Folder, Deck, Rating
 from flashcards.schemas import GetUser, UpdateUser, FolderInfo, DeckInfo
 from ninja_jwt.authentication import JWTAuth
+from botocore.exceptions import ClientError
+import boto3
+import json
+import uuid
+from ninja.files import UploadedFile
 
 profile_router = Router(tags=["Profile"])
 
@@ -27,6 +32,7 @@ def get_profile(request, userId: int = None):
         "flip_mode": user.flip_mode,
         "sidebar_open": user.sidebar_open,
         "light_mode": user.light_mode,
+        "avatar": user.avatar,
         "is_owner": is_owner,
     }
 
@@ -193,3 +199,42 @@ def ALL_rated_deck(request):
             "name":deck.name
         })
     return 200,rated_decks
+
+@profile_router.post("/upload_avatar", response={200: dict, 500: str}, auth=JWTAuth())
+def upload_avatar(request, avatar: UploadedFile = File(...)):
+    # 加载 AWS 凭证
+    with open('config.json') as config_file:
+        config = json.load(config_file)
+
+    AWS_ACCESS_KEY_ID = config['AWS_ACCESS_KEY_ID']
+    AWS_SECRET_ACCESS_KEY = config['AWS_SECRET_ACCESS_KEY']
+    AWS_REGION = config['AWS_REGION']
+    AWS_STORAGE_BUCKET_NAME = config['AWS_STORAGE_BUCKET_NAME']
+
+    s3 = boto3.client(
+        's3',
+        aws_access_key_id=AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+        region_name=AWS_REGION
+    )
+
+    # 为头像文件生成唯一的文件名
+    file_extension = avatar.name.split('.')[-1]
+    file_name = f"avatars/{request.user.username}/{uuid.uuid4()}.{file_extension}"
+
+    try:
+        # 上传文件到 S3
+        s3.upload_fileobj(avatar, AWS_STORAGE_BUCKET_NAME, file_name)
+    except Exception as e:
+        return {"error": "Failed to upload avatar"}, 500
+
+    # 构建头像 URL 并保存到用户的 avatar 字段中
+    avatar_url = f"https://{AWS_STORAGE_BUCKET_NAME}.s3-{AWS_REGION}.amazonaws.com/{file_name}"
+    
+    user = request.user
+    user.avatar = avatar_url  # 更新为 avatar
+    user.save()
+
+    print(f"Saved avatar to user profile: {avatar_url}")
+    
+    return {"message": "Avatar uploaded successfully", "avatar": avatar_url}

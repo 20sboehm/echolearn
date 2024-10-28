@@ -21,6 +21,7 @@ class GetUser(Schema):
     sidebar_open: Optional[bool] = None
     light_mode: Optional[bool] = None
     is_owner: Optional[bool] = None
+    avatar: Optional[str] = None
 
     class Config:
         orm_mode = True

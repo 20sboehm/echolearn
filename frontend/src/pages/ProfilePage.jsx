@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import api from '../utils/api';
 import { Link, useSearchParams } from 'react-router-dom';
-import folderOpenImg from "../assets/folder-open.png";
-import folderCloseImg from "../assets/folder-close.png";
-import decksImg from "../assets/decks.png";
-import userPic from "../assets/defaltUser.png"
+import defaultAvatar from "../assets/defaltUser.png";
 import FriendsPage from './FriendsPage';
+import { useApi } from "../hooks";
+import { useQuery, useMutation, useQueryClient } from "react-query";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 function ProfilePage() {
   const { _get, _patch } = api();
@@ -30,6 +30,13 @@ function ProfilePage() {
   const [folders, setFolders] = useState([]);
   const [RatedDeck, setRatedDeck] = useState([]);
   const [activeTab, setActiveTab] = useState('folders');
+
+  // User avatar
+  const apiClient = useApi();
+  const queryClient = useQueryClient();
+  const [avatar, setAvatar] = useState(defaultAvatar);
+  const [preview, setPreview] = useState(null);
+  const [file, setFile] = useState(null);
 
   const selectedTabClassName = "bg-elSkyBlue text-white dark:bg-edMedGray";
   const unselectedTabClassName = "bg-elLightGray text-elDarkGray dark:bg-edDarkGray dark:text-white";
@@ -76,19 +83,20 @@ function ProfilePage() {
         setEditableEmail(data.email);
         setEditableAge(data.age);
         setEditableCountry(data.country);
-        // Only set these values if the user is not a guest
+        setAvatar(data.avatar || defaultAvatar);
+  
         if (data.is_owner) {
           setFlipOrSet(data.flip_mode);
           setSidebarClosed(data.sidebar_open);
           setLightMode(data.light_mode);
-
+  
           if (!data.light_mode) {
             document.documentElement.classList.add('dark');
           } else {
             document.documentElement.classList.remove('dark');
           }
         }
-
+  
         const folderEndpoint = userId ? `/api/profile/folders_decks?userId=${userId}` : '/api/profile/folders_decks';
         const foldersResponse = await _get(folderEndpoint);
         const foldersData = await foldersResponse.json();
@@ -100,7 +108,7 @@ function ProfilePage() {
         setError('Failed to fetch profile data');
       }
     }
-
+  
     fetchProfile();
   }, []);
 
@@ -217,16 +225,90 @@ function ProfilePage() {
     }
   };
 
+ // 获取头像的查询请求
+ const { data: profileData, isLoading, error: fetchError } = useQuery("profile", async () => {
+    const response = await apiClient._get("/api/profile/me");
+    if (response.ok) {
+      const data = await response.json();
+      setAvatar(data.avatar || defaultAvatar);
+      return data;
+    }
+    throw new Error("Failed to fetch profile");
+  }
+);
+
+// 头像上传的 Mutate 方法
+const uploadMutation = useMutation(
+  async (formData) => {
+    const response = await apiClient._postFile("/api/profile/upload_avatar", formData); // 使用队友的上传方法
+    if (!response.ok) throw new Error("头像上传失败");
+    return response.json();
+  },
+  {
+    onSuccess: (data) => {
+      console.log("Success");
+      setAvatar(data.avatar_url);
+      console.log("Avatar URL:", data.avatar_url);
+      setPreview(data.avatar_url);
+      setFile(null);
+      queryClient.invalidateQueries("profile", { refetchActive: true });
+    },
+    onError: () => alert("Failed to upload avatar")
+  }
+);
+
+const handleAvatarChange = (e) => {
+  const selectedFile = e.target.files[0];
+  if (selectedFile && selectedFile.size <= 1 * 1024 * 1024) { // 限制1MB
+    setFile(selectedFile);
+    setPreview(URL.createObjectURL(selectedFile)); // 预览头像
+  } else {
+    alert("avatar size need < 1MB");
+  }
+};
+
+const handleUpload = () => {
+  if (!file) return;
+  const formData = new FormData();
+  formData.append("avatar", file);
+  uploadMutation.mutate(formData);
+};
+
+if (isLoading) return <LoadingSpinner />;
+if (error) return <p>Load fail: {error.message}</p>;
+
+
   return (
     <div className={`w-3/4 text-left flex mt-4 ${profile.is_owner ? '' : 'justify-center'}`}>
       {/* Left column: User Profile Information */}
       <div className={`h-1/2 ml-4 ${profile.is_owner ? 'w-2/3' : 'w-2/4'}`}>
         {/* Profile header */}
         <div className="flex items-center -mt-2">
-          <div className="w-24 h-24 rounded-full overflow-hidden">
-            {/* {profile.avatar || userPic} */}
-            <img src={userPic} alt="User avatar" className="object-cover w-full h-full" />
+
+          <div className="profile-page">
+            <div className="relative w-[100px] h-[100px] cursor-pointer" onClick={() => document.getElementById('avatarInput').click()}>
+              <img
+                src={preview || avatar} // 使用预览图或头像URL
+                alt="Avatar"
+                className="w-full h-full rounded-full object-cover transition-opacity duration-300 ease-in-out hover:opacity-80"
+              />
+            </div>
+
+            <input
+              id="avatarInput"
+              type="file"
+              accept="image/*"
+              onChange={handleAvatarChange}
+              className="hidden"
+            />
+
+            {file && (
+              <button onClick={handleUpload} className="button-common button-blue">
+                Upload
+              </button>
+            )}
           </div>
+
           <div className="ml-4">
             <h1 className="text-3xl font-bold text-elDark dark:text-edWhite">{profile.username}</h1>
           </div>
