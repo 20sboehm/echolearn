@@ -225,16 +225,16 @@ function ProfilePage() {
     }
   };
 
- const { data: profileData, isLoading, error: fetchError } = useQuery("profile", async () => {
-    const response = await apiClient._get("/api/profile/me");
-    if (response.ok) {
-      const data = await response.json();
-      setAvatar(data.avatar || defaultAvatar);
-      return data;
-    }
-    throw new Error("Failed to fetch profile");
-  }
-);
+//  const { data: profileData, isLoading, error: fetchError } = useQuery("profile", async () => {
+//     const response = await apiClient._get("/api/profile/me");
+//     if (response.ok) {
+//       const data = await response.json();
+//       setAvatar(data.avatar || defaultAvatar);
+//       return data;
+//     }
+//     throw new Error("Failed to fetch profile");
+//   }
+// );
 
   const uploadMutation = useMutation(
     async (formData) => {
@@ -247,7 +247,7 @@ function ProfilePage() {
         console.log("Success");
         setAvatar(data.avatar_url);
         console.log("Avatar URL:", data.avatar_url);
-        setPreview(data.avatar_url);
+        setPreview(null);
         setFile(null);
         queryClient.invalidateQueries("profile", { refetchActive: true });
         window.location.reload();
@@ -273,8 +273,8 @@ function ProfilePage() {
     uploadMutation.mutate(formData);
   };
 
-  if (isLoading) return <LoadingSpinner />;
-  if (error) return <p>Load fail: {error.message}</p>;
+  // if (isLoading) return <LoadingSpinner />;
+  // if (error) return <p>Load fail: {error.message}</p>;
 
 
   return (
