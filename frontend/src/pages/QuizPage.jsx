@@ -17,7 +17,6 @@ function QuizPage() {
 
   const [correct, setCorrect] = useState(0);
   const [incorrect, setIncorrect] = useState(0);
-  const [flip, setFlip] = useState(false);
   const [fadeIn, setFadeIn] = useState(false);
 
   const { data: Questions, isLoading, error, refetch } = useQuery(
@@ -56,14 +55,6 @@ function QuizPage() {
       return () => clearTimeout(fadeInTimeout);
     }
   }, [fadeIn]);
-
-  const toggleFlip = () => {
-    setFlip((prevFlip) => {
-      const newFlip = !prevFlip;
-      setTimeout(() => {}, 150);
-      return newFlip;
-    });
-  };
 
   if (isLoading || isFetching) {
     return <LoadingSpinner />;
@@ -114,7 +105,6 @@ function QuizPage() {
 
     // Move to the next question
     setTimeout(() => {
-      toggleFlip();
       setTimeout(() => {
         if (currentQuestionIndex < quizs.quiz.length - 1) {
           setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
@@ -141,8 +131,8 @@ function QuizPage() {
         </div>
       </div>
 
-      <div className={`flipCard ${flip ? 'flipped' : ''}`}>
-        <div className="flipCardInner w-[60vw] h-[40vh] border-2 text-elDark border-elDark bg-white dark:bg-edDarker rounded-lg p-4 mb-4 shadow-xl">
+      <div>
+        <div className="w-[60vw] h-[40vh] border-2 text-elDark border-elDark bg-white dark:bg-edDarker rounded-lg p-4 mb-4 shadow-xl">
           <MarkdownPreviewer content={currentQuestion.question} className="flex-1 p-2 min-h-20 rounded-2xl text-xl bg-transparent" />
         </div>
       </div>
