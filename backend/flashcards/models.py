@@ -61,6 +61,10 @@ class Card(models.Model):
     correct_count = models.IntegerField(default=0)
     incorrect_count = models.IntegerField(default=0)
     review_history = models.JSONField(default=list, blank=True)
+    review_again = models.BooleanField(default=False)
+    ease_factor_points = models.FloatField(default=0)
+    ease_factor_max_points = models.FloatField(default=0)
+    target_recall = models.FloatField(default=0.9)
 
     def __str__(self):
         return f"{self.question} (id={self.card_id})"
