@@ -225,7 +225,6 @@ function ProfilePage() {
     }
   };
 
- // 获取头像的查询请求
  const { data: profileData, isLoading, error: fetchError } = useQuery("profile", async () => {
     const response = await apiClient._get("/api/profile/me");
     if (response.ok) {
@@ -237,45 +236,45 @@ function ProfilePage() {
   }
 );
 
-// 头像上传的 Mutate 方法
-const uploadMutation = useMutation(
-  async (formData) => {
-    const response = await apiClient._postFile("/api/profile/upload_avatar", formData); // 使用队友的上传方法
-    if (!response.ok) throw new Error("头像上传失败");
-    return response.json();
-  },
-  {
-    onSuccess: (data) => {
-      console.log("Success");
-      setAvatar(data.avatar_url);
-      console.log("Avatar URL:", data.avatar_url);
-      setPreview(data.avatar_url);
-      setFile(null);
-      queryClient.invalidateQueries("profile", { refetchActive: true });
+  const uploadMutation = useMutation(
+    async (formData) => {
+      const response = await apiClient._postFile("/api/profile/upload_avatar", formData);
+      if (!response.ok) throw new Error("Avatar upload fail");
+      return response.json();
     },
-    onError: () => alert("Failed to upload avatar")
-  }
-);
+    {
+      onSuccess: (data) => {
+        console.log("Success");
+        setAvatar(data.avatar_url);
+        console.log("Avatar URL:", data.avatar_url);
+        setPreview(data.avatar_url);
+        setFile(null);
+        queryClient.invalidateQueries("profile", { refetchActive: true });
+        window.location.reload();
+      },
+      onError: () => alert("Failed to upload avatar")
+    }
+  );
 
-const handleAvatarChange = (e) => {
-  const selectedFile = e.target.files[0];
-  if (selectedFile && selectedFile.size <= 1 * 1024 * 1024) { // 限制1MB
-    setFile(selectedFile);
-    setPreview(URL.createObjectURL(selectedFile)); // 预览头像
-  } else {
-    alert("avatar size need < 1MB");
-  }
-};
+  const handleAvatarChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile && selectedFile.size <= 1 * 1024 * 1024) {
+      setFile(selectedFile);
+      setPreview(URL.createObjectURL(selectedFile));
+    } else {
+      alert("avatar size need < 1MB");
+    }
+  };
 
-const handleUpload = () => {
-  if (!file) return;
-  const formData = new FormData();
-  formData.append("avatar", file);
-  uploadMutation.mutate(formData);
-};
+  const handleUpload = () => {
+    if (!file) return;
+    const formData = new FormData();
+    formData.append("avatar", file);
+    uploadMutation.mutate(formData);
+  };
 
-if (isLoading) return <LoadingSpinner />;
-if (error) return <p>Load fail: {error.message}</p>;
+  if (isLoading) return <LoadingSpinner />;
+  if (error) return <p>Load fail: {error.message}</p>;
 
 
   return (
@@ -286,23 +285,26 @@ if (error) return <p>Load fail: {error.message}</p>;
         <div className="flex items-center -mt-2">
 
           <div className="profile-page">
-            <div className="relative w-[100px] h-[100px] cursor-pointer" onClick={() => document.getElementById('avatarInput').click()}>
+            <div className={`relative w-[100px] h-[100px] ${profile.is_owner ? "cursor-pointer" : ""}`} 
+              {...(profile.is_owner && { onClick: () => document.getElementById('avatarInput').click() })}>
               <img
-                src={preview || avatar} // 使用预览图或头像URL
+                src={preview || avatar}
                 alt="Avatar"
                 className="w-full h-full rounded-full object-cover transition-opacity duration-300 ease-in-out hover:opacity-80"
               />
             </div>
 
-            <input
-              id="avatarInput"
-              type="file"
-              accept="image/*"
-              onChange={handleAvatarChange}
-              className="hidden"
-            />
+            {profile.is_owner && (
+              <input
+                id="avatarInput"
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarChange}
+                className="hidden"
+              />
+            )}
 
-            {file && (
+            {profile.is_owner && file && (
               <button onClick={handleUpload} className="button-common button-blue">
                 Upload
               </button>
