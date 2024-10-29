@@ -22,9 +22,10 @@ import AboutPage from './pages/AboutPage';
 import ProfilePage from './pages/ProfilePage';
 import StatsPage from './pages/StatsPage';
 import FriendsPage from './pages/FriendsPage';
-import CommunityPage from './pages/CommunityPage'
-import QuizletParserPage from './pages/QuizletParserPage'
+import CommunityPage from './pages/CommunityPage';
+import QuizletParserPage from './pages/QuizletParserPage';
 import MyImagesPage from './pages/MyImagesPage';
+import QuizPage from "./pages/QuizPage";
 
 const queryClient = new QueryClient();
 
@@ -43,7 +44,7 @@ function AuthenticatedRoutes() {
       <Route path="/" element={<HomePage />} />
       <Route path="/cards" element={<CreateCardPage />} />
       <Route path="/quizletparser" element={<QuizletParserPage />} />
-      <Route path="/review/:deckId" element={<ReviewPage />} />
+      <Route path="/review" element={<ReviewPage />} />
       <Route path="/help" element={<HelpPage />} />
       <Route path="/edit/:cardId" element={<EditCardPage />} />
       <Route path="/decks/:deckId" element={<DeckPage />} />
@@ -54,6 +55,7 @@ function AuthenticatedRoutes() {
       <Route path="*" element={<ErrorPage statusCode="404" errorMessage="Page not found" />} />
       <Route path="/friends" element={<FriendsPage />} />
       <Route path="/myimages" element={<MyImagesPage />} />
+      <Route path="/quiz/:deckId" element={<QuizPage />} />
     </Routes>
   );
 }

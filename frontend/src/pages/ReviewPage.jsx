@@ -22,14 +22,17 @@ function ReviewPage() {
   const api = useApi();
   const navigate = useNavigate();
 
-  const [cardIndex, setCardIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false); // Reveals the answer buttons as well as the 'Answer' card on the default review display setting
   const [finish, setFinish] = useState(false);
   const [changeAnimation, setAnimation] = useState(true);
   const [currImage, setCurrImage] = useState(card);
-  const { deckId } = useParams();
+
   const [searchParams] = useSearchParams();
   const studyAll = searchParams.get('studyAll') === 'true';
+  const deckIds = searchParams.get('deckIds')?.split(',');
+  const [currentDeckIndex, setCurrentDeckIndex] = useState(0);
+  const [cardIndex, setCardIndex] = useState(0);
+  
   const [sidebarWidth, setSidebarWidth] = useState(250);
 
   const [flip, setFlip] = useState(false);
@@ -71,9 +74,9 @@ function ReviewPage() {
 
   // Fetch reviews info
   const { data: reviews, isLoading, error } = useQuery(
-    ['reviews', deckId, studyAll],
+    ['reviews', deckIds, studyAll],
     async () => {
-      let response = await api._get(`/api/reviews/${deckId}?studyAll=${studyAll}`);
+      let response = await api._get(`/api/reviews?deckIds=${deckIds}&studyAll=${studyAll}`);
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -103,7 +106,7 @@ function ReviewPage() {
     );
   }
 
-  const updateReviewedCard = (newBucket, nextReviewTime, card, wasCorrect) => {
+  const updateReviewedCard = (newBucket, nextReviewTime, card, wasCorrect, updateCardIndex) => {
     setFlip(false);
 
     const today = new Date();
@@ -115,26 +118,18 @@ function ReviewPage() {
       next_review: formatTime(nextReviewTime),
       last_reviewed: formatTime(today)
     };
-    console.log(card);
-    console.log(card.correct_count);
 
     if (wasCorrect) {
       updatedCardData.correct_count = (card.correct_count || 0) + 1;
     } else {
       updatedCardData.incorrect_count = (card.incorrect_count || 0) + 1;
     }
-    console.log(updatedCardData);
 
     api._patch(
       `/api/cards/${card.card_id}`, updatedCardData)
       .then(response => {
         if (response.ok) {
-          if (cardIndex < reviews.cards.length - 1) {
-            setCardIndex(cardIndex + 1);
-            setShowAnswer(false);
-          } else {
-            setFinish(true);
-          }
+          updateCardIndex();
         } else {
           console.error('Failed to update next_review');
         }
@@ -144,11 +139,32 @@ function ReviewPage() {
       });
   };
 
+  // Function to handle finishing the current deck
+  const finishDeck = () => {
+    if (currentDeckIndex < reviews.decks.length - 1) {
+      // Move to the next deck
+      setCurrentDeckIndex((prev) => prev + 1);
+      setCardIndex(0); // Reset card index
+    } else {
+      setFinish(true);
+    }
+  };
+
+  // Handle updating the card index and moving to the next card
+  const updateCardIndex = () => {
+    if (cardIndex < reviews.decks[currentDeckIndex].cards.length - 1) {
+      setCardIndex((prev) => prev + 1);
+    } else {
+      finishDeck(); // If all cards in the current deck are finished, move to the next deck
+    }
+  };
+
   // Check if reviews data is available
-  if (!reviews || !reviews.cards || reviews.cards.length === 0) {
+  if (!reviews || !reviews.decks || reviews.decks.length === 0) {
     return <div>No cards found for review.</div>;
   }
 
+    
   return (
     <>
       <div className="flex w-full h-full">
@@ -158,23 +174,24 @@ function ReviewPage() {
           <div className="grid grid-cols-3 mx-auto items-center border-b border-elDividerGray dark:border-edDividerGray pb-2 w-[40vw]">
             <button type="button" onClick={() => { navigate(-1) }} className="py-2 w-[50%] text-center block rounded-lg border border-edGray 
             text-black dark:text-edWhite hover:bg-elHLT dark:hover:bg-edHLT">Back</button>
-            <h2 className="text-center text-[2em] grid-col text-elDark dark:text-edWhite mx-auto">{reviews.deck_name}</h2>
+            <h2 className="text-center text-[2em] grid-col text-elDark dark:text-edWhite mx-auto">{reviews.decks[currentDeckIndex].deck_name}</h2>
             <button className="border border-black w-[40%] ml-auto" onClick={switchAnimation}>
               <img src={currImage}></img>
             </button>
           </div>
           {!finish && (
             <ReviewCard
-              card={reviews.cards[cardIndex]}
+              card={reviews.decks[currentDeckIndex].cards[cardIndex]}
               showAnswer={showAnswer}
               setShowAnswer={setShowAnswer}
               updateReviewedCard={updateReviewedCard}
+              updateCardIndex={updateCardIndex}
               changeAnimation={changeAnimation}
               flip={flip}
               setFlip={setFlip}
             />
           )}
-          {finish && <FinishView deckId={deckId} />}
+          {finish && <FinishView deckId={deckIds[currentDeckIndex]} />}
         </div>
       </div>
     </>
@@ -186,7 +203,7 @@ function FinishView(deckId) {
     <div className="flex flex-row justify-center items-center mt-[10vh]">
       <img className="w-40 h-40 mt-[-10vh]" src={partyPopperFlipImg} alt="Party Popper" />
       <div className="flex flex-col justify-center items-center mx-4">
-        <h3 className="h-[25vh] flex justify-center items-center w-full border-black bg-white rounded-md p-5 text-2xl text-black my-4">You have studied all the cards in this deck</h3>
+        <h3 className="h-[25vh] flex justify-center items-center w-full border border-black bg-white rounded-md p-5 text-2xl text-black my-4">You have studied all the cards in this deck</h3>
         <Link to={`/decks/${deckId.deckId}`}>
           <button className="button-common button-blue border rounded-md px-2 py-1">Back to deck</button>
         </Link>
@@ -196,7 +213,7 @@ function FinishView(deckId) {
   )
 }
 
-function ReviewCard({ card, showAnswer, setShowAnswer, updateReviewedCard, changeAnimation, flip, setFlip }) {
+function ReviewCard({ card, showAnswer, setShowAnswer, updateReviewedCard, changeAnimation, flip, setFlip, updateCardIndex }) {
   // Whether to display the question or answer on the 'flip' version of the card
   // This is to make the animation seem smoother by switching the displayed text half way through the flip animation
   const [displayQuestionOnFlipCard, setDisplayQuestionOnFlipCard] = useState(true);
@@ -239,7 +256,7 @@ function ReviewCard({ card, showAnswer, setShowAnswer, updateReviewedCard, chang
           </div>
         </div>
       </div>
-      <ShowAnswerButtons card={card} showAnswer={showAnswer} updateReviewedCard={updateReviewedCard} toggleFlip={toggleFlip}></ShowAnswerButtons>
+      <ShowAnswerButtons card={card} showAnswer={showAnswer} updateReviewedCard={updateReviewedCard} toggleFlip={toggleFlip} updateCardIndex={updateCardIndex}></ShowAnswerButtons>
     </>
   );
 }
@@ -286,7 +303,7 @@ function FlipFlashcard({ card, flip, toggleFlip, displayQuestion }) {
   )
 }
 
-function ShowAnswerButtons({ card, showAnswer, updateReviewedCard, toggleFlip }) {
+function ShowAnswerButtons({ card, showAnswer, updateReviewedCard, toggleFlip, updateCardIndex }) {
   const confidence_scale_factors = {
     1: 0,     // Set interval to 0
     2: 0.75,  // Decrease interval by 25%
@@ -303,9 +320,9 @@ function ShowAnswerButtons({ card, showAnswer, updateReviewedCard, toggleFlip })
   const updateReviewedCardAndDisplay = (confidence_level) => {
     toggleFlip();
     if (confidence_level === 1) {
-      return updateReviewedCard(0, nextReviewTime(confidence_level), card, false);
+      return updateReviewedCard(0, nextReviewTime(confidence_level), card, false, updateCardIndex);
     } else {
-      return updateReviewedCard(card.bucket + 1, nextReviewTime(confidence_level), card, true);
+      return updateReviewedCard(card.bucket + 1, nextReviewTime(confidence_level), card, true, updateCardIndex);
     }
   }
 
