@@ -4,8 +4,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import defaultAvatar from "../assets/defaltUser.png";
 import FriendsPage from './FriendsPage';
 import { useApi } from "../hooks";
-import { useQuery, useMutation, useQueryClient } from "react-query";
-import LoadingSpinner from "../components/LoadingSpinner";
+import { useMutation, useQueryClient } from "react-query";
 
 function ProfilePage() {
   const { _get, _patch } = api();
@@ -186,8 +185,6 @@ function ProfilePage() {
     }));
   };
 
-
-
   const handleFlipOrSetChange = async () => {
     const newFlipOrSet = !flipOrSet;
     setFlipOrSet(newFlipOrSet);
@@ -225,17 +222,6 @@ function ProfilePage() {
     }
   };
 
-//  const { data: profileData, isLoading, error: fetchError } = useQuery("profile", async () => {
-//     const response = await apiClient._get("/api/profile/me");
-//     if (response.ok) {
-//       const data = await response.json();
-//       setAvatar(data.avatar || defaultAvatar);
-//       return data;
-//     }
-//     throw new Error("Failed to fetch profile");
-//   }
-// );
-
   const uploadMutation = useMutation(
     async (formData) => {
       const response = await apiClient._postFile("/api/profile/upload_avatar", formData);
@@ -272,10 +258,6 @@ function ProfilePage() {
     formData.append("avatar", file);
     uploadMutation.mutate(formData);
   };
-
-  // if (isLoading) return <LoadingSpinner />;
-  // if (error) return <p>Load fail: {error.message}</p>;
-
 
   return (
     <div className={`w-3/4 text-left flex mt-4 ${profile.is_owner ? '' : 'justify-center'}`}>

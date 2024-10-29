@@ -4,7 +4,6 @@ from ninja import Router, File
 from flashcards.models import CustomUser, Folder, Deck, Rating
 from flashcards.schemas import GetUser, UpdateUser, FolderInfo, DeckInfo
 from ninja_jwt.authentication import JWTAuth
-from botocore.exceptions import ClientError
 import boto3
 import json
 import uuid
