@@ -8,6 +8,7 @@ import DeckViewImg from "../assets/DeckPage.png"
 import ReviewViewImg from "../assets/ReviewPage.png"
 import SpaceRepeImg from "../assets/growth.png"
 import ProfileImg from "../assets/Profile.png"
+import CopyImg from "../assets/CopyDeck.png"
 
 const topics = [
   {
@@ -17,8 +18,13 @@ const topics = [
   },
   {
     title: "Community",
-    guide: "The Community page displays all the public decks shared within our community. You can click on the author's name to view their profile. Additionally, clicking the right curved arrow will show you the details of the deck.",
+    guide: "The Community page displays all the public decks shared within our community. You can click on the author's name to view their profile. Additionally, clicking the right curved arrow will show you the details of the deck where you can copy the deck into your library.",
     image: CommunityImg,
+  },
+  {
+    title: "Copy Deck",
+    guide: "After clicking the curved arrow on the Community page, you can either click the heart icon to favorite the deck or select the 'Copy Deck' button. This will display all your folders, prompting you to choose the folder which you want to copy the deck.",
+    image: CopyImg,
   },
   {
     title: "Profile Page",
@@ -92,7 +98,7 @@ function HelpPage() {
 
   const SCROLL_SENSITIVITY = 30; // How much scroll distance is needed to trigger index change
   const SPACE_BETWEEN_CARDS = 90; // Adjust this value to space out cards more
-  const VISIBLE_CARDS = 5;
+  const VISIBLE_CARDS = 6;
 
   const handleWheel = (e) => {
     // Prevent scrolling if a card is expanded
