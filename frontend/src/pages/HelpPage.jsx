@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import TODOImg from "../assets/TO-DOList.png"
 import CCardImg from "../assets/CreateCard.png"
-import CDeckImg from "../assets/CreateDeck.png"
-import CFolderImg from "../assets/CreateFolder.png"
+import MarkdownImg from "../assets/Markdown.png"
+import CommunityImg from "../assets/Community.png"
 import SidebarImg from "../assets/Sidebar.png"
 import DeckViewImg from "../assets/DeckPage.png"
 import ReviewViewImg from "../assets/ReviewPage.png"
 import SpaceRepeImg from "../assets/growth.png"
+import ProfileImg from "../assets/Profile.png"
 
 const topics = [
   {
@@ -15,14 +16,14 @@ const topics = [
     image: TODOImg,
   },
   {
-    title: "Create Folder",
-    guide: "On the create folder page, type in the desired folder name and press 'Submit' to create the folder.",
-    image: CFolderImg,
+    title: "Community",
+    guide: "The Community page displays all the public decks shared within our community. You can click on the author's name to view their profile. Additionally, clicking the right curved arrow will show you the details of the deck.",
+    image: CommunityImg,
   },
   {
-    title: "Create Deck",
-    guide: "On the create deck page, enter a name for the deck. The description is optional, but you must select a folder you have created to proceed with creating the deck.",
-    image: CDeckImg,
+    title: "Profile Page",
+    guide: "On the Profile page, you can change your name, email, age, and country. At the bottom, there are tabs that allow you to switch between your folders, favorite decks, and friends. Finally, on the right, you can modify your account settings.",
+    image: ProfileImg,
   },
   {
     title: "Create Card",
@@ -35,6 +36,22 @@ const topics = [
     image: "",
   },
   {
+    title: "Simple Markdown Tutorial",
+    guide: [
+      "Bold: **<text>**",
+      "Italic: *<text>>*",
+      "Underline: __<text>__",
+      "Code snippet: `code`",
+      "Page break: ---",
+      "Image Links: ![alt](url)",
+      "Links: [text](url)",
+      "Header 1: #<text>",
+      "Header 2: ##<text>",
+    ],
+    format: "list",
+    image: MarkdownImg,
+  },
+  {
     title: "Sidebar",
     guide: "The sidebar displays all the folders you have created, allowing you to access a deck by clicking on it. You can create, rename, or delete folders and decks by right-clicking, or by using the 'Create Folder' and 'Create Deck' buttons at the top. To do this, you need to select a folder first. There is also an 'Expand and Collapse' button at the top to expand all your folders with one click, and collapse them with another. When you hover over the border, it will turn blue, indicating that you can drag to adjust the width of the sidebar. Additionally, a close sidebar button (represented as a left arrow) is available on the top right to close the sidebar.",
     image: SidebarImg,
@@ -42,10 +59,11 @@ const topics = [
   {
     title: "Deck Page",
     guide: "On the Deck Page, the top section displays the deck name, followed by buttons for 'Study' and 'Study All,' which take you to the review page. The 'Quiz' button leads you to the quiz page, while 'Statistics' takes you to the statistics page, which shows additional data about your deck. The 'Public/Private' indicator shows whether your current deck is public or private to the community. The 'Delete Deck' button will delete the entire deck. The graph on the right illustrates your mastery level. The 'Quick Create Card' option provides a small area for entering simple text to create a quick card. Alternatively, you can click 'Create Card' to go to the create card page for more complex card creation. Clicking the 'Toggle Delete Card' button activates delete mode, allowing you to remove the cards you wish to delete. At the bottom, all the cards in the deck are displayed, and you can click the edit icon to edit the card or click the speaker icon to let the computer speak the card for you.",
+    image: DeckViewImg,
   },
   {
     title: "Review page",
-    guide: "The review page will only shows the cards that you need to review. On the top right you can choice what animation you like to use to review, question set or flashcard. When you reveal the answer it will show up 4 choice ask you how confident you feel you know the question, each choice will follow with a time, telling you when will be your next review time for the card. ",
+    guide: "The Review page displays the cards you need to review. In the top right corner, you can choose which animation to use for reviewing: either the question set or the flashcard. When you reveal the answer, four choices will appear, asking how confident you feel about knowing the question. Each choice indicates the time for your next review of that card. You can also press the space key to reveal or flip the card, and use the number keys (1 to 4) to select your answer choice.",
     image: ReviewViewImg,
   },
   {
@@ -167,18 +185,32 @@ function HelpPage() {
 
           return (
             <div
-            // key={`$index}-${i}`} could avoid the error but would lost the animation???
+              // key={`$index}-${i}`} could avoid the error but would lost the animation???
               key={index}
               style={calculateCardStyle(positionFromCenter, isSelected)} // Pass isSelected to calculate card style
               className={`absolute w-full p-4 dark:bg-white dark:text-black border-2 shadow-xl border-black rounded-lg bg-white flex flex-col items-center ${isSelected ? "shadow-xl h-[90vh]" : ""}`}
               onClick={() => handleCardClick(index)}
             >
               <h2 className="text-2xl font-bold mb-4">{topics[index].title}</h2>
-              <p className="mt-2">
-                {isSelected
-                  ? topics[index].guide
-                  : `${topics[index].guide.substring(0, 80)}...`}
-              </p>
+              <div className="mt-2">
+                {Array.isArray(topics[index].guide) && topics[index].format === "list" ? (
+                  <ul className={`grid gap-2 grid-cols-1" ml-6`}>
+                    {(isSelected ? topics[index].guide : topics[index].guide.slice(0, 1)).map((item, idx) => (
+                      <li key={idx} className="flex">
+                        <span className="font-semibold">{item.split(":")[0]}:</span> {/* Label */}
+                        <span className="ml-2">{item.split(":")[1]}</span> {/* Example */}
+                      </li>
+                    ))}
+                    {!isSelected && topics[index].guide.length > 1 && <li>...</li>}
+                  </ul>
+                ) : (
+                  <p>
+                    {isSelected
+                      ? topics[index].guide
+                      : `${topics[index].guide.substring(0, 80)}...`}
+                  </p>
+                )}
+              </div>
               {isSelected && (
                 <img
                   src={topics[index].image}
