@@ -86,6 +86,13 @@ function QuizletParserPage() {
 
         console.log(ankiInput)
 
+         // Check if deckId is valid
+        if (!deckId) {
+            console.error("Error: Missing deckId");
+            alert("Faile to creat cards because did not select deck")
+            displayPopup(false);
+            return; 
+        }
         const results = [];
         for (let i = 0; i < ankiInput.length - 1; i++) {
             const arr = ankiInput[i];
@@ -161,7 +168,7 @@ function QuizletParserPage() {
             <div className="w-1/2 flex flex-col mx-auto">
                 <div className="flex justify-between border-b-2 border-edMedGray mb-4 mt-8 pb-1">
                     <h1 className="text-xl text-elDark dark:text-edWhite font-medium">New Card</h1>
-                    <select id="selectDeck" value={deckId} onChange={(e) => setDeckId(e.target.value)} className='text-black bg-elGray border border-black dark:bg-edDarker dark:text-edWhite focus:outline-none' >
+                    <select id="selectDeck" value={deckId} onChange={(e) => setDeckId(e.target.value)}className='text-black bg-elGray border border-black dark:bg-edDarker dark:text-edWhite focus:outline-none' >
                         <option key='select-deck-key' value=''>Select a deck</option>
                         {decks.map((deck) => (
                             <option key={deck.deck_id} value={deck.deck_id}>{deck.name}</option>

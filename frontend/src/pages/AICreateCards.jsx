@@ -66,6 +66,14 @@ function AICreateCardsPage() {
   const handleAIParser = async (e) => {
     e.preventDefault();
     setWatiting(true)
+      // Check if deckId is valid
+      if (!deckId) {
+        console.error("Error: Missing deckId");
+        setWatiting(false)
+        alert("Faile to creat cards because did not select deck")
+        displayPopup(false);
+        return; 
+    }
     console.log(userInput)
    
     const dataToSend = {
@@ -81,6 +89,14 @@ function AICreateCardsPage() {
     } else {
       const responseData = await response.json();
       console.log(responseData)
+      if(!responseData.newcardset.length){
+        // console.error("Error creating cards: ", errorData);
+        alert("Faile to request AI generation please input meaningful text or try again later ")
+        displayPopup(false);
+        setWatiting(false)
+        setNewResponse("")
+        return
+      }
       setNewResponse(responseData.newcardset);
       console.log("All cards created successfully.");
       displayPopup(true);
@@ -176,10 +192,10 @@ function AICreateCardsPage() {
                     preview.map((item, index) => (
                     <div className="grid grid-cols-2 gap-4 font-medium px-2" key={index}>
                         <div className="border bg-white dark:bg-edDarker text-black dark:text-edWhite mt-2 px-2 py-2">
-                            <p>Question: {item.question}</p>
+                            <p>{item.question}</p>
                         </div>
                         <div className="border bg-white dark:bg-edDarker text-black dark:text-edWhite mt-2 px-2 py-2 relative">
-                            <p>Answer: {item.answer}</p>
+                            <p>{item.answer}</p>
                         </div>
                     </div>
                     ))

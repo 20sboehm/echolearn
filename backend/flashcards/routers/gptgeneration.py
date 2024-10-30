@@ -26,7 +26,7 @@ def test(request):
     prompt = "\n".join(prompt_lines) + "\n" + f"Input: {userinput}"
     try:
         response = client.chat.completions.create(
-            model="gpt-4",  
+            model="gpt-4o-mini",  
             # prompt=f"Question: {question}\nRéponse:",
             # max_tokens=1024,
             # n=1,
@@ -41,7 +41,7 @@ def test(request):
         response_message = response.choices[0].message.content
         print(response_message.replace('\n',''))
         
-        pattern = re.compile(r'Question: (.*?) Answer: (.*?)(?=Question:|$)', re.DOTALL)
+        pattern = re.compile(r'Question:\s*(.*?)\s*Answer:\s*(.*?)(?=Question:|$)', re.DOTALL)
         matches = pattern.findall(response_message.replace('\n',''))
 
         for question, answer in matches:
