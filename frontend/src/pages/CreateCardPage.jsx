@@ -68,7 +68,8 @@ function CreateCardPage() {
           </div>
 
           <button type="button" onClick={() => navigate("/quizletparser", { state: { deckId: deckId } })} className="button-common button-blue py-2 text-center w-1/4 mb-4 font-semibold">quizlet parser</button>
-
+          <button type="button" onClick={() => navigate("/ankiparser", { state: { deckId: deckId } })} className="button-common button-blue py-2 text-center w-1/4 mb-4 font-semibold">anki parser</button>
+          <button type="button" onClick={() => navigate("/aigeneratecards", { state: { deckId: deckId } })} className="button-common button-blue py-2 text-center w-1/4 mb-4 font-semibold">AI make cards</button>   
           <MarkdownEditor requestType="post" submitButtonText="Create Card" questionText={questionText} setQuestionText={setQuestionText}
             answerText={answerText} setAnswerText={setAnswerText} deckId={deckId} />
 

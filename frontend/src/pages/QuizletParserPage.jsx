@@ -63,6 +63,14 @@ function QuizletParserPage() {
   // create multiple cards
   const handleQuizletParser = async (e) => {
     e.preventDefault();
+
+      // Check if deckId is valid
+      if (!deckId) {
+        console.error("Error: Missing deckId");
+        alert("Faile to creat cards because did not select deck")
+        displayPopup(false);
+        return; 
+    }
     console.log(quizletInput)
     let lineChoice = "{|}";
     let spaceChoice = "|";

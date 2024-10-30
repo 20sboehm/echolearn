@@ -12,6 +12,7 @@ from flashcards.routers.profile import profile_router
 from flashcards.routers.friends import friends_router
 from flashcards.routers.images import images_router
 from flashcards.routers.quiz import quiz_router
+from flashcards.routers.gptgeneration import gpt_router
 
 api = NinjaExtraAPI()
 
@@ -28,4 +29,5 @@ api.add_router("/signup", signup_router)
 api.add_router("/profile", profile_router)
 api.add_router("/friends", friends_router)
 api.add_router("/images", images_router)
+api.add_router("/gptgeneration",gpt_router)
 api.add_router("/quiz", quiz_router)
