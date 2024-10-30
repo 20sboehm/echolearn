@@ -1,13 +1,33 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect  } from "react";
 import { Link, useParams, useLocation } from "react-router-dom";
 import echolearnLogoBlue from "../assets/echolearn-logo-blue.png"
 import echolearnLogoWhite from "../assets/echolearn-logo-white.png"
-import userPic from "../assets/defaltUser.png"
-import { useAuth } from "../hooks";
+import defaultUserPic from "../assets/defaltUser.png";
+import { useAuth, useApi } from "../hooks";
 
 function Header() {
   const { isLoggedIn, _logout } = useAuth();
   const isGuestPage = !isLoggedIn;
+  const [userData, setUserData] = useState(null);
+  const api = useApi();
+
+  useEffect(() => {
+    if (isLoggedIn && !userData) {
+      const fetchUserSettings = async () => {
+        try {
+          const response = await api._get('/api/profile/me');
+          const data = await response.json();
+          setUserData(data);
+        } catch (error) {
+          console.error('Failed to obtain user Settings', error);
+        }
+      };
+
+      fetchUserSettings();
+    }
+  }, [isLoggedIn, api]);
+
+  const avatar = userData?.avatar || defaultUserPic;
 
   const handleLogout = () => {
     _logout();
@@ -59,7 +79,7 @@ function Header() {
               Log Out
             </button>
             <Link to="/profile" onClick={(e) => navigateWithRefresh(e, "/profile")}  className="flex items-center">
-              <img src={userPic} alt="User profile picture" className="h-10 mr-10" />
+              <img src={avatar} alt="User profile picture" className="h-10 w-10 mr-10 rounded-full object-cover" />
             </Link>
           </div>
         </div>

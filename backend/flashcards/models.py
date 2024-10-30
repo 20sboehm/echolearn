@@ -12,6 +12,7 @@ class CustomUser(AbstractUser):
     flip_mode = models.BooleanField(default=True)
     sidebar_open = models.BooleanField(default=True)
     light_mode = models.BooleanField(default=False)
+    avatar = models.URLField(blank=True, null=True)
     
     def __str__(self):
         return self.username
