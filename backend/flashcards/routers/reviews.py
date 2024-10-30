@@ -8,29 +8,48 @@ import time
 
 review_router = Router(tags=["Review"])
 
-@review_router.get("/{deck_id}", response=sc.ReviewCards, auth=JWTAuth())
-def get_reviews(request, deck_id: int, studyAll: bool = False):
-    deck = Deck.objects.get(deck_id=deck_id)
+@review_router.get("/", response=sc.MultipleReviewCards, auth=JWTAuth())
+def get_reviews(request, deckIds: str = None, studyAll: bool = False):
+    if deckIds:
+        deck_ids = [int(id) for id in deckIds.split(',')]
+    else:
+        raise HttpError(400, "There is no deck to study")
 
     # time.sleep(1)
 
-    if deck.owner != request.user:
-        raise HttpError(403, "You are not authorized to access this deck")
-
-    cards = Card.objects.filter(deck=deck)
+    reviewSets = []
     today = datetime.now(timezone.utc)
 
-    reviewSets = []
-    for card in cards:
-        if studyAll or card.next_review <= today:
-            reviewSets.append({
-                "card_id": card.card_id,
-                "question": card.question,
-                "answer": card.answer,
-                "bucket": card.bucket,
-                "correct_count": card.correct_count,
-                "incorrect_count": card.incorrect_count,
-                "next_review": card.next_review
-            })
+    for deck_id in deck_ids:
+        try:
+            deck = Deck.objects.get(deck_id=deck_id)
+            
+            if deck.owner != request.user:
+                raise HttpError(403, "You are not authorized to access this deck")
+            
+            cards = Card.objects.filter(deck=deck)
+            deckReviewSet = []
 
-    return {"deck_id": deck.deck_id, "deck_name": deck.name, "cards": reviewSets}
+            for card in cards:
+                if studyAll or card.next_review <= today:
+                    deckReviewSet.append({
+                        "card_id": card.card_id,
+                        "question": card.question,
+                        "answer": card.answer,
+                        "bucket": card.bucket,
+                        "correct_count": card.correct_count,
+                        "incorrect_count": card.incorrect_count,
+                        "next_review": card.next_review
+                    })
+                    # Add the review set for the deck
+            if deckReviewSet:
+                reviewSets.append({
+                    "deck_id": deck.deck_id,
+                    "deck_name": deck.name,
+                    "cards": deckReviewSet
+                })
+
+        except Deck.DoesNotExist:
+            raise HttpError(404, f"Deck with id {deck_id} does not exist")
+    
+    return {"decks": reviewSets}

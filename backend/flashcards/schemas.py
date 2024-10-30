@@ -110,6 +110,9 @@ class GetCard(Schema):
     correct_count: int
     incorrect_count: int
     review_history: list[datetime]
+    review_again: bool
+    ease_factor_points: float
+    ease_factor_max_points: float
 
 class UpdateCard(Schema):
     question: Optional[str] = None
@@ -120,6 +123,15 @@ class UpdateCard(Schema):
     correct_count: Optional[int] = None
     incorrect_count: Optional[int] = None
     review_history: Optional[list[datetime]] = None
+
+class UpdateReviewCard(Schema):
+    confidence: int
+
+class GetReviewTimes(Schema):
+    again: str
+    hard: str
+    good: str
+    easy: str
 
 class CreateCard(Schema):
     deck_id: int
@@ -139,6 +151,9 @@ class ReviewCards(Schema):
     deck_id: int
     deck_name: str
     cards: list[Cards]
+
+class MultipleReviewCards(Schema):
+    decks: List[ReviewCards]
 
 class DeckCards(Schema):
     deck_id: int
