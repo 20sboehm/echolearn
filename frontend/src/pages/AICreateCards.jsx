@@ -18,7 +18,7 @@ function AICreateCardsPage() {
   const [preview, setPreview] = useState([])
   const [newresponse,setNewResponse] = useState([])
   const [waiting, setWatiting] = useState(false);
-
+  const [wordCount, setWordCount] = useState(0);
   const [popupActive, setPopupActive] = useState(false);
   const [popupSuccess, setPopupSuccess] = useState(false);
   const [popupText, setPopupText] = useState("");
@@ -74,8 +74,15 @@ function AICreateCardsPage() {
         displayPopup(false);
         return; 
     }
+    if(wordCount > 500){
+      console.error("Error: The word count exceeds the 500-word limit ");
+      setWatiting(false)
+      alert("Faile to creat cards because the word count exceeds the 500-word limit")
+      displayPopup(false);
+      return; 
+    }
     console.log(userInput)
-   
+    
     const dataToSend = {
       userinput:userInput,
       deckId:deckId
@@ -107,6 +114,14 @@ function AICreateCardsPage() {
     }
 
   };
+
+  const handleInputChange = (e) => {
+    const inputText = e.target.value;
+    setuserInput(inputText);
+
+    const words = inputText.trim().split(/\s+/).filter(Boolean);
+    setWordCount(words.length);
+};
 
   const handleBackButton = () => {
     if (userInput) {
@@ -172,11 +187,14 @@ function AICreateCardsPage() {
             Back
           </button>
           <p className="text-elDark dark:text-edWhite mb-2">
-            To let AI generate cards based on your input simply just put the text in the below box
+            To let AI generate cards based on your input simply just put the text in the below box; Words limit 500
             </p>
           <div className="mb-2 flex flex-col w-full">
-            <textarea value={userInput} onChange={(e) => {setuserInput(e.target.value) }} className="text-black dark:text-white dark:bg-edDarker w-full min-h-20 h-40 p-2 border border-edDarkGray focus:outline-none custom-scrollbar"
+            <textarea value={userInput} onChange={handleInputChange} className="text-black dark:text-white dark:bg-edDarker w-full min-h-20 h-40 p-2 border border-edDarkGray focus:outline-none custom-scrollbar"
               placeholder="put your text here" ></textarea>
+               <div className="word-count">
+                Word count: {wordCount}
+            </div>
           </div>
           <button type='submit' className="button-common button-blue font-semibold py-2 text-center w-1/4 my-2">
             Submit
