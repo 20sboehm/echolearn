@@ -39,6 +39,7 @@ function Login() {
       const data = await response.json();
       _login(data);
       navigate("/");
+      window.location.reload();
     } else {
       triggerPopup('Check your username or password...', 'red');
     }
