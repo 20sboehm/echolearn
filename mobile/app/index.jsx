@@ -6,9 +6,9 @@ import "../global.css";
 export default function App() {
   return (
     <View className="flex-1 items-center justify-center bg-white">
-      <Text className="text-3xl">Here is EchoLearn!</Text>
+      <Text className="text-3xl font-pblack">Here is EchoLearn!</Text>
       <StatusBar style="auto" />
-      <Link href="/profile" style={{ color: 'blue' }}>Profile</Link>
+      <Link href="/home" style={{ color: 'blue' }}>Home</Link>
     </View>
   );
 }
