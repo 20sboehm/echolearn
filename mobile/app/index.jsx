@@ -14,7 +14,7 @@ export default function App() {
         <View className="w-full justify-center items-center h-[85vh] px-4">
           <Image
             source={images.logo}
-            className="w-[130px] h-[84px]"
+            className="w-[60vw] h-[120px]"
             resizeMode="contain"
           />
           <Image
@@ -39,7 +39,7 @@ export default function App() {
           <Text className="text-sm font-pregular text-gray-100 mt-7 text-center">Unlock your learning potential with EchoLearn. Our smart flashcard system makes remembering information easy and fun.</Text>
 
           <CustomButton
-            title="Continue with Email"
+            title="Continue with login"
             handlePress={() => router.push('/sign-in')}
             containerStyles="w-full mt-7"
           />

@@ -26,9 +26,9 @@ const SignUp = () => {
           <Image
             source={images.logo}
             resizeMode='contain'
-            className="w-[115px] h-[35px]"
+            className="w-[150px] h-[50px]" 
           />
-          <Text className="text-2xl text-white text-semibold mt-10 font-psemibold">Sign up to EchoLearn</Text>
+          <Text className="text-2xl text-white text-semibold mt-5 font-psemibold">Sign up to EchoLearn</Text>
           <FormField
             title="Username"
             value={form.username}
