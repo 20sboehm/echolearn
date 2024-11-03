@@ -1,21 +1,67 @@
 import { View, Text, ScrollView, Image } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Link } from 'expo-router'
+import { Link, useRouter } from 'expo-router'
 import { images } from '../../constants'
 import FormField from '../../components/FormField'
 import CustomButton from '../../components/CustomButton'
+
+import { Context } from '../../context/globalContext';
+import { useContext } from 'react';
 
 const SignIn = () => {
   const [form, setForm] = useState({
     username: '',
     password: ''
   })
+  const globalContext = useContext(Context)
+  const { domain, token, setToken, storeToken } = globalContext;
+  const router = useRouter();
 
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState("");
 
   const submit = () => {
+    handleLogin();
+  }
 
+  function handleLogin() {
+
+    setError("")
+    let body = JSON.stringify({
+      'password': form.password,
+      'username': form.username,
+    })
+
+    console.log(form);
+
+    fetch(`${domain}/api/token/pair`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: body
+    })
+      .then(res => {
+        if (res.ok) {
+          return res.json()
+        } else {
+          setError("Username or Password incorrect, Please try again");
+          throw res.json()
+        }
+      })
+      .then(json => {
+        console.log("Logged In")
+        console.log(json)
+        setToken(json.access)
+        storeToken(json.access)
+        console.log(json.access)
+        console.log(token)
+        router.replace('/home');
+      })
+      .catch(error => {
+        console.log(error)
+      })
   }
 
   return (
@@ -25,7 +71,7 @@ const SignIn = () => {
           <Image
             source={images.logo}
             resizeMode='contain'
-            className="w-[150px] h-[50px]" 
+            className="w-[150px] h-[50px]"
           />
           <Text className="text-2xl text-white text-semibold mt-5 font-psemibold">Login in to EchoLearn</Text>
           <FormField
@@ -56,8 +102,11 @@ const SignIn = () => {
               Don't have account?
             </Text>
             <Link href="/sign-up" className='text-lg font-psemibold text-secondary'>Sign Up</Link>
-
           </View>
+          <View className="mt-10 items-center">
+            <Text className="text-lg text-red-500 font-pregular">{error}</Text>
+          </View>
+
         </View>
       </ScrollView>
     </SafeAreaView>

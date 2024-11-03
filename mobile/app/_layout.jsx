@@ -1,7 +1,8 @@
 import { StyleSheet, Text, View } from 'react-native'
 import { SplashScreen, Stack } from 'expo-router'
-import { useFonts }from 'expo-font'
+import { useFonts } from 'expo-font'
 import React, { useEffect } from 'react'
+import { Provider } from '../context/globalContext';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -19,18 +20,20 @@ const RooyLayout = () => {
   });
 
   useEffect(() => {
-    if(error) throw error;
+    if (error) throw error;
     if (fontsLoaded) SplashScreen.hideAsync();
   }, [fontsLoaded, error])
 
-  if(!fontsLoaded && !error) return null;
+  if (!fontsLoaded && !error) return null;
   return (
-    <Stack>
-      <Stack.Screen name="index" options={{headerShown: false}} />
-      <Stack.Screen name="(auth)" options={{headerShown: false}} />
-      <Stack.Screen name="(tabs)" options={{headerShown: false}} />
-      {/* <Stack.Screen name="/search/[query]" options={{headerShown: false}} /> */}
-    </Stack>
+    <Provider>
+      <Stack>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        {/* <Stack.Screen name="/search/[query]" options={{headerShown: false}} /> */}
+      </Stack>
+    </Provider>
   )
 }
 
