@@ -47,10 +47,11 @@ def get_deck(request, deck_id: int):
 @decks_router.get("/public/{deck_id}/cards", response={200: sc.DeckCards, 404: str}, auth=JWTAuth())
 def get_cards_from_deck_public(request, deck_id: int):
     deck = get_object_or_404(Deck, deck_id=deck_id)
+    is_shared = SharedDeck.objects.filter(deck=deck, shared_with=request.user).exists()
 
     publicAccess = True
     # Check if the deck owner by the user
-    if deck.owner == request.user:
+    if deck.owner == request.user or is_shared:
         publicAccess = False
     else:
         if deck.isPublic == False:
@@ -63,8 +64,9 @@ def get_cards_from_deck_public(request, deck_id: int):
 @decks_router.get("/{deck_id}/cards", response={200: sc.DeckCards, 404: str}, auth=JWTAuth())
 def get_cards_from_deck(request, deck_id: int):
     deck = get_object_or_404(Deck, deck_id=deck_id)
+    is_shared = SharedDeck.objects.filter(deck=deck, shared_with=request.user).exists()
 
-    if deck.owner != request.user:
+    if deck.owner != request.user and not is_shared:
         raise HttpError(403, "You are not authorized to access this deck")
 
     card_list = Card.objects.filter(deck_id=deck_id)
