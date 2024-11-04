@@ -88,10 +88,10 @@ const Home = () => {
     }
 
     return (
-      <View className="flex-row justify-between p-4 border-b border-gray-300">
-        <Text className="text-white font-psemibold flex-1">{deck.name}</Text>
-        <Text className="text-white flex-0.5 mr-5">{newCardsCount}</Text>
-        <Text className="text-white flex-0.5 mr-5">{reviewCardsCount}</Text>
+      <View className="flex-row justify-between p-4 mt-2 border-b border-gray-300">
+        <Text className="text-white font-psemibold mt-1 flex-1">{deck.name}</Text>
+        <Text className="text-white flex-0.5 mt-1 mr-10">{newCardsCount}</Text>
+        <Text className="text-white flex-0.5 mt-1 mr-8">{reviewCardsCount}</Text>
         <TouchableOpacity
           onPress={() => navigation.navigate('Review', { deckIds: deck.deck_id })}
           className="bg-blue-500 p-2 rounded"
@@ -106,14 +106,14 @@ const Home = () => {
     <SafeAreaView className="bg-primary h-full">
       <View className="pt-12 my-6 min-h-[85vh]">
         <Text className="text-4xl text-white font-pextrabold mb-4">Welcome back, {userObj.username}!</Text>
-        <Text className="text-xl font-pbold mb-4 text-white">Here are your top 5 decks that need study</Text>
+        <Text className="text-xl font-pbold mb-4 text-white">Upcoming reviews</Text>
         <View className="flex-row justify-between items-center p-4 border-b border-gray-300 bg-gray-700">
           <Text className="text-white flex-1 font-bold">Deck</Text>
           <Text className="text-white flex-0.5 font-bold mr-5">New</Text>
-          <Text className="text-white flex-0.5 font-bold mr-10">Review</Text>
+          <Text className="text-white flex-0.5 font-bold mr-16">Review</Text>
         </View>
         <FlatList
-          data={decks.slice(0,5)}
+          data={decks}
           keyExtractor={(item) => item.deck_id.toString()}
           renderItem={({ item }) => <DeckRow deck={item} />}
         />

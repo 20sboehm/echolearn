@@ -1,4 +1,5 @@
-import decks from "../assets/icons/decks.png";
+import checklist from "../assets/icons/checklist.png";
+import deck from "../assets/icons/decks.png";
 import book from "../assets/icons/book.png";
 import home from "../assets/icons/home.png";
 import plus from "../assets/icons/plus.png";
@@ -15,8 +16,9 @@ import play from "../assets/icons/play.png";
 
 export default {
   play,
-  decks,
+  checklist,
   book,
+  deck,
   home,
   plus,
   profile,

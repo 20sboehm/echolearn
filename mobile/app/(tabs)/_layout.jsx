@@ -42,7 +42,7 @@ const TabsLayout = () => {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
-                icon={icons.home}
+                icon={icons.checklist}
                 color={color}
                 name="Home"
                 focused={focused}
@@ -57,9 +57,9 @@ const TabsLayout = () => {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
-                icon={icons.decks}
+                icon={icons.deck}
                 color={color}
-                name="decks"
+                name="deck"
                 focused={focused}
               />
             )
