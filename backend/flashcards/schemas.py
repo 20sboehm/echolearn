@@ -24,7 +24,7 @@ class GetUser(Schema):
     avatar: Optional[str] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class UserLogin(Schema):
     username: str
@@ -93,12 +93,11 @@ class UpdateDeck(Schema):
     description: Optional[str] = None
     folder_id: Optional[int] = None
 
-
-class SharedDeckSchema(Schema):
+class GetSharedDeck(Schema):
     share_id: int
-    deck_id: int
-    shared_from_id: int
-    shared_with_id: int
+    deck: int
+    shared_from: int
+    shared_with: int
 
     class Config:
         from_attributes = True

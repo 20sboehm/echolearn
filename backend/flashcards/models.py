@@ -84,7 +84,7 @@ class SharedDeck(models.Model):
     shared_with = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="shared_decks_with")
 
     class Meta:
-        unique_together = ("deck_id", "shared_with")
+        unique_together = ("deck", "shared_with")
 
     def __str__(self):
         return f"share_id={self.share_id}, deck={self.deck}, shared_from={self.shared_from}, shared_with={self.shared_with}"

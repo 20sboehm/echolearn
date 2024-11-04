@@ -270,21 +270,6 @@ def share_deck(request, deck_id: int, user_id: int):
 
     return 201, message
 
-@decks_router.get("/share", response={200: List[sc.SharedDeckSchema]}, auth=JWTAuth())
-def get_shared_decks(request):
-    shared_decks = SharedDeck.objects.filter(shared_with=request.user).select_related('deck', 'shared_from')
-    
-    result = []
-    for shared_deck in shared_decks:
-        result.append({
-            "share_id": shared_deck.share_id,
-            "deck_id": shared_deck.deck.deck_id,
-            "deck_name": shared_deck.deck.name,
-            "shared_from": shared_deck.shared_from
-        })
-    
-    return result
-
 # Check if shared
 @decks_router.get("/{deck_id}/is_shared/{user_id}", response={200: bool, 404: str}, auth=JWTAuth())
 def is_deck_shared(request, deck_id: int, user_id: int):

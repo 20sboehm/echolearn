@@ -3,6 +3,7 @@ import api from '../utils/api';
 import { Link, useSearchParams } from 'react-router-dom';
 import defaultAvatar from "../assets/defaltUser.png";
 import FriendsPage from './FriendsPage';
+import SharePage from './SharedWith';
 import { useApi } from "../hooks";
 import { useMutation, useQueryClient } from "react-query";
 
@@ -372,6 +373,12 @@ function ProfilePage() {
             >
               Friends
             </button>
+            <button
+              className={`py-2 px-4 rounded-lg ${activeTab === 'share' ? selectedTabClassName : unselectedTabClassName}`}
+              onClick={() => profile.is_owner && setActiveTab('share')}
+            >
+              Shared With Me
+            </button>
           </div>
 
           {/* Container for Tabs and Content */}
@@ -409,6 +416,13 @@ function ProfilePage() {
             {activeTab === 'friends' && (
               <div>
                 <FriendsPage />
+              </div>
+            )}
+
+            {/* Share Tab Content */}
+            {activeTab === 'share' && (
+              <div>
+                <SharePage />
               </div>
             )}
           </div>

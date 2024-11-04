@@ -28,6 +28,7 @@ import MyImagesPage from './pages/MyImagesPage';
 import QuizPage from "./pages/QuizPage";
 import AnkiParserPage from './pages/AnkiParserPage'
 import AIGenerateCards from './pages/AICreateCards'
+import SharedDeck from './pages/SharedWith'
 
 const queryClient = new QueryClient();
 
@@ -51,6 +52,7 @@ function AuthenticatedRoutes() {
       <Route path="/edit/:cardId" element={<EditCardPage />} />
       <Route path="/decks/:deckId" element={<DeckPage />} />
       <Route path="/decks/public/:deckId" element={<DeckPage publicAccess={true} />} />
+      <Route path="/shared" element={<SharedDeck />} />
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/stats/:deckId" element={<StatsPage />} />
       <Route path="/community" element={<CommunityPage />} />
