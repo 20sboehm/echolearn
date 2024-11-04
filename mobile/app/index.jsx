@@ -15,6 +15,11 @@ export default function App() {
   const globalContext = useContext(Context)
   const { isLoggedIn } = globalContext;
 
+  // if (isLoggedIn) {
+  //   console.log(isLoggedIn);
+  //   return <Redirect href="/home" />;
+  // }
+
   return (
     <SafeAreaView className="bg-primary h-full">
       <ScrollView contentContainerStyle={{ height: '100%' }}>

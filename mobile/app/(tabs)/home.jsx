@@ -9,7 +9,7 @@ const Home = () => {
   const [loading, setLoading] = useState(true); // State for loading status
   const [error, setError] = useState(""); // State for error messages
   const globalContext = useContext(Context);
-  const { domain, token } = globalContext; // Get domain and token from context
+  const { domain, token, userObj } = globalContext; // Get domain and token from context
 
   useEffect(() => {
     const fetchDecksAndCards = async () => {
@@ -26,7 +26,6 @@ const Home = () => {
         if (!decksResponse.ok) throw new Error("Failed to fetch decks");
 
         const fetchedDecks = await decksResponse.json();
-        setDecks(fetchedDecks);
 
         // Fetch cards
         const cardsResponse = await fetch(`${domain}/api/cards`, {
@@ -41,6 +40,25 @@ const Home = () => {
 
         const fetchedCards = await cardsResponse.json();
         setCards(fetchedCards);
+
+        // Combine decks with card counts
+        const decksWithCounts = fetchedDecks.map(deck => {
+          const newCardsCount = fetchedCards.filter(card => card.deck_id === deck.deck_id && card.is_new).length;
+          const reviewCardsCount = fetchedCards.filter(
+            card => card.deck_id === deck.deck_id && !card.is_new && Date.parse(card.next_review) < Date.now()
+          ).length;
+          return {
+            ...deck,
+            totalCount: newCardsCount + reviewCardsCount, // Total count for sorting
+            newCardsCount,
+            reviewCardsCount,
+          };
+        });
+
+        // Sort decks by total count (descending)
+        decksWithCounts.sort((a, b) => b.totalCount - a.totalCount);
+
+        setDecks(decksWithCounts);
       } catch (error) {
         setError(error.message);
       } finally {
@@ -71,7 +89,7 @@ const Home = () => {
 
     return (
       <View className="flex-row justify-between p-4 border-b border-gray-300">
-        <Text className="text-white flex-1">{deck.name}</Text>
+        <Text className="text-white font-psemibold flex-1">{deck.name}</Text>
         <Text className="text-white flex-0.5 mr-5">{newCardsCount}</Text>
         <Text className="text-white flex-0.5 mr-5">{reviewCardsCount}</Text>
         <TouchableOpacity
@@ -86,15 +104,16 @@ const Home = () => {
 
   return (
     <SafeAreaView className="bg-primary h-full">
-      <View className="min-h-[85vh]">
-        <Text className="text-2xl font-bold mb-4 text-white">Today's Task List</Text>
-        <View className="flex-row justify-between p-4 border-b border-gray-300 bg-gray-700">
+      <View className="pt-12 my-6 min-h-[85vh]">
+        <Text className="text-4xl text-white font-pextrabold mb-4">Welcome back, {userObj.username}!</Text>
+        <Text className="text-xl font-pbold mb-4 text-white">Here are your top 5 decks that need study</Text>
+        <View className="flex-row justify-between items-center p-4 border-b border-gray-300 bg-gray-700">
           <Text className="text-white flex-1 font-bold">Deck</Text>
           <Text className="text-white flex-0.5 font-bold mr-5">New</Text>
           <Text className="text-white flex-0.5 font-bold mr-10">Review</Text>
         </View>
         <FlatList
-          data={decks}
+          data={decks.slice(0,5)}
           keyExtractor={(item) => item.deck_id.toString()}
           renderItem={({ item }) => <DeckRow deck={item} />}
         />

@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View } from 'react-native'
 import { SplashScreen, Stack } from 'expo-router'
 import { useFonts } from 'expo-font'
-import React, { useEffect } from 'react'
-import { Provider } from '../context/globalContext';
+import React, { useEffect, useContext } from 'react'
+import { Provider, Context } from '../context/globalContext';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -25,16 +25,42 @@ const RooyLayout = () => {
   }, [fontsLoaded, error])
 
   if (!fontsLoaded && !error) return null;
+
   return (
     <Provider>
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        {/* <Stack.Screen name="/search/[query]" options={{headerShown: false}} /> */}
-      </Stack>
+      <RootNavigator />
     </Provider>
-  )
-}
+  );
+};
+
+const RootNavigator = () => {
+  const { isLoggedIn, loading } = useContext(Context);
+
+  // Show loading indicator while checking login status
+  if (loading) {
+    return <ActivityIndicator size="large" color="#0000ff" />;
+  }
+
+  return (
+    <Stack>
+      <Stack.Screen name="index" options={{ headerShown: false }} />
+      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      {/* <Stack.Screen name="/search/[query]" options={{headerShown: false}} /> */}
+    </Stack>
+  );
+};
 
 export default RooyLayout
+
+
+    // <Stack>
+    //   {isLoggedIn ? (
+    //     <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+    //   ) : (
+    //     <>
+    //       <Stack.Screen name="index" options={{ headerShown: false }} />
+    //       <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+    //     </>
+    //   )}
+    // </Stack>

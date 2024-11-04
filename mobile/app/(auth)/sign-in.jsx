@@ -15,7 +15,7 @@ const SignIn = () => {
     password: ''
   })
   const globalContext = useContext(Context)
-  const { domain, token, setToken, storeToken } = globalContext;
+  const { domain, token, setToken, storeToken, setUserObj } = globalContext;
   const router = useRouter();
 
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -53,6 +53,7 @@ const SignIn = () => {
       .then(json => {
         console.log("Logged In")
         console.log(json)
+        setUserObj(json)
         setToken(json.access)
         storeToken(json.access)
         console.log(json.access)
