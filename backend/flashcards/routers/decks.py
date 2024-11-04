@@ -1,6 +1,6 @@
 import datetime
 from ninja import Router
-from flashcards.models import Deck, Folder, Card, CustomUser,Rating
+from flashcards.models import Deck, Folder, Card, CustomUser,Rating, SharedDeck
 from typing import List
 import flashcards.schemas as sc
 from django.shortcuts import get_object_or_404
@@ -93,14 +93,6 @@ def copy_deck(request, deck_id:int,folder_id:int):
     deck = get_object_or_404(Deck, deck_id=deck_id)
     owner_ref = request.user
     folder_ref = get_object_or_404(Folder,folder_id=folder_id)
-
-    # if(len(folderList) != 0):
-    #     folder_ref = folderList[0]
-    # else:
-    #     folder_ref = Folder.objects.create(
-    #         name = 'default',
-    #         owner=owner_ref,
-    #         description=deck.description)
    
     newdeck = Deck.objects.create(
         folder=folder_ref,
@@ -250,3 +242,58 @@ def delete_deck(request, deck_id: int):
     deck.delete()
 
     return 204, None
+
+# ---------------------------------------------
+# -------------------- SHARE ------------------
+# ---------------------------------------------
+@decks_router.post("/{deck_id}/share/{user_id}", response={201: str, 404: str}, auth=JWTAuth())
+def share_deck(request, deck_id: int, user_id: int):
+    deck = get_object_or_404(Deck, deck_id=deck_id)
+    shared_with_user = get_object_or_404(CustomUser, id=user_id)
+    
+    # Check if the deck owner is the current user
+    if deck.owner != request.user:
+        raise HttpError(403, "You are not authorized to share this deck")
+
+    # Create or update the SharedDeck entry
+    shared_deck, created = SharedDeck.objects.update_or_create(
+        deck=deck,
+        shared_from=request.user,
+        shared_with=shared_with_user,
+        defaults={'deck': deck, 'shared_from': request.user, 'shared_with': shared_with_user}
+    )
+
+    if created:
+        message = "Deck shared successfully."
+    else:
+        message = "Deck sharing updated successfully."
+
+    return 201, message
+
+@decks_router.get("/share", response={200: List[sc.SharedDeckSchema]}, auth=JWTAuth())
+def get_shared_decks(request):
+    shared_decks = SharedDeck.objects.filter(shared_with=request.user).select_related('deck', 'shared_from')
+    
+    result = []
+    for shared_deck in shared_decks:
+        result.append({
+            "share_id": shared_deck.share_id,
+            "deck_id": shared_deck.deck.deck_id,
+            "deck_name": shared_deck.deck.name,
+            "shared_from": shared_deck.shared_from
+        })
+    
+    return result
+
+# Check if shared
+@decks_router.get("/{deck_id}/is_shared/{user_id}", response={200: bool, 404: str}, auth=JWTAuth())
+def is_deck_shared(request, deck_id: int, user_id: int):
+    shared = SharedDeck.objects.filter(deck=deck_id, shared_from=request.user, shared_with_id=user_id).exists()
+    return shared
+
+# Delete share
+@decks_router.delete("/{deck_id}/unshare/{user_id}", response={200: str, 404: str}, auth=JWTAuth())
+def unshare_deck(request, deck_id: int, user_id: int):
+    shared_deck = get_object_or_404(SharedDeck, deck_id=deck_id, shared_from=request.user, shared_with_id=user_id)
+    shared_deck.delete()
+    return "Deck unshared successfully"

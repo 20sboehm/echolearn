@@ -93,6 +93,16 @@ class UpdateDeck(Schema):
     description: Optional[str] = None
     folder_id: Optional[int] = None
 
+
+class SharedDeckSchema(Schema):
+    share_id: int
+    deck_id: int
+    shared_from_id: int
+    shared_with_id: int
+
+    class Config:
+        from_attributes = True
+
 # -----------------------------------------------
 # -------------------- Cards --------------------
 # -----------------------------------------------

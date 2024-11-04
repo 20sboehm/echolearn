@@ -8,6 +8,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import MarkdownPreviewer from "../components/MarkdownPreviewer";
 import { SpeakerIcon, StarIcon, HeartIcon, EditIcon } from "../components/Icons";
 import './Buttons.css';
+import ShareDeck from './ShareDeck';
 
 // import ReactPlayer from 'react-player';
 // import katex from 'katex';
@@ -44,6 +45,17 @@ function DeckPage({ publicAccess = false }) {
   const [dragging, setDragging] = useState(null);
   const [items, setItems] = useState([]);
   const [itemKeys, setItemKeys] = useState([]);
+
+  // Share
+  const [showShareModal, setShowShareModal] = useState(false);
+
+  const handleShareClick = () => {
+    setShowShareModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowShareModal(false);
+  };
 
   const { data: deckCards, isLoading, error, refetch } = useQuery(
     ['deckCards', deckId], // Unique key based on deckId
@@ -434,6 +446,20 @@ function DeckPage({ publicAccess = false }) {
                     </button>
                   </>
                 )}
+                
+                <button className="button-common button-blue" onClick={handleShareClick}>
+                  Share
+                </button>
+
+                {showShareModal && (
+                  <div className="modal-overlay" onClick={handleCloseModal}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                      <button className="modal-close bg-edBlue text-white rounded-full w-8 h-8 flex items-center justify-center" onClick={handleCloseModal}>X</button>
+                      <ShareDeck deck_id={deckId} />
+                    </div>
+                  </div>
+                )}
+
                 <button onClick={submitRating} id="button-preview" aria-labelledby="tooltip-1f7d89ff-668b-406b-9c3f-e3e313ecdc97" type="button" data-view-component="true" className="w-[5vw] Button Button--iconOnly Button--secondary Button--medium inline-flex items-center space-x-2 p-2">
                   <HeartIcon isFilled={Rateresult} />
                   <p className="text-black dark:text-edWhite">{deckCards.stars}</p>
@@ -446,11 +472,6 @@ function DeckPage({ publicAccess = false }) {
               <ProgressCircleGraph radius={radius} dashLength={dashLength} gapLength={gapLength} strokeDashoffset={strokeDashoffset} percentage={percentage} deckId={deckId} publicAccess={isPublicAccess} />
             )}
           </div>
-
-          {/* <MiddleButtons deckCards={deckCards} publicAccess={isPublicAccess} setStatus={setStatus} isCreateMode={isCreateMode}
-            handleCreateCard={handleCreateCard} toggleCreateMode={toggleCreateMode} handleCancelCreateCard={handleCancelCreateCard}
-            handleTakeACopy={handleTakeACopy} isModalOpen={isModalOpen} folders={folders} handleFolderSelection={handleFolderSelection}
-            setModalOpen={setModalOpen} deleteMode={deleteMode} changeMode={changeMode} /> */}
 
           <div className={`flex flex-col items-center flex-grow overflow-y-auto border-t border-elDividerGray dark:border-edDividerGray`}>
 
