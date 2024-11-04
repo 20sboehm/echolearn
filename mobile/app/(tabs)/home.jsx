@@ -2,6 +2,7 @@ import { View, Text, FlatList, ActivityIndicator, TouchableOpacity } from 'react
 import React, { useEffect, useState, useContext } from 'react'
 import { Context } from '../../context/globalContext'; // Import your global context
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { Link, useRouter } from 'expo-router'
 
 const Home = () => {
   const [decks, setDecks] = useState([]);
@@ -86,18 +87,15 @@ const Home = () => {
     if (newCardsCount === 0 && reviewCardsCount === 0) {
       return null; // Skip decks with no new or review cards
     }
-
+    
     return (
       <View className="flex-row justify-between p-4 mt-2 border-b border-gray-300">
         <Text className="text-white font-psemibold mt-1 flex-1">{deck.name}</Text>
         <Text className="text-white flex-0.5 mt-1 mr-10">{newCardsCount}</Text>
         <Text className="text-white flex-0.5 mt-1 mr-8">{reviewCardsCount}</Text>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Review', { deckIds: deck.deck_id })}
-          className="bg-blue-500 p-2 rounded"
-        >
+        <Link href={`/reviews?deckIds=${deck.deck_id}`} className="bg-blue-500 p-2 rounded">
           <Text className="text-white">Study</Text>
-        </TouchableOpacity>
+        </Link>
       </View>
     );
   };
