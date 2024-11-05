@@ -67,9 +67,11 @@ function CreateCardPage() {
             </select>
           </div>
 
-          <button type="button" onClick={() => navigate("/quizletparser", { state: { deckId: deckId } })} className="button-common button-blue py-2 text-center w-1/4 mb-4 font-semibold">quizlet parser</button>
-          <button type="button" onClick={() => navigate("/ankiparser", { state: { deckId: deckId } })} className="button-common button-blue py-2 text-center w-1/4 mb-4 font-semibold">anki parser</button>
-          <button type="button" onClick={() => navigate("/aigeneratecards", { state: { deckId: deckId } })} className="button-common button-blue py-2 text-center w-1/4 mb-4 font-semibold">AI make cards</button>   
+          <div className="flex gap-2">
+            <button type="button" onClick={() => navigate("/quizletparser", { state: { deckId: deckId } })} className="button-common button-blue py-2 text-center mb-4 font-semibold">Quizlet Parser</button>
+            <button type="button" onClick={() => navigate("/ankiparser", { state: { deckId: deckId } })} className="button-common button-blue py-2 text-center mb-4 font-semibold">Anki Parser</button>
+            <button type="button" onClick={() => navigate("/aigeneratecards", { state: { deckId: deckId } })} className="button-common button-blue py-2 text-center mb-4 font-semibold">Create with AI</button>
+          </div>
           <MarkdownEditor requestType="post" submitButtonText="Create Card" questionText={questionText} setQuestionText={setQuestionText}
             answerText={answerText} setAnswerText={setAnswerText} deckId={deckId} />
 
