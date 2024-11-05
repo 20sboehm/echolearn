@@ -66,7 +66,7 @@ def get_cards_from_deck(request, deck_id: int):
     deck = get_object_or_404(Deck, deck_id=deck_id)
     is_shared = SharedDeck.objects.filter(deck=deck, shared_with=request.user).exists()
 
-    if deck.owner != request.user and not is_shared:
+    if deck.owner != request.user:
         raise HttpError(403, "You are not authorized to access this deck")
 
     card_list = Card.objects.filter(deck_id=deck_id)

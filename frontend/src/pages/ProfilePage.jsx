@@ -398,10 +398,14 @@ function ProfilePage() {
 
             {activeTab === 'ratedDecks' && (
               <div>
-                <h2 className="text-xl font-bold text-white">favorite Decks</h2>
+                <h2 className="text-xl font-bold text-white">Favorite Decks</h2>
                 {RatedDeck.length > 0 ? (
                   RatedDeck.map((rDeck) => (
-                    <Link key={rDeck.deck_id} to={`/decks/public/${rDeck.deck_id}`} style={{ display: 'flex', alignItems: 'center' }}>
+                    <Link
+                      key={rDeck.deck_id}
+                      to={rDeck.Owner === profile.id ? `/decks/${rDeck.deck_id}` : `/decks/public/${rDeck.deck_id}`}
+                      style={{ display: 'flex', alignItems: 'center' }}
+                    >
                       <span className="mr-2">📚</span>
                       <p className="overflow-x-auto whitespace-nowrap">{rDeck.name}</p>
                     </Link>
@@ -540,7 +544,7 @@ const Folder = ({ folder, onRightClick, is_owner }) => {
           {folder.children && folder.children.length > 0 && (
             <div className="ml-3">
               {folder.children.map((childFolder) => (
-                <Folder key={childFolder.folder_id} folder={childFolder} onRightClick={onRightClick} />
+                <Folder key={childFolder.folder_id} folder={childFolder} onRightClick={onRightClick} is_owner={is_owner} />
               ))}
             </div>
           )}

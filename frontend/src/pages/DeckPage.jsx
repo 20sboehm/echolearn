@@ -447,9 +447,13 @@ function DeckPage({ publicAccess = false }) {
                   </>
                 )}
                 
-                <button className="button-common button-blue" onClick={handleShareClick}>
+                {publicAccess ? (
+                  null
+                ) : (
+                  <button className="button-common button-blue" onClick={handleShareClick}>
                   Share
                 </button>
+                )}
 
                 {showShareModal && (
                   <div className="modal-overlay" onClick={handleCloseModal}>
