@@ -71,6 +71,7 @@ function CreateCardPage() {
             <button type="button" onClick={() => navigate("/quizletparser", { state: { deckId: deckId } })} className="button-common button-blue py-2 text-center mb-4 font-semibold">Quizlet Parser</button>
             <button type="button" onClick={() => navigate("/ankiparser", { state: { deckId: deckId } })} className="button-common button-blue py-2 text-center mb-4 font-semibold">Anki Parser</button>
             <button type="button" onClick={() => navigate("/aigeneratecards", { state: { deckId: deckId } })} className="button-common button-blue py-2 text-center mb-4 font-semibold">Create with AI</button>
+            <button type="button" onClick={() => navigate("/multipleinput", { state: { deckId: deckId } })} className="button-common button-blue py-2 text-center mb-4 font-semibold">Multiple Input</button>
           </div>
           <MarkdownEditor requestType="post" submitButtonText="Create Card" questionText={questionText} setQuestionText={setQuestionText}
             answerText={answerText} setAnswerText={setAnswerText} deckId={deckId} />

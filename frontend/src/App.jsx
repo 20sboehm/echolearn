@@ -29,6 +29,7 @@ import QuizPage from "./pages/QuizPage";
 import AnkiParserPage from './pages/AnkiParserPage'
 import AIGenerateCards from './pages/AICreateCards'
 import EditAll from './pages/EditAllPage'
+import MultipleInput from './pages/MultipleInputPage'
 
 const queryClient = new QueryClient();
 
@@ -62,6 +63,7 @@ function AuthenticatedRoutes() {
       <Route path="/ankiparser" element={<AnkiParserPage />} />
       <Route path="/aigeneratecards" element={<AIGenerateCards />} />
       <Route path="/editall/:deckId" element={<EditAll />} />
+      <Route path="/multipleinput" element = {<MultipleInput/>}/>
     </Routes>
   );
 }
