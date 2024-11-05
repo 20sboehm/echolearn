@@ -389,7 +389,9 @@ function DeckPage({ publicAccess = false }) {
                     >
                       Delete Deck
                     </button>
-
+                    <Link to={`/editall/${deckId}`} className="button-top">
+                      Edit All
+                    </Link>
                   </>
                 </div>
               )}

@@ -58,7 +58,7 @@ def get_cards_from_deck_public(request, deck_id: int):
     
     card_list = Card.objects.filter(deck_id=deck_id)
     
-    return {"deck_id": deck.deck_id, "isPublic": deck.isPublic, "deck_name": deck.name, "cards": card_list,"stars": deck.stars, "order_List": deck.order_List, "publicAccess": publicAccess}
+    return {"deck_id": deck.deck_id, "isPublic": deck.isPublic, "deck_name": deck.name,"deckdescription":deck.description, "cards": card_list,"stars": deck.stars, "order_List": deck.order_List, "publicAccess": publicAccess}
 
 @decks_router.get("/{deck_id}/cards", response={200: sc.DeckCards, 404: str}, auth=JWTAuth())
 def get_cards_from_deck(request, deck_id: int):
@@ -74,7 +74,9 @@ def get_cards_from_deck(request, deck_id: int):
         for card in card_list:
             deck.order_List.append(card.card_id)
             deck.save()
-    return {"deck_id": deck.deck_id, "isPublic": deck.isPublic, "deck_name": deck.name, "cards": card_list, "stars":deck.stars, "order_List":deck.order_List}
+    print("1")
+    print(deck.description)
+    return {"deck_id": deck.deck_id, "isPublic": deck.isPublic, "deckdescription":deck.description, "deck_name": deck.name, "cards": card_list, "stars":deck.stars, "order_List":deck.order_List}
 
 @decks_router.get("/{deck_id}/ratedOrnot", response={200: bool, 404: str}, auth=JWTAuth())
 def checkRatedresult(request, deck_id: int):
@@ -216,6 +218,37 @@ def store_new_order_list(request, deck_id):
         print(data['templist'])
         deck.order_List = data['templist']
         deck.save()
+        return JsonResponse({
+            "neworderlist": deck.order_List
+        }, status=200)
+    else:
+        return 404
+    
+    
+@decks_router.post("/{deck_id}/editall", response={200:None, 404: str}, auth=JWTAuth())
+def editall(request, deck_id):
+    deck = get_object_or_404(Deck, deck_id=deck_id)
+    data = json.loads(request.body)
+    
+    newitems = data.get("newItems")
+    
+    deck.name = data.get("newdeckname")
+    deck.description = data.get("newdeckdescription")
+    print(deck.description)
+    print(data.get("newdeckdescription"))
+    deck.save()
+    
+    if deck:
+        cardList = Card.objects.filter(deck=deck)
+        card_map = {card.card_id: card for card in cardList}
+        for item in newitems:
+            print(item)
+            if(item["card_id"] in card_map):
+                card = card_map[item["card_id"]]
+                card.question = item["question"]
+                card.answer = item["answer"]
+                card.save()
+       
         return JsonResponse({
             "neworderlist": deck.order_List
         }, status=200)
