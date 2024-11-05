@@ -460,10 +460,10 @@ function DeckPage({ publicAccess = false }) {
               <div className={`flex font-medium mt-4 border border-elDividerGray dark:border-edDividerGray rounded-2xl bg-elGray dark:bg-edDarker w-[99%] 
                 ${deleteMode ? "hover:bg-[#ff000055] hover:dark:bg-[#ff000055] cursor-not-allowed" : ""}`}
                 key={item.card_id} onClick={() => { handleCardClick(item.card_id) }}
-                draggable
-                onDragStart={(e) => handleDragStart(e, index)}
-                onDragOver={handleDragOver}
-                onDrop={(e) => handleDrop(e, index)}
+                draggable={!publicAccess}
+                onDragStart={publicAccess ? undefined :(e) => handleDragStart(e, index)}
+                onDragOver={publicAccess ? undefined :handleDragOver}
+                onDrop={publicAccess ? undefined :(e) => handleDrop(e, index)}
               >
 
                 <div className={`relative w-1/2 flex flex-col pr-4 border-r border-elDividerGray dark:border-edDividerGray bg-transparent`}>

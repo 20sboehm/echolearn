@@ -74,8 +74,7 @@ def get_cards_from_deck(request, deck_id: int):
         for card in card_list:
             deck.order_List.append(card.card_id)
             deck.save()
-    print("1")
-    print(deck.description)
+
     return {"deck_id": deck.deck_id, "isPublic": deck.isPublic, "deckdescription":deck.description, "deck_name": deck.name, "cards": card_list, "stars":deck.stars, "order_List":deck.order_List}
 
 @decks_router.get("/{deck_id}/ratedOrnot", response={200: bool, 404: str}, auth=JWTAuth())
@@ -167,7 +166,7 @@ def update_deck_status(request, deck_id:int):
     deck.isPublic = not deck.isPublic
     deck.save()
     card_list = Card.objects.filter(deck_id=deck_id)
-    return {"deck_id": deck.deck_id,"isPublic": deck.isPublic, "deck_name": deck.name, "cards": card_list,"stars":deck.stars, "order_List":deck.order_List}
+    return {"deck_id": deck.deck_id,"isPublic": deck.isPublic,"deckdescription":deck.description, "deck_name": deck.name, "cards": card_list,"stars":deck.stars, "order_List":deck.order_List}
 
 @decks_router.post("/{deck_id}/ratings", response={200: dict, 404: str}, auth=JWTAuth())
 def rate_deck(request, deck_id: int):
@@ -234,15 +233,12 @@ def editall(request, deck_id):
     
     deck.name = data.get("newdeckname")
     deck.description = data.get("newdeckdescription")
-    print(deck.description)
-    print(data.get("newdeckdescription"))
     deck.save()
     
     if deck:
         cardList = Card.objects.filter(deck=deck)
         card_map = {card.card_id: card for card in cardList}
         for item in newitems:
-            print(item)
             if(item["card_id"] in card_map):
                 card = card_map[item["card_id"]]
                 card.question = item["question"]
