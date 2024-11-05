@@ -6,7 +6,7 @@ import { useApi } from "../hooks";
 import editIconImg from "../assets/edit-icon.png"
 import LoadingSpinner from "../components/LoadingSpinner";
 import MarkdownPreviewer from "../components/MarkdownPreviewer";
-import { SpeakerIcon, StarIcon, HeartIcon, EditIcon } from "../components/Icons";
+import { SpeakerIcon, StarIcon, HeartIcon, EditIcon ,DragIcon} from "../components/Icons";
 import './Buttons.css';
 
 function DeckPage({ publicAccess = false }) {
@@ -314,16 +314,13 @@ const handleDeckChange = (type, text) => {
       <div className="flex flex-row w-full h-full">
         <Sidebar refetchTrigger={refetchTrigger} onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
         <div className="w-full flex flex-col mx-[15%] max-h-[calc(100vh-5rem)] border-b border-elDividerGray dark:border-edDividerGray">
-          {/* <h1 className="text-[2rem] text-elDark dark:text-edWhite font-medium mt-8 mb-4 
-          border-b w-full border-elDividerGray dark:border-edDividerGray pb-1">
-            {deckCards.deck_name} <span className="font-normal text-xl">({deckCards.cards.length} Cards)</span></h1> */}
-            <div className="text-[2rem] text-elDark dark:text-edWhite font-medium mt-8 mb-4 
+            <div className=" flex flex-col text-[2rem] text-elDark dark:text-edWhite font-medium mt-8 mb-4 
             border-b w-full border-elDividerGray dark:border-edDividerGray pb-1">
-
-            <label htmlFor="deckname" >Deckname: </label>
-            <input id="deckname" value={deckname} onChange={(e) => handleDeckChange("Deckname",e.target.value)}
-             className=" border-r border-elDividerGray dark:border-edDividerGray bg-transparent"></input>  
-            
+            <div className="flex items-center mb-4"> 
+              <label htmlFor="deckname" >Deckname: </label>
+              <input id="deckname" value={deckname} onChange={(e) => handleDeckChange("Deckname",e.target.value)}
+              className=" border-r border-elDividerGray dark:border-edDividerGray bg-transparent"></input>  
+            </div>
             <textarea placeholder="Put description here"  value={deckdescription} onChange={(e) => handleDeckChange("Deckdescription",e.target.value)}
                   className="w-1/2 bg-transparent flex-1 p-2 min-h-20" />
             </div>
@@ -373,7 +370,10 @@ const handleDeckChange = (type, text) => {
                   </>
                   
                 )}
+                <div>
+                <p>Preview</p>
                 <MarkdownPreviewer content={previewText} className="flex-1 p-2 min-h-20 rounded-2xl bg-transparent" />
+                </div>
               </div>
             </div>
             
@@ -386,11 +386,13 @@ const handleDeckChange = (type, text) => {
               <div className={`flex font-medium mt-4 border border-elDividerGray dark:border-edDividerGray rounded-2xl bg-elGray dark:bg-edDarker w-[99%] 
                 ${deleteMode ? "hover:bg-[#ff000055] hover:dark:bg-[#ff000055] cursor-not-allowed" : ""}`}
                 key={item.card_id} onClick={() => { handleCardClick(item.card_id) }}
-                draggable
-                onDragStart={(e) => handleDragStart(e, index)}
+               
                 onDragOver={handleDragOver}
                 onDrop={(e) => handleDrop(e, index)}
               >
+                <div className="cursor-move" draggable onDragStart={(e) => handleDragStart(e, index)}>
+                <DragIcon/>
+                </div>
                 <p>{index+1}</p>
                 <div className={`relative w-1/2 flex flex-col pr-4 border-r border-elDividerGray dark:border-edDividerGray bg-transparent`}>                
                   <textarea value={item.question} onChange={(e) => handleCardChange(item.card_id,'questionText',e.target.value)} onClick={(e) =>setpreviewText(e.target.value)}
