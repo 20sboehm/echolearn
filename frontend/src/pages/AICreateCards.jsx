@@ -19,6 +19,8 @@ function AICreateCardsPage() {
   const [newresponse,setNewResponse] = useState([])
   const [waiting, setWatiting] = useState(false);
   const [wordCount, setWordCount] = useState(0);
+
+
   const [popupActive, setPopupActive] = useState(false);
   const [popupSuccess, setPopupSuccess] = useState(false);
   const [popupText, setPopupText] = useState("");
@@ -26,6 +28,7 @@ function AICreateCardsPage() {
   const popupTimerRef = useRef(null); // Ref to hold the popup timer
 
   const [sidebarWidth, setSidebarWidth] = useState(250);
+  const [selectedRowIndices, setSelectedRowIndices] = useState([]);
 
   const displayPopup = (isSuccess) => {
     // Clear the old timer if it is still active
@@ -115,6 +118,58 @@ function AICreateCardsPage() {
 
   };
 
+  const handleSubmitChoice = async (e) => {
+    e.preventDefault();
+    setWatiting(true)
+      // Check if deckId is valid
+      if (!deckId) {
+        console.error("Error: Missing deckId");
+        setWatiting(false)
+        alert("Faile to creat cards because did not select deck")
+        displayPopup(false);
+        return; 
+    }
+    
+    const dataToSend = {
+      indexwanted:selectedRowIndices,
+      previewdata:preview,
+      deckid:deckId
+    };
+
+    const response = await api._post('/api/gptgeneration/requestselection', dataToSend);
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Error creating cards: ", errorData);
+      displayPopup(false);
+      setSelectedRowIndices([])
+      setPreview([])
+    } else {
+      const responseData = await response.json();
+      console.log(responseData)
+      if(!responseData.newcardset.length){
+        // console.error("Error creating cards: ", errorData);
+        alert("Faile to request AI generation please input meaningful text or try again later ")
+        displayPopup(false);
+        setWatiting(false)
+        setNewResponse("")
+        return
+      }
+      setNewResponse(responseData.newcardset);
+      console.log("All cards created successfully.");
+      displayPopup(true);
+      setSelectedRowIndices([])
+      setPreview([])
+      navigate(`/decks/${deckId}`)
+    }
+    setWatiting(false)
+    setSelectedRowIndices([])
+    setPreview([])
+    if (userInput !== null) {
+      setuserInput('')
+    }
+
+  };
+
   const handleInputChange = (e) => {
     const inputText = e.target.value;
     setuserInput(inputText);
@@ -122,7 +177,26 @@ function AICreateCardsPage() {
     const words = inputText.trim().split(/\s+/).filter(Boolean);
     setWordCount(words.length);
 };
+const handleRowClick = (index) => {
+    setSelectedRowIndices(prev => {
+      const currentIndex = prev.indexOf(index);
+      if (currentIndex === -1) {
+        // If not found, add the index
+        console.log(selectedRowIndices)
+        return [...prev, index];
+      } else {
+        // If found, remove the index
+        console.log(selectedRowIndices)
+        return prev.filter(item => item !== index);
+      }
+     
+    });
+  };
 
+   // Function to determine the background class
+   const getBackgroundClass = (index) => {
+    return selectedRowIndices.includes(index) ? 'bg-blue-200 dark:bg-blue-700' : 'bg-white dark:bg-edDarker';
+  };
   const handleBackButton = () => {
     if (userInput) {
       const shouldLeave = window.confirm("You have stuff did not save. Do you still want to leave?");
@@ -200,7 +274,12 @@ function AICreateCardsPage() {
             Submit
           </button>
 
-          <h3 className="text-elDark dark:text-edWhite">Preview</h3>
+          
+        </form>
+
+        <form onSubmit={handleSubmitChoice} className='flex flex-col items-center'>
+        <h3 className="text-elDark dark:text-edWhite">Preview</h3>
+        <button type='submit' className="button-common button-blue font-semibold py-2 text-center w-1/4 my-2">Finish Choose</button>
             <div className="h-[50vh] overflow-y-auto">
                 {waiting ? (
                 <div className="flex justify-center items-center">
@@ -208,7 +287,7 @@ function AICreateCardsPage() {
                 </div>
                 ) : (
                     preview.map((item, index) => (
-                    <div className="grid grid-cols-2 gap-4 font-medium px-2" key={index}>
+                    <div className={`grid grid-cols-2 gap-4 font-medium px-2 ${getBackgroundClass(index)}`} key={index} onClick={() => handleRowClick(index)}  >
                         <div className="border bg-white dark:bg-edDarker text-black dark:text-edWhite mt-2 px-2 py-2">
                             <p>{item.question}</p>
                         </div>

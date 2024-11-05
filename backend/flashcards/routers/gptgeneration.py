@@ -48,11 +48,7 @@ def test(request):
             print(f"Question: {question}\nAnswer: {answer}\n")
         qa_pairs = []
 
-        deck = get_object_or_404(Deck, deck_id=deckid)
-        for  question, answer in matches:
-            card = Card.objects.create(deck=deck, question=question, answer=answer)
-            deck.order_List.append(card.card_id)
-            deck.save()
+        for  question, answer in matches:          
             qa_pairs.append({'Question':question,'Answer':answer})
             
         print(qa_pairs)
@@ -61,3 +57,20 @@ def test(request):
     except Exception as e:
         print(e)
         return JsonResponse({'error': str(e)}, status=500)
+
+
+@gpt_router.post("/requestselection", response={200: dict, 404: str})
+def selected_cards(request):
+    data = json.loads(request.body)
+    
+    indexWanted = data.get("indexwanted") 
+    dataGenerated = data.get("previewdata")
+    deckid = data.get("deckid")
+    deck = get_object_or_404(Deck, deck_id=deckid)
+    for  index in indexWanted:
+        
+        card = Card.objects.create(deck=deck, question= dataGenerated[index].get("question"), answer=dataGenerated[index].get("answer"))
+        deck.order_List.append(card.card_id)
+        deck.save()
+    
+    return  JsonResponse({"newcardset":dataGenerated}, status=200)
