@@ -5,7 +5,6 @@ import { Link, useRouter } from 'expo-router'
 import { images } from '../../constants'
 import FormField from '../../components/FormField'
 import CustomButton from '../../components/CustomButton'
-
 import { Context } from '../../context/globalContext';
 import { useContext } from 'react';
 
@@ -20,10 +19,6 @@ const SignIn = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState("");
-
-  const submit = () => {
-    handleLogin();
-  }
 
   function handleLogin() {
 
@@ -51,13 +46,9 @@ const SignIn = () => {
         }
       })
       .then(json => {
-        console.log("Logged In")
-        console.log(json)
         setUserObj(json)
         setToken(json.access)
         storeToken(json.access)
-        console.log(json.access)
-        console.log(token)
         router.replace('/home');
       })
       .catch(error => {
@@ -93,7 +84,7 @@ const SignIn = () => {
 
           <CustomButton
             title="Sign In"
-            handlePress={submit}
+            handlePress={handleLogin}
             containerStyles="mt-7"
             isLoading={isSubmitting}
           />

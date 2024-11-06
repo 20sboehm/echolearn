@@ -3,6 +3,7 @@ import { SplashScreen, Stack } from 'expo-router'
 import { useFonts } from 'expo-font'
 import React, { useEffect, useContext } from 'react'
 import { Provider, Context } from '../context/globalContext';
+import { StatusBar } from 'expo-status-bar';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -28,6 +29,8 @@ const RooyLayout = () => {
 
   return (
     <Provider>
+      {/* sometime it would lost the lighting? */}
+      <StatusBar backgroundColor="#161622" style="light" />
       <RootNavigator />
     </Provider>
   );
