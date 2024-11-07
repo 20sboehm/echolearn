@@ -1,4 +1,5 @@
 import { useState, createContext } from "react";
+import { json } from "react-router-dom";
 
 // For auth we need global state that is shared accross the entire application, 
 // which is why we need the Context API
@@ -8,6 +9,7 @@ const AuthContext = createContext();
 // needing to login again
 const getToken = () => localStorage.getItem("echolearn_token");
 const getRefreshToken = () => localStorage.getItem("echolearn_refresh_token");
+const getGuestStatus = () => JSON.parse(localStorage.getItem("echolearn_is_guest") || "false");
 
 const storeTokens = (token, refreshToken) => {
     console.log("Storing tokens");
@@ -24,6 +26,7 @@ const clearTokens = () => {
 const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(getToken);
     const [refreshToken, setRefreshToken] = useState(getRefreshToken);
+    const [isGuest, setIsGuest] = useState(getGuestStatus);
 
     const _login = (tokenData) => {
         console.log("Logging in.");
@@ -39,6 +42,18 @@ const AuthProvider = ({ children }) => {
         clearTokens();
     };
 
+    const _start_guest_session = () => {
+        console.log("Starting guest session.");
+        setIsGuest(true);
+        localStorage.setItem("echolearn_is_guest", true);
+    };
+
+    const _end_guest_session = () => {
+        console.log("Ending guest session.");
+        setIsGuest(false);
+        localStorage.setItem("echolearn_is_guest", false);
+    }
+
     const _storeRefreshedToken = async (newToken) => {
         console.log("Storing new access token.");
         setToken(newToken);
@@ -50,7 +65,7 @@ const AuthProvider = ({ children }) => {
     const isLoggedIn = !!token;
 
     return (
-        <AuthContext.Provider value={{ _login, _logout, _storeRefreshedToken, isLoggedIn, token, refreshToken }}>
+        <AuthContext.Provider value={{ _login, _logout, _storeRefreshedToken, isLoggedIn, token, refreshToken, isGuest, _start_guest_session, _end_guest_session }}>
             {children}
         </AuthContext.Provider>
     );

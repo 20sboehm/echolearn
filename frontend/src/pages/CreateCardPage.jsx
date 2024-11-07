@@ -8,6 +8,7 @@ import MarkdownEditor from "../components/MarkdownEditor";
 import './Buttons.css';
 
 function CreateCardPage() {
+  const isGuest = JSON.parse(localStorage.getItem("echolearn_is_guest") || "false");
   const api = useApi();
   const navigate = useNavigate();
   const location = useLocation();
@@ -23,15 +24,26 @@ function CreateCardPage() {
   const { data: decks, isLoading, error } = useQuery({
     queryKey: ['decks'],
     queryFn: async () => {
-      let response = await api._get('/api/decks');
+      if (isGuest) {
+        // Guest mode: Load decks from localStorage
+        console.log("Guest mode: loading decks from localStorage");
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        const message = errorData.detail || 'An error occurred';
-        throw new Error(`${response.status}: ${message}`);
+        // Retrieve guest decks from localStorage
+        const guestDecks = JSON.parse(localStorage.getItem("guestDecks")) || {};
+
+        // Transform guestDecks object to array format if needed
+        return Object.values(guestDecks);
+      } else {
+        let response = await api._get('/api/decks');
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          const message = errorData.detail || 'An error occurred';
+          throw new Error(`${response.status}: ${message}`);
+        }
+
+        return response.json();
       }
-
-      return response.json();
     }
   });
 

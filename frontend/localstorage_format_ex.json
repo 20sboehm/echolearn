@@ -1,0 +1,38 @@
+{
+  "guest_folders": {
+    "1": {
+      "id": 1,
+      "name": "Top Level Folder",
+      "folder_id": null,
+      "deck_ids": [
+        101
+      ],
+      "child_folder_ids": [
+        2
+      ]
+    },
+    "2": {
+      "id": 2,
+      "name": "Nested Folder",
+      "folder_id": 1,
+      "deck_ids": [
+        102
+      ],
+      "child_folder_ids": []
+    }
+  },
+  "decks": {
+    "1": {
+      "deck_id": 101,
+      "name": "Deck 1",
+      "folder_id": 1,
+      "cards": []
+    },
+    "2": {
+      "deck_id": 102,
+      "name": "Deck 2",
+      "folder_id": 2,
+      "cards": []
+    }
+  }
+}

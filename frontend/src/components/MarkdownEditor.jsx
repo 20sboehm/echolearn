@@ -309,25 +309,46 @@ function MarkdownEditor({ requestType, submitButtonText, questionText, setQuesti
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    let response = undefined;
-    console.log("yo: " + requestType);
+    let response = { ok: false };
 
-    if (requestType === "post") {
-      const cardData = {
-        deck_id: deckId,
-        question: questionText,
-        answer: answerText,
+    const cardData = {
+      question: questionText,
+      answer: answerText,
+    };
+
+    if (isGuest) {
+      // Guest Mode: Handle saving to localStorage
+      console.log("Guest mode: saving card to localStorage");
+
+      // Retrieve guest decks and the specific deck
+      const guestDecks = JSON.parse(localStorage.getItem("guestDecks")) || {};
+      const deck = guestDecks[deckId] || { cards: {} };
+
+      if (requestType === "post") {
+        // POST: Add a new card
+        const newCardId = Date.now().toString();  // Unique ID for new card
+        deck.cards[newCardId] = { ...cardData, card_id: newCardId };
+        response.ok = true;  // Simulate successful response
+      } else if (requestType === "patch") {
+        // PATCH: Update existing card if it exists
+        if (deck.cards[cardId]) {
+          deck.cards[cardId] = { ...deck.cards[cardId], ...cardData };
+          response.ok = true;  // Simulate successful response
+        } else {
+          console.error("Card not found for update in guest mode.");
+        }
       }
 
-      response = await api._post('/api/cards', cardData);
-    }
-    else if (requestType === "patch") {
-      const cardData = {
-        question: questionText,
-        answer: answerText,
+      // Save the updated deck back to localStorage
+      guestDecks[deckId] = deck;
+      localStorage.setItem("guestDecks", JSON.stringify(guestDecks));
+    } else {
+      // Logged-in user: Make an API request
+      if (requestType === "post") {
+        response = await api._post('/api/cards', { ...cardData, deck_id: deckId });
+      } else if (requestType === "patch") {
+        response = await api._patch(`/api/cards/${cardId}`, cardData);
       }
-
-      response = await api._patch(`/api/cards/${cardId}`, cardData);
     }
 
     if (!response.ok) {

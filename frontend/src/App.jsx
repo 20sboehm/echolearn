@@ -63,7 +63,35 @@ function AuthenticatedRoutes() {
       <Route path="/ankiparser" element={<AnkiParserPage />} />
       <Route path="/aigeneratecards" element={<AIGenerateCards />} />
       <Route path="/editall/:deckId" element={<EditAll />} />
-      <Route path="/multipleinput" element = {<MultipleInput/>}/>
+      <Route path="/multipleinput" element={<MultipleInput />} />
+    </Routes>
+  );
+}
+
+function GuestRoutes() {
+  // console.log("guest routes!!!!!")
+
+  return (
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/cards" element={<CreateCardPage />} />
+      <Route path="/quizletparser" element={<QuizletParserPage />} />
+      <Route path="/review" element={<ReviewPage />} />
+      <Route path="/help" element={<HelpPage />} />
+      <Route path="/edit/:cardId" element={<EditCardPage />} />
+      <Route path="/decks/:deckId" element={<DeckPage />} />
+      <Route path="/decks/public/:deckId" element={<DeckPage publicAccess={true} />} />
+      {/* <Route path="/profile" element={<ProfilePage />} /> */}
+      <Route path="/stats/:deckId" element={<StatsPage />} />
+      {/* <Route path="/community" element={<CommunityPage />} /> */}
+      <Route path="*" element={<ErrorPage statusCode="404" errorMessage="Page not found" />} />
+      <Route path="/friends" element={<FriendsPage />} />
+      <Route path="/myimages" element={<MyImagesPage />} />
+      <Route path="/quiz/:deckId" element={<QuizPage />} />
+      <Route path="/ankiparser" element={<AnkiParserPage />} />
+      <Route path="/aigeneratecards" element={<AIGenerateCards />} />
+      <Route path="/editall/:deckId" element={<EditAll />} />
+      <Route path="/multipleinput" element={<MultipleInput />} />
     </Routes>
   );
 }
@@ -82,7 +110,7 @@ function UnauthenticatedRoutes() {
 }
 
 function Main({ setBgClass }) {
-  const { isLoggedIn, token } = useAuth();
+  const { isLoggedIn, token, isGuest, _end_guest_session } = useAuth();
   console.log("isLoggedIn: " + isLoggedIn);
   console.log("token: " + !!token);
   const api = useApi();
@@ -117,6 +145,8 @@ function Main({ setBgClass }) {
       } else {
         // If the user isn't logged in, just remove the class
         document.documentElement.classList.remove('theme-pending');
+
+        document.documentElement.classList.add('dark');
       }
     };
 
@@ -126,8 +156,11 @@ function Main({ setBgClass }) {
 
   return (
     <main className="w-full h-full flex flex-col items-center">
-      {isLoggedIn ?
-        <AuthenticatedRoutes /> :
+      {isLoggedIn ? (
+        <AuthenticatedRoutes />
+      ) : isGuest ? (
+        <GuestRoutes />
+      ) :
         <UnauthenticatedRoutes />
       }
     </main>

@@ -15,6 +15,8 @@ import './Buttons.css';
 // import voiceIconImg from "../assets/voice.png"
 
 function DeckPage({ publicAccess = false }) {
+  const isGuest = JSON.parse(localStorage.getItem("echolearn_is_guest") || "false");
+
   const api = useApi();
   const navigate = useNavigate();
 
@@ -48,19 +50,31 @@ function DeckPage({ publicAccess = false }) {
   const { data: deckCards, isLoading, error, refetch } = useQuery(
     ['deckCards', deckId], // Unique key based on deckId
     async () => { // This function is queryFn
-      let response = null;
-      if (publicAccess) {
-        response = await api._get(`/api/decks/public/${deckId}/cards`);
+      if (isGuest) {
+        // Guest mode: Fetch deck cards from localStorage
+        const guestDecks = JSON.parse(localStorage.getItem("guest_decks")) || {};
+        const deckData = guestDecks[deckId];
+
+        if (!deckData) {
+          throw new Error(`Deck with ID ${deckId} not found in guest mode`);
+        }
+
+        return deckData;
       } else {
-        response = await api._get(`/api/decks/${deckId}/cards`); // If the ordered list is empty this will automatically create one
-      }
+        let response = null;
+        if (publicAccess) {
+          response = await api._get(`/api/decks/public/${deckId}/cards`);
+        } else {
+          response = await api._get(`/api/decks/${deckId}/cards`); // If the ordered list is empty this will automatically create one
+        }
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(`${response.status}: ${errorData.detail || 'An error occurred'}`);
-      }
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(`${response.status}: ${errorData.detail || 'An error occurred'}`);
+        }
 
-      return response.json();
+        return response.json();
+      }
     },
     {
       onSuccess: (data) => {
@@ -89,13 +103,14 @@ function DeckPage({ publicAccess = false }) {
   };
 
   const submitorderList = async (templist) => {
-    console.log("SUBMITTING ORDER LIST")
-    const response = await api._post(`/api/decks/${deckId}/orderList`, {
-      templist
-    });
-    const data = await response.json();
-    console.log(data)
-
+    if (isGuest) {
+      localStorage.setItem(`orderList_${deckId}`, JSON.stringify(templist));
+    } else {
+      const response = await api._post(`/api/decks/${deckId}/orderList`, {
+        templist
+      });
+      // const data = await response.json();
+    }
   };
 
   // useEffect(() => {
@@ -146,18 +161,39 @@ function DeckPage({ publicAccess = false }) {
       answer: newAnswer,
     };
 
-    try {
-      const response = await api._post(`/api/cards`, requestData);
-      if (!response.ok) {
-        throw new Error('Failed to create card');
-      }
+    if (isGuest) {
+      // Guest mode: Store card in localStorage
+      console.log("Guest mode: storing new card in localStorage");
 
+      // Retrieve existing cards for the deck from localStorage, or initialize an empty array
+      const localCardsKey = `deckCards_${deckId}`;
+      const localCards = JSON.parse(localStorage.getItem(localCardsKey)) || [];
+
+      // Add the new card to the array
+      localCards.push(requestData);
+
+      // Save the updated card array back to localStorage
+      localStorage.setItem(localCardsKey, JSON.stringify(localCards));
+
+      // Reset fields and exit create mode
       setNewQuestion("");
       setNewAnswer("");
       setCreateMode(false);
-      refetch();
-    } catch (error) {
-      console.error('Error creating card:', error);
+      console.log("Card created in guest mode");
+    } else {
+      try {
+        const response = await api._post(`/api/cards`, requestData);
+        if (!response.ok) {
+          throw new Error('Failed to create card');
+        }
+
+        setNewQuestion("");
+        setNewAnswer("");
+        setCreateMode(false);
+        refetch();
+      } catch (error) {
+        console.error('Error creating card:', error);
+      }
     }
   };
 
@@ -169,16 +205,34 @@ function DeckPage({ publicAccess = false }) {
 
   const handleDeleteDeck = async () => {
     if (window.confirm('Are you sure you want to delete this deck? This action cannot be undone.')) {
-      try {
-        const response = await api._delete(`/api/decks/${deckId}`);
-        if (!response.ok) {
-          throw new Error('Failed to delete deck');
-        }
+      if (isGuest) {
+        // Guest mode: Remove deck data from localStorage
+        console.log("Guest mode: deleting deck from localStorage");
+
+        // Retrieve all decks from localStorage
+        const decks = JSON.parse(localStorage.getItem("guestDecks")) || {};
+
+        // Remove the specific deck
+        delete decks[deckId];
+
+        // Save the updated decks back to localStorage
+        localStorage.setItem("guestDecks", JSON.stringify(decks));
+
+        // Provide feedback and navigate back
         popupDetails('Deck deleted successfully!', 'green');
         navigate('/');
-      } catch (error) {
-        console.error('Error deleting deck:', error);
-        popupDetails('Failed to delete deck.', 'red');
+      } else {
+        try {
+          const response = await api._delete(`/api/decks/${deckId}`);
+          if (!response.ok) {
+            throw new Error('Failed to delete deck');
+          }
+          popupDetails('Deck deleted successfully!', 'green');
+          navigate('/');
+        } catch (error) {
+          console.error('Error deleting deck:', error);
+          popupDetails('Failed to delete deck.', 'red');
+        }
       }
     }
   };
@@ -232,15 +286,35 @@ function DeckPage({ publicAccess = false }) {
 
   const handleCardClick = async (cardId) => {
     if (deleteMode) {
-      try {
-        const response = await api._delete(`/api/cards/${cardId}`);
-        if (!response.ok) {
-          throw new Error('Failed to delete card');
+      if (isGuest) {
+        // Guest mode: Remove card data from localStorage
+        console.log("Guest mode: deleting card from localStorage");
+
+        // Retrieve all guest decks from localStorage
+        const decks = JSON.parse(localStorage.getItem("guestDecks")) || {};
+        const deck = decks[deckId];
+
+        if (deck) {
+          // Remove the specific card from the deck's cards array
+          deck.cards = deck.cards.filter(card => card.id !== cardId);
+
+          // Save the updated decks back to localStorage
+          localStorage.setItem("guestDecks", JSON.stringify(decks));
+
+          console.log("Deleted card with ID:", cardId);
+          refetch(); // Refresh the displayed cards
         }
-        console.log("Deleted card with ID:", cardId);
-        refetch();
-      } catch (error) {
-        console.error('Error deleting card:', error);
+      } else {
+        try {
+          const response = await api._delete(`/api/cards/${cardId}`);
+          if (!response.ok) {
+            throw new Error('Failed to delete card');
+          }
+          console.log("Deleted card with ID:", cardId);
+          refetch();
+        } catch (error) {
+          console.error('Error deleting card:', error);
+        }
       }
     }
   };
@@ -270,6 +344,9 @@ function DeckPage({ publicAccess = false }) {
   // };
 
   const handleTakeACopy = async () => {
+    if (isGuest) {
+      return;
+    }
     setModalOpen(true); // Open the modal to select or create a folder
     const userfolders = await api._get(`/api/folders`)
     const folderData = await userfolders.json()
@@ -278,6 +355,9 @@ function DeckPage({ publicAccess = false }) {
   };
 
   const handleFolderSelection = async (folderId) => {
+    if (isGuest) {
+      return;
+    }
     const response = await api._get(`/api/decks/${deckId}/take_copy/${folderId}`);
     try {
       if (!response.ok) {
@@ -299,6 +379,9 @@ function DeckPage({ publicAccess = false }) {
   };
 
   const fetchRatingData = async () => {
+    if (isGuest) {
+      return {};
+    }
     try {
       const response = await api._get(`/api/decks/${deckId}/ratedOrnot`);
       const json = await response.json();
@@ -316,6 +399,9 @@ function DeckPage({ publicAccess = false }) {
   fetchRatingData();
 
   const submitRating = async () => {
+    if (isGuest) {
+      return;
+    }
     const response = await api._post(`/api/decks/${deckId}/ratings`);
     const data = await response.json();
     if (data.status == "removed")
@@ -461,9 +547,9 @@ function DeckPage({ publicAccess = false }) {
                 ${deleteMode ? "hover:bg-[#ff000055] hover:dark:bg-[#ff000055] cursor-not-allowed" : ""}`}
                 key={item.card_id} onClick={() => { handleCardClick(item.card_id) }}
                 draggable={!publicAccess}
-                onDragStart={publicAccess ? undefined :(e) => handleDragStart(e, index)}
-                onDragOver={publicAccess ? undefined :handleDragOver}
-                onDrop={publicAccess ? undefined :(e) => handleDrop(e, index)}
+                onDragStart={publicAccess ? undefined : (e) => handleDragStart(e, index)}
+                onDragOver={publicAccess ? undefined : handleDragOver}
+                onDrop={publicAccess ? undefined : (e) => handleDrop(e, index)}
               >
 
                 <div className={`relative w-1/2 flex flex-col pr-4 border-r border-elDividerGray dark:border-edDividerGray bg-transparent`}>

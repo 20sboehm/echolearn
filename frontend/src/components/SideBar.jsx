@@ -8,6 +8,8 @@ import 'react-resizable/css/styles.css';
 
 const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) => {
   const api = useApi();
+  const isGuest = JSON.parse(localStorage.getItem("echolearn_is_guest") || "false");
+
   const [sidebarData, setSidebarData] = useState(null);
   const [contextMenu, setContextMenu] = useState(null); // For right-click menu
   const [newName, setNewName] = useState('');
@@ -46,32 +48,55 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
   }, []);
 
   const fetchSidebarData = () => {
-    api._get('/api/sidebar')
-      .then((response) => response.json())
-      .then((data) => {
-        setSidebarData(data);
+    if (isGuest) {
+      const guestSidebarData = JSON.parse(localStorage.getItem("guest_sidebar_data")) || { folders: [] };
+      setSidebarData(guestSidebarData);
 
-        setFolderStates((prevFolderStates) => {
-          const newFolderStates = { ...prevFolderStates }; // Start with existing folder states
+      setFolderStates((prevFolderStates) => {
+        const newFolderStates = { ...prevFolderStates };
 
-          const initializeFolderStates = (folders) => {
-            folders.forEach((folder) => {
-              // Only initialize folders that don't have a state yet
-              if (!(folder.folder_id in newFolderStates)) {
-                newFolderStates[folder.folder_id] = false; // Default is closed
-              }
-              if (folder.children) {
-                initializeFolderStates(folder.children); // Recursively initialize nested folders
-              }
-            });
-          };
-          initializeFolderStates(data.folders);
-          return newFolderStates;
-        });
-      })
-      .catch((error) => {
-        console.log('An error occurred fetching sidebar:', error);
+        const initializeFolderStates = (folders) => {
+          folders.forEach((folder) => {
+            if (!(folder.folder_id in newFolderStates)) {
+              newFolderStates[folder.folder_id] = false; // Default is closed
+            }
+            if (folder.children) {
+              initializeFolderStates(folder.children);
+            }
+          });
+        };
+        initializeFolderStates(guestSidebarData.folders);
+        return newFolderStates;
       });
+    } else {
+      api._get('/api/sidebar')
+        .then((response) => response.json())
+        .then((data) => {
+          setSidebarData(data);
+
+          setFolderStates((prevFolderStates) => {
+            const newFolderStates = { ...prevFolderStates }; // Start with existing folder states
+
+            const initializeFolderStates = (folders) => {
+              folders.forEach((folder) => {
+                // Only initialize folders that don't have a state yet
+                if (!(folder.folder_id in newFolderStates)) {
+                  newFolderStates[folder.folder_id] = false; // Default is closed
+                }
+                if (folder.children) {
+                  initializeFolderStates(folder.children); // Recursively initialize nested folders
+                }
+              });
+            };
+            initializeFolderStates(data.folders);
+            return newFolderStates;
+          });
+        })
+        .catch((error) => {
+          console.log('An error occurred fetching sidebar:', error);
+        });
+    }
+
   };
 
   useEffect(() => {
@@ -81,13 +106,20 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
   const { data: userSettings, loading } = useQuery(
     ['userSettings'],
     async () => {
-      let response = await api._get('/api/profile/me');
-      if (!response.ok) {
-        const errorData = await response.json();
-        const message = errorData.detail || 'An error occurred';
-        throw new Error(`${response.status}: ${message}`);
+      if (isGuest) {
+        // const guestSettings = JSON.parse(localStorage.getItem("guest_user_settings")) || { sidebar_open: true };
+        // const guestSettings = { sidebar_open: true };
+        // return guestSettings;
+        return { sidebar_open: true };
+      } else {
+        let response = await api._get('/api/profile/me');
+        if (!response.ok) {
+          const errorData = await response.json();
+          const message = errorData.detail || 'An error occurred';
+          throw new Error(`${response.status}: ${message}`);
+        }
+        return response.json(); // Ensure we return the response data
       }
-      return response.json(); // Ensure we return the response data
     },
     {
       onSuccess: (data) => {
@@ -191,24 +223,44 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
 
     let newItem = {
       name: newName,
-      // null should only happen if user is creating a top level folder
-      folder_id: selected?.parent_folder_id || selected?.folder_id || null,
+      folder_id: selected?.parent_folder_id || selected?.folder_id || null, // null should only happen if user is creating a top level folder
     };
-    const endpoint = createType === 'deck' ? "/api/decks" : "/api/folders";
 
-    try {
-      const response = await api._post(endpoint, newItem);
-      if (response.status === 201) {
-        setNewName('');
-        fetchSidebarData();
-        setContextMenu(null);
-        setShowInput(false);
-        setCreateType('');
-      } else {
-        console.error(`Failed to create ${createType}`, response);
+    if (isGuest) {
+      const storageKey = createType === 'deck' ? "guest_decks" : "guest_folders";
+      const existingItems = JSON.parse(localStorage.getItem(storageKey)) || {};
+
+      if (storageKey === "guest_folders") {
+        const updatedItems = [...existingItems, { ...newItem, id: Date.now() }];
       }
-    } catch (error) {
-      console.error(`Error creating ${createType}`, error);
+
+      // Add the new item to the existing list
+      const updatedItems = [...existingItems, { ...newItem, id: Date.now() }];
+      localStorage.setItem(storageKey, JSON.stringify(updatedItems));
+
+      // Reset states and refetch sidebar data from localStorage
+      setNewName('');
+      fetchSidebarData();
+      setContextMenu(null);
+      setShowInput(false);
+      setCreateType('');
+    } else {
+      try {
+        const endpoint = createType === 'deck' ? "/api/decks" : "/api/folders";
+
+        const response = await api._post(endpoint, newItem);
+        if (response.status === 201) {
+          setNewName('');
+          fetchSidebarData();
+          setContextMenu(null);
+          setShowInput(false);
+          setCreateType('');
+        } else {
+          console.error(`Failed to create ${createType}`, response);
+        }
+      } catch (error) {
+        console.error(`Error creating ${createType}`, error);
+      }
     }
   };
 
@@ -221,23 +273,46 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
     }
 
     let endpoint = '';
-    try {
-      if (selected.folder_id) {
-        endpoint = `/api/folders/${selected.folder_id}`;
-      } else if (selected.deck_id) {
-        endpoint = `/api/decks/${selected.deck_id}`;
-      }
 
-      const response = await api._patch(endpoint, { name: newName });
-      if (response.status === 200) {
-        fetchSidebarData();
-        setRenaming(false);
-        setContextMenu(null);
-      } else {
-        console.error("Failed to rename", response);
+    if (isGuest) {
+      // Guest mode: Update the name in localStorage
+      const storageKey = selected.folder_id ? "guest_folders" : "guest_decks";
+      const items = JSON.parse(localStorage.getItem(storageKey)) || [];
+
+      // Find and update the specific item
+      const updatedItems = items.map(item => {
+        if ((selected.folder_id && item.folder_id === selected.folder_id) ||
+          (selected.deck_id && item.deck_id === selected.deck_id)) {
+          return { ...item, name: newName };
+        }
+        return item;
+      });
+
+      localStorage.setItem(storageKey, JSON.stringify(updatedItems));
+
+      // Reset states and refresh sidebar from localStorage
+      fetchSidebarData();
+      setRenaming(false);
+      setContextMenu(null);
+    } else {
+      try {
+        if (selected.folder_id) {
+          endpoint = `/api/folders/${selected.folder_id}`;
+        } else if (selected.deck_id) {
+          endpoint = `/api/decks/${selected.deck_id}`;
+        }
+
+        const response = await api._patch(endpoint, { name: newName });
+        if (response.status === 200) {
+          fetchSidebarData();
+          setRenaming(false);
+          setContextMenu(null);
+        } else {
+          console.error("Failed to rename", response);
+        }
+      } catch (error) {
+        console.error("Error renaming", error);
       }
-    } catch (error) {
-      console.error("Error renaming", error);
     }
   };
 
@@ -245,23 +320,41 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
   const handleDelete = async () => {
     if (!selected) return;
 
-    let endpoint = '';
-    try {
-      if (selected.folder_id) {
-        endpoint = `/api/folders/${selected.folder_id}`;
-      } else if (selected.deck_id) {
-        endpoint = `/api/decks/${selected.deck_id}`;
-      }
+    if (isGuest) {
+      // Guest mode: Remove the item from localStorage
+      const storageKey = selected.folder_id ? "guest_folders" : "guest_decks";
+      const items = JSON.parse(localStorage.getItem(storageKey)) || [];
 
-      const response = await api._delete(endpoint);
-      if (response.status === 204) {
-        fetchSidebarData();
-        setContextMenu(null);
-      } else {
-        alert("Cannot delete folder with items inside.");
+      // Filter out the item being deleted
+      const updatedItems = items.filter(item => {
+        return (selected.folder_id && item.folder_id !== selected.folder_id) ||
+          (selected.deck_id && item.deck_id !== selected.deck_id);
+      });
+
+      localStorage.setItem(storageKey, JSON.stringify(updatedItems));
+
+      // Update UI
+      fetchSidebarData();
+      setContextMenu(null);
+    } else {
+      let endpoint = '';
+      try {
+        if (selected.folder_id) {
+          endpoint = `/api/folders/${selected.folder_id}`;
+        } else if (selected.deck_id) {
+          endpoint = `/api/decks/${selected.deck_id}`;
+        }
+
+        const response = await api._delete(endpoint);
+        if (response.status === 204) {
+          fetchSidebarData();
+          setContextMenu(null);
+        } else {
+          alert("Cannot delete folder with items inside.");
+        }
+      } catch (error) {
+        console.error("Error deleting", error);
       }
-    } catch (error) {
-      console.error("Error deleting", error);
     }
   };
 

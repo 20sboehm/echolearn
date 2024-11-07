@@ -26,24 +26,57 @@ function HomePage() {
 
 function TaskList() {
   const api = useApi();
+  const isGuest = JSON.parse(localStorage.getItem("echolearn_is_guest") || "false");
 
-  const { data: decks, isLoadingDecks, errorDecks } = useQuery({
-    queryKey: ["decks"],
-    queryFn: () =>
-      api._get('/api/decks').then((response) => response.json()),
-    onError: () => {
-      console.log(`An error occurred fetching decks ${errorDecks.text}`)
+  const fetchDecks = () => {
+    if (isGuest) {
+      return JSON.parse(localStorage.getItem("guest_decks")) || [];
+    } else {
+      return api._get('/api/decks').then((response) => response.json());
     }
-  })
+  };
 
-  const { data: cards, isLoadingCards, errorCards } = useQuery({
-    queryKey: ["cards"],
-    queryFn: () =>
-      api._get('/api/cards').then((response) => response.json()),
-    onError: () => {
-      console.log(`An error occurred fetching cards ${errorCards.text}`)
+  const fetchCards = () => {
+    if (isGuest) {
+      return JSON.parse(localStorage.getItem("guest_cards")) || [];
+    } else {
+      return api._get('/api/cards').then((response) => response.json());
     }
-  })
+  };
+
+  const { data: decks, isLoading: isLoadingDecks, error: errorDecks } = useQuery({
+    queryKey: ["decks", isGuest],
+    queryFn: fetchDecks,
+    onError: () => {
+      console.log(`An error occurred fetching decks: ${errorDecks}`);
+    }
+  });
+
+  const { data: cards, isLoading: isLoadingCards, error: errorCards } = useQuery({
+    queryKey: ["cards", isGuest],
+    queryFn: fetchCards,
+    onError: () => {
+      console.log(`An error occurred fetching cards: ${errorCards}`);
+    }
+  });
+
+  // const { data: decks, isLoadingDecks, errorDecks } = useQuery({
+  //   queryKey: ["decks"],
+  //   queryFn: () =>
+  //     api._get('/api/decks').then((response) => response.json()),
+  //   onError: () => {
+  //     console.log(`An error occurred fetching decks ${errorDecks.text}`)
+  //   }
+  // })
+
+  // const { data: cards, isLoadingCards, errorCards } = useQuery({
+  //   queryKey: ["cards"],
+  //   queryFn: () =>
+  //     api._get('/api/cards').then((response) => response.json()),
+  //   onError: () => {
+  //     console.log(`An error occurred fetching cards ${errorCards.text}`)
+  //   }
+  // })
 
   if (isLoadingDecks || isLoadingCards) {
     return <LoadingSpinner />
@@ -58,7 +91,7 @@ function TaskList() {
       })
       .map((deck) => deck.deck_id);
 
-      const deckIdsQueryParam = studyableDeckIds.join(',');
+    const deckIdsQueryParam = studyableDeckIds.join(',');
     return (
       <div className="text-2xl text-left">
         <div className="flex justify-between items-center border-b border-elDarkGray dark:border-edDividerGray mb-4">
