@@ -6,6 +6,10 @@ import { ResizableBox } from 'react-resizable';
 import { DeckCreateIcon, FolderCreateIcon, ExpandContractAllIcon, SidebarOpenClose, ChevronIcon } from './Icons';
 import 'react-resizable/css/styles.css';
 
+function capitalizeFirstLetter(val) {
+  return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+}
+
 const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) => {
   const api = useApi();
   const [sidebarData, setSidebarData] = useState(null);
@@ -268,7 +272,7 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
   return (
     <div onContextMenu={(e) => handleRightClick(e)}>
       <button
-        onClick={sidebarShow}
+        onClick={() => { sidebarShow(); }}
         style={{ left: `calc(${sidebarWidth}px)` }}
         className={`px-1 py-1 m-1 absolute top-[4rem] z-50 hover:bg-elLavender dark:hover:bg-edStrongHLT rounded-md`}
       >
@@ -305,7 +309,10 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
                 <Folder key={index} folder={folder} onRightClick={handleRightClick} folderStates={folderStates} toggleFolder={toggleFolder} setContextMenu={setContextMenu} selected={selected} setSelected={setSelected} folderRef={folderRef} />
               ))
             ) : (
-              <p>You have no decks!</p>
+              <div className='flex flex-col justify-center'>
+                <p className='text-center mt-4'>You have no decks or folders!</p>
+                <p className='text-center italic mt-4'>Right click anywhere on the sidebar to create</p>
+              </div>
             )
 
           ) : (
@@ -317,7 +324,7 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
       {contextMenu && (
         <div
           ref={popupRef}
-          className="absolute bg-edDarker text-white p-2 z-[9999] flex flex-col rounded-md border border-eGray"
+          className="absolute bg-elCloudWhite dark:bg-edDarker p-2 z-[9999] flex flex-col rounded-md border border-black dark:border-edDividerGray"
           style={{
             top: `${contextMenu.y}px`,
             left: `${contextMenu.x}px`,
@@ -325,129 +332,54 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
         >
           {selected && ( // Right-click on folder or deck
             <>
-              <div
-                className='px-1 py-1 cursor-pointer text-[1rem] hover:bg-eHLT'
-                onClick={() => setCreateType('deck')}
-              >
-                Create Deck
-              </div>
-              <div
-                className='px-1 py-1 cursor-pointer text-[1rem] hover:bg-eHLT'
-                onClick={() => setCreateType('folder')}
-              >
-                Create Folder
-              </div>
-              <div
-                className='px-1 py-1 cursor-pointer text-[1rem] hover:bg-eHLT'
-                onClick={() => {
-                  setRenaming(true);
-                  setNewName(selected.name);
-                }}
-              >
-                Rename
-              </div>
-              <div
-                className='px-1 py-1 cursor-pointer text-[1rem] hover:bg-eHLT'
-                onClick={handleDelete}
-              >
-                Delete
-              </div>
-              <div
-                className='px-1 py-1 cursor-pointer text-[1rem] hover:bg-eHLT text-eRed'
-                onClick={() => { setNewName(''); setContextMenu(null); setCreateType(''); }}>
-                Cancel
-              </div>
+              <PopupMenuButton clickEvent={() => { setCreateType('deck'); setRenaming(false); setNewName(''); }}>Create Deck</PopupMenuButton>
+              <PopupMenuButton clickEvent={() => { setCreateType('folder'); setRenaming(false); setNewName(''); }}>Create Folder</PopupMenuButton>
+              <PopupMenuButton clickEvent={() => { setRenaming(true); setNewName(selected.name); setCreateType(''); }}>Rename</PopupMenuButton>
+              <PopupMenuButton clickEvent={() => { handleDelete(); }} customStyles="text-edRed dark:text-edRed">Delete</PopupMenuButton>
             </>
           )}
 
-          {!selected && ( // Right-click on empty space
-            <>
-              <div
-                className='px-1 py-1 cursor-pointer text-[1rem] hover:bg-eHLT'
-                onClick={() => setCreateType('folder')}
-              >
-                Create Folder
-              </div>
-              <div
-                className='px-1 py-1 cursor-pointer text-[1rem] hover:bg-eHLT text-eRed'
-                onClick={() => { setNewName(''); setContextMenu(null); setCreateType(''); }}>
-                Cancel
-              </div>
-            </>
+          {!selected && !createType && ( // Right-click on empty space
+            <PopupMenuButton clickEvent={() => setCreateType('folder')}>Create Folder</PopupMenuButton>
           )}
 
           {/* Input for creating new deck or folder */}
           {createType && (
-            <div style={{ marginTop: '10px' }}>
-              <input
-                type="text"
-                placeholder={`Enter ${createType} name`}
-                value={newName}
-                onChange={(e) => setNewName(e.target.value)}
-                style={{
-                  color: 'black',
-                  backgroundColor: 'white',
-                  padding: '5px',
-                  borderRadius: '3px',
-                  width: '100%',
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    handleCreate();
-                  }
-                }}
-              />
-              <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'space-between' }}>
-                <button onClick={handleCreate}>Create</button>
-                {/* <button onClick={() => { setNewName(''); setContextMenu(null); setCreateType('') }}>Cancel</button> */}
+            <>
+              <PopupMenuInput placeholder={`Enter ${createType} name`} value={newName} changeEvent={(e) => setNewName(e.target.value)}
+                keyDown={(e) => { e.key === 'Enter' ? handleCreate() : null; }} />
+
+              <div className='flex justify-center'>
+                <button className='text-white bg-edGreen dark:bg-edGreen 
+                  hover:bg-edDarkGreen dark:hover:bg-edDarkGreen mt-4 flex px-2 py-1 rounded mr-2' onClick={handleCreate}>Create {capitalizeFirstLetter(createType)}
+                </button>
               </div>
-            </div>
+            </>
           )}
 
           {renaming && (
-            <div style={{ marginTop: '10px' }}>
-              <input
-                type="text"
-                placeholder="Enter new name"
-                value={newName}
-                onChange={(e) => setNewName(e.target.value)}
-                style={{
-                  color: 'black',
-                  backgroundColor: 'white',
-                  padding: '5px',
-                  borderRadius: '3px',
-                  width: '100%',
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    handleRename();
-                  }
-                }}
-              />
-              <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'space-between' }}>
-                <button onClick={handleRename}>Rename</button>
-                <button onClick={() => { setNewName(''); setContextMenu(null); setRenaming(false); }}>Cancel</button>
+            <>
+              <PopupMenuInput placeholder="Enter new name" value={newName} changeEvent={(e) => setNewName(e.target.value)}
+                keyDown={(e) => { e.key === 'Enter' ? handleRename() : null; }} />
+
+              <div className='flex justify-center'>
+                <button className='text-white bg-edGreen dark:bg-edGreen 
+                    hover:bg-edDarkGreen dark:hover:bg-edDarkGreen mt-4 flex px-2 py-1 rounded mr-2'
+                  onClick={() => { handleRename(); }}>Rename
+                </button>
               </div>
-            </div>
+            </>
           )}
         </div>
       )}
 
       {showInput && (
-        <div ref={popupRef} style={{ position: 'absolute', top: '50px', left: '50px', background: 'black', padding: '10px', border: '1px solid #ddd', borderRadius: '5px', zIndex: 9999, color: 'white' }}>
-          <input
-            type="text"
-            placeholder={`Enter ${createType} name`}
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-            style={{ padding: '5px', borderRadius: '3px', width: '100%', color: 'black' }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                handleCreate();
-              }
-            }}
-          />
-          <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'space-between' }}>
+        <div ref={popupRef} className='absolute bg-elCloudWhite dark:bg-edDarker top-[50px] left-[50px] p-[10px] 
+        border border-[#ddd] rounded-[5px] z-50 text-black dark:text-white'>
+          <PopupMenuInput placeholder={`Enter ${createType} name`} value={newName} changeEvent={(e) => setNewName(e.target.value)}
+            keyDown={(e) => { e.key === 'Enter' ? handleCreate() : null; }} />
+
+          <div className='mt-2 flex justify-between'>
             <button onClick={handleCreate}>Create</button>
             <button onClick={() => { setNewName(''); setShowInput(false); setCreateType(''); }}>Cancel</button>
           </div>
@@ -457,15 +389,38 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
   );
 };
 
+function PopupMenuButton({ clickEvent, customStyles, children }) {
+  return (
+    <button
+      type='button'
+      className={`px-1 py-1 cursor-pointer text-[1rem] hover:bg-elHLT dark:hover:bg-edHLT text-left rounded text-black dark:text-white ${customStyles}`}
+      onClick={clickEvent}
+      onMouseDown={(e) => { e.preventDefault() }}
+    >
+      {children}
+    </button>
+  )
+}
+
+function PopupMenuInput({ placeholder, value, changeEvent, keyDown, customStyles }) {
+  return (
+    <input
+      type="text"
+      autoFocus
+      placeholder={placeholder}
+      value={value}
+      onChange={changeEvent}
+      className={`p-1.5 mt-1 rounded w-full bg-white dark:bg-edBase text-black dark:text-white border border-edDividerGray outline-none ${customStyles}`}
+      onKeyDown={keyDown}
+    />
+  )
+}
+
 const Folder = ({ folder, onRightClick, folderStates, toggleFolder, setContextMenu, selected, setSelected, folderRef }) => {
 
   const handleLeftClick = (event) => {
-    // console.log("clicked")
-    // console.log(folder)
-
     event.preventDefault();
     event.stopPropagation();
-
 
     setSelected(folder);
     toggleFolder(folder.folder_id);
