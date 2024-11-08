@@ -1,4 +1,4 @@
-import { View, Text, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native'
+import { View, Text, FlatList, ActivityIndicator, ScrollView } from 'react-native'
 import React, { useEffect, useState, useContext } from 'react'
 import { Context } from '../../context/globalContext'; // Import your global context
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -90,11 +90,11 @@ const Home = () => {
 
     return (
       <View className="flex-row justify-between p-4 mt-2 border-b border-gray-300">
-        <Link href={`/decks?deckId=${deck.deck_id}`} className="flex-1">
-          <Text className="text-white font-psemibold mt-1">{deck.name}</Text>
+        <Link href={`/decks?deckId=${deck.deck_id}`} className="flex-1 mt-1">
+          <Text className="text-white font-psemibold">{deck.name}</Text>
         </Link>
-        <Text className="text-white flex-0.5 mt-1 mr-10">{newCardsCount}</Text>
-        <Text className="text-white flex-0.5 mt-1 mr-8">{reviewCardsCount}</Text>
+        <Text className="text-white flex-0.5 mt-2 mr-10">{newCardsCount}</Text>
+        <Text className="text-white flex-0.5 mt-2 mr-8">{reviewCardsCount}</Text>
         <Link href={`/reviews?deckIds=${deck.deck_id}`} className="bg-blue-500 p-2 rounded">
           <Text className="text-white">Study</Text>
         </Link>
@@ -112,11 +112,11 @@ const Home = () => {
           <Text className="text-white flex-0.5 font-bold mr-5">New</Text>
           <Text className="text-white flex-0.5 font-bold mr-16">Review</Text>
         </View>
-        <FlatList
-          data={decks}
-          keyExtractor={(item) => item.deck_id.toString()}
-          renderItem={({ item }) => <DeckRow deck={item} />}
-        />
+        <ScrollView className="mb-2 pb-10 h-[65vh]">
+          {decks.map((deck) => (
+            <DeckRow key={deck.deck_id.toString()} deck={deck} />
+          ))}
+        </ScrollView>
       </View>
     </SafeAreaView>
   );

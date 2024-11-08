@@ -73,25 +73,36 @@ const Decks = () => {
     <SafeAreaView className="bg-primary h-full">
       <View className="mt-10 ml-2">
         <Text className="text-3xl text-white font-pextrabold">{deck.name}</Text>
-        <Link href={`/reviews?deckIds=${deck.deck_id}`} className="mt-2 w-[20vw] text-center bg-blue-500 p-2 rounded">
-          <Text className="text-white">Study</Text>
-        </Link>
+        <View className="flex flex-row mt-2">
+          <Link href={`/reviews?deckIds=${deck.deck_id}`} className="w-[20vw] text-center bg-blue-500 p-2 rounded mr-4">
+            <Text className="text-white">Study</Text>
+          </Link>
+          <Link href={`/reviews?deckIds=${deck.deck_id}&studyAll=true`} className="w-[20vw] text-center bg-blue-500 p-2 rounded">
+            <Text className="text-white">Study All</Text>
+          </Link>
+        </View>
       </View>
 
       {/* Display sorted cards */}
       <View className="mt-5 ml-2">
         <Text className="text-xl text-white font-pbold">Cards:</Text>
-        <ScrollView className="mt-2 pb-10">
-        {cards.length > 0 ? (
-          cards.map((card, index) => (
-            <View key={card.card_id} className="mt-2 p-2 border-b border-gray-300">
-              <Text className="text-white font-semibold">Q{index + 1}: {card.question}</Text>
-              <Text className="text-gray-300">A: {card.answer}</Text>
-            </View>
-          ))
-        ) : (
-          <Text className="text-gray-400">No cards available.</Text>
-        )}
+        <View className="flex-row justify-between items-center mt-2">
+          <Text className="text-gray-300 font-pblack w-[45vw] text-center">Question:</Text>
+          <Text className="text-gray-300 font-pblack w-[50vw] text-center">Answer:</Text>
+        </View>
+        <ScrollView className="mt-2 pb-10 h-[65vh]">
+          {cards.length > 0 ? (
+            cards.map((card) => (
+              <View key={card.card_id} className="p-2">
+                <View className="flex-row justify-between items-center border-b border-gray-300 pb-4">
+                  <Text className="text-white font-psemibold border border-r border-gray-300 w-[45vw] p-4 bg-gray-700">{card.question}</Text>
+                  <Text className="text-white font-psemibold border border-r border-gray-300 w-[45vw] p-4 bg-gray-700">{card.answer}</Text>
+                </View>
+              </View>
+            ))
+          ) : (
+            <Text className="text-gray-400">No cards inside the deck.</Text>
+          )}
         </ScrollView>
       </View>
     </SafeAreaView>
