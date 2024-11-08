@@ -1,6 +1,6 @@
 import { View, Text, FlatList, ActivityIndicator, ScrollView } from 'react-native'
 import React, { useEffect, useState, useContext } from 'react'
-import { Context } from '../../context/globalContext'; // Import your global context
+import { Context } from '../../context/globalContext';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Link, useRouter } from 'expo-router'
 

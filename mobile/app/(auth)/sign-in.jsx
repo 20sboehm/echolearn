@@ -14,47 +14,27 @@ const SignIn = () => {
     password: ''
   })
   const globalContext = useContext(Context)
-  const { domain, token, setToken, storeToken, setUserObj } = globalContext;
+  const { domain, login, setUserObj } = globalContext;
   const router = useRouter();
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState("");
 
-  function handleLogin() {
+  const handleLogin = async () => {
+    setError("");
+    setIsSubmitting(true);
 
-    setError("")
-    let body = JSON.stringify({
-      'password': form.password,
-      'username': form.username,
-    })
-
-    console.log(form);
-
-    fetch(`${domain}/api/token/pair`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: body
-    })
-      .then(res => {
-        if (res.ok) {
-          return res.json()
-        } else {
-          setError("Username or Password incorrect, Please try again");
-          throw res.json()
-        }
-      })
-      .then(json => {
-        setUserObj(json)
-        setToken(json.access)
-        storeToken(json.access)
-        router.replace('/home');
-      })
-      .catch(error => {
-        console.log(error)
-      })
-  }
+    try {
+      const userData = await login(form.username, form.password);
+      setUserObj(userData);
+      router.replace('/home');
+    } catch (err) {
+      setError("Username or Password incorrect, Please try again");
+      console.log("Login error:", err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <SafeAreaView className="bg-primary h-full">

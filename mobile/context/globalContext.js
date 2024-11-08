@@ -5,25 +5,156 @@ const Context = createContext()
 
 const Provider = ({ children }) => {
 
-  const [ domain, setDomain ] = useState("http://10.0.0.219:8000");
+  const [domain, setDomain] = useState("http://10.0.0.219:8000");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userObj, setUserObj] = useState({});
   const [token, setToken] = useState(false);
+  const [refreshToken, setRefreshToken] = useState(null);
 
-  const storeToken = async (token) => {
-    await SecureStore.setItemAsync('token', token);
-  }
+  useEffect(() => {
+    console.log("Token state after logout (useEffect): ", token);
+  }, [token]);
+  
+  const storeTokens = async (accessToken, refreshToken) => {
+    console.log("Storing tokens:", { accessToken, refreshToken });
+    await SecureStore.setItemAsync('accessToken', accessToken);
+    await SecureStore.setItemAsync('refreshToken', refreshToken);
+  };
+
+  // Load tokens from secure storage
+  const loadTokens = async () => {
+    const accessToken = await SecureStore.getItemAsync('accessToken');
+    const refreshToken = await SecureStore.getItemAsync('refreshToken');
+
+    if (accessToken && refreshToken) {
+      setToken(accessToken);
+      setRefreshToken(refreshToken);
+      await verifyToken(accessToken);
+    }
+  };
+
+  // Verify if the access token is still valid
+  const verifyToken = async (accessToken) => {
+    try {
+      const response = await fetch(`${domain}/api/token/verify`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token: accessToken }),
+      });
+
+      if (response.ok) {
+        setIsLoggedIn(true);
+      } else {
+        // If verification fails, attempt to refresh the token
+        await refreshAccessToken();
+      }
+    } catch (error) {
+      console.error("Token verification failed:", error.message);
+    }
+  };
+
+  // Refresh the access token using the refresh token
+  const refreshAccessToken = async () => {
+    try {
+      const response = await fetch(`${domain}/api/token/refresh`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ refresh: refreshToken }),
+      });
+
+      if (!response.ok) throw new Error("Failed to refresh token");
+
+      const data = await response.json();
+      const newAccessToken = data.access;
+      const newRefreshToken = data.refresh || refreshToken;
+
+      // Update tokens in state and secure storage
+      setToken(newAccessToken);
+      setRefreshToken(newRefreshToken);
+      await storeTokens(newAccessToken, newRefreshToken);
+      setIsLoggedIn(true);
+    } catch (error) {
+      console.error("Token refresh failed:", error.message);
+      setIsLoggedIn(false);
+    }
+  };
+
+  // Log in and obtain access and refresh tokens
+  const login = async (username, password) => {
+    try {
+      const response = await fetch(`${domain}/api/token/pair`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (!response.ok) throw new Error("Login failed");
+
+      const data = await response.json();
+
+      console.log(data);
+      
+      const accessToken = data.access;
+      const refreshToken = data.refresh;
+
+      console.log("Login successful. Access Token:", accessToken);
+      console.log("Login successful. Refresh Token:", refreshToken);
+  
+      setToken(accessToken);
+      setRefreshToken(refreshToken);
+      await storeTokens(accessToken, refreshToken);
+      setIsLoggedIn(true);
+
+      console.log("After set token is: " + token);
+      return data;
+    } catch (error) {
+      console.error("Login error:", error.message);
+      throw error;
+    }
+  };
+
+  // Log out and clear stored tokens
+  const logout = async () => {
+    await SecureStore.deleteItemAsync('accessToken');
+    await SecureStore.deleteItemAsync('refreshToken');
+    setToken(null);
+    setRefreshToken(null);
+    setIsLoggedIn(false);
+
+    // Check if tokens are successfully removed from SecureStore
+    const accessToken = await SecureStore.getItemAsync('accessToken');
+    const refreshToken = await SecureStore.getItemAsync('refreshToken');
+
+    console.log("Access Token after deletion: ", accessToken); // Should be null
+    console.log("Refresh Token after deletion: ", refreshToken); // Should be null
+  };
+
+  // Automatically load tokens when the app starts
+  useEffect(() => {
+    loadTokens();
+  }, []);
+
 
   const globalContext = {
     domain,
     isLoggedIn,
-    setIsLoggedIn,
     userObj,
     setUserObj,
     token,
     setToken,
-    storeToken,
-  }
+    refreshToken,
+    setRefreshToken,
+    login,
+    logout,
+    refreshAccessToken,
+    storeTokens,
+  };
 
   return <Context.Provider value={globalContext}>{children}</Context.Provider>
 

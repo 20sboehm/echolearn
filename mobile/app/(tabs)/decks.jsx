@@ -26,7 +26,6 @@ const Decks = () => {
       if (!response.ok) throw new Error("Failed to fetch decks");
       const fetchedDeck = await response.json();
       setDeck(fetchedDeck);
-      console.log(fetchedDeck);
     } catch (error) {
       console.error(error.message);
     }
@@ -46,7 +45,6 @@ const Decks = () => {
       // Sort cards according to deck's order_List
 
       setCards(fetchedCards);
-      console.log(fetchedCards);
     } catch (error) {
       console.error(error.message);
     }
