@@ -25,13 +25,29 @@ const Provider = ({ children }) => {
   const loadTokens = async () => {
     const accessToken = await SecureStore.getItemAsync('accessToken');
     const refreshToken = await SecureStore.getItemAsync('refreshToken');
-
+  
     if (accessToken && refreshToken) {
       setToken(accessToken);
       setRefreshToken(refreshToken);
-      await verifyToken(accessToken);
+  
+      // Validate token on startup (you can call verifyToken function here)
+      const isValidToken = await verifyToken(accessToken);
+      if (isValidToken) {
+        setIsLoggedIn(true);
+      } else {
+        // If invalid, clear the tokens
+        setToken(null);
+        setRefreshToken(null);
+        setIsLoggedIn(false);
+      }
+    } else {
+      // No tokens, user is logged out
+      setToken(null);
+      setRefreshToken(null);
+      setIsLoggedIn(false);
     }
   };
+  
 
   // Verify if the access token is still valid
   const verifyToken = async (accessToken) => {
