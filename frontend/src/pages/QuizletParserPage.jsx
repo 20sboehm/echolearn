@@ -64,12 +64,12 @@ function QuizletParserPage() {
   const handleQuizletParser = async (e) => {
     e.preventDefault();
 
-      // Check if deckId is valid
-      if (!deckId) {
-        console.error("Error: Missing deckId");
-        alert("Faile to creat cards because did not select deck")
-        displayPopup(false);
-        return; 
+    // Check if deckId is valid
+    if (!deckId) {
+      console.error("Error: Missing deckId");
+      alert("Faile to creat cards because did not select deck")
+      displayPopup(false);
+      return;
     }
     console.log(quizletInput)
     let lineChoice = "{|}";
@@ -219,7 +219,7 @@ function QuizletParserPage() {
           </div>
         </form>
       </div>
-      <div className={`flex flex-col items-center min-w-40 p-3 fixed top-20 right-5 rounded-[1.4rem] text-white ${popupColor}
+      <div className={`flex flex-col items-center min-w-40 p-3 fixed top-20 right-5 rounded-[1.4rem] text-white font-semibold ${popupColor}
           transition-opacity duration-200 ${popupActive ? 'opacity-100' : 'opacity-0'}`}
       >
         {popupText}

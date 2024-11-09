@@ -58,34 +58,51 @@ function TaskList() {
       })
       .map((deck) => deck.deck_id);
 
-      const deckIdsQueryParam = studyableDeckIds.join(',');
-    return (
-      <div className="text-2xl text-left">
-        <div className="flex justify-between items-center border-b border-elDarkGray dark:border-edDividerGray mb-4">
-          <h1 className="font-bold text-[2rem] text-elDark dark:text-edWhite">
-            Today's Task List
-          </h1>
-          <Link to={`/review?deckIds=${deckIdsQueryParam}`}>
-            <button className="mb-2 text-xl button-common">Study All</button>
-          </Link>
-        </div>
-        <ul className=" w-[80vw] sm:[75vw] md:w-[50vw] text-xs sm:text-sm lg:text-xl">
-          <li className="overflow-y-auto flex font-semibold px-2 py-3 rounded-t-lg text-elCloudWhite bg-elLightBlue dark:bg-edDark dark:text-edWhite
+    console.log(studyableDeckIds)
+
+    const deckIdsQueryParam = studyableDeckIds.join(',');
+
+    if (studyableDeckIds.length > 0) {
+      return (
+        <div className="text-2xl text-left">
+          <div className="flex justify-between items-center border-b border-elDarkGray dark:border-edDividerGray mb-4">
+            <h1 className="font-bold text-[2rem] text-elDark dark:text-edWhite">
+              Today's Task List
+            </h1>
+            <Link to={`/review?deckIds=${deckIdsQueryParam}`}>
+              <button className="mb-2 text-xl button-common">Study All</button>
+            </Link>
+          </div>
+          <ul className="w-[80vw] sm:[75vw] md:w-[50vw] text-xs sm:text-sm lg:text-xl">
+            <li className="overflow-y-auto flex font-semibold px-2 py-3 rounded-t-lg text-elCloudWhite bg-elLightBlue dark:bg-edDark dark:text-edWhite
           border-x border-t border-elLightBlue dark:border-edMedGray"
-            style={{ scrollbarGutter: "stable" }}>
-            <div className="w-[50%]">Deck</div>
-            <div className="w-[17.5%]">New</div>
-            <div className="w-[15%]">Review</div>
-            <div className="w-[15%] mr-4"></div>
-          </li>
-          <ScrollContainer className="border-x border-b border-elDividerGray dark:border-edMedGray">
-            {decks.map((deck) => {
-              return <DeckRow key={deck.deck_id} deck={deck} cards={cards} />
-            })}
-          </ScrollContainer>
-        </ul>
-      </div >
-    );
+              style={{ scrollbarGutter: "stable" }}>
+              <div className="w-[50%]">Deck</div>
+              <div className="w-[17.5%]">New</div>
+              <div className="w-[15%]">Review</div>
+              <div className="w-[15%] mr-4"></div>
+            </li>
+            <ScrollContainer className="border-x border-b border-elDividerGray dark:border-edMedGray">
+              {decks.map((deck) => {
+                return <DeckRow key={deck.deck_id} deck={deck} cards={cards} />
+              })}
+            </ScrollContainer>
+          </ul>
+        </div >
+      );
+    } else {
+      return (
+        <>
+          <div className="w-[80vw] sm:[75vw] md:w-[50vw] flex justify-between items-center border-b border-elDarkGray dark:border-edDividerGray mb-4">
+            <h1 className="font-bold text-[2rem] text-elDark dark:text-edWhite">
+              Today's Task List
+            </h1>
+          </div>
+          <div className="mt-4 text-2xl">No more reviews for now!</div>
+          <div className="mt-4 italic">Go to a deck or click "Create Card" in the header to add new cards</div>
+        </>
+      )
+    }
   }
 }
 

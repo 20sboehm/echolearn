@@ -62,7 +62,7 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
             folders.forEach((folder) => {
               // Only initialize folders that don't have a state yet
               if (!(folder.folder_id in newFolderStates)) {
-                newFolderStates[folder.folder_id] = false; // Default is closed
+                newFolderStates[folder.folder_id] = true; // Default is closed
               }
               if (folder.children) {
                 initializeFolderStates(folder.children); // Recursively initialize nested folders

@@ -99,7 +99,7 @@ function CreateDeck() {
               </button>
             </form>
             {showPopup && (
-              <div className={`fixed bottom-20 left-1/2 -translate-x-1/2 transform p-4 bg-${popupColor}-500 rounded-md transition-opacity duration-1000 ${popupOpacity}`}>
+              <div className={`text-white font-semibold fixed bottom-20 left-1/2 -translate-x-1/2 transform p-4 bg-${popupColor}-500 rounded-md transition-opacity duration-1000 ${popupOpacity}`}>
                 {popupMessage}
               </div>
             )}

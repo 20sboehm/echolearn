@@ -9,11 +9,6 @@ import MarkdownPreviewer from "../components/MarkdownPreviewer";
 import { SpeakerIcon, StarIcon, HeartIcon, EditIcon } from "../components/Icons";
 import './Buttons.css';
 
-// import ReactPlayer from 'react-player';
-// import katex from 'katex';
-// import 'katex/dist/katex.min.css';
-// import voiceIconImg from "../assets/voice.png"
-
 function DeckPage({ publicAccess = false }) {
   const api = useApi();
   const navigate = useNavigate();
@@ -30,9 +25,6 @@ function DeckPage({ publicAccess = false }) {
   const [folders, setFolders] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [refetchTrigger, setRefetchTrigger] = useState(false);
-  // const [link, setLink] = useState('');
-  // const [inputShareLink, setinputShareLink] = useState('');
-  // const [newFolderName, setNewFolderName] = useState('');
 
   const [isCreateMode, setCreateMode] = useState(false);
   const [newQuestion, setNewQuestion] = useState("");
@@ -67,8 +59,6 @@ function DeckPage({ publicAccess = false }) {
         setItemKeys(data.order_List);
         setItems(reorderItems(data.cards, data.order_List));
         setIsPublicAccess(data.publicAccess);
-        console.log(data.order_List)
-        console.log('Data fetched successfully:', items);
       },
       retry: false
     }
@@ -89,21 +79,11 @@ function DeckPage({ publicAccess = false }) {
   };
 
   const submitorderList = async (templist) => {
-    console.log("SUBMITTING ORDER LIST")
     const response = await api._post(`/api/decks/${deckId}/orderList`, {
       templist
     });
     const data = await response.json();
-    console.log(data)
-
   };
-
-  // useEffect(() => {
-  //   if (items) {
-  //     setItemKeys(Object.cards(items)); // Initialize the keys array
-  //     console.log(itemKeys)
-  //   }
-  // }, [items]);
 
   if (isLoading) {
     return <LoadingSpinner />
@@ -221,7 +201,7 @@ function DeckPage({ publicAccess = false }) {
         throw new Error('Failed to update card');
       }
       else {
-        popupDetails('Deck privacy has been updated!.', 'green')
+        popupDetails('Deck privacy has been updated!', 'green')
         refetch();
       }
     } catch (error) {
@@ -245,35 +225,10 @@ function DeckPage({ publicAccess = false }) {
     }
   };
 
-  // const KatexOutput = ({ latex }) => {
-  //   const html = katex.renderToString(latex, {
-  //     throwOnError: false,
-  //     output: "html"
-  //   });
-
-  //   return <div dangerouslySetInnerHTML={{ __html: html }} />;
-  // };
-
-  // const handleGenerateLink = async () => {
-  //   const response = await api._post(`/api/decks/${deckId}/generate-share-link`)
-  //   try {
-  //     if (!response.ok) {
-  //       throw new Error('Failed to share deck');
-  //     }
-  //     const data = await response.json();
-  //     console.log("shared link:", data.link);
-  //     setLink(data.link)
-  //     prompt("Copy this link and share it:", data.link);
-  //   } catch (error) {
-  //     console.error('Error', error);
-  //   }
-  // };
-
   const handleTakeACopy = async () => {
     setModalOpen(true); // Open the modal to select or create a folder
     const userfolders = await api._get(`/api/folders`)
     const folderData = await userfolders.json()
-    console.log(folderData)
     setFolders(folderData)
   };
 
@@ -302,7 +257,6 @@ function DeckPage({ publicAccess = false }) {
     try {
       const response = await api._get(`/api/decks/${deckId}/ratedOrnot`);
       const json = await response.json();
-      console.log(json)
       if (json === true) {
         setRateresult(true)
       }
@@ -328,7 +282,6 @@ function DeckPage({ publicAccess = false }) {
 
   const handleDragStart = (e, index) => {
     setDragging(index);
-    console.log(index)
     e.dataTransfer.effectAllowed = "move";
   };
 
@@ -345,12 +298,14 @@ function DeckPage({ publicAccess = false }) {
     setItemKeys(null);
     let templist = []
     templist = updatedItems.map(item => parseInt(item.card_id))
-    console.log(templist)
     setItemKeys(templist)
-    console.log(itemKeys)
     submitorderList(templist);
     setDragging(null);
   };
+
+  const reviewCount = deckCards.cards.filter((card) => {
+    return Date.parse(card.next_review) < Date.now();
+  }).length;
 
   return (
     <>
@@ -361,18 +316,23 @@ function DeckPage({ publicAccess = false }) {
           border-b w-full border-elDividerGray dark:border-edDividerGray pb-1">
             {deckCards.deck_name} <span className="font-normal text-xl">({deckCards.cards.length} Cards)</span></h1>
           <div className="flex">
-            {/* <TopButtons deckCards={deckCards} publicAccess={isPublicAccess} deckId={deckId} handleDeleteDeck={handleDeleteDeck} /> */}
             <div className="flex flex-col">
               {publicAccess ? (
                 null
               ) : (
-                <div className="flex items-start mb-4 pb-4 gap-2 border-b border-elDividerGray dark:border-edDividerGray">
+                <div className="flex flex-wrap items-start mb-4 pb-4 gap-2 border-b border-elDividerGray dark:border-edDividerGray">
                   <>
-                    <Link to={`/review?deckIds=${deckId}`} className="button-top">
-                      Study
-                    </Link>
+                    {reviewCount > 0 ? (
+                      <Link to={`/review?deckIds=${deckId}`} className="button-top">
+                        Study ({reviewCount})
+                      </Link>
+                    ) : (
+                      <Link to="" onClick={(e) => { e.preventDefault(); }} className="button-top bg-edDarkGray dark:bg-edDarkGray hover:scale-100 cursor-default">
+                        Study ({reviewCount})
+                      </Link>
+                    )}
                     <Link to={`/review?deckIds=${deckId}&studyAll=true`} className="button-top">
-                      StudyAll
+                      Study All
                     </Link>
                     <Link to={`/quiz/${deckId}`}>
                       <button className="button-top">quiz</button>
@@ -380,6 +340,9 @@ function DeckPage({ publicAccess = false }) {
                     <Link to={`/stats/${deckId}`}>
                       <button className="button-top">
                         Statistics</button>
+                    </Link>
+                    <Link to={`/editall/${deckId}`} className="button-top">
+                      Edit All
                     </Link>
                     <button disabled={publicAccess} className={`button-top ${deckCards.isPublic ? "button-green" : "button-red"} ${publicAccess ? "" : ""}`}
                       onClick={setStatus}> {deckCards.isPublic ? "Public" : "Private"} </button>
@@ -389,9 +352,6 @@ function DeckPage({ publicAccess = false }) {
                     >
                       Delete Deck
                     </button>
-                    <Link to={`/editall/${deckId}`} className="button-top">
-                      Edit All
-                    </Link>
                   </>
                 </div>
               )}
@@ -420,7 +380,7 @@ function DeckPage({ publicAccess = false }) {
                 {publicAccess ? (
                   null
                 ) : (
-                  <>
+                  <div className="flex flex-wrap gap-2">
                     <div>
                       <button className={`button-common ${isCreateMode ? "button-green" : "button-blue"}`}
                         onClick={isCreateMode ? handleCreateCard : toggleCreateMode}>
@@ -434,7 +394,7 @@ function DeckPage({ publicAccess = false }) {
                     <button className={`button-common ${deleteMode ? "button-red" : "button-blue"}`} onClick={changeMode}>
                       {deleteMode ? "Cancel" : "Toggle Delete Card"}
                     </button>
-                  </>
+                  </div>
                 )}
                 <button onClick={submitRating} id="button-preview" aria-labelledby="tooltip-1f7d89ff-668b-406b-9c3f-e3e313ecdc97" type="button" data-view-component="true" className="w-[5vw] Button Button--iconOnly Button--secondary Button--medium inline-flex items-center space-x-2 p-2">
                   <HeartIcon isFilled={Rateresult} />
@@ -449,11 +409,6 @@ function DeckPage({ publicAccess = false }) {
             )}
           </div>
 
-          {/* <MiddleButtons deckCards={deckCards} publicAccess={isPublicAccess} setStatus={setStatus} isCreateMode={isCreateMode}
-            handleCreateCard={handleCreateCard} toggleCreateMode={toggleCreateMode} handleCancelCreateCard={handleCancelCreateCard}
-            handleTakeACopy={handleTakeACopy} isModalOpen={isModalOpen} folders={folders} handleFolderSelection={handleFolderSelection}
-            setModalOpen={setModalOpen} deleteMode={deleteMode} changeMode={changeMode} /> */}
-
           <div className={`flex flex-col items-center flex-grow overflow-y-auto border-t border-elDividerGray dark:border-edDividerGray`}>
 
             {items.map((item, index) => (
@@ -461,9 +416,9 @@ function DeckPage({ publicAccess = false }) {
                 ${deleteMode ? "hover:bg-[#ff000055] hover:dark:bg-[#ff000055] cursor-not-allowed" : ""}`}
                 key={item.card_id} onClick={() => { handleCardClick(item.card_id) }}
                 draggable={!publicAccess}
-                onDragStart={publicAccess ? undefined :(e) => handleDragStart(e, index)}
-                onDragOver={publicAccess ? undefined :handleDragOver}
-                onDrop={publicAccess ? undefined :(e) => handleDrop(e, index)}
+                onDragStart={publicAccess ? undefined : (e) => handleDragStart(e, index)}
+                onDragOver={publicAccess ? undefined : handleDragOver}
+                onDrop={publicAccess ? undefined : (e) => handleDrop(e, index)}
               >
 
                 <div className={`relative w-1/2 flex flex-col pr-4 border-r border-elDividerGray dark:border-edDividerGray bg-transparent`}>
@@ -500,7 +455,7 @@ function DeckPage({ publicAccess = false }) {
         </div>
       </div >
       {showPopup && (
-        <div className={`fixed bottom-20 left-1/2 -translate-x-1/2 transform p-4 bg-${popupColor}-500 rounded-md transition-opacity duration-1000 ${popupOpacity}`}>
+        <div className={`text-white font-semibold fixed bottom-20 left-1/2 -translate-x-1/2 transform p-4 bg-${popupColor}-500 rounded-md transition-opacity duration-1000 ${popupOpacity}`}>
           {popupMessage}
         </div>
       )
@@ -508,90 +463,6 @@ function DeckPage({ publicAccess = false }) {
     </>
   )
 }
-
-// function TopButtons({ deckCards, publicAccess, deckId, handleDeleteDeck, }) {
-//   return (
-//     <div className="flex flex-col items-start">
-//       {/* <h1 className="text-4xl font-bold my-4 text-black dark:text-edLightGray">{deckCards.deck_name}</h1> */}
-//       <h1 className="text-[2rem] text-elDark dark:text-edWhite font-medium mt-8 mb-4 border-b w-[40vw] border-elDividerGray dark:border-edDividerGray pb-1">{deckCards.deck_name}</h1>
-//       {publicAccess ? (
-//         null
-//       ) : (
-//         <div className="flex gap-4 mb-2">
-//           <Link to={`/review/${deckId}`} className="button-top">
-//             Study
-//           </Link>
-//           <Link to={`/review/${deckId}?studyAll=true`} className="button-top">
-//             StudyAll
-//           </Link>
-//         </div>
-//       )}
-//       {publicAccess ? (
-//         null
-//       ) : (
-//         <button
-//           className="button-topDelete"
-//           onClick={handleDeleteDeck}
-//         >
-//           Delete Deck
-//         </button>
-//       )}
-//     </div>
-//   )
-// }
-
-// function MiddleButtons({ deckCards, publicAccess, setStatus, isCreateMode, handleCreateCard, toggleCreateMode, handleCancelCreateCard,
-//   handleTakeACopy, isModalOpen, folders, handleFolderSelection, setModalOpen, deleteMode, changeMode }) {
-//   return (
-//     <div className="flex flex-row items-center text-black dark:text-edLightGray justify-between mt-2 mb-4 border-t border-gray-500 pt-4">
-//       <h1>{deckCards.cards.length} Cards</h1>
-
-//       {publicAccess ? (
-//         null
-//       ) : (
-//         <div>
-//           <button className={`button-common ${isCreateMode ? "button-green" : "button-blue"}`}
-//             onClick={isCreateMode ? handleCreateCard : toggleCreateMode}>
-//             {isCreateMode ? "Done" : "Create"}
-//           </button>
-//           {isCreateMode && (
-//             <button className={`button-common button-red`}
-//               onClick={handleCancelCreateCard}>
-//               Cancel
-//             </button>
-//           )}
-//         </div>
-//       )}
-
-//       <div className="text-black dark:text-white">
-//         <button type="button" className="button-common button-blue" onClick={handleTakeACopy}>Copy Deck</button>
-//         {isModalOpen && (
-//           <div className="modal">
-//             <div className="modal-content">
-//               <h2>Select a folder </h2>
-//               {folders.map(folder => (
-//                 <button className="button-common button-blue"
-//                   key={folder.folder_id} onClick={() => handleFolderSelection(folder.folder_id)}>
-//                   {folder.name}
-//                 </button>
-//               ))}
-//               <button className={`button-common button-red`} onClick={() => setModalOpen(false)}>Close</button>
-//             </div>
-//           </div>
-//         )}
-//       </div>
-
-//       {publicAccess ? (
-//         null
-//       ) : (
-//         <button className={`button-common ${deleteMode ? "button-red" : "button-blue"}`} onClick={changeMode}>
-//           {deleteMode ? "Cancel" : "Delete"}
-//         </button>
-//       )}
-
-//     </div>
-//   )
-// }
 
 function ProgressCircleGraph({ radius, dashLength, gapLength, strokeDashoffset, percentage, deckId, publicAccess }) {
   if (publicAccess) {

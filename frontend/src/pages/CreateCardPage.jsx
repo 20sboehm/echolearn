@@ -59,7 +59,7 @@ function CreateCardPage() {
           <div className="flex justify-between items-end border-b border-elDividerGray dark:border-edDividerGray mb-4 mt-8 pb-2">
             <h1 className="text-[2rem] text-elDark dark:text-edWhite font-medium">New Card</h1>
             <select id="selectDeck" value={deckId} onChange={(e) => setDeckId(e.target.value)}
-              className='text-black bg-elGray dark:bg-edDarker dark:text-edWhite focus:outline-none h-8 mb-1' >
+              className='text-black bg-elGray dark:bg-edDarker dark:text-edWhite focus:outline-none h-8 mb-1 pl-1 pr-4' >
               <option key='select-deck-key' value=''>Select a deck</option>
               {decks.map((deck) => (
                 <option key={deck.deck_id} value={deck.deck_id}>{deck.name}</option>
