@@ -52,7 +52,7 @@ export default function App() {
           <CustomButton
             title="Continue with login"
             handlePress={() => router.push('/sign-in')}
-            containerStyles="w-full mt-7"
+            containerStyles="bg-secondary w-full mt-7"
           />
         </View>
       </ScrollView>

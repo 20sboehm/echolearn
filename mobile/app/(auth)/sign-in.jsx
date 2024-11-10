@@ -45,7 +45,7 @@ const SignIn = () => {
             resizeMode='contain'
             className="w-[150px] h-[50px]"
           />
-          <Text className="text-2xl text-white text-semibold mt-5 font-psemibold">Login in to EchoLearn</Text>
+          <Text className="text-2xl text-white text-semibold mt-5 font-psemibold">Login to EchoLearn</Text>
           <FormField
             title="Username"
             value={form.username}
@@ -65,7 +65,7 @@ const SignIn = () => {
           <CustomButton
             title="Sign In"
             handlePress={handleLogin}
-            containerStyles="mt-7"
+            containerStyles="bg-secondary mt-7"
             isLoading={isSubmitting}
           />
 

@@ -10,13 +10,8 @@ const Provider = ({ children }) => {
   const [userObj, setUserObj] = useState({});
   const [token, setToken] = useState(false);
   const [refreshToken, setRefreshToken] = useState(null);
-
-  useEffect(() => {
-    console.log("Token state after logout (useEffect): ", token);
-  }, [token]);
   
   const storeTokens = async (accessToken, refreshToken) => {
-    console.log("Storing tokens:", { accessToken, refreshToken });
     await SecureStore.setItemAsync('accessToken', accessToken);
     await SecureStore.setItemAsync('refreshToken', refreshToken);
   };
@@ -51,6 +46,7 @@ const Provider = ({ children }) => {
 
   // Verify if the access token is still valid
   const verifyToken = async (accessToken) => {
+    if (!accessToken) return false;
     try {
       const response = await fetch(`${domain}/api/token/verify`, {
         method: 'POST',
@@ -73,6 +69,11 @@ const Provider = ({ children }) => {
 
   // Refresh the access token using the refresh token
   const refreshAccessToken = async () => {
+    if (!refreshToken) {
+      setIsLoggedIn(false);
+      return;
+    }
+  
     try {
       const response = await fetch(`${domain}/api/token/refresh`, {
         method: 'POST',
@@ -113,21 +114,15 @@ const Provider = ({ children }) => {
       if (!response.ok) throw new Error("Login failed");
 
       const data = await response.json();
-
-      console.log(data);
       
       const accessToken = data.access;
       const refreshToken = data.refresh;
-
-      console.log("Login successful. Access Token:", accessToken);
-      console.log("Login successful. Refresh Token:", refreshToken);
   
       setToken(accessToken);
       setRefreshToken(refreshToken);
       await storeTokens(accessToken, refreshToken);
       setIsLoggedIn(true);
 
-      console.log("After set token is: " + token);
       return data;
     } catch (error) {
       console.error("Login error:", error.message);
@@ -142,13 +137,6 @@ const Provider = ({ children }) => {
     setToken(null);
     setRefreshToken(null);
     setIsLoggedIn(false);
-
-    // Check if tokens are successfully removed from SecureStore
-    const accessToken = await SecureStore.getItemAsync('accessToken');
-    const refreshToken = await SecureStore.getItemAsync('refreshToken');
-
-    console.log("Access Token after deletion: ", accessToken); // Should be null
-    console.log("Refresh Token after deletion: ", refreshToken); // Should be null
   };
 
   // Automatically load tokens when the app starts
