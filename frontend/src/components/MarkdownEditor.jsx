@@ -460,7 +460,7 @@ function TextBox({ label, reference, content, inputHandler, handleTextEditingBut
         )}
       </div>
       {textBoxOpen && (
-        <textarea value={content} ref={reference} onInput={inputHandler}
+        <textarea value={content} ref={reference} onInput={inputHandler} required
           className="text-black dark:text-white dark:bg-edDarker w-full min-h-20 h-[18vh] p-2 border 
           border-edDarkGray focus:outline-none custom-scrollbar" onKeyDown={(e) => { handleKeyDown(e, forQuestionBox) }}></textarea>
       )}

@@ -168,7 +168,8 @@ function QuizletParserPage() {
             <div className="w-1/2 flex flex-col mx-auto">
                 <div className="flex justify-between border-b-2 border-edMedGray mb-4 mt-8 pb-1">
                     <h1 className="text-xl text-elDark dark:text-edWhite font-medium">New Card</h1>
-                    <select id="selectDeck" value={deckId} onChange={(e) => setDeckId(e.target.value)} className='text-black bg-elGray border border-black dark:bg-edDarker dark:text-edWhite focus:outline-none' >
+                    <select id="selectDeck" value={deckId} onChange={(e) => setDeckId(e.target.value)}
+                        className='text-black bg-elGray dark:bg-edDarker dark:text-edWhite focus:outline-none h-8 mb-1 pl-1 pr-4' >
                         <option key='select-deck-key' value=''>Select a deck</option>
                         {decks.map((deck) => (
                             <option key={deck.deck_id} value={deck.deck_id}>{deck.name}</option>
@@ -183,7 +184,7 @@ function QuizletParserPage() {
                     </button>
 
                     <div className="mb-2 flex flex-col w-full">
-                        <input type="file" onChange={handleFileuploaded}></input>
+                        <input type="file" onChange={handleFileuploaded} required></input>
                     </div>
                     <button type='submit' className="button-common button-blue font-semibold py-2 text-center w-1/4 my-2">
                         Submit

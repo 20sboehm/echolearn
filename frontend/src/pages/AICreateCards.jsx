@@ -247,7 +247,8 @@ function AICreateCardsPage() {
       <div className="w-1/2 flex flex-col mx-auto">
         <div className="flex justify-between border-b-2 border-edMedGray mb-4 mt-8 pb-1">
           <h1 className="text-xl text-elDark dark:text-edWhite font-medium">New Card</h1>
-          <select id="selectDeck" value={deckId} onChange={(e) => setDeckId(e.target.value)} className='text-black bg-elGray border border-black dark:bg-edDarker dark:text-edWhite focus:outline-none' >
+          <select id="selectDeck" value={deckId} onChange={(e) => setDeckId(e.target.value)}
+            className='text-black bg-elGray dark:bg-edDarker dark:text-edWhite focus:outline-none h-8 mb-1 pl-1 pr-4' >
             <option key='select-deck-key' value=''>Select a deck</option>
             {decks.map((deck) => (
               <option key={deck.deck_id} value={deck.deck_id}>{deck.name}</option>
@@ -265,7 +266,7 @@ function AICreateCardsPage() {
           </p>
           <div className="mb-2 flex flex-col w-full">
             <textarea value={userInput} onChange={handleInputChange} className="text-black dark:text-white dark:bg-edDarker w-full min-h-20 h-40 p-2 border border-edDarkGray focus:outline-none custom-scrollbar"
-              placeholder="put your text here" ></textarea>
+              placeholder="put your text here" required></textarea>
             <div className="word-count">
               Word count: {wordCount}
             </div>

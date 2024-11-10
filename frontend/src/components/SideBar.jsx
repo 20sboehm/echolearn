@@ -345,30 +345,27 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
 
           {/* Input for creating new deck or folder */}
           {createType && (
-            <>
-              <PopupMenuInput placeholder={`Enter ${createType} name`} value={newName} changeEvent={(e) => setNewName(e.target.value)}
-                keyDown={(e) => { e.key === 'Enter' ? handleCreate() : null; }} />
+            <form onSubmit={handleCreate}>
+              <PopupMenuInput placeholder={`Enter ${createType} name`} value={newName} changeEvent={(e) => setNewName(e.target.value)} />
 
               <div className='flex justify-center'>
                 <button className='text-white bg-edGreen dark:bg-edGreen 
-                  hover:bg-edDarkGreen dark:hover:bg-edDarkGreen mt-4 flex px-2 py-1 rounded mr-2' onClick={handleCreate}>Create {capitalizeFirstLetter(createType)}
+                  hover:bg-edDarkGreen dark:hover:bg-edDarkGreen mt-4 flex px-2 py-1 rounded mr-2'>Create {capitalizeFirstLetter(createType)}
                 </button>
               </div>
-            </>
+            </form>
           )}
 
           {renaming && (
-            <>
-              <PopupMenuInput placeholder="Enter new name" value={newName} changeEvent={(e) => setNewName(e.target.value)}
-                keyDown={(e) => { e.key === 'Enter' ? handleRename() : null; }} />
+            <form onSubmit={handleRename}>
+              <PopupMenuInput placeholder="Enter new name" value={newName} changeEvent={(e) => setNewName(e.target.value)} />
 
               <div className='flex justify-center'>
                 <button className='text-white bg-edGreen dark:bg-edGreen 
-                    hover:bg-edDarkGreen dark:hover:bg-edDarkGreen mt-4 flex px-2 py-1 rounded mr-2'
-                  onClick={() => { handleRename(); }}>Rename
+                    hover:bg-edDarkGreen dark:hover:bg-edDarkGreen mt-4 flex px-2 py-1 rounded mr-2'>Rename
                 </button>
               </div>
-            </>
+            </form>
           )}
         </div>
       )}
@@ -412,6 +409,7 @@ function PopupMenuInput({ placeholder, value, changeEvent, keyDown, customStyles
       onChange={changeEvent}
       className={`p-1.5 mt-1 rounded w-full bg-white dark:bg-edBase text-black dark:text-white border border-edDividerGray outline-none ${customStyles}`}
       onKeyDown={keyDown}
+      required
     />
   )
 }

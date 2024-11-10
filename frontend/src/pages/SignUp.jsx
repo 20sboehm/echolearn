@@ -24,8 +24,6 @@ function SignUp() {
       setPopupOpacity('opacity-0');
       setTimeout(() => setShowPopup(false), 1000);
     }, 1000);
-    setUsername('');
-    setEmail('');
     setPassword('');
   }
 
