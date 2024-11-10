@@ -1,10 +1,20 @@
 import { useQuery } from "react-query";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useApi } from "../hooks";
 import Sidebar from "../components/SideBar";
 import ScrollContainer from "../components/ScrollContainer";
-import { useApi } from "../hooks";
 import LoadingSpinner from "../components/LoadingSpinner";
+import QuestionMarkHoverHelp from "../components/QuestionMarkHoverHelp";
+
+const todoTextList = [
+  "This list shows you all decks containing cards that are up for review.",
+  "Click on one of the deck names to go to the deck page.",
+  'The "New" column lists cards that are new.',
+  'The "Review" column lists cards that are up for review but have been reviewed at least once in the past.',
+  'Click "Study All" to review all due cards.',
+  'Click "Study" to review all due cards from a specific deck.'
+]
 
 function HomePage() {
   const [sidebarWidth, setSidebarWidth] = useState(250);
@@ -66,9 +76,12 @@ function TaskList() {
       return (
         <div className="text-2xl text-left">
           <div className="flex justify-between items-center border-b border-elDarkGray dark:border-edDividerGray mb-4">
-            <h1 className="font-bold text-[2rem] text-elDark dark:text-edWhite">
-              Today's Task List
-            </h1>
+            <div className="flex items-center">
+              <h1 className="font-bold text-[2rem] text-elDark dark:text-edWhite mr-4">
+                Today's Task List
+              </h1>
+              <QuestionMarkHoverHelp title="TODO List" helpTextList={todoTextList} heightInRem={36} />
+            </div>
             <Link to={`/review?deckIds=${deckIdsQueryParam}`}>
               <button className="mb-2 text-xl button-common">Study All</button>
             </Link>

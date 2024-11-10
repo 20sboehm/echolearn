@@ -5,7 +5,13 @@ import { useQuery } from "react-query";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { useNavigate, useLocation } from "react-router-dom";
 import MarkdownEditor from "../components/MarkdownEditor";
+import QuestionMarkHoverHelp from "../components/QuestionMarkHoverHelp";
 import './Buttons.css';
+
+const markdownEditorHelpList = [
+  "This editor uses markdown for rendering rich text.",
+  "The editor buttons will insert various markdown characters. Hover over them to see what they do."
+]
 
 function CreateCardPage() {
   const api = useApi();
@@ -57,7 +63,10 @@ function CreateCardPage() {
         <Sidebar onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
         <div className="w-full flex flex-col mx-[15%]">
           <div className="flex justify-between items-end border-b border-elDividerGray dark:border-edDividerGray mb-4 mt-8 pb-2">
-            <h1 className="text-[2rem] text-elDark dark:text-edWhite font-medium">New Card</h1>
+            <div className="flex items-center">
+              <h1 className="text-[2rem] text-elDark dark:text-edWhite font-medium mr-2">New Card</h1>
+              <QuestionMarkHoverHelp title="Markdown Editor" helpTextList={markdownEditorHelpList} heightInRem={20} />
+            </div>
             <select id="selectDeck" value={deckId} onChange={(e) => setDeckId(e.target.value)}
               className='text-black bg-elGray dark:bg-edDarker dark:text-edWhite focus:outline-none h-8 mb-1 pl-1 pr-4' >
               <option key='select-deck-key' value=''>Select a deck</option>

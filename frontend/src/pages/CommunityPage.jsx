@@ -7,6 +7,12 @@ import { useApi } from "../hooks";
 import { CurveArrowRight } from '../components/Icons';
 import LoadingSpinner from "../components/LoadingSpinner";
 import { HeartIcon } from "../components/Icons";
+import QuestionMarkHoverHelp from "../components/QuestionMarkHoverHelp";
+
+const communityHelpList = [
+  "Each item displayed below is a public deck. Click on the arrow icon in the top right to go to its public deck page where you can copy it into your own deck.",
+  "Click on the username under the deck to go to that user's public profile page.",
+]
 
 function CommunityPage() {
   const api = useApi();
@@ -52,7 +58,10 @@ function CommunityPage() {
           <div className="w-full flex flex-col mx-[15%]">
             {decks && decks.length > 0 ? (
               <>
-                <h1 className="text-[2rem] text-elDark dark:text-edWhite font-medium mt-8 mb-4 border-b border-elDividerGray dark:border-edDividerGray pb-1">Public Decks</h1>
+                <div className="flex items-center mt-8 mb-4 border-b border-elDividerGray dark:border-edDividerGray pb-1">
+                  <h1 className="text-[2rem] text-elDark dark:text-edWhite font-medium mr-2">Public Decks</h1>
+                  <QuestionMarkHoverHelp title="Community Page" helpTextList={communityHelpList} heightInRem={18} />
+                </div>
                 <input
                   type="text"
                   value={searchQuery}

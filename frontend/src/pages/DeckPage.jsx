@@ -6,8 +6,17 @@ import { useApi } from "../hooks";
 import editIconImg from "../assets/edit-icon.png"
 import LoadingSpinner from "../components/LoadingSpinner";
 import MarkdownPreviewer from "../components/MarkdownPreviewer";
+import QuestionMarkHoverHelp from "../components/QuestionMarkHoverHelp";
 import { SpeakerIcon, StarIcon, HeartIcon, EditIcon } from "../components/Icons";
 import './Buttons.css';
+
+const deckPageHelpList = [
+  'Click "Study (N)" to review all due cards (N is the number of cards up for review).',
+  'Click Study All to review all cards (regardless of next review time).',
+  'Private/Public indicates whether or not your deck will show up on the community page.',
+  'Click "Quick Create Card" to create a card on this page, or click "Create Card" to create one in the card editor for more advanced formatting.',
+  '"Mastery" is the percentage of cards you are caught up on.',
+];
 
 function DeckPage({ publicAccess = false }) {
   const api = useApi();
@@ -312,9 +321,13 @@ function DeckPage({ publicAccess = false }) {
       <div className="flex flex-row w-full h-full">
         <Sidebar refetchTrigger={refetchTrigger} onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
         <div className="w-full flex flex-col mx-[15%] max-h-[calc(100vh-5rem)] border-b border-elDividerGray dark:border-edDividerGray">
-          <h1 className="text-[2rem] text-elDark dark:text-edWhite font-medium mt-8 mb-4 
-          border-b w-full border-elDividerGray dark:border-edDividerGray pb-1">
-            {deckCards.deck_name} <span className="font-normal text-xl">({deckCards.cards.length} Cards)</span></h1>
+          <div className="flex items-center w-full border-b border-elDividerGray dark:border-edDividerGray pb-1 mt-8 mb-4 ">
+            <h1 className="text-[2rem] text-elDark dark:text-edWhite font-medium inline mr-2">
+              {deckCards.deck_name} <span className="font-normal text-xl">({deckCards.cards.length} Cards)</span>
+            </h1>
+            <QuestionMarkHoverHelp title="Deck Page" helpTextList={deckPageHelpList} heightInRem={32} />
+          </div>
+
           <div className="flex">
             <div className="flex flex-col">
               {publicAccess ? (
@@ -335,7 +348,7 @@ function DeckPage({ publicAccess = false }) {
                       Study All
                     </Link>
                     <Link to={`/quiz/${deckId}`}>
-                      <button className="button-top">quiz</button>
+                      <button className="button-top">Quiz</button>
                     </Link>
                     <Link to={`/stats/${deckId}`}>
                       <button className="button-top">

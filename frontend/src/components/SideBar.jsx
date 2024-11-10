@@ -4,7 +4,18 @@ import { Link } from "react-router-dom";
 import { useApi } from "../hooks";
 import { ResizableBox } from 'react-resizable';
 import { DeckCreateIcon, FolderCreateIcon, ExpandContractAllIcon, SidebarOpenClose, ChevronIcon } from './Icons';
+import QuestionMarkHoverHelp from './QuestionMarkHoverHelp';
 import 'react-resizable/css/styles.css';
+
+const sideBarHelpTextList = [
+  "Click on a deck to go to the deck page.",
+  "Right click empty space to create a new folder.",
+  "Right click a folder to add a child folder/deck.",
+  "Right click a folder/deck to rename/delete it.",
+  "You can also add folders and decks with the buttons on the top of the sidebar. When adding a deck this way, make sure you have a folder selected (by left clicking on one).",
+  "Click the vertical arrow at the top to expand/collapse all folders and decks.",
+  "Click the horizontal arrow (top right, outside the sidebar) to close the sidebar.",
+]
 
 function capitalizeFirstLetter(val) {
   return String(val).charAt(0).toUpperCase() + String(val).slice(1);
@@ -274,7 +285,7 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
       <button
         onClick={() => { sidebarShow(); }}
         style={{ left: `calc(${sidebarWidth}px)` }}
-        className={`px-1 py-1 m-1 absolute top-[4rem] z-50 hover:bg-elLavender dark:hover:bg-edStrongHLT rounded-md`}
+        className={`px-1 py-1 m-1 absolute top-[4rem] z-15 hover:bg-elLavender dark:hover:bg-edStrongHLT rounded-md`}
       >
         <SidebarOpenClose sidebarOpen={sidebarOpen} sidebarWidth={sidebarWidth} />
       </button>
@@ -293,8 +304,13 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
         handle={<div className="absolute top-0 right-0 h-full w-2 cursor-default hover:cursor-ew-resize bg-transparent hover:bg-edBlue z-10 transition duration-200" />}
       >
         <div className="h-[92vh] overflow-y-auto p-2">
-          <div className='flex justify-between border-b border-elDark dark:border-edGray'>
-            <h2 className='font-bold text-xl text-elDark dark:text-edWhite whitespace-nowrap'>Deck Library</h2>
+          <div className='flex justify-between border-b border-elDark dark:border-edGray items-center'>
+            <div className='flex items-center'>
+              <h2 className='font-bold text-xl text-elDark dark:text-edWhite whitespace-nowrap mr-2'>Deck Library</h2>
+              <QuestionMarkHoverHelp title="Sidebar" helpTextList={sideBarHelpTextList} heightInRem={38} />
+            </div>
+
+            {/* <ExpandContractAllIcon isExpanded={isAnyFolderOpen} /> */}
             <div ref={buttonRef} className='flex items-center'>
               <button onClick={() => buttonCreate('deck')} className='hover:bg-elLavender dark:hover:bg-edStrongHLT mr-1 rounded-md'><DeckCreateIcon /></button>
               <button onClick={() => buttonCreate('folder')} className='hover:bg-elLavender dark:hover:bg-edStrongHLT mr-1 rounded-md'><FolderCreateIcon /></button>
