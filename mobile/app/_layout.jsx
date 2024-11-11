@@ -29,7 +29,7 @@ const RooyLayout = () => {
 
   return (
     <Provider>
-      {/* sometime it would lost the lighting? */}
+      {/* sometime it would lose the lighting? */}
       <StatusBar backgroundColor="#161622" style="light" />
       <RootNavigator />
     </Provider>
@@ -48,7 +48,7 @@ const RootNavigator = () => {
     <Stack>
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="(tabs)" options={{ gestureEnabled: false, headerShown: false }} />
       {/* <Stack.Screen name="/search/[query]" options={{headerShown: false}} /> */}
     </Stack>
   );
@@ -57,13 +57,13 @@ const RootNavigator = () => {
 export default RooyLayout
 
 
-    // <Stack>
-    //   {isLoggedIn ? (
-    //     <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-    //   ) : (
-    //     <>
-    //       <Stack.Screen name="index" options={{ headerShown: false }} />
-    //       <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-    //     </>
-    //   )}
-    // </Stack>
+// <Stack>
+//   {isLoggedIn ? (
+//     <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+//   ) : (
+//     <>
+//       <Stack.Screen name="index" options={{ headerShown: false }} />
+//       <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+//     </>
+//   )}
+// </Stack>

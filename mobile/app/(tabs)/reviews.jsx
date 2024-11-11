@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity, Animated, ScrollView, RefreshControl } from 'react-native'
 import React, { useEffect, useState, useContext } from 'react';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams, Link } from 'expo-router';
 import { Context } from '../../context/globalContext';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import useReviewTimes from '../help/reviewTime';
@@ -17,10 +17,9 @@ const Reviews = () => {
   const globalContext = useContext(Context);
   const { domain, token } = globalContext;
 
-  const router = useRouter();
-
   const onRefresh = async () => {
     setRefreshing(true);
+    setFlipped(false);
     await fetchReview();
     setRefreshing(false);
   };
@@ -47,6 +46,7 @@ const Reviews = () => {
       const { decks: fetchedReview } = await response.json();
       setReviews(fetchedReview);
       setCurrentCardIndex(0);
+      setFlipped(false);
     } catch (error) {
       console.error(error.message);
     }
@@ -102,11 +102,23 @@ const Reviews = () => {
 
   useEffect(() => {
     if (!deckIds) {
-      router.replace('/decks');
       return;
     }
     fetchReview();
   }, [deckIds, studyAll]);
+
+  if (!deckIds) {
+    return (
+      <SafeAreaView className="bg-primary h-full flex items-center justify-center">
+        <View className="mt-10 items-center">
+          <Text className="text-3xl text-white text-center font-pextrabold mb-4">Please select a deck to start studying</Text>
+          <Link href={`/decks`} replace={true} className="w-auto bg-blue-500 p-4 rounded">
+            <Text className="text-white text-lg text-center font-psemibold">Go to Decks</Text>
+          </Link>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView className="bg-primary h-full">
