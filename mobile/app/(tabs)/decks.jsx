@@ -3,6 +3,7 @@ import { View, Text, ActivityIndicator, ScrollView, TouchableOpacity, RefreshCon
 import { useLocalSearchParams, Link } from 'expo-router';
 import { Context } from '../../context/globalContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import MarkdownPreviewer from '../help/markdownPreviewer';
 
 const Decks = () => {
   const { deckId } = useLocalSearchParams();
@@ -102,6 +103,11 @@ const Decks = () => {
     }
   };
 
+  // <Text className="text-white font-psemibold border border-r border-gray-300 w-[45vw] p-4 bg-gray-700">{card.question}</Text>
+  // <Text className="text-white font-psemibold border border-r border-gray-300 w-[45vw] p-4 bg-gray-700">{card.answer}</Text>
+  // <MarkdownPreviewer content={card.question} className="text-white w-[45vw] bg-gray-700" />
+  // <MarkdownPreviewer content={card.answer} />
+
   // Show loading indicator while fetching data
   if (loading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
@@ -121,11 +127,9 @@ const Decks = () => {
           }
         >
           <View className="mt-10 ml-2">
-          <Link href="/decks" className='bg-gray-700 p-2 w-[30vw] mb-4'>
-            <Text className="text-gray-300 text-lg rounded mb-4">
-              Back to Decks
-            </Text>
-          </Link>
+            <Link href="/decks" className='bg-gray-700 p-2 w-[30vw] mb-4'>
+              <Text className="text-gray-300 text-lg rounded mb-4">Back</Text>
+            </Link>
             {/* Conditionally render deck name */}
             {deck ? (
               <Text className="text-3xl text-white font-pextrabold">{deck.name}</Text>
@@ -154,8 +158,14 @@ const Decks = () => {
                 cards.map((card) => (
                   <View key={card.card_id} className="p-2">
                     <View className="flex-row justify-between items-center border-b border-gray-300 pb-4">
-                      <Text className="text-white font-psemibold border border-r border-gray-300 w-[45vw] p-4 bg-gray-700">{card.question}</Text>
-                      <Text className="text-white font-psemibold border border-r border-gray-300 w-[45vw] p-4 bg-gray-700">{card.answer}</Text>
+                      <MarkdownPreviewer
+                        content={card.question}
+                        className="border border-gray-300 w-[45vw] p-4 bg-gray-700 mr-4"
+                      />
+                      <MarkdownPreviewer
+                        content={card.answer}
+                        className="border border-gray-300 w-[45vw] p-4 bg-gray-700"
+                      />
                     </View>
                   </View>
                 ))
