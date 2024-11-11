@@ -22,6 +22,7 @@ class GetUser(Schema):
     light_mode: Optional[bool] = None
     is_owner: Optional[bool] = None
     avatar: Optional[str] = None
+    score: Optional[int] = None
 
     class Config:
         orm_mode = True

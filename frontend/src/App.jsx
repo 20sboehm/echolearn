@@ -30,6 +30,7 @@ import AnkiParserPage from './pages/AnkiParserPage'
 import AIGenerateCards from './pages/AICreateCards'
 import EditAll from './pages/EditAllPage'
 import MultipleInput from './pages/MultipleInputPage'
+import LeaderBoard from './pages/LeaderBoard'
 
 const queryClient = new QueryClient();
 
@@ -64,6 +65,7 @@ function AuthenticatedRoutes() {
       <Route path="/aigeneratecards" element={<AIGenerateCards />} />
       <Route path="/editall/:deckId" element={<EditAll />} />
       <Route path="/multipleinput" element = {<MultipleInput/>}/>
+      <Route path="/leaderboard" element = {<LeaderBoard/>}/>
     </Routes>
   );
 }

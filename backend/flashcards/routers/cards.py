@@ -172,8 +172,8 @@ def update_review_card(request, card_id: int, payload: sc.UpdateReviewCard):
         card.review_again = True
         card.incorrect_count += 1
         #if incorrect -1
-        if user.rank >0:
-            user.rank -=1
+        if user.score >0:
+            user.score -=1
         
     elif confidence_level in [2, 3, 4]:
         if confidence_level == 2:
@@ -182,12 +182,13 @@ def update_review_card(request, card_id: int, payload: sc.UpdateReviewCard):
             card.ease_factor_points += 1
         
         # if correct +1
-        user.rank += 1
+        user.score += 1
         card.correct_count += 1
         
     # if review +1
-    user.rank +=1
-    
+    user.score +=1
+    user.save()
+    print(user.score)
     card.ease_factor_max_points += 1
     
     if card.is_new:

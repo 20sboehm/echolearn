@@ -33,7 +33,7 @@ def get_profile(request, userId: int = None):
         "light_mode": user.light_mode,
         "avatar": user.avatar,
         "is_owner": is_owner,
-        "rank":user.rank
+        "score":user.score
     }
 
 # Edit profile
