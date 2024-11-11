@@ -213,3 +213,11 @@ class GetImage(Schema):
     description: str
     link: str
     name: str
+    
+class UpdateNotificationSettings(Schema):
+    wants_notification: bool
+    notification_time: str
+    
+class GetNotificationSettings(Schema):
+    wants_notification: bool
+    notification_time: str

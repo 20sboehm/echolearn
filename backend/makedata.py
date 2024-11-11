@@ -227,6 +227,7 @@ $$x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$$
     joe = CustomUser.objects.create_user(username="joe", email="joe@cs.utah.edu", password="joe", age=25, country="USA")
     alice = CustomUser.objects.create_user(username="alice", email="alice@cs.utah.edu", password="alice", age=30, country="USA")
     bob = CustomUser.objects.create_user(username="bob", email="bob@cs.utah.edu", password="bob", age=35, country="USA")
+    seth = CustomUser.objects.create_user(username="seth", email="20sboehm@gmail.com", password="seth", age=21, country="USA")
 
     # -------------------------------------------
     # ------------------ Folders ----------------
