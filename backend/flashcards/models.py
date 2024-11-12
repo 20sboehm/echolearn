@@ -40,8 +40,17 @@ class Deck(models.Model):
     isPublic = models.BooleanField(default=False)
     stars =  models.IntegerField(default=0)
     order_List =  models.JSONField(default=list, blank=True)
+    rate = models.DecimalField(max_digits=2, decimal_places=1, default=0.0)
     def __str__(self):
         return f"{self.name} (id={self.deck_id})"
+    
+class Rated(models.Model):
+    deck = models.ForeignKey(Deck,on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    rate = models.DecimalField(max_digits=2, decimal_places=1, default=0.0)
+
+    class Meta:
+        unique_together = ("deck", "user")
 
 class Rating(models.Model):
     deck = models.ForeignKey(Deck,on_delete=models.CASCADE)

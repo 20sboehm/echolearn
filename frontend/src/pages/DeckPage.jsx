@@ -1,6 +1,6 @@
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "react-query";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "../components/SideBar";
 import { useApi } from "../hooks";
 import editIconImg from "../assets/edit-icon.png"
@@ -9,6 +9,8 @@ import MarkdownPreviewer from "../components/MarkdownPreviewer";
 import { SpeakerIcon, StarIcon, HeartIcon, EditIcon } from "../components/Icons";
 import './Buttons.css';
 import ShareDeck from './ShareDeck';
+import RateDeck from './RateDeck';
+import './StarDisplay.css';
 
 // import ReactPlayer from 'react-player';
 // import katex from 'katex';
@@ -17,6 +19,7 @@ import ShareDeck from './ShareDeck';
 
 function DeckPage({ publicAccess = false }) {
   const api = useApi();
+  const { _get } = api;
   const navigate = useNavigate();
 
   const [deleteMode, setDeleteMode] = useState(false);
@@ -49,12 +52,20 @@ function DeckPage({ publicAccess = false }) {
   // Share
   const [showShareModal, setShowShareModal] = useState(false);
 
+  // Rate
+  const [showRateModal, setShowRateModal] = useState(false);
+  const [rate, setRate] = useState(0); // 默认评分为 0
+
   const handleShareClick = () => {
     setShowShareModal(true);
   };
 
   const handleCloseModal = () => {
     setShowShareModal(false);
+  };
+
+  const handleRateModal = () => {
+    setShowRateModal(!showRateModal);
   };
 
   const { data: deckCards, isLoading, error, refetch } = useQuery(
@@ -110,12 +121,28 @@ function DeckPage({ publicAccess = false }) {
 
   };
 
-  // useEffect(() => {
-  //   if (items) {
-  //     setItemKeys(Object.cards(items)); // Initialize the keys array
-  //     console.log(itemKeys)
-  //   }
-  // }, [items]);
+  useEffect(() => {
+    const fetchRate = async () => {
+      try {
+        const response = await api._get(`/api/decks/${deckId}/getRate`);
+        if (response.ok) {
+          const data = await response.json();
+          setRate(data);
+        } else {
+          console.error("Failed to fetch rate");
+        }
+      } catch (error) {
+        console.error("Error fetching rate:", error);
+      }
+    };
+
+    fetchRate();
+  }, [deckId, _get]);
+
+  const fullStars = Math.floor(rate);
+  const partialPercentage = (rate % 1) * 100;
+  const hasPartialStar = partialPercentage > 0;
+  const emptyStars = 5 - fullStars - (hasPartialStar ? 1 : 0);
 
   if (isLoading) {
     return <LoadingSpinner />
@@ -460,6 +487,32 @@ function DeckPage({ publicAccess = false }) {
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                       <button className="modal-close bg-edBlue text-white rounded-full w-8 h-8 flex items-center justify-center" onClick={handleCloseModal}>X</button>
                       <ShareDeck deck_id={deckId} />
+                    </div>
+                  </div>
+                )}
+
+                {/* Stars */}
+                <div className="star-display flex items-center" onClick={handleRateModal} style={{ '--partial-percentage': `${partialPercentage}%` }}>
+                  {[...Array(fullStars)].map((_, index) => (
+                    <span key={`full-${index}`} className="star filled">★</span>
+                  ))}
+
+                  {hasPartialStar && (
+                    <span className="star partial">★</span>
+                  )}
+
+                  {[...Array(emptyStars)].map((_, index) => (
+                    <span key={`empty-${index}`} className="star">★</span>
+                  ))}
+
+                  <span className="ml-2 text-sm text-black dark:text-edWhite">{rate.toFixed(1)}</span>
+                </div>
+
+                {showRateModal && (
+                  <div className="modal-overlay" onClick={handleRateModal}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                      <button className="modal-close bg-edBlue text-white rounded-full w-8 h-8 flex items-center justify-center" onClick={handleRateModal}>X</button>
+                      <RateDeck deck_id={deckId} />
                     </div>
                   </div>
                 )}
