@@ -127,8 +127,8 @@ const Decks = () => {
           }
         >
           <View className="mt-10 ml-2">
-            <Link href="/decks" className='bg-gray-700 p-2 w-[30vw] mb-4'>
-              <Text className="text-gray-300 text-lg rounded mb-4">Back</Text>
+            <Link href="/decks" className="bg-gray-700 p-2 w-[20vw] mb-4 flex justify-center items-center">
+              <Text className="text-gray-300 text-lg text-center">Back</Text>
             </Link>
             {/* Conditionally render deck name */}
             {deck ? (
