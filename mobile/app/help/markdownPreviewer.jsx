@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, Text, Image, View } from 'react-native';
+import { ScrollView, Text, Image, View, Linking } from 'react-native';
 // import { Video } from 'expo-av';
 import MathView from 'react-native-math-view';
 
@@ -10,83 +10,93 @@ const markdownPreviewer = ({ content, className }) => {
 
     lines.forEach((line, index) => {
       let processedLine = line;
-      let styles = [{ color: 'white' }];
+      let textSegments = [];
+      let lastIndex = 0;
 
-      // Check for bold (**text**)
-      if (processedLine.match(/\*\*(.*?)\*\*/)) {
-        processedLine = processedLine.replace(/\*\*(.*?)\*\*/g, '$1');
-        styles.push({ fontWeight: 'bold' });
-      }
+      // Regex pattern for detecting nested markdown styles
+      const markdownPattern = /(\*\*\_\_\*(.*?)\*\_\_\*\*|\*\*\*(.*?)\*\*\*|\*\*(.*?)\*\*|\_\_(.*?)\_\_|\*(.*?)\*)/g;
+      let match;
 
-      // Check for italic (*text*)
-      if (processedLine.match(/\*(.*?)\*/)) {
-        processedLine = processedLine.replace(/\*(.*?)\*/g, '$1');
-        styles.push({ fontStyle: 'italic' });
-      }
+      // Helper function to push regular text
+      const pushText = (text, styles) => {
+        if (text) {
+          textSegments.push(<Text key={`${index}-${lastIndex}`} style={styles}>{text}</Text>);
+        }
+      };
 
-      // Check for underline (__text__)
-      if (processedLine.match(/__(.*?)__/)) {
-        processedLine = processedLine.replace(/__(.*?)__/g, '$1');
-        styles.push({ textDecorationLine: 'underline' });
-      }
+      // Process inline markdown matches
+      while ((match = markdownPattern.exec(processedLine)) !== null) {
+        // Push text before the matched markdown
+        pushText(processedLine.substring(lastIndex, match.index), { color: 'white' });
 
-      // Headers (## or ###)
-      if (processedLine.match(/^## (.*)$/)) {
-        processedLine = processedLine.replace(/^## (.*)$/, '$1');
-        styles.push({ fontSize: 20, fontWeight: 'bold' });
-      }
+        // Determine styles based on the matched markdown
+        let styles = [{ color: 'white' }];
+        let matchedText = match[0]; // Get the full matched text
 
-      // This will work if it an actual video like .mp4
-      // // Handle video: !!(videolink)
-      // if (processedLine.match(/!!\((.*?)\)/)) {
-      //   const [fullMatch, videoUrl] = processedLine.match(/!!\((.*?)\)/);
-      //   elements.push(
-      //     <Video
-      //       key={index}
-      //       source={{ uri: videoUrl }}
-      //       style={{ width: '100%', height: 200 }}
-      //       useNativeControls // Add video controls (play/pause, volume, etc.)
-      //       resizeMode="contain"
-      //     />
-      //   );
-      //   return; // Skip the rest of the logic if it's a video
-      // }
+        // Apply styles based on detected markers
+        if (matchedText.includes('**')) {
+          styles.push({ fontWeight: 'bold' });
+          matchedText = matchedText.replace(/\*\*/g, ''); // Remove all instances of '**'
+        }
 
-      // Images (![alt](url))
-      if (processedLine.match(/!\[(.*?)\]\((.*?)\)/)) {
-        const [fullMatch, alt, url] = processedLine.match(/!\[(.*?)\]\((.*?)\)/);
-        elements.push(
-          <Image key={index} source={{ uri: url }} alt={alt} style={{ width: '100%', height: 200 }} />
+        if (matchedText.includes('__')) {
+          styles.push({ textDecorationLine: 'underline' });
+          matchedText = matchedText.replace(/__/g, ''); // Remove all instances of '__'
+        }
+
+        if (matchedText.includes('*') && !matchedText.includes('**')) {
+          styles.push({ fontStyle: 'italic' });
+          matchedText = matchedText.replace(/\*/g, ''); // Remove all instances of '*'
+        }
+
+        // Add the styled text segment
+        textSegments.push(
+          <Text key={`markdown-${index}-${match.index}`} style={styles}>
+            {matchedText}
+          </Text>
         );
-        return; // Skip the rest of the logic if it's an image
+
+        lastIndex = markdownPattern.lastIndex;
       }
 
-      // Links ([text](url))
-      if (processedLine.match(/\[(.*?)\]\((.*?)\)/)) {
-        const [fullMatch, text, url] = processedLine.match(/\[(.*?)\]\((.*?)\)/);
+      // Handle images (![alt](url))
+      const imagePattern = /!\[(.*?)\]\((.*?)\)/g;
+      processedLine = processedLine.replace(imagePattern, (fullMatch, alt, url) => {
         elements.push(
-          <Text key={index} style={{ color: 'blue' }} onPress={() => console.log('Navigate to:', url)}>
+          <Image key={`${index}`} source={{ uri: url }} alt={alt} style={{ width: '100%', height: 200 }} />
+        );
+        return ''; // Remove the image markdown from the processed line
+      });
+
+      // Handle links ([text](url))
+      const linkPattern = /\[(.*?)\]\((.*?)\)/g;
+      processedLine = processedLine.replace(linkPattern, (fullMatch, text, url) => {
+        elements.push(
+          <Text
+            key={`${index}`}
+            style={{ color: 'blue' }}
+            onPress={() => Linking.openURL(url)}
+          >
             {text}
           </Text>
         );
-        return; // Skip the rest of the logic if it's a link
-      }
+        return ''; // Remove the link markdown from the processed line
+      });
 
-      // Math (Inline) - Handle $$inline$$ math
-      if (processedLine.match(/\$(.*?)\$/)) {
-        processedLine = processedLine.replace(/\$(.*?)\$/g, '$1');
+      // Handle inline math ($inline math$)
+      const mathPattern = /\$\$(.*?)\$\$/g;
+      processedLine = processedLine.replace(mathPattern, (fullMatch, mathContent) => {
         elements.push(
-          <MathView key={index} math={processedLine} style={{ maxWidth: '100%' }} />
+          <MathView key={`${index}`} math={mathContent} style={{ color: 'white', maxWidth: '100%' }} />
         );
-        return; // Skip the rest of the logic if it's math
-      }
+        return ''; // Remove the math markdown from the processed line
+      });
 
-      // Regular Text (after all markdown removal)
-      elements.push(
-        <Text key={index} style={styles.length > 0 ? styles : { fontSize: 16 }}>
-          {processedLine}
-        </Text>
-      );
+      // Push any remaining text after the last markdown match
+      pushText(processedLine.substring(lastIndex), { color: 'white' });
+
+      // Add the processed line segments to the elements array
+      elements.push(<Text key={index} style={{ color: 'white' }}>{textSegments}</Text>);
     });
 
     return elements;
@@ -100,3 +110,19 @@ const markdownPreviewer = ({ content, className }) => {
 };
 
 export default markdownPreviewer;
+
+// This will work if it an actual video like .mp4
+// // Handle video: !!(videolink)
+// if (processedLine.match(/!!\((.*?)\)/)) {
+//   const [fullMatch, videoUrl] = processedLine.match(/!!\((.*?)\)/);
+//   elements.push(
+//     <Video
+//       key={index}
+//       source={{ uri: videoUrl }}
+//       style={{ width: '100%', height: 200 }}
+//       useNativeControls // Add video controls (play/pause, volume, etc.)
+//       resizeMode="contain"
+//     />
+//   );
+//   return; // Skip the rest of the logic if it's a video
+// }
