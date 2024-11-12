@@ -359,7 +359,8 @@ function DeckPage({ publicAccess = false }) {
         <div className="w-full flex flex-col mx-[15%] max-h-[calc(100vh-5rem)] border-b border-elDividerGray dark:border-edDividerGray">
           <h1 className="text-[2rem] text-elDark dark:text-edWhite font-medium mt-8 mb-4 
           border-b w-full border-elDividerGray dark:border-edDividerGray pb-1">
-            {deckCards.deck_name} <span className="font-normal text-xl">({deckCards.cards.length} Cards)</span></h1>
+            {deckCards.deck_name} <span className="font-normal text-xl">({deckCards.cards.length} Cards)</span>
+            <span className="font-normal text-xl">  Description: {deckCards.deckdescription}</span></h1>
           <div className="flex">
             {/* <TopButtons deckCards={deckCards} publicAccess={isPublicAccess} deckId={deckId} handleDeleteDeck={handleDeleteDeck} /> */}
             <div className="flex flex-col">

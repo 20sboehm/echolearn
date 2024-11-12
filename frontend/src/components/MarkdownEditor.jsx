@@ -284,7 +284,17 @@ function MarkdownEditor({ requestType, submitButtonText, questionText, setQuesti
     // Indicate an update is in progress
     setQuestionIsUpdating(true);
     // Append new transcript to the existing content
-    const combinedText = questionText + ' ' + newTranscript;
+    let textarea = questionRef.current
+
+    let selStart = textarea.selectionStart;
+    let selEnd = textarea.selectionEnd;
+
+    const firstHalf = questionText.substring(0, selStart);
+    
+    const secondHalf = questionText.substring(selEnd);
+
+    const combinedText = firstHalf + ' '+ newTranscript+ ' ' + secondHalf;
+
     await new Promise(resolve => {
       setQuestionText(combinedText); // Asynchronously update the question state
       setTimeout(resolve, 1); // Resolve the promise on the next tick, allowing state to update
@@ -297,7 +307,15 @@ function MarkdownEditor({ requestType, submitButtonText, questionText, setQuesti
     // Indicate an update is in progress
     setAnswerIsUpdating(true);
     // Append new transcript to the existing content
-    const combinedText = answerText + ' ' + newTranscript;
+    let textarea = answerRef.current
+    let selStart = textarea.selectionStart;
+    let selEnd = textarea.selectionEnd;
+
+    const firstHalf = answerText.substring(0, selStart);
+    
+    const secondHalf = answerText.substring(selEnd);
+
+    const combinedText = firstHalf + ' '+ newTranscript+ ' ' + secondHalf;
     await new Promise(resolve => {
       setAnswerText(combinedText);
       setTimeout(resolve, 1);
