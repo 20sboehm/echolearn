@@ -1,12 +1,13 @@
 import { View, Text, TouchableOpacity, Animated, ScrollView, RefreshControl } from 'react-native'
 import React, { useEffect, useState, useContext } from 'react';
-import { useLocalSearchParams, Link } from 'expo-router';
+import { useLocalSearchParams, Link, useRouter } from 'expo-router';
 import { Context } from '../../context/globalContext';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import useReviewTimes from '../help/reviewTime';
 import CustomButton from '../../components/CustomButton';
 
 const Reviews = () => {
+  const router = useRouter();
   const { deckIds } = useLocalSearchParams();
   const { studyAll } = useLocalSearchParams();
   const [reviews, setReviews] = useState(null);
@@ -59,6 +60,8 @@ const Reviews = () => {
     if (currentCardIndex < reviews[0]?.cards.length - 1) {
       setCurrentCardIndex(currentCardIndex + 1);
       toggleFlip();
+    } else {
+      router.replace("/home");
     }
   };
 
@@ -89,7 +92,6 @@ const Reviews = () => {
     })
       .then(response => {
         if (response.ok) {
-          console.log(`Card ${card.card_id} updated with confidence level ${updatedCardData.confidence}`);
           nextCard();
         } else {
           console.error('Failed to update next_review');

@@ -30,7 +30,6 @@ const SignIn = () => {
       router.replace('/home');
     } catch (err) {
       setError("Username or Password incorrect, Please try again");
-      console.log("Login error:", err.message);
     } finally {
       setIsSubmitting(false);
     }

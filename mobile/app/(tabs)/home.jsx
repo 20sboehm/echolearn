@@ -120,7 +120,7 @@ const Home = () => {
           />
         }
       >
-        <View className="pt-12 my-6 min-h-[85vh]">
+        <View className="pt-12 my-6 min-h-[85vh] pb-2">
           <Text className="text-4xl text-white font-pextrabold mb-4">Welcome back, {userObj.username}!</Text>
           <Text className="text-xl font-pbold mb-4 text-white">Upcoming reviews</Text>
           <View className="flex-row justify-between items-center p-4 border-b border-gray-300 bg-gray-700">
