@@ -191,11 +191,11 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
 
     let newItem = {
       name: newName,
-      // null should only happen if user is creating a top level folder
+      // null should only happen if user is creating a top level item
       folder_id: selected?.parent_folder_id || selected?.folder_id || null,
     };
     const endpoint = createType === 'deck' ? "/api/decks" : "/api/folders";
-
+    console.log("reach submitting and the value is :" + newItem.folder_id);
     try {
       const response = await api._post(endpoint, newItem);
       if (response.status === 201) {
@@ -311,7 +311,25 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
           ) : (
             <div className='text-black'>Loading...</div>
           )}
+
+          {/* Render root-level decks */}
+          {sidebarData && sidebarData.decks && sidebarData.decks.length > 0 && (
+            <div className="mb-4">
+              {sidebarData.decks.map((deck, index) => (
+                <div
+                  key={index}
+                  className="text-elDark dark:text-edWhite flex items-center select-none mt-2"
+                  onContextMenu={(e) => handleRightClick(e, deck)}
+                >
+                  <Link to={`/decks/${deck.deck_id}`}>
+                    <p className="overflow-x-auto whitespace-nowrap hover:text-edBlue">{deck.name}</p>
+                  </Link>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
+
       </ResizableBox>
 
       {contextMenu && (
@@ -367,6 +385,12 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
                 onClick={() => setCreateType('folder')}
               >
                 Create Folder
+              </div>
+              <div
+                className='px-1 py-1 cursor-pointer text-[1rem] hover:bg-eHLT'
+                onClick={() => setCreateType('deck')}
+              >
+                Create Deck
               </div>
               <div
                 className='px-1 py-1 cursor-pointer text-[1rem] hover:bg-eHLT text-eRed'
@@ -497,7 +521,6 @@ const Folder = ({ folder, onRightClick, folderStates, toggleFolder, setContextMe
       )}
     </div>
   );
-
 };
 
 
