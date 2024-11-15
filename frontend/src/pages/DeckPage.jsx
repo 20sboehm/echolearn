@@ -54,7 +54,7 @@ function DeckPage({ publicAccess = false }) {
 
   // Rate
   const [showRateModal, setShowRateModal] = useState(false);
-  const [rate, setRate] = useState(0); // 默认评分为 0
+  const [rate, setRate] = useState(0);
 
   const handleShareClick = () => {
     setShowShareModal(true);

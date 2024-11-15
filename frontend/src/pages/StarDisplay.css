@@ -43,3 +43,7 @@
 .rate-deck .star:hover ~ .star {
     color: lightgray;
 }
+
+.com {
+    cursor: default
+}

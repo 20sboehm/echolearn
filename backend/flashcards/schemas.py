@@ -72,6 +72,7 @@ class GetDeck(Schema):
     last_edited: datetime
     isPublic:bool
     order_List: list[int]
+    rate: float
 
 class GetPublicDeck(Schema):
     deck_id: int
@@ -82,6 +83,7 @@ class GetPublicDeck(Schema):
     created_at: str
     last_edited: str
     favorites: int
+    rate: float
     
 class CreateDeck(Schema):
     folder_id: int
