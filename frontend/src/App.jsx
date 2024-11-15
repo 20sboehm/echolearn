@@ -29,6 +29,7 @@ import QuizPage from "./pages/QuizPage";
 import AnkiParserPage from './pages/AnkiParserPage'
 import AIGenerateCards from './pages/AICreateCards'
 import SharedDeck from './pages/SharedWith'
+import StudyPage from './pages/StudyPage'
 
 const queryClient = new QueryClient();
 
@@ -48,6 +49,7 @@ function AuthenticatedRoutes() {
       <Route path="/cards" element={<CreateCardPage />} />
       <Route path="/quizletparser" element={<QuizletParserPage />} />
       <Route path="/review" element={<ReviewPage />} />
+      <Route path="/study" element={<StudyPage />} />
       <Route path="/help" element={<HelpPage />} />
       <Route path="/edit/:cardId" element={<EditCardPage />} />
       <Route path="/decks/:deckId" element={<DeckPage />} />

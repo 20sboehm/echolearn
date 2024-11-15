@@ -403,7 +403,11 @@ function DeckPage({ publicAccess = false }) {
             {/* <TopButtons deckCards={deckCards} publicAccess={isPublicAccess} deckId={deckId} handleDeleteDeck={handleDeleteDeck} /> */}
             <div className="flex flex-col">
               {publicAccess ? (
-                null
+                <div className="flex items-start mb-4 pb-4 gap-2 border-b border-elDividerGray dark:border-edDividerGray">
+                  <Link to={`/study?deckIds=${deckId}`} className="button-top">
+                    Study
+                  </Link>
+                </div>
               ) : (
                 <div className="flex items-start mb-4 pb-4 gap-2 border-b border-elDividerGray dark:border-edDividerGray">
                   <>
