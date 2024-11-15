@@ -403,26 +403,26 @@ function TextBox({ label, reference, content, inputHandler, handleTextEditingBut
       </button>
       {/* add a bg color for light mode? */}
       <div className="dark:bg-edDarker w-full border-x border-t border-edDarkGray flex items-center flex-wrap pl-2 py-1.5">
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "bold"); }} Icon={BoldIcon} />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "italic"); }} Icon={ItalicIcon} />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "underline"); }} Icon={UnderlineIcon} />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "code"); }} Icon={CodeIcon} />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "codeBlock"); }} Icon={CodeBlockIcon} />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "pageBreak"); }} Icon={PageBreakIcon} />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "link"); }} Icon={LinkIcon} />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "imageLink"); }} Icon={ImageLinkIcon} />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "videoLink"); }} Icon={VideoLinkIcon} />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "table"); }} Icon={TableIcon} />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "latex"); }} Icon={LatexIcon} />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "latexBlock"); }} Icon={LatexBlockIcon} />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header1"); }} Icon={HeaderIcon1} />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header2"); }} Icon={HeaderIcon2} />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header3"); }} Icon={HeaderIcon3} />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header4"); }} Icon={HeaderIcon4} />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "bold"); }} Icon={BoldIcon} title="Bold" />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "italic"); }} Icon={ItalicIcon} title="italic" />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "underline"); }} Icon={UnderlineIcon} title="underline" />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "code"); }} Icon={CodeIcon} title="code" />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "codeBlock"); }} Icon={CodeBlockIcon} title="codeBlock" />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "pageBreak"); }} Icon={PageBreakIcon} title="pageBreak" />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "link"); }} Icon={LinkIcon} title="link" />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "imageLink"); }} Icon={ImageLinkIcon} title="imageLink" />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "videoLink"); }} Icon={VideoLinkIcon} title="videoLink" />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "table"); }} Icon={TableIcon} title="table" />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "latex"); }} Icon={LatexIcon} title="latex" />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "latexBlock"); }} Icon={LatexBlockIcon} title="latexBlock" />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header1"); }} Icon={HeaderIcon1} title="header1" />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header2"); }} Icon={HeaderIcon2} title="header2" />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header3"); }} Icon={HeaderIcon3} title="header3" />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header4"); }} Icon={HeaderIcon4} title="header4" />
 
 
         {questionisListening == false && (
-          <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "questionmicIcon"); }} Icon={MicIcon} />
+          <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "questionmicIcon"); }} Icon={MicIcon} title="Voice Input" />
         )}
         {questionisListening == true && (
           <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "questionmicIconlistening"); }} Icon={MicIconListening} />
@@ -444,8 +444,8 @@ function TextBox({ label, reference, content, inputHandler, handleTextEditingBut
   );
 }
 
-function TextEditingIcon({ clickHandler, Icon }) {
-  return <button type='button' onClick={clickHandler} className='mr-3'><Icon /></button>;
+function TextEditingIcon({ clickHandler, Icon, title }) {
+  return <button type='button' onClick={clickHandler} className='mr-3' title={title}><Icon /></button>;
 }
 
 // function DividerLine() {
