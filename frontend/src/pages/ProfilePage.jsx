@@ -27,6 +27,7 @@ function ProfilePage() {
 
   // Tabs (other info)
   const [folders, setFolders] = useState([]);
+  const [rootDecks, setRootDecks] = useState([]);
   const [RatedDeck, setRatedDeck] = useState([]);
   const [activeTab, setActiveTab] = useState('folders');
 
@@ -83,23 +84,24 @@ function ProfilePage() {
         setEditableAge(data.age);
         setEditableCountry(data.country);
         setAvatar(data.avatar || defaultAvatar);
-  
+
         if (data.is_owner) {
           setFlipOrSet(data.flip_mode);
           setSidebarClosed(data.sidebar_open);
           setLightMode(data.light_mode);
-  
+
           if (!data.light_mode) {
             document.documentElement.classList.add('dark');
           } else {
             document.documentElement.classList.remove('dark');
           }
         }
-  
+
         const folderEndpoint = userId ? `/api/profile/folders_decks?userId=${userId}` : '/api/profile/folders_decks';
         const foldersResponse = await _get(folderEndpoint);
         const foldersData = await foldersResponse.json();
-        setFolders(foldersData);
+        setFolders(foldersData.folders);
+        setRootDecks(foldersData.decks);
         const RatedResponse = await _get('/api/profile/ALLRatedDecks');
         const RatedDeck = await RatedResponse.json();
         setRatedDeck(RatedDeck);
@@ -107,7 +109,7 @@ function ProfilePage() {
         setError('Failed to fetch profile data');
       }
     }
-  
+
     fetchProfile();
   }, []);
 
@@ -267,7 +269,7 @@ function ProfilePage() {
         <div className="flex items-center -mt-2">
 
           <div className="profile-page">
-            <div className={`relative w-[100px] h-[100px] ${profile.is_owner ? "cursor-pointer" : ""}`} 
+            <div className={`relative w-[100px] h-[100px] ${profile.is_owner ? "cursor-pointer" : ""}`}
               {...(profile.is_owner && { onClick: () => document.getElementById('avatarInput').click() })}>
               <img
                 src={preview || avatar}
@@ -382,9 +384,19 @@ function ProfilePage() {
               <div>
                 <h2 className="text-xl font-bold text-white">Folders and Decks</h2>
                 {folders.length > 0 ? (
-                  folders.map((folder) => <Folder key={folder.folder_id} folder={folder} is_owner={profile.is_owner}/>)
+                  folders.map((folder) => <Folder key={folder.folder_id} folder={folder} is_owner={profile.is_owner} />)
                 ) : (
                   <p>No folders or decks available</p>
+                )}
+                {rootDecks.length > 0 ? (
+                  rootDecks.map((deck) => (
+                    <Link key={deck.deck_id} to={`/decks/public/${deck.deck_id}`} className="flex items-center">
+                      <span className="mx-2">📚</span>
+                      <p className="overflow-x-auto whitespace-nowrap">{deck.name}</p>
+                    </Link>
+                  ))
+                ) : (
+                  null
                 )}
               </div>
             )}
