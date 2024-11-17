@@ -30,7 +30,7 @@ class Folder(models.Model):
 
 class Deck(models.Model):
     deck_id = models.AutoField(primary_key=True)
-    folder = models.ForeignKey(Folder, on_delete=models.PROTECT) # Cannot delete folder with decks in it
+    folder = models.ForeignKey(Folder, on_delete=models.PROTECT, null=True, blank=True) # Cannot delete folder with decks in it
     owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True) # blank=True allows this to be an empty string

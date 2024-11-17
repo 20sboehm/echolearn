@@ -147,7 +147,9 @@ def create_card(request, payload: sc.CreateCard):
 @decks_router.post("", response={201: sc.GetDeck, 404: str}, auth=JWTAuth())
 def create_deck(request, payload: sc.CreateDeck):
 
-    folder_ref = get_object_or_404(Folder, pk=payload.folder_id)
+    folder_ref = None
+    if payload.folder_id is not None:
+        folder_ref = get_object_or_404(Folder, pk=payload.folder_id)
 
     owner_ref = request.user  # Use the authenticated user as the owner
         
