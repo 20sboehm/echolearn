@@ -198,7 +198,9 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
   };
 
   // Following are the logic for create both folder and deck
-  const handleCreate = async () => {
+  const handleCreate = async (e) => {
+    e.preventDefault();
+
     if (newName.trim() === '') {
       alert("Name can't be empty")
       return;
@@ -209,8 +211,11 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
       // null should only happen if user is creating a top level item
       folder_id: selected?.parent_folder_id || selected?.folder_id || null,
     };
+
     const endpoint = createType === 'deck' ? "/api/decks" : "/api/folders";
+
     console.log("reach submitting and the value is :" + newItem.folder_id);
+
     try {
       const response = await api._post(endpoint, newItem);
       if (response.status === 201) {
@@ -374,12 +379,15 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
           )}
 
           {!selected && !createType && ( // Right-click on empty space
-            <PopupMenuButton clickEvent={() => setCreateType('folder')}>Create Folder</PopupMenuButton>
+            <>
+              <PopupMenuButton clickEvent={() => setCreateType('folder')}>Create Folder</PopupMenuButton>
+              <PopupMenuButton clickEvent={() => setCreateType('deck')}>Create Deck</PopupMenuButton>
+            </>
           )}
 
           {/* Input for creating new deck or folder */}
           {createType && (
-            <form onSubmit={handleCreate}>
+            <form onSubmit={(e) => { handleCreate(e) }}>
               <PopupMenuInput placeholder={`Enter ${createType} name`} value={newName} changeEvent={(e) => setNewName(e.target.value)} />
 
               <div className='flex justify-center'>
