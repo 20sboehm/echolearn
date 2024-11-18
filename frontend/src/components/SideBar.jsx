@@ -222,6 +222,7 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
         setContextMenu(null);
         setShowInput(false);
         setCreateType('');
+        setSelected(null);
       } else {
         console.error(`Failed to create ${createType}`, response);
       }
@@ -251,6 +252,7 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
         fetchSidebarData();
         setRenaming(false);
         setContextMenu(null);
+        setSelected(null);
       } else {
         console.error("Failed to rename", response);
       }
@@ -275,6 +277,7 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
       if (response.status === 204) {
         fetchSidebarData();
         setContextMenu(null);
+        setSelected(null);
       } else {
         alert("Cannot delete folder with items inside.");
       }
@@ -459,7 +462,13 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
         <div ref={popupRef} className='absolute bg-elCloudWhite dark:bg-edDarker top-[50px] left-[50px] p-[10px] 
         border border-[#ddd] rounded-[5px] z-50 text-black dark:text-white'>
           <PopupMenuInput placeholder={`Enter ${createType} name`} value={newName} changeEvent={(e) => setNewName(e.target.value)}
-            keyDown={(e) => { e.key === 'Enter' ? handleCreate() : null; }} />
+            keyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();  // Prevent default behavior for Enter key
+                handleCreate(e);
+              }
+            }}
+          />
 
           <div className='mt-2 flex justify-between'>
             <button onClick={handleCreate}>Create</button>
@@ -470,6 +479,34 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
     </div>
   );
 };
+
+function PopupMenuButton({ clickEvent, customStyles, children }) {
+  return (
+    <button
+      type='button'
+      className={`px-1 py-1 cursor-pointer text-[1rem] hover:bg-elHLT dark:hover:bg-edHLT text-left rounded text-black dark:text-white ${customStyles}`}
+      onClick={clickEvent}
+      onMouseDown={(e) => { e.preventDefault() }}
+    >
+      {children}
+    </button>
+  )
+}
+
+function PopupMenuInput({ placeholder, value, changeEvent, keyDown, customStyles }) {
+  return (
+    <input
+      type="text"
+      autoFocus
+      placeholder={placeholder}
+      value={value}
+      onChange={changeEvent}
+      className={`p-1.5 mt-1 rounded w-full bg-white dark:bg-edBase text-black dark:text-white border border-edDividerGray outline-none ${customStyles}`}
+      onKeyDown={keyDown}
+      required
+    />
+  )
+}
 
 const Folder = ({ folder, onRightClick, folderStates, toggleFolder, setContextMenu, selected, setSelected, folderRef, onDragStart, onDrop, onDragOver }) => {
 
