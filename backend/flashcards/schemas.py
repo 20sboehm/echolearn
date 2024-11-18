@@ -25,7 +25,7 @@ class GetUser(Schema):
     score: Optional[int] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class UserLogin(Schema):
     username: str
@@ -73,6 +73,7 @@ class GetDeck(Schema):
     last_edited: datetime
     isPublic:bool
     order_List: list[int]
+    rate: float
 
 class GetPublicDeck(Schema):
     deck_id: int
@@ -83,6 +84,7 @@ class GetPublicDeck(Schema):
     created_at: str
     last_edited: str
     favorites: int
+    rate: float
     
 class CreateDeck(Schema):
     folder_id: Optional[int] = None
@@ -93,6 +95,15 @@ class UpdateDeck(Schema):
     name: Optional[str] = None
     description: Optional[str] = None
     folder_id: Optional[int] = None
+
+class GetSharedDeck(Schema):
+    share_id: int
+    deck: int
+    shared_from: int
+    shared_with: int
+
+    class Config:
+        from_attributes = True
 
 # -----------------------------------------------
 # -------------------- Cards --------------------

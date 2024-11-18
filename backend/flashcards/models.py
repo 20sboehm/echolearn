@@ -41,8 +41,17 @@ class Deck(models.Model):
     isPublic = models.BooleanField(default=False)
     stars =  models.IntegerField(default=0)
     order_List =  models.JSONField(default=list, blank=True)
+    rate = models.DecimalField(max_digits=2, decimal_places=1, default=0.0)
     def __str__(self):
         return f"{self.name} (id={self.deck_id})"
+    
+class Rated(models.Model):
+    deck = models.ForeignKey(Deck,on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    rate = models.DecimalField(max_digits=2, decimal_places=1, default=0.0)
+
+    class Meta:
+        unique_together = ("deck", "user")
 
 class Rating(models.Model):
     deck = models.ForeignKey(Deck,on_delete=models.CASCADE)
@@ -81,13 +90,14 @@ class Image(models.Model):
 class SharedDeck(models.Model):
     share_id = models.AutoField(primary_key=True)
     deck = models.ForeignKey(Deck, on_delete=models.CASCADE)
-    shared_with = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    shared_from = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="shared_decks_from")
+    shared_with = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="shared_decks_with")
 
     class Meta:
-        unique_together = ("deck_id", "shared_with")
+        unique_together = ("deck", "shared_with")
 
     def __str__(self):
-        return f"share_id={self.share_id}, deck={self.deck}, shared_with={self.shared_with}"
+        return f"share_id={self.share_id}, deck={self.deck}, shared_from={self.shared_from}, shared_with={self.shared_with}"
 
 # -----------------------------------------------
 # ------------------ Friend list ----------------

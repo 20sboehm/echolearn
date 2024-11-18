@@ -115,15 +115,15 @@ function MarkdownPreviewer({ content, className }) {
       const trimmedCode = innerCodeContent.trim();
 
       if (language) {
-        return `<pre class="p-2 my-1 rounded-md bg-[#0c0c0c] border border-black"><code class="language-${language}">${trimmedCode}</code></pre>`;
+        return `<pre class="p-2 my-1 rounded-md bg-[#f3f3f3] dark:bg-[#2d2d2d] border border-[#e5e5e5] dark:border-[#2d2d2d]"><code class="language-${language}">${trimmedCode}</code></pre>`;
       } else {
-        return `<pre class="p-2 my-1 rounded-md bg-[#0c0c0c] border border-black">${trimmedCode}</pre>`;
+        return `<pre class="p-2 my-1 rounded-md bg-[#f3f3f3] dark:bg-[#2d2d2d] border border-[#e5e5e5] dark:border-[#2d2d2d]">${trimmedCode}</pre>`;
       }
     });
 
     const codePattern = /`(.*?)`/g;
-    // #2f3136 a light dark for dark mode?, elMedGray or elCloudWhite maybe for light mode?
-    text = text.replace(codePattern, '<code class="bg-[#0c0c0c] border border-black px-1 py-0.5 rounded-md">$1</code>');
+    // #2d2d2d a light dark for dark mode?, elMedGray or elCloudWhite maybe for light mode?
+    text = text.replace(codePattern, '<code class="bg-[#f3f3f3] dark:bg-[#2d2d2d] border border-[#e5e5e5] dark:border-[#2d2d2d] px-1 py-0.5 rounded-md">$1</code>');
 
     const header1Pattern = /^# (.*$)/gim;
     text = text.replace(header1Pattern, '<h1 class="text-[2rem]">$1</h1>');

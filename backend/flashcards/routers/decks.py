@@ -1,6 +1,6 @@
 import datetime
 from ninja import Router
-from flashcards.models import Deck, Folder, Card, CustomUser,Rating
+from flashcards.models import Deck, Folder, Card, CustomUser,Rating, SharedDeck, Rated
 from typing import List
 import flashcards.schemas as sc
 from django.shortcuts import get_object_or_404
@@ -35,6 +35,7 @@ def get_ALL_decks(request):
             "created_at": deck.created_at.strftime("%d %B %Y"),
             "last_edited": deck.last_edited.strftime("%d %B %Y"),
             "favorites": deck.stars,
+            "rate": deck.rate,
         })
     
     return result
@@ -47,22 +48,24 @@ def get_deck(request, deck_id: int):
 @decks_router.get("/public/{deck_id}/cards", response={200: sc.DeckCards, 404: str}, auth=JWTAuth())
 def get_cards_from_deck_public(request, deck_id: int):
     deck = get_object_or_404(Deck, deck_id=deck_id)
+    is_shared = SharedDeck.objects.filter(deck=deck, shared_with=request.user).exists()
 
     publicAccess = True
     # Check if the deck owner by the user
-    if deck.owner == request.user:
+    if deck.owner == request.user or is_shared:
         publicAccess = False
     else:
         if deck.isPublic == False:
             raise HttpError(403, "You are not authorized to access this deck")
     
     card_list = Card.objects.filter(deck_id=deck_id)
-    
-    return {"deck_id": deck.deck_id, "isPublic": deck.isPublic, "deck_name": deck.name,"deckdescription":deck.description, "cards": card_list,"stars": deck.stars, "order_List": deck.order_List, "publicAccess": publicAccess}
+
+    return {"deck_id": deck.deck_id, "isPublic": deck.isPublic, "deck_name": deck.name,"deckdescription":deck.description, "cards": card_list,"stars": deck.stars, "order_List": deck.order_List, "publicAccess": publicAccess, "rate": deck.rate}
 
 @decks_router.get("/{deck_id}/cards", response={200: sc.DeckCards, 404: str}, auth=JWTAuth())
 def get_cards_from_deck(request, deck_id: int):
     deck = get_object_or_404(Deck, deck_id=deck_id)
+    is_shared = SharedDeck.objects.filter(deck=deck, shared_with=request.user).exists()
 
     if deck.owner != request.user:
         raise HttpError(403, "You are not authorized to access this deck")
@@ -75,7 +78,7 @@ def get_cards_from_deck(request, deck_id: int):
             deck.order_List.append(card.card_id)
             deck.save()
 
-    return {"deck_id": deck.deck_id, "isPublic": deck.isPublic, "deckdescription":deck.description, "deck_name": deck.name, "cards": card_list, "stars":deck.stars, "order_List":deck.order_List}
+    return {"deck_id": deck.deck_id, "isPublic": deck.isPublic, "deckdescription":deck.description, "deck_name": deck.name, "cards": card_list, "stars":deck.stars, "order_List":deck.order_List, "rate": deck.rate}
 
 @decks_router.get("/{deck_id}/ratedOrnot", response={200: bool, 404: str}, auth=JWTAuth())
 def checkRatedresult(request, deck_id: int):
@@ -94,14 +97,6 @@ def copy_deck(request, deck_id:int,folder_id:int):
     deck = get_object_or_404(Deck, deck_id=deck_id)
     owner_ref = request.user
     folder_ref = get_object_or_404(Folder,folder_id=folder_id)
-
-    # if(len(folderList) != 0):
-    #     folder_ref = folderList[0]
-    # else:
-    #     folder_ref = Folder.objects.create(
-    #         name = 'default',
-    #         owner=owner_ref,
-    #         description=deck.description)
    
     newdeck = Deck.objects.create(
         folder=folder_ref,
@@ -168,7 +163,8 @@ def update_deck_status(request, deck_id:int):
     deck.isPublic = not deck.isPublic
     deck.save()
     card_list = Card.objects.filter(deck_id=deck_id)
-    return {"deck_id": deck.deck_id,"isPublic": deck.isPublic,"deckdescription":deck.description, "deck_name": deck.name, "cards": card_list,"stars":deck.stars, "order_List":deck.order_List}
+
+    return {"deck_id": deck.deck_id,"isPublic": deck.isPublic,"deckdescription":deck.description, "deck_name": deck.name, "cards": card_list,"stars":deck.stars, "order_List":deck.order_List, "rate": deck.rate}
 
 @decks_router.post("/{deck_id}/ratings", response={200: dict, 404: str}, auth=JWTAuth())
 def rate_deck(request, deck_id: int):
@@ -295,3 +291,77 @@ def delete_deck(request, deck_id: int):
     deck.delete()
 
     return 204, None
+
+# ---------------------------------------------
+# -------------------- SHARE ------------------
+# ---------------------------------------------
+@decks_router.post("/{deck_id}/share/{user_id}", response={201: str, 404: str}, auth=JWTAuth())
+def share_deck(request, deck_id: int, user_id: int):
+    deck = get_object_or_404(Deck, deck_id=deck_id)
+    shared_with_user = get_object_or_404(CustomUser, id=user_id)
+    
+    # Check if the deck owner is the current user
+    if deck.owner != request.user:
+        raise HttpError(403, "You are not authorized to share this deck")
+
+    # Create or update the SharedDeck entry
+    shared_deck, created = SharedDeck.objects.update_or_create(
+        deck=deck,
+        shared_from=request.user,
+        shared_with=shared_with_user,
+        defaults={'deck': deck, 'shared_from': request.user, 'shared_with': shared_with_user}
+    )
+
+    if created:
+        message = "Deck shared successfully."
+    else:
+        message = "Deck sharing updated successfully."
+
+    return 201, message
+
+# Check if shared
+@decks_router.get("/{deck_id}/is_shared/{user_id}", response={200: bool, 404: str}, auth=JWTAuth())
+def is_deck_shared(request, deck_id: int, user_id: int):
+    shared = SharedDeck.objects.filter(deck=deck_id, shared_from=request.user, shared_with_id=user_id).exists()
+    return shared
+
+# Delete share
+@decks_router.delete("/{deck_id}/unshare/{user_id}", response={200: str, 404: str}, auth=JWTAuth())
+def unshare_deck(request, deck_id: int, user_id: int):
+    shared_deck = get_object_or_404(SharedDeck, deck_id=deck_id, shared_from=request.user, shared_with_id=user_id)
+    shared_deck.delete()
+    return "Deck unshared successfully"
+
+# ---------------------------------------------
+# -------------------- RATE -------------------
+# ---------------------------------------------
+@decks_router.get("/{deck_id}/getRate", response={200: float, 404: str}, auth=JWTAuth())
+def get_deck_rate(request, deck_id: int):
+    deck = get_object_or_404(Deck, deck_id=deck_id)
+    return 200, float(deck.rate)
+
+@decks_router.post("/{deck_id}/setRate/{point}", response={200: str, 404: str}, auth=JWTAuth())
+def set_deck_rate(request, deck_id: int, point: float):
+    # Validate the rating point to ensure it's between 0 and 5, with one decimal place
+    if point < 0.0 or point > 5.0:
+        return 404, "Invalid rating. Must be between 0.0 and 5.0."
+
+    deck = get_object_or_404(Deck, deck_id=deck_id)
+    user = request.user
+
+    # Create or update the rating in the Rated model
+    Rated.objects.update_or_create(
+        deck=deck,
+        user=user,
+        defaults={"rate": point}
+    )
+
+    # Calculate the new average rating for the deck
+    all_ratings = Rated.objects.filter(deck=deck).values_list("rate", flat=True)
+    average_rating = round(sum(all_ratings) / len(all_ratings), 1) if all_ratings else 0.0
+
+    # Update the deck's average rating
+    deck.rate = average_rating
+    deck.save()
+
+    return 200, "Rating set successfully and average updated."
