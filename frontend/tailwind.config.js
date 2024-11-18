@@ -30,7 +30,9 @@ export default {
 				edSoftBlue: '#407196',
 				edLightBlue: '#33a7ff',
 				edRed: '#D2042D',
+				edDarkRed: '#af0426',
 				edGreen: '#009355',
+				edDarkGreen: '#00663c',
 				edHLT: '#ffffff10', // Highlight
 				edStrongHLT: '#ffffff20', // Strong highlight
 

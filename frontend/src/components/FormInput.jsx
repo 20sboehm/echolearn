@@ -11,6 +11,7 @@ export function FormInputBox({ type = "text", idAndName, value, onChange, autoFo
       name={idAndName}
       onChange={onChange}
       placeholder={placeholder}
+      required
     />
   );
 }

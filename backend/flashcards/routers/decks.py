@@ -147,7 +147,9 @@ def create_card(request, payload: sc.CreateCard):
 @decks_router.post("", response={201: sc.GetDeck, 404: str}, auth=JWTAuth())
 def create_deck(request, payload: sc.CreateDeck):
 
-    folder_ref = get_object_or_404(Folder, pk=payload.folder_id)
+    folder_ref = None
+    if payload.folder_id is not None:
+        folder_ref = get_object_or_404(Folder, pk=payload.folder_id)
 
     owner_ref = request.user  # Use the authenticated user as the owner
         
@@ -267,6 +269,20 @@ def update_deck(request, deck_id: int, payload: sc.UpdateDeck):
     deck.save()
     
     return deck
+
+@decks_router.patch("/{deck_id}/move", auth=JWTAuth())
+def move_deck(request, deck_id: int, target_folder_id: int = None):
+    deck = get_object_or_404(Deck, deck_id=deck_id)
+    print(deck)
+    
+    # Moving into orginal folder do nothing
+    if (deck.folder_id == target_folder_id):
+        return 
+    
+    deck.folder_id = target_folder_id
+    deck.save()
+
+    return {"success": True, "message": "Deck moved successfully", "deck_id": deck_id, "target_folder_id": target_folder_id}
 
 # ---------------------------------------------
 # -------------------- DELETE -----------------

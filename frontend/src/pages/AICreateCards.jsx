@@ -16,7 +16,7 @@ function AICreateCardsPage() {
 
   const [userInput, setuserInput] = useState("")
   const [preview, setPreview] = useState([])
-  const [newresponse,setNewResponse] = useState([])
+  const [newresponse, setNewResponse] = useState([])
   const [waiting, setWatiting] = useState(false);
   const [wordCount, setWordCount] = useState(0);
 
@@ -53,15 +53,15 @@ function AICreateCardsPage() {
   }
 
   useEffect(() => {
-    
+
     if (!newresponse) return;
     console.log(newresponse)
     const formattedPreview = newresponse.map(item => {
-        return {
-          question: item.Question,
-          answer: item.Answer
-        };
-      });
+      return {
+        question: item.Question,
+        answer: item.Answer
+      };
+    });
     setPreview(formattedPreview);
   }, [newresponse]);
 
@@ -69,26 +69,26 @@ function AICreateCardsPage() {
   const handleAIParser = async (e) => {
     e.preventDefault();
     setWatiting(true)
-      // Check if deckId is valid
-      if (!deckId) {
-        console.error("Error: Missing deckId");
-        setWatiting(false)
-        alert("Faile to creat cards because did not select deck")
-        displayPopup(false);
-        return; 
+    // Check if deckId is valid
+    if (!deckId) {
+      console.error("Error: Missing deckId");
+      setWatiting(false)
+      alert("Faile to creat cards because did not select deck")
+      displayPopup(false);
+      return;
     }
-    if(wordCount > 500){
+    if (wordCount > 500) {
       console.error("Error: The word count exceeds the 500-word limit ");
       setWatiting(false)
       alert("Faile to creat cards because the word count exceeds the 500-word limit")
       displayPopup(false);
-      return; 
+      return;
     }
     console.log(userInput)
-    
+
     const dataToSend = {
-      userinput:userInput,
-      deckId:deckId
+      userinput: userInput,
+      deckId: deckId
     };
 
     const response = await api._post('/api/gptgeneration', dataToSend);
@@ -99,7 +99,7 @@ function AICreateCardsPage() {
     } else {
       const responseData = await response.json();
       console.log(responseData)
-      if(!responseData.newcardset.length){
+      if (!responseData.newcardset.length) {
         // console.error("Error creating cards: ", errorData);
         alert("Faile to request AI generation please input meaningful text or try again later ")
         displayPopup(false);
@@ -121,19 +121,19 @@ function AICreateCardsPage() {
   const handleSubmitChoice = async (e) => {
     e.preventDefault();
     setWatiting(true)
-      // Check if deckId is valid
-      if (!deckId) {
-        console.error("Error: Missing deckId");
-        setWatiting(false)
-        alert("Faile to creat cards because did not select deck")
-        displayPopup(false);
-        return; 
+    // Check if deckId is valid
+    if (!deckId) {
+      console.error("Error: Missing deckId");
+      setWatiting(false)
+      alert("Faile to creat cards because did not select deck")
+      displayPopup(false);
+      return;
     }
-    
+
     const dataToSend = {
-      indexwanted:selectedRowIndices,
-      previewdata:preview,
-      deckid:deckId
+      indexwanted: selectedRowIndices,
+      previewdata: preview,
+      deckid: deckId
     };
 
     const response = await api._post('/api/gptgeneration/requestselection', dataToSend);
@@ -146,7 +146,7 @@ function AICreateCardsPage() {
     } else {
       const responseData = await response.json();
       console.log(responseData)
-      if(!responseData.newcardset.length){
+      if (!responseData.newcardset.length) {
         // console.error("Error creating cards: ", errorData);
         alert("Faile to request AI generation please input meaningful text or try again later ")
         displayPopup(false);
@@ -176,8 +176,8 @@ function AICreateCardsPage() {
 
     const words = inputText.trim().split(/\s+/).filter(Boolean);
     setWordCount(words.length);
-};
-const handleRowClick = (index) => {
+  };
+  const handleRowClick = (index) => {
     setSelectedRowIndices(prev => {
       const currentIndex = prev.indexOf(index);
       if (currentIndex === -1) {
@@ -189,12 +189,12 @@ const handleRowClick = (index) => {
         console.log(selectedRowIndices)
         return prev.filter(item => item !== index);
       }
-     
+
     });
   };
 
-   // Function to determine the background class
-   const getBackgroundClass = (index) => {
+  // Function to determine the background class
+  const getBackgroundClass = (index) => {
     return selectedRowIndices.includes(index) ? 'bg-blue-200 dark:bg-blue-700' : 'bg-white dark:bg-edDarker';
   };
   const handleBackButton = () => {
@@ -229,7 +229,7 @@ const handleRowClick = (index) => {
     return <LoadingSpinner />
   }
 
-  
+
   if (error) {
     const [status, message] = error.message.split(': ');
 
@@ -247,7 +247,8 @@ const handleRowClick = (index) => {
       <div className="w-1/2 flex flex-col mx-auto">
         <div className="flex justify-between border-b-2 border-edMedGray mb-4 mt-8 pb-1">
           <h1 className="text-xl text-elDark dark:text-edWhite font-medium">New Card</h1>
-          <select id="selectDeck" value={deckId} onChange={(e) => setDeckId(e.target.value)} className='text-black bg-elGray border border-black dark:bg-edDarker dark:text-edWhite focus:outline-none' >
+          <select id="selectDeck" value={deckId} onChange={(e) => setDeckId(e.target.value)}
+            className='text-black bg-elGray dark:bg-edDarker dark:text-edWhite focus:outline-none h-8 mb-1 pl-1 pr-4' >
             <option key='select-deck-key' value=''>Select a deck</option>
             {decks.map((deck) => (
               <option key={deck.deck_id} value={deck.deck_id}>{deck.name}</option>
@@ -262,46 +263,46 @@ const handleRowClick = (index) => {
           </button>
           <p className="text-elDark dark:text-edWhite mb-2">
             To let AI generate cards based on your input simply just put the text in the below box; Words limit 500
-            </p>
+          </p>
           <div className="mb-2 flex flex-col w-full">
             <textarea value={userInput} onChange={handleInputChange} className="text-black dark:text-white dark:bg-edDarker w-full min-h-20 h-40 p-2 border border-edDarkGray focus:outline-none custom-scrollbar"
-              placeholder="put your text here" ></textarea>
-               <div className="word-count">
-                Word count: {wordCount}
+              placeholder="put your text here" required></textarea>
+            <div className="word-count">
+              Word count: {wordCount}
             </div>
           </div>
           <button type='submit' className="button-common button-blue font-semibold py-2 text-center w-1/4 my-2">
             Submit
           </button>
 
-          
+
         </form>
 
         <form onSubmit={handleSubmitChoice} className='flex flex-col items-center'>
-        <h3 className="text-elDark dark:text-edWhite">Preview</h3>
-        <button type='submit' className="button-common button-blue font-semibold py-2 text-center w-1/4 my-2">Finish Choose</button>
-            <div className="h-[50vh] overflow-y-auto">
-                {waiting ? (
-                <div className="flex justify-center items-center">
-                     <LoadingSpinner />
+          <h3 className="text-elDark dark:text-edWhite">Preview</h3>
+          <button type='submit' className="button-common button-blue font-semibold py-2 text-center w-1/4 my-2">Finish Choose</button>
+          <div className="h-[50vh] overflow-y-auto">
+            {waiting ? (
+              <div className="flex justify-center items-center">
+                <LoadingSpinner />
+              </div>
+            ) : (
+              preview.map((item, index) => (
+                <div className={`grid grid-cols-2 gap-4 font-medium px-2 ${getBackgroundClass(index)}`} key={index} onClick={() => handleRowClick(index)}  >
+                  <div className="border bg-white dark:bg-edDarker text-black dark:text-edWhite mt-2 px-2 py-2">
+                    <p>{item.question}</p>
+                  </div>
+                  <div className="border bg-white dark:bg-edDarker text-black dark:text-edWhite mt-2 px-2 py-2 relative">
+                    <p>{item.answer}</p>
+                  </div>
                 </div>
-                ) : (
-                    preview.map((item, index) => (
-                    <div className={`grid grid-cols-2 gap-4 font-medium px-2 ${getBackgroundClass(index)}`} key={index} onClick={() => handleRowClick(index)}  >
-                        <div className="border bg-white dark:bg-edDarker text-black dark:text-edWhite mt-2 px-2 py-2">
-                            <p>{item.question}</p>
-                        </div>
-                        <div className="border bg-white dark:bg-edDarker text-black dark:text-edWhite mt-2 px-2 py-2 relative">
-                            <p>{item.answer}</p>
-                        </div>
-                    </div>
-                    ))
-                
-                )}
+              ))
+
+            )}
           </div>
         </form>
       </div>
-      <div className={`flex flex-col items-center min-w-40 p-3 fixed top-20 right-5 rounded-[1.4rem] text-white ${popupColor}
+      <div className={`text-white font-semibold flex flex-col items-center min-w-40 p-3 fixed top-20 right-5 rounded-[1.4rem] ${popupColor}
           transition-opacity duration-200 ${popupActive ? 'opacity-100' : 'opacity-0'}`}
       >
         {popupText}

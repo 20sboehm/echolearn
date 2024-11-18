@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import api from '../utils/api';
+// import api from '../utils/api';
 import { Link, useSearchParams } from 'react-router-dom';
 import defaultAvatar from "../assets/defaltUser.png";
 import FriendsPage from './FriendsPage';
@@ -7,7 +7,8 @@ import { useApi } from "../hooks";
 import { useMutation, useQueryClient } from "react-query";
 
 function ProfilePage() {
-  const { _get, _patch } = api();
+  const api = useApi();
+  // const { _get, _patch, _post } = api();
   // profile
   const [searchParams] = useSearchParams();
   const userId = searchParams.get('userId');
@@ -27,6 +28,7 @@ function ProfilePage() {
 
   // Tabs (other info)
   const [folders, setFolders] = useState([]);
+  const [rootDecks, setRootDecks] = useState([]);
   const [RatedDeck, setRatedDeck] = useState([]);
   const [activeTab, setActiveTab] = useState('folders');
 
@@ -36,6 +38,10 @@ function ProfilePage() {
   const [avatar, setAvatar] = useState(defaultAvatar);
   const [preview, setPreview] = useState(null);
   const [file, setFile] = useState(null);
+
+  // Notification settings
+  const [toggleNotifications, setToggleNotifications] = useState(false);
+  const [notificationTime, setNotificationTime] = useState("");
 
   const selectedTabClassName = "bg-elSkyBlue text-white dark:bg-edMedGray";
   const unselectedTabClassName = "bg-elLightGray text-elDarkGray dark:bg-edDarkGray dark:text-white";
@@ -71,45 +77,116 @@ function ProfilePage() {
     "Uruguay", "Uzbekistan", "Vanuatu", "Venezuela", "Vietnam", "Yemen", "Zambia", "Zimbabwe"
   ];
 
-  useEffect(() => {
-    async function fetchProfile() {
-      try {
-        const endpoint = userId ? `/api/profile/me?userId=${userId}` : '/api/profile/me';
-        const response = await _get(endpoint);
-        const data = await response.json();
-        setProfile(data);
-        setEditableUsername(data.username);
-        setEditableEmail(data.email);
-        setEditableAge(data.age);
-        setEditableCountry(data.country);
-        setAvatar(data.avatar || defaultAvatar);
-  
-        if (data.is_owner) {
-          setFlipOrSet(data.flip_mode);
-          setSidebarClosed(data.sidebar_open);
-          setLightMode(data.light_mode);
-  
-          if (!data.light_mode) {
-            document.documentElement.classList.add('dark');
-          } else {
-            document.documentElement.classList.remove('dark');
-          }
+  async function fetchProfile() {
+    try {
+      const endpoint = userId ? `/api/profile/me?userId=${userId}` : '/api/profile/me';
+      const response = await api._get(endpoint);
+      const data = await response.json();
+      setProfile(data);
+      setEditableUsername(data.username);
+      setEditableEmail(data.email);
+      setEditableAge(data.age);
+      setEditableCountry(data.country);
+      setAvatar(data.avatar || defaultAvatar);
+
+      if (data.is_owner) {
+        setFlipOrSet(data.flip_mode);
+        setSidebarClosed(data.sidebar_open);
+        setLightMode(data.light_mode);
+
+        if (!data.light_mode) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
         }
-  
-        const folderEndpoint = userId ? `/api/profile/folders_decks?userId=${userId}` : '/api/profile/folders_decks';
-        const foldersResponse = await _get(folderEndpoint);
-        const foldersData = await foldersResponse.json();
-        setFolders(foldersData);
-        const RatedResponse = await _get('/api/profile/ALLRatedDecks');
-        const RatedDeck = await RatedResponse.json();
-        setRatedDeck(RatedDeck);
-      } catch (error) {
-        setError('Failed to fetch profile data');
       }
+
+      const folderEndpoint = userId ? `/api/profile/folders_decks?userId=${userId}` : '/api/profile/folders_decks';
+      const foldersResponse = await api._get(folderEndpoint);
+      const foldersData = await foldersResponse.json();
+      setFolders(foldersData.folders);
+      setRootDecks(foldersData.decks);
+      const RatedResponse = await api._get('/api/profile/ALLRatedDecks');
+      const RatedDeck = await RatedResponse.json();
+      setRatedDeck(RatedDeck);
+    } catch (error) {
+      console.log(error)
+      setError('Failed to fetch profile data');
     }
-  
+  }
+
+  const fetchUserSettings = async () => {
+    try {
+      const response = await api._get('/api/emails/get-notification-settings');
+      const data = await response.json();
+
+      setToggleNotifications(data.wants_notification);
+
+      // Convert UTC ISO string to a Date object in local time
+      const localTime = new Date(data.notification_time);  // Convert the ISO string to a Date object in local time
+      const hours = localTime.getHours().toString().padStart(2, '0');  // Get the local hours and ensure two digits
+      const minutes = localTime.getMinutes().toString().padStart(2, '0');  // Get the local minutes and ensure two digits
+      const formattedTime = `${hours}:${minutes}`;  // Format as HH:mm
+
+      setNotificationTime(formattedTime);
+    } catch (error) {
+      console.error('Failed to obtain notification settings.', error);
+    }
+  };
+
+  useEffect(() => {
     fetchProfile();
+    fetchUserSettings();
   }, []);
+
+  // useEffect(() => {
+  //   fetchUserSettings();
+  // }, []);
+
+  const uploadMutation = useMutation(
+    async (formData) => {
+      const response = await apiClient._postFile("/api/profile/upload_avatar", formData);
+      if (!response.ok) throw new Error("Avatar upload fail");
+      return response.json();
+    },
+    {
+      onSuccess: (data) => {
+        console.log("Success");
+        setAvatar(data.avatar_url);
+        console.log("Avatar URL:", data.avatar_url);
+        setPreview(null);
+        setFile(null);
+        queryClient.invalidateQueries("profile", { refetchActive: true });
+        window.location.reload();
+      },
+      onError: () => alert("Failed to upload avatar")
+    }
+  );
+
+  const handleUpdateNotificationSettings = async () => {
+    const [hours, minutes] = notificationTime.split(":");
+
+    // Create a new Date object for today with the specified time in local time (provided by user)
+    const now = new Date();
+    now.setHours(parseInt(hours), parseInt(minutes), 0);
+
+    // toISOString will automatically convert to UTC based off the current local time zone
+    const notificationTimeUTC = now.toISOString();
+
+    let data = {
+      wants_notification: toggleNotifications,
+      notification_time: notificationTimeUTC
+    }
+
+    const response = await api._post('/api/emails/update-notification-settings', data);
+
+    if (response.ok) {
+      console.log("Notification settings updated!");
+    } else {
+      let data = await response.json();
+      console.log(data.error)
+    }
+  };
 
   // Edit handle here
   const handleEditClick = (field) => {
@@ -143,7 +220,7 @@ function ProfilePage() {
         return;
     }
     try {
-      const response = await _patch('/api/profile/me', updatedData);
+      const response = await api._patch('/api/profile/me', updatedData);
       const data = await response.json();
       setProfile(data);
       // Reset the editing state for the specific field
@@ -189,7 +266,7 @@ function ProfilePage() {
     const newFlipOrSet = !flipOrSet;
     setFlipOrSet(newFlipOrSet);
     try {
-      const response = await _patch('/api/profile/me', { flip_mode: newFlipOrSet });
+      const response = await api._patch('/api/profile/me', { flip_mode: newFlipOrSet });
     } catch (error) {
       setError('Failed to update flip or set setting');
     }
@@ -199,7 +276,7 @@ function ProfilePage() {
     const newSidebarClosed = !sidebarClosed;
     setSidebarClosed(newSidebarClosed);
     try {
-      const response = await _patch('/api/profile/me', { sidebar_open: newSidebarClosed });
+      const response = await api._patch('/api/profile/me', { sidebar_open: newSidebarClosed });
     } catch (error) {
       setError('Failed to update sidebar closed setting');
     }
@@ -216,31 +293,31 @@ function ProfilePage() {
     }
 
     try {
-      const response = await _patch('/api/profile/me', { light_mode: newLightMode });
+      const response = await api._patch('/api/profile/me', { light_mode: newLightMode });
     } catch (error) {
       setError('Failed to update sidebar closed setting');
     }
   };
 
-  const uploadMutation = useMutation(
-    async (formData) => {
-      const response = await apiClient._postFile("/api/profile/upload_avatar", formData);
-      if (!response.ok) throw new Error("Avatar upload fail");
-      return response.json();
-    },
-    {
-      onSuccess: (data) => {
-        console.log("Success");
-        setAvatar(data.avatar_url);
-        console.log("Avatar URL:", data.avatar_url);
-        setPreview(null);
-        setFile(null);
-        queryClient.invalidateQueries("profile", { refetchActive: true });
-        window.location.reload();
-      },
-      onError: () => alert("Failed to upload avatar")
-    }
-  );
+  // const uploadMutation = useMutation(
+  //   async (formData) => {
+  //     const response = await apiClient._postFile("/api/profile/upload_avatar", formData);
+  //     if (!response.ok) throw new Error("Avatar upload fail");
+  //     return response.json();
+  //   },
+  //   {
+  //     onSuccess: (data) => {
+  //       console.log("Success");
+  //       setAvatar(data.avatar_url);
+  //       console.log("Avatar URL:", data.avatar_url);
+  //       setPreview(null);
+  //       setFile(null);
+  //       queryClient.invalidateQueries("profile", { refetchActive: true });
+  //       window.location.reload();
+  //     },
+  //     onError: () => alert("Failed to upload avatar")
+  //   }
+  // );
 
   const handleAvatarChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -267,7 +344,7 @@ function ProfilePage() {
         <div className="flex items-center -mt-2">
 
           <div className="profile-page">
-            <div className={`relative w-[100px] h-[100px] ${profile.is_owner ? "cursor-pointer" : ""}`} 
+            <div className={`relative w-[100px] h-[100px] ${profile.is_owner ? "cursor-pointer" : ""}`}
               {...(profile.is_owner && { onClick: () => document.getElementById('avatarInput').click() })}>
               <img
                 src={preview || avatar}
@@ -382,9 +459,19 @@ function ProfilePage() {
               <div>
                 <h2 className="text-xl font-bold text-white">Folders and Decks</h2>
                 {folders.length > 0 ? (
-                  folders.map((folder) => <Folder key={folder.folder_id} folder={folder} is_owner={profile.is_owner}/>)
+                  folders.map((folder) => <Folder key={folder.folder_id} folder={folder} is_owner={profile.is_owner} />)
                 ) : (
                   <p>No folders or decks available</p>
+                )}
+                {rootDecks.length > 0 ? (
+                  rootDecks.map((deck) => (
+                    <Link key={deck.deck_id} to={`/decks/public/${deck.deck_id}`} className="flex items-center">
+                      <span className="mx-2 mt-2">📚</span>
+                      <p className="overflow-x-auto whitespace-nowrap">{deck.name}</p>
+                    </Link>
+                  ))
+                ) : (
+                  null
                 )}
               </div>
             )}
@@ -446,6 +533,20 @@ function ProfilePage() {
               value={lightMode}
               onChange={handleLightMode}
             />
+
+            <h2 className='mt-8 border-t py-4 font-semibold'>Notification Settings</h2>
+
+            <input type='checkbox' id='toggleEmailNotifs' name='toggleEmailNotifs' checked={toggleNotifications}
+              onChange={(e) => { setToggleNotifications(!toggleNotifications) }} />
+            <label htmlFor="toggleEmailNotifs" className='ml-2'>Enable Email Notifications</label>
+
+            <div>
+              <input type="time" id='notifTime' name='notifTime' value={notificationTime} onChange={(e) => { setNotificationTime(e.target.value) }}
+                className='text-black mt-2 p-1' />
+              <label htmlFor="notifTime" className='ml-2' >Time</label>
+            </div>
+
+            <button className='button-common p-1.5 mt-4' onClick={handleUpdateNotificationSettings}>Update Notification Settings</button>
 
             {/* Possible add setting for profile visible level (public, friend only, private) */}
           </div>
