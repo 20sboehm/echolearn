@@ -104,7 +104,8 @@ function ProfilePage() {
       const folderEndpoint = userId ? `/api/profile/folders_decks?userId=${userId}` : '/api/profile/folders_decks';
       const foldersResponse = await api._get(folderEndpoint);
       const foldersData = await foldersResponse.json();
-      setFolders(foldersData);
+      setFolders(foldersData.folders);
+      setRootDecks(foldersData.decks);
       const RatedResponse = await api._get('/api/profile/ALLRatedDecks');
       const RatedDeck = await RatedResponse.json();
       setRatedDeck(RatedDeck);
@@ -465,7 +466,7 @@ function ProfilePage() {
                 {rootDecks.length > 0 ? (
                   rootDecks.map((deck) => (
                     <Link key={deck.deck_id} to={`/decks/public/${deck.deck_id}`} className="flex items-center">
-                      <span className="mx-2">📚</span>
+                      <span className="mx-2 mt-2">📚</span>
                       <p className="overflow-x-auto whitespace-nowrap">{deck.name}</p>
                     </Link>
                   ))
