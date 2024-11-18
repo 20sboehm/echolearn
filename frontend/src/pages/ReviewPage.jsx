@@ -252,18 +252,35 @@ function ReviewPageContent() {
 
 function FinishView(deckId) {
   return (
-    <div className="flex flex-row justify-center items-center mt-[10vh]">
-      <img className="w-40 h-40 mt-[-10vh]" src={partyPopperFlipImg} alt="Party Popper" />
-      <div className="flex flex-col justify-center items-center mx-4">
-        <h3 className="h-[25vh] flex justify-center items-center w-full border border-black bg-white rounded-md p-5 text-2xl text-black my-4">You have studied all the cards in this deck</h3>
-        <Link to={`/decks/${deckId.deckId}`}>
-          <button className="button-common button-blue border rounded-md px-2 py-1">Back to deck</button>
-        </Link>
-      </div>
-      <img className="w-40 h-40 mt-[-10vh]" src={partyPopperImg} alt="Party Popper" />
+    <div className="flex flex-col justify-center items-center mx-4 mt-10">
+      <h2 className="text-center text-3xl">No more cards in this deck!</h2>
+      <Link to={`/decks/${deckId.deckId}`}>
+        <button className="button-common button-blue border rounded-md px-4 py-2 mt-8">Back to deck</button>
+      </Link>
+      <Link to="/">
+        <button className="button-common button-blue border rounded-md px-4 py-2 mt-4">Home</button>
+      </Link>
     </div>
   )
 }
+
+// function FinishView(deckId) {
+//   return (
+//     <div className="flex flex-row justify-center items-center mt-[10vh]">
+//       <img className="w-40 h-40 mt-[-10vh]" src={partyPopperFlipImg} alt="Party Popper" />
+//       <div className="flex flex-col justify-center items-center mx-4">
+//         <h3 className="h-[25vh] flex justify-center items-center w-full border border-black bg-white rounded-md p-5 text-2xl text-black my-4">You have studied all the cards in this deck</h3>
+//         <Link to={`/decks/${deckId.deckId}`}>
+//           <button className="button-common button-blue border rounded-md px-2 py-1">Back to deck</button>
+//         </Link>
+//         <Link to="/">
+//           <button className="button-common button-blue border rounded-md px-2 py-1 mt-4">Home</button>
+//         </Link>
+//       </div>
+//       <img className="w-40 h-40 mt-[-10vh]" src={partyPopperImg} alt="Party Popper" />
+//     </div>
+//   )
+// }
 
 function ReviewCard({ card }) {
   const { changeAnimation, displayQuestionOnFlipCard, toggleFlip } = useContext(ReviewContext);

@@ -2,7 +2,7 @@ from typing import Optional
 from django.shortcuts import get_object_or_404
 from ninja import Router, File
 from flashcards.models import CustomUser, Folder, Deck, Rating
-from flashcards.schemas import GetUser, UpdateUser, FolderInfo, DeckInfo
+from flashcards.schemas import GetUser, UpdateUser, FolderInfo, DeckInfo, GetSidebar
 from ninja_jwt.authentication import JWTAuth
 import boto3
 import json
@@ -33,6 +33,7 @@ def get_profile(request, userId: int = None):
         "light_mode": user.light_mode,
         "avatar": user.avatar,
         "is_owner": is_owner,
+        "score":user.score
     }
 
 # Edit profile
@@ -89,7 +90,7 @@ def get_folder_data(folder, user):
     
     return folder_data
 
-@profile_router.get("/folders_decks", response=list[FolderInfo], auth=JWTAuth())
+@profile_router.get("/folders_decks", response=GetSidebar, auth=JWTAuth())
 def get_folders_and_decks(request, userId: int = None):
     authenticated_user = request.auth
 
@@ -99,7 +100,10 @@ def get_folders_and_decks(request, userId: int = None):
         user = authenticated_user
 
     folders = Folder.objects.filter(owner=user, parent__isnull=True)
+    decks = Deck.objects.filter(owner=user, folder__isnull=True)
+
     folder_list = []
+    deck_list = []
 
     # Loop through folders
     for folder in folders:
@@ -112,7 +116,15 @@ def get_folders_and_decks(request, userId: int = None):
             if public_folder_data:
                 folder_list.append(public_folder_data)
 
-    return folder_list
+    for deck in decks:
+        if authenticated_user.id == user.id or deck.isPublic:
+            deck_list.append(DeckInfo(
+                deck_id=deck.deck_id,
+                name=deck.name,
+                parent_folder_id=None
+            ))
+
+    return {"folders": folder_list, "decks": deck_list}
 
 def get_folder_data(folder: Folder, user: Optional[CustomUser]) -> FolderInfo:
     """

@@ -4,7 +4,22 @@ import { Link } from "react-router-dom";
 import { useApi } from "../hooks";
 import { ResizableBox } from 'react-resizable';
 import { DeckCreateIcon, FolderCreateIcon, ExpandContractAllIcon, SidebarOpenClose, ChevronIcon } from './Icons';
+import QuestionMarkHoverHelp from './QuestionMarkHoverHelp';
 import 'react-resizable/css/styles.css';
+
+const sideBarHelpTextList = [
+  "Click on a deck to go to the deck page.",
+  "Right click empty space to create a new folder.",
+  "Right click a folder to add a child folder/deck.",
+  "Right click a folder/deck to rename/delete it.",
+  "You can also add folders and decks with the buttons on the top of the sidebar. When adding a deck this way, make sure you have a folder selected (by left clicking on one).",
+  "Click the vertical arrow at the top to expand/collapse all folders and decks.",
+  "Click the horizontal arrow (top right, outside the sidebar) to close the sidebar.",
+]
+
+function capitalizeFirstLetter(val) {
+  return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+}
 
 const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) => {
   const api = useApi();
@@ -20,6 +35,7 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
   const folderRef = useRef(null);
   const buttonRef = useRef(null);
   const popupRef = useRef(null);
+  const draggingItemRef = useRef(null);
 
   // Click outside handler to unselect the folder or deck
   useEffect(() => {
@@ -58,7 +74,7 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
             folders.forEach((folder) => {
               // Only initialize folders that don't have a state yet
               if (!(folder.folder_id in newFolderStates)) {
-                newFolderStates[folder.folder_id] = false; // Default is closed
+                newFolderStates[folder.folder_id] = true; // Default is closed
               }
               if (folder.children) {
                 initializeFolderStates(folder.children); // Recursively initialize nested folders
@@ -183,7 +199,9 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
   };
 
   // Following are the logic for create both folder and deck
-  const handleCreate = async () => {
+  const handleCreate = async (e) => {
+    e.preventDefault();
+
     if (newName.trim() === '') {
       alert("Name can't be empty")
       return;
@@ -191,11 +209,11 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
 
     let newItem = {
       name: newName,
-      // null should only happen if user is creating a top level folder
+      // null should only happen if user is creating a top level item
       folder_id: selected?.parent_folder_id || selected?.folder_id || null,
     };
-    const endpoint = createType === 'deck' ? "/api/decks" : "/api/folders";
 
+    const endpoint = createType === 'deck' ? "/api/decks" : "/api/folders";
     try {
       const response = await api._post(endpoint, newItem);
       if (response.status === 201) {
@@ -204,6 +222,7 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
         setContextMenu(null);
         setShowInput(false);
         setCreateType('');
+        setSelected(null);
       } else {
         console.error(`Failed to create ${createType}`, response);
       }
@@ -233,6 +252,7 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
         fetchSidebarData();
         setRenaming(false);
         setContextMenu(null);
+        setSelected(null);
       } else {
         console.error("Failed to rename", response);
       }
@@ -257,6 +277,7 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
       if (response.status === 204) {
         fetchSidebarData();
         setContextMenu(null);
+        setSelected(null);
       } else {
         alert("Cannot delete folder with items inside.");
       }
@@ -265,12 +286,54 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
     }
   };
 
+
+  // Drag-and-Drop Handlers
+  const handleDragStart = (e, item) => {
+    e.stopPropagation();
+    draggingItemRef.current = item;
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = async (e, targetFolder) => {
+    e.stopPropagation();
+
+    if (!draggingItemRef.current) return;
+
+    // Determine if the dragged item is a folder or deck
+    const isFolder = draggingItemRef.current.folder_id !== undefined && draggingItemRef.current.deck_id == undefined;
+    const itemId = isFolder ? draggingItemRef.current.folder_id : draggingItemRef.current.deck_id;
+    const targetId = targetFolder ? targetFolder.folder_id : null;
+
+    if (itemId === targetId && isFolder) return; // Prevent dropping onto itself
+
+    const endpoint = isFolder
+      ? `/api/folders/${itemId}/move${targetId !== null ? `?target_folder_id=${targetId}` : ''}`
+      : `/api/decks/${itemId}/move${targetId !== null ? `?target_folder_id=${targetId}` : ''}`;
+  
+
+    console.log(endpoint);
+    try {
+      const response = await api._patch(endpoint);
+      if (response.status === 200) {
+        fetchSidebarData(); // Refetch the sidebar data
+      } else {
+        console.error('Failed to move item', response);
+      }
+    } catch (error) {
+      console.error('Error moving item', error);
+    }
+  };
+
+
   return (
-    <div onContextMenu={(e) => handleRightClick(e)}>
+    <div onContextMenu={(e) => handleRightClick(e)} onDragOver={(e) => handleDragOver(e)} onDrop={(e) => handleDrop(e, null)}>
       <button
-        onClick={sidebarShow}
+        onClick={() => { sidebarShow(); }}
         style={{ left: `calc(${sidebarWidth}px)` }}
-        className={`px-1 py-1 m-1 absolute top-[4rem] z-50 hover:bg-elLavender dark:hover:bg-edStrongHLT rounded-md`}
+        className={`px-1 py-1 m-1 absolute top-[4rem] z-15 hover:bg-elLavender dark:hover:bg-edStrongHLT rounded-md`}
       >
         <SidebarOpenClose sidebarOpen={sidebarOpen} sidebarWidth={sidebarWidth} />
       </button>
@@ -289,8 +352,13 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
         handle={<div className="absolute top-0 right-0 h-full w-2 cursor-default hover:cursor-ew-resize bg-transparent hover:bg-edBlue z-10 transition duration-200" />}
       >
         <div className="h-[92vh] overflow-y-auto p-2">
-          <div className='flex justify-between border-b border-elDark dark:border-edGray'>
-            <h2 className='font-bold text-xl text-elDark dark:text-edWhite whitespace-nowrap'>Deck Library</h2>
+          <div className='flex justify-between border-b border-elDark dark:border-edGray items-center'>
+            <div className='flex items-center'>
+              <h2 className='font-bold text-xl text-elDark dark:text-edWhite whitespace-nowrap mr-2'>Deck Library</h2>
+              <QuestionMarkHoverHelp title="Sidebar" helpTextList={sideBarHelpTextList} heightInRem={38} />
+            </div>
+
+            {/* <ExpandContractAllIcon isExpanded={isAnyFolderOpen} /> */}
             <div ref={buttonRef} className='flex items-center'>
               <button onClick={() => buttonCreate('deck')} className='hover:bg-elLavender dark:hover:bg-edStrongHLT mr-1 rounded-md'><DeckCreateIcon /></button>
               <button onClick={() => buttonCreate('folder')} className='hover:bg-elLavender dark:hover:bg-edStrongHLT mr-1 rounded-md'><FolderCreateIcon /></button>
@@ -302,22 +370,46 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
           {sidebarData && sidebarData.folders ? (
             sidebarData.folders.length > 0 ? (
               sidebarData.folders.map((folder, index) => (
-                <Folder key={index} folder={folder} onRightClick={handleRightClick} folderStates={folderStates} toggleFolder={toggleFolder} setContextMenu={setContextMenu} selected={selected} setSelected={setSelected} folderRef={folderRef} />
+                <Folder key={index} folder={folder} onRightClick={handleRightClick} folderStates={folderStates} toggleFolder={toggleFolder} setContextMenu={setContextMenu} selected={selected} setSelected={setSelected} folderRef={folderRef} onDragStart={handleDragStart} onDrop={handleDrop} onDragOver={handleDragOver} />
               ))
             ) : (
-              <p>You have no decks!</p>
+              <div className='flex flex-col justify-center'>
+                <p className='text-center mt-4'>You have no decks or folders!</p>
+                <p className='text-center italic mt-4'>Right click anywhere on the sidebar to create</p>
+              </div>
             )
 
           ) : (
             <div className='text-black'>Loading...</div>
           )}
+
+          {/* Render root-level decks */}
+          {sidebarData && sidebarData.decks && sidebarData.decks.length > 0 && (
+            <div className="mb-4">
+              {sidebarData.decks.map((deck, index) => (
+                <div
+                  key={index}
+                  className="text-elDark dark:text-edWhite flex items-center select-none mt-2"
+                  onContextMenu={(e) => handleRightClick(e, deck)}
+                  onDragStart={(e) => handleDragStart(e, deck)}
+                  onDrop={(e) => handleDrop(e, null)}
+                  onDragOver={handleDragOver}
+                >
+                  <Link to={`/decks/${deck.deck_id}`}>
+                    <p className="overflow-x-auto whitespace-nowrap hover:text-edBlue">~ {deck.name}</p>
+                  </Link>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
+
       </ResizableBox>
 
       {contextMenu && (
         <div
           ref={popupRef}
-          className="absolute bg-edDarker text-white p-2 z-[9999] flex flex-col rounded-md border border-eGray"
+          className="absolute bg-elCloudWhite dark:bg-edDarker p-2 z-[9999] flex flex-col rounded-md border border-black dark:border-edDividerGray"
           style={{
             top: `${contextMenu.y}px`,
             left: `${contextMenu.x}px`,
@@ -325,129 +417,60 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
         >
           {selected && ( // Right-click on folder or deck
             <>
-              <div
-                className='px-1 py-1 cursor-pointer text-[1rem] hover:bg-eHLT'
-                onClick={() => setCreateType('deck')}
-              >
-                Create Deck
-              </div>
-              <div
-                className='px-1 py-1 cursor-pointer text-[1rem] hover:bg-eHLT'
-                onClick={() => setCreateType('folder')}
-              >
-                Create Folder
-              </div>
-              <div
-                className='px-1 py-1 cursor-pointer text-[1rem] hover:bg-eHLT'
-                onClick={() => {
-                  setRenaming(true);
-                  setNewName(selected.name);
-                }}
-              >
-                Rename
-              </div>
-              <div
-                className='px-1 py-1 cursor-pointer text-[1rem] hover:bg-eHLT'
-                onClick={handleDelete}
-              >
-                Delete
-              </div>
-              <div
-                className='px-1 py-1 cursor-pointer text-[1rem] hover:bg-eHLT text-eRed'
-                onClick={() => { setNewName(''); setContextMenu(null); setCreateType(''); }}>
-                Cancel
-              </div>
+              <PopupMenuButton clickEvent={() => { setCreateType('deck'); setRenaming(false); setNewName(''); }}>Create Deck</PopupMenuButton>
+              <PopupMenuButton clickEvent={() => { setCreateType('folder'); setRenaming(false); setNewName(''); }}>Create Folder</PopupMenuButton>
+              <PopupMenuButton clickEvent={() => { setRenaming(true); setNewName(selected.name); setCreateType(''); }}>Rename</PopupMenuButton>
+              <PopupMenuButton clickEvent={() => { handleDelete(); }} customStyles="text-edRed dark:text-edRed">Delete</PopupMenuButton>
             </>
           )}
 
-          {!selected && ( // Right-click on empty space
+          {!selected && !createType && ( // Right-click on empty space
             <>
-              <div
-                className='px-1 py-1 cursor-pointer text-[1rem] hover:bg-eHLT'
-                onClick={() => setCreateType('folder')}
-              >
-                Create Folder
-              </div>
-              <div
-                className='px-1 py-1 cursor-pointer text-[1rem] hover:bg-eHLT text-eRed'
-                onClick={() => { setNewName(''); setContextMenu(null); setCreateType(''); }}>
-                Cancel
-              </div>
+              <PopupMenuButton clickEvent={() => setCreateType('folder')}>Create Folder</PopupMenuButton>
+              <PopupMenuButton clickEvent={() => setCreateType('deck')}>Create Deck</PopupMenuButton>
             </>
           )}
 
           {/* Input for creating new deck or folder */}
           {createType && (
-            <div style={{ marginTop: '10px' }}>
-              <input
-                type="text"
-                placeholder={`Enter ${createType} name`}
-                value={newName}
-                onChange={(e) => setNewName(e.target.value)}
-                style={{
-                  color: 'black',
-                  backgroundColor: 'white',
-                  padding: '5px',
-                  borderRadius: '3px',
-                  width: '100%',
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    handleCreate();
-                  }
-                }}
-              />
-              <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'space-between' }}>
-                <button onClick={handleCreate}>Create</button>
-                {/* <button onClick={() => { setNewName(''); setContextMenu(null); setCreateType('') }}>Cancel</button> */}
+            <form onSubmit={(e) => { handleCreate(e) }}>
+              <PopupMenuInput placeholder={`Enter ${createType} name`} value={newName} changeEvent={(e) => setNewName(e.target.value)} />
+
+              <div className='flex justify-center'>
+                <button className='text-white bg-edGreen dark:bg-edGreen 
+                  hover:bg-edDarkGreen dark:hover:bg-edDarkGreen mt-4 flex px-2 py-1 rounded mr-2'>Create {capitalizeFirstLetter(createType)}
+                </button>
               </div>
-            </div>
+            </form>
           )}
 
           {renaming && (
-            <div style={{ marginTop: '10px' }}>
-              <input
-                type="text"
-                placeholder="Enter new name"
-                value={newName}
-                onChange={(e) => setNewName(e.target.value)}
-                style={{
-                  color: 'black',
-                  backgroundColor: 'white',
-                  padding: '5px',
-                  borderRadius: '3px',
-                  width: '100%',
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    handleRename();
-                  }
-                }}
-              />
-              <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'space-between' }}>
-                <button onClick={handleRename}>Rename</button>
-                <button onClick={() => { setNewName(''); setContextMenu(null); setRenaming(false); }}>Cancel</button>
+            <form onSubmit={handleRename}>
+              <PopupMenuInput placeholder="Enter new name" value={newName} changeEvent={(e) => setNewName(e.target.value)} />
+
+              <div className='flex justify-center'>
+                <button className='text-white bg-edGreen dark:bg-edGreen 
+                    hover:bg-edDarkGreen dark:hover:bg-edDarkGreen mt-4 flex px-2 py-1 rounded mr-2'>Rename
+                </button>
               </div>
-            </div>
+            </form>
           )}
         </div>
       )}
 
       {showInput && (
-        <div ref={popupRef} style={{ position: 'absolute', top: '50px', left: '50px', background: 'black', padding: '10px', border: '1px solid #ddd', borderRadius: '5px', zIndex: 9999, color: 'white' }}>
-          <input
-            type="text"
-            placeholder={`Enter ${createType} name`}
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-            style={{ padding: '5px', borderRadius: '3px', width: '100%', color: 'black' }}
-            onKeyDown={(e) => {
+        <div ref={popupRef} className='absolute bg-elCloudWhite dark:bg-edDarker top-[50px] left-[50px] p-[10px] 
+        border border-[#ddd] rounded-[5px] z-50 text-black dark:text-white'>
+          <PopupMenuInput placeholder={`Enter ${createType} name`} value={newName} changeEvent={(e) => setNewName(e.target.value)}
+            keyDown={(e) => {
               if (e.key === 'Enter') {
-                handleCreate();
+                e.preventDefault();  // Prevent default behavior for Enter key
+                handleCreate(e);
               }
             }}
           />
-          <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'space-between' }}>
+
+          <div className='mt-2 flex justify-between'>
             <button onClick={handleCreate}>Create</button>
             <button onClick={() => { setNewName(''); setShowInput(false); setCreateType(''); }}>Cancel</button>
           </div>
@@ -457,33 +480,57 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
   );
 };
 
-const Folder = ({ folder, onRightClick, folderStates, toggleFolder, setContextMenu, selected, setSelected, folderRef }) => {
+function PopupMenuButton({ clickEvent, customStyles, children }) {
+  return (
+    <button
+      type='button'
+      className={`px-1 py-1 cursor-pointer text-[1rem] hover:bg-elHLT dark:hover:bg-edHLT text-left rounded text-black dark:text-white ${customStyles}`}
+      onClick={clickEvent}
+      onMouseDown={(e) => { e.preventDefault() }}
+    >
+      {children}
+    </button>
+  )
+}
+
+function PopupMenuInput({ placeholder, value, changeEvent, keyDown, customStyles }) {
+  return (
+    <input
+      type="text"
+      autoFocus
+      placeholder={placeholder}
+      value={value}
+      onChange={changeEvent}
+      className={`p-1.5 mt-1 rounded w-full bg-white dark:bg-edBase text-black dark:text-white border border-edDividerGray outline-none ${customStyles}`}
+      onKeyDown={keyDown}
+      required
+    />
+  )
+}
+
+const Folder = ({ folder, onRightClick, folderStates, toggleFolder, setContextMenu, selected, setSelected, folderRef, onDragStart, onDrop, onDragOver }) => {
 
   const handleLeftClick = (event) => {
-    // console.log("clicked")
-    // console.log(folder)
-
     event.preventDefault();
     event.stopPropagation();
-
 
     setSelected(folder);
     toggleFolder(folder.folder_id);
   };
 
   return (
-    <div ref={folderRef} className="mt-2">
+    <div ref={folderRef} className="mt-2" draggable onDragStart={(e) => onDragStart(e, folder)} onDragOver={(e) => onDragOver(e)} onDrop={(e) => onDrop(e, folder)}>
       <div onClick={handleLeftClick} onContextMenu={(e) => onRightClick(e, folder)}
         className={`cursor-pointer text-elDark dark:text-edWhite flex items-center select-none ${selected === folder ? 'bg-gray-300 dark:bg-edMedGray' : ''}`}>
-        <button onClick={() => { toggleFolder(folder.folder_id); }}>
-          <ChevronIcon isOpen={folderStates[folder.folder_id]} />
-        </button>
+        <ChevronIcon
+          isOpen={folderStates[folder.folder_id]}
+        />
         <p className="overflow-x-auto">{folder.name}</p>
       </div>
       {folderStates[folder.folder_id] && (
         <div className="ml-2 border-l border-edGray">
           {folder.decks.map((deck, index) => (
-            <div key={index} className="text-elDark dark:text-edWhite flex items-center select-none ml-2 mt-2" onContextMenu={(e) => onRightClick(e, deck)}>
+            <div key={index} className="text-elDark dark:text-edWhite flex items-center select-none ml-2 mt-2" onContextMenu={(e) => onRightClick(e, deck)} draggable onDragStart={(e) => onDragStart(e, deck)} onDragOver={(e) => onDragOver(e)} onDrop={(e) => onDrop(e, folder)}>
               <Link to={`/decks/${deck.deck_id}`}>
                 <p className="overflow-x-auto whitespace-nowrap hover:text-edBlue">{deck.name}</p>
               </Link>
@@ -491,13 +538,13 @@ const Folder = ({ folder, onRightClick, folderStates, toggleFolder, setContextMe
           ))}
           {folder.children &&
             folder.children.map((child, index) => (
-              <Folder key={index} folder={child} className="mt-2" onRightClick={onRightClick} folderStates={folderStates} toggleFolder={toggleFolder} setContextMenu={setContextMenu} selected={selected} setSelected={setSelected} />
+              <Folder key={index} folder={child} className="mt-2" onRightClick={onRightClick} folderStates={folderStates} toggleFolder={toggleFolder} setContextMenu={setContextMenu} selected={selected} setSelected={setSelected} folderRef={folderRef} onDragStart={onDragStart} onDrop={onDrop} onDragOver={onDragOver}
+              />
             ))}
         </div>
       )}
     </div>
   );
-
 };
 
 

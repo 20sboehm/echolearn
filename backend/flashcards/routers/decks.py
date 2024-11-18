@@ -59,8 +59,8 @@ def get_cards_from_deck_public(request, deck_id: int):
             raise HttpError(403, "You are not authorized to access this deck")
     
     card_list = Card.objects.filter(deck_id=deck_id)
-    
-    return {"deck_id": deck.deck_id, "isPublic": deck.isPublic, "deck_name": deck.name, "cards": card_list,"stars": deck.stars, "order_List": deck.order_List, "publicAccess": publicAccess, "rate": deck.rate}
+
+    return {"deck_id": deck.deck_id, "isPublic": deck.isPublic, "deck_name": deck.name,"deckdescription":deck.description, "cards": card_list,"stars": deck.stars, "order_List": deck.order_List, "publicAccess": publicAccess, "rate": deck.rate}
 
 @decks_router.get("/{deck_id}/cards", response={200: sc.DeckCards, 404: str}, auth=JWTAuth())
 def get_cards_from_deck(request, deck_id: int):
@@ -77,7 +77,8 @@ def get_cards_from_deck(request, deck_id: int):
         for card in card_list:
             deck.order_List.append(card.card_id)
             deck.save()
-    return {"deck_id": deck.deck_id, "isPublic": deck.isPublic, "deck_name": deck.name, "cards": card_list, "stars":deck.stars, "order_List":deck.order_List, "rate": deck.rate}
+
+    return {"deck_id": deck.deck_id, "isPublic": deck.isPublic, "deckdescription":deck.description, "deck_name": deck.name, "cards": card_list, "stars":deck.stars, "order_List":deck.order_List, "rate": deck.rate}
 
 @decks_router.get("/{deck_id}/ratedOrnot", response={200: bool, 404: str}, auth=JWTAuth())
 def checkRatedresult(request, deck_id: int):
@@ -141,7 +142,9 @@ def create_card(request, payload: sc.CreateCard):
 @decks_router.post("", response={201: sc.GetDeck, 404: str}, auth=JWTAuth())
 def create_deck(request, payload: sc.CreateDeck):
 
-    folder_ref = get_object_or_404(Folder, pk=payload.folder_id)
+    folder_ref = None
+    if payload.folder_id is not None:
+        folder_ref = get_object_or_404(Folder, pk=payload.folder_id)
 
     owner_ref = request.user  # Use the authenticated user as the owner
         
@@ -160,7 +163,8 @@ def update_deck_status(request, deck_id:int):
     deck.isPublic = not deck.isPublic
     deck.save()
     card_list = Card.objects.filter(deck_id=deck_id)
-    return {"deck_id": deck.deck_id,"isPublic": deck.isPublic, "deck_name": deck.name, "cards": card_list,"stars":deck.stars, "order_List":deck.order_List, "rate": deck.rate}
+
+    return {"deck_id": deck.deck_id,"isPublic": deck.isPublic,"deckdescription":deck.description, "deck_name": deck.name, "cards": card_list,"stars":deck.stars, "order_List":deck.order_List, "rate": deck.rate}
 
 @decks_router.post("/{deck_id}/ratings", response={200: dict, 404: str}, auth=JWTAuth())
 def rate_deck(request, deck_id: int):
@@ -216,6 +220,34 @@ def store_new_order_list(request, deck_id):
         }, status=200)
     else:
         return 404
+    
+    
+@decks_router.post("/{deck_id}/editall", response={200:None, 404: str}, auth=JWTAuth())
+def editall(request, deck_id):
+    deck = get_object_or_404(Deck, deck_id=deck_id)
+    data = json.loads(request.body)
+    
+    newitems = data.get("newItems")
+    
+    deck.name = data.get("newdeckname")
+    deck.description = data.get("newdeckdescription")
+    deck.save()
+    
+    if deck:
+        cardList = Card.objects.filter(deck=deck)
+        card_map = {card.card_id: card for card in cardList}
+        for item in newitems:
+            if(item["card_id"] in card_map):
+                card = card_map[item["card_id"]]
+                card.question = item["question"]
+                card.answer = item["answer"]
+                card.save()
+       
+        return JsonResponse({
+            "neworderlist": deck.order_List
+        }, status=200)
+    else:
+        return 404
 # ---------------------------------------------
 # -------------------- PATCH ------------------
 # ---------------------------------------------
@@ -233,6 +265,20 @@ def update_deck(request, deck_id: int, payload: sc.UpdateDeck):
     deck.save()
     
     return deck
+
+@decks_router.patch("/{deck_id}/move", auth=JWTAuth())
+def move_deck(request, deck_id: int, target_folder_id: int = None):
+    deck = get_object_or_404(Deck, deck_id=deck_id)
+    print(deck)
+    
+    # Moving into orginal folder do nothing
+    if (deck.folder_id == target_folder_id):
+        return 
+    
+    deck.folder_id = target_folder_id
+    deck.save()
+
+    return {"success": True, "message": "Deck moved successfully", "deck_id": deck_id, "target_folder_id": target_folder_id}
 
 # ---------------------------------------------
 # -------------------- DELETE -----------------

@@ -10,6 +10,7 @@ sidebar_router = Router(tags=["Sidebar"])
 @sidebar_router.get("", response=sc.GetSidebar, auth=JWTAuth())
 def get_sidebar_info(request):
     sidebar_data = []
+    root_decks = []
     
     folders = Folder.objects.filter(owner_id=request.user.id)
     def get_folder_data(folder):
@@ -41,4 +42,14 @@ def get_sidebar_info(request):
         if folder.parent is None:
             sidebar_data.append(get_folder_data(folder))
 
-    return sc.GetSidebar(folders=sidebar_data)
+    # Fetch all root-level decks (decks without a folder)
+    root_level_decks = Deck.objects.filter(folder__isnull=True, owner_id=request.user.id)
+    for deck in root_level_decks:
+        root_decks.append(sc.DeckInfo(
+            deck_id=deck.deck_id,
+            name=deck.name,
+            parent_folder_id=None,
+        ))
+
+    # Return both the folder structure and root-level decks
+    return sc.GetSidebar(folders=sidebar_data, decks=root_decks)

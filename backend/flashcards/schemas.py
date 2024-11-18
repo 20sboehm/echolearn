@@ -22,6 +22,7 @@ class GetUser(Schema):
     light_mode: Optional[bool] = None
     is_owner: Optional[bool] = None
     avatar: Optional[str] = None
+    score: Optional[int] = None
 
     class Config:
         from_attributes = True
@@ -63,7 +64,7 @@ class UpdateFolder(Schema):
 
 class GetDeck(Schema):
     deck_id: int
-    folder_id: int
+    folder_id: Optional[int] = None
     owner_id: int
     name: str
     description: str
@@ -86,7 +87,7 @@ class GetPublicDeck(Schema):
     rate: float
     
 class CreateDeck(Schema):
-    folder_id: int
+    folder_id: Optional[int] = None
     name: str
     description: Optional[str] = None
     
@@ -175,6 +176,7 @@ class DeckCards(Schema):
     stars:int
     order_List: list[int]
     publicAccess: Optional[bool] = None
+    deckdescription:str
     
 class EditCards(Schema):
     question: Optional[str] = None
@@ -189,17 +191,18 @@ class CreateMultipleCard(Schema):
 
 class DeckInfo(Schema):
     deck_id: int
-    parent_folder_id: int
+    parent_folder_id: Optional[int] = None
     name: str
 
 class FolderInfo(Schema):
-    folder_id: int
+    folder_id: Optional[int] = None
     name: str
     decks: list[DeckInfo]
     children: Optional[list['FolderInfo']] = []
 
 class GetSidebar(Schema):
     folders: list[FolderInfo]
+    decks: Optional[list[DeckInfo]] = []
 
 # -----------------------------------------------
 # ------------------ Friend list ----------------
@@ -223,3 +226,11 @@ class GetImage(Schema):
     description: str
     link: str
     name: str
+    
+class UpdateNotificationSettings(Schema):
+    wants_notification: bool
+    notification_time: str
+    
+class GetNotificationSettings(Schema):
+    wants_notification: bool
+    notification_time: str

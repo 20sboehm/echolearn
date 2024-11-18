@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from ninja import Router
-from flashcards.models import Card, Deck
+from flashcards.models import Card, Deck, CustomUser
 from typing import List
 import flashcards.schemas as sc
 from django.shortcuts import get_object_or_404
@@ -166,16 +166,29 @@ def update_review_card(request, card_id: int, payload: sc.UpdateReviewCard):
     
     confidence_level = payload.confidence
     
+    user = request.auth
+    
     if confidence_level == 1:
         card.review_again = True
         card.incorrect_count += 1
+        #if incorrect -1
+        if user.score >0:
+            user.score -=1
+        
     elif confidence_level in [2, 3, 4]:
         if confidence_level == 2:
             card.ease_factor_points += 0.5
         else:
             card.ease_factor_points += 1
+        
+        # if correct +1
+        user.score += 1
         card.correct_count += 1
-    
+        
+    # if review +1
+    user.score +=1
+    user.save()
+    print(user.score)
     card.ease_factor_max_points += 1
     
     if card.is_new:
