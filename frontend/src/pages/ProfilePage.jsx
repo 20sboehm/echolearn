@@ -28,6 +28,7 @@ function ProfilePage() {
 
   // Tabs (other info)
   const [folders, setFolders] = useState([]);
+  const [rootDecks, setRootDecks] = useState([]);
   const [RatedDeck, setRatedDeck] = useState([]);
   const [activeTab, setActiveTab] = useState('folders');
 
@@ -460,6 +461,16 @@ function ProfilePage() {
                   folders.map((folder) => <Folder key={folder.folder_id} folder={folder} is_owner={profile.is_owner} />)
                 ) : (
                   <p>No folders or decks available</p>
+                )}
+                {rootDecks.length > 0 ? (
+                  rootDecks.map((deck) => (
+                    <Link key={deck.deck_id} to={`/decks/public/${deck.deck_id}`} className="flex items-center">
+                      <span className="mx-2">📚</span>
+                      <p className="overflow-x-auto whitespace-nowrap">{deck.name}</p>
+                    </Link>
+                  ))
+                ) : (
+                  null
                 )}
               </div>
             )}
