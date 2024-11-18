@@ -64,12 +64,12 @@ function QuizletParserPage() {
   const handleQuizletParser = async (e) => {
     e.preventDefault();
 
-      // Check if deckId is valid
-      if (!deckId) {
-        console.error("Error: Missing deckId");
-        alert("Faile to creat cards because did not select deck")
-        displayPopup(false);
-        return; 
+    // Check if deckId is valid
+    if (!deckId) {
+      console.error("Error: Missing deckId");
+      alert("Faile to creat cards because did not select deck")
+      displayPopup(false);
+      return;
     }
     console.log(quizletInput)
     let lineChoice = "{|}";
@@ -178,7 +178,8 @@ function QuizletParserPage() {
       <div className="w-1/2 flex flex-col mx-auto">
         <div className="flex justify-between border-b-2 border-edMedGray mb-4 mt-8 pb-1">
           <h1 className="text-xl text-elDark dark:text-edWhite font-medium">New Card</h1>
-          <select id="selectDeck" value={deckId} onChange={(e) => setDeckId(e.target.value)} className='text-black bg-elGray border border-black dark:bg-edDarker dark:text-edWhite focus:outline-none' >
+          <select id="selectDeck" value={deckId} onChange={(e) => setDeckId(e.target.value)}
+            className='text-black bg-elGray dark:bg-edDarker dark:text-edWhite focus:outline-none h-8 mb-1 pl-1 pr-4' >
             <option key='select-deck-key' value=''>Select a deck</option>
             {decks.map((deck) => (
               <option key={deck.deck_id} value={deck.deck_id}>{deck.name}</option>
@@ -198,7 +199,7 @@ function QuizletParserPage() {
           </p>
           <div className="mb-2 flex flex-col w-full">
             <textarea value={quizletInput} onChange={(e) => setquizletInput(e.target.value)} className="text-black dark:text-white dark:bg-edDarker w-full min-h-20 h-40 p-2 border border-edDarkGray focus:outline-none custom-scrollbar"
-              placeholder="question | answer {|}"></textarea>
+              placeholder="question | answer {|}" required></textarea>
           </div>
           <button type='submit' className="button-common button-blue font-semibold py-2 text-center w-1/4 my-2">
             Submit
@@ -219,7 +220,7 @@ function QuizletParserPage() {
           </div>
         </form>
       </div>
-      <div className={`flex flex-col items-center min-w-40 p-3 fixed top-20 right-5 rounded-[1.4rem] text-white ${popupColor}
+      <div className={`flex flex-col items-center min-w-40 p-3 fixed top-20 right-5 rounded-[1.4rem] text-white font-semibold ${popupColor}
           transition-opacity duration-200 ${popupActive ? 'opacity-100' : 'opacity-0'}`}
       >
         {popupText}

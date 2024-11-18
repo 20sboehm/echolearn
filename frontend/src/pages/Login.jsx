@@ -26,8 +26,6 @@ function Login() {
       setPopupOpacity('opacity-0'); // Start fading out
       setTimeout(() => setShowPopup(false), 1000); // Give it 1 second to fade
     }, 1000); // Stay fully visible for 1 second
-    setUsername('');
-    setUserPassword('');
   }
 
   const handleLogin = async (e) => {
@@ -43,6 +41,8 @@ function Login() {
     } else {
       triggerPopup('Check your username or password...', 'red');
     }
+
+    setUserPassword('');
   }
 
   return (
@@ -54,7 +54,7 @@ function Login() {
         <FormInputBox idAndName="username" value={username} onChange={e => setUsername(e.target.value)} autoFocus={true} placeholder="Username" />
 
         <FormInputLabel htmlFor="userpassword">Password</FormInputLabel>
-        <FormInputBox idAndName="userpassword" value={userpassword} onChange={e => setUserPassword(e.target.value)} placeholder="Password"></FormInputBox>
+        <FormInputBox type='password' idAndName="userpassword" value={userpassword} onChange={e => setUserPassword(e.target.value)} placeholder="Password"></FormInputBox>
 
         <FormInputButton isPrimaryButton={true}>Log in</FormInputButton>
         <div className='flex flex-row justify-center items-center mt-4 w-full'>
@@ -66,7 +66,7 @@ function Login() {
       </form >
 
       {showPopup && (
-        <div className={`fixed bottom-20 left-1/2 -translate-x-1/2 transform p-4 bg-${popupColor}-500 rounded-md transition-opacity duration-1000 ${popupOpacity}`}>
+        <div className={`text-white font-semibold fixed bottom-20 left-1/2 -translate-x-1/2 transform p-4 bg-${popupColor}-500 rounded-md transition-opacity duration-1000 ${popupOpacity}`}>
           {popupMessage}
         </div>
       )

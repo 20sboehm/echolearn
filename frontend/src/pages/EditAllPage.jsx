@@ -6,7 +6,7 @@ import { useApi } from "../hooks";
 import editIconImg from "../assets/edit-icon.png"
 import LoadingSpinner from "../components/LoadingSpinner";
 import MarkdownPreviewer from "../components/MarkdownPreviewer";
-import { SpeakerIcon, StarIcon, HeartIcon, EditIcon ,DragIcon} from "../components/Icons";
+import { SpeakerIcon, StarIcon, HeartIcon, EditIcon, DragIcon } from "../components/Icons";
 import './Buttons.css';
 
 function DeckPage({ publicAccess = false }) {
@@ -28,7 +28,7 @@ function DeckPage({ publicAccess = false }) {
   const [isCreateMode, setCreateMode] = useState(false);
   const [newQuestion, setNewQuestion] = useState("");
   const [newAnswer, setNewAnswer] = useState("");
-  
+
   const [deckname, setdeckname] = useState("");
   const [deckdescription, setdeckdescription] = useState("");
   const [previewText, setpreviewText] = useState("");
@@ -114,52 +114,52 @@ function DeckPage({ publicAccess = false }) {
   }
 
   const handleCardChange = (cardId, type, text) => {
-    if(type === "questionText"){
-        setItems(prevItems => prevItems.map(item => {
-            if (item.card_id === cardId) {
-                //set preview here then trigger markdown 
-                console.log(item.question)
-                setpreviewText(text)
-              item.question = text
-            }
-            setChangedCardsId(prevIds => {
-                // Ensure only unique IDs are added
-                return prevIds.includes(cardId) ? prevIds : [...prevIds, cardId];
-            });
-           
-            return item
-          }));
-    }
-    else{
-        setItems(prevItems => prevItems.map(item => {
-            if (item.card_id === cardId) {
-                setpreviewText(text)
-              item.answer = text
-            }
-            setChangedCardsId(prevIds => {
-                // Ensure only unique IDs are added
-                return prevIds.includes(cardId) ? prevIds : [...prevIds, cardId];
-            });
-            return item
-          }));
-          
-    }
-    
-};
+    if (type === "questionText") {
+      setItems(prevItems => prevItems.map(item => {
+        if (item.card_id === cardId) {
+          //set preview here then trigger markdown 
+          console.log(item.question)
+          setpreviewText(text)
+          item.question = text
+        }
+        setChangedCardsId(prevIds => {
+          // Ensure only unique IDs are added
+          return prevIds.includes(cardId) ? prevIds : [...prevIds, cardId];
+        });
 
-const setpreviewer = (cardId, type, text) => {
-    
-};
-const handleDeckChange = (type, text) => {
-    if(type === "Deckname"){
-       setdeckname(text)
+        return item
+      }));
     }
-    else{
-        setdeckdescription(text)
-        console.log(deckdescription)
+    else {
+      setItems(prevItems => prevItems.map(item => {
+        if (item.card_id === cardId) {
+          setpreviewText(text)
+          item.answer = text
+        }
+        setChangedCardsId(prevIds => {
+          // Ensure only unique IDs are added
+          return prevIds.includes(cardId) ? prevIds : [...prevIds, cardId];
+        });
+        return item
+      }));
+
     }
-    
-};
+
+  };
+
+  const setpreviewer = (cardId, type, text) => {
+
+  };
+  const handleDeckChange = (type, text) => {
+    if (type === "Deckname") {
+      setdeckname(text)
+    }
+    else {
+      setdeckdescription(text)
+      console.log(deckdescription)
+    }
+
+  };
 
   const toggleCreateMode = () => {
     setCreateMode(!isCreateMode);
@@ -216,24 +216,24 @@ const handleDeckChange = (type, text) => {
     }
   };
   const handleEditAll = async () => {
-      try {
-        console.log(deckname)
-        console.log(deckdescription)
-        const dataToSend = {
-            newItems: items.filter(item => ChangedCardsId.includes(item.card_id)),
-            newdeckname:deckname,
-            newdeckdescription:deckdescription,
-          };
-        const response = await api._post(`/api/decks/${deckId}/editall`, dataToSend);
-        if (!response.ok) {
-          throw new Error('Failed to edit all deck');
-        }
-        popupDetails('Edit all decks successfully!', 'green');
-        refetch();
-        navigate(`/decks/${deckId}`);
-      } catch (error) {
-        console.error('Error editing all decks:', error);
-        popupDetails('Failed to editing all decks.', 'red');
+    try {
+      console.log(deckname)
+      console.log(deckdescription)
+      const dataToSend = {
+        newItems: items.filter(item => ChangedCardsId.includes(item.card_id)),
+        newdeckname: deckname,
+        newdeckdescription: deckdescription,
+      };
+      const response = await api._post(`/api/decks/${deckId}/editall`, dataToSend);
+      if (!response.ok) {
+        throw new Error('Failed to edit all deck');
+      }
+      popupDetails('Edit all decks successfully!', 'green');
+      refetch();
+      navigate(`/decks/${deckId}`);
+    } catch (error) {
+      console.error('Error editing all decks:', error);
+      popupDetails('Failed to editing all decks.', 'red');
     }
   };
   const changeMode = () => {
@@ -314,24 +314,24 @@ const handleDeckChange = (type, text) => {
       <div className="flex flex-row w-full h-full">
         <Sidebar refetchTrigger={refetchTrigger} onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
         <div className="w-full flex flex-col mx-[15%] max-h-[calc(100vh-5rem)] border-b border-elDividerGray dark:border-edDividerGray">
-            <div className=" flex flex-col text-[2rem] text-elDark dark:text-edWhite font-medium mt-8 mb-4 
+          <div className=" flex flex-col text-[2rem] text-elDark dark:text-edWhite font-medium mt-8 mb-4 
             border-b w-full border-elDividerGray dark:border-edDividerGray pb-1">
-            <div className="flex items-center mb-4"> 
+            <div className="flex items-center mb-4">
               <label htmlFor="deckname" >Deckname: </label>
-              <input id="deckname" value={deckname} onChange={(e) => handleDeckChange("Deckname",e.target.value)}
-              className=" border-r border-elDividerGray dark:border-edDividerGray bg-transparent"></input>  
+              <input id="deckname" value={deckname} onChange={(e) => handleDeckChange("Deckname", e.target.value)}
+                className=" border-r border-elDividerGray dark:border-edDividerGray bg-transparent"></input>
             </div>
-            <textarea placeholder="Put description here"  value={deckdescription} onChange={(e) => handleDeckChange("Deckdescription",e.target.value)}
-                  className="w-1/2 bg-transparent flex-1 p-2 min-h-20" />
-            </div>
-            <div className="flex">
+            <textarea placeholder="Put description here" value={deckdescription} onChange={(e) => handleDeckChange("Deckdescription", e.target.value)}
+              className="w-1/2 bg-transparent flex-1 p-2 min-h-20" />
+          </div>
+          <div className="flex">
 
             <div className="flex flex-col">
               {publicAccess ? (
                 null
               ) : (
                 <div className="flex items-start mb-4 pb-4 gap-2 border-b border-elDividerGray dark:border-edDividerGray">
-                  <>                                    
+                  <>
                     <button disabled={publicAccess} className={`button-top ${deckCards.isPublic ? "button-green" : "button-red"} ${publicAccess ? "" : ""}`}
                       onClick={setStatus}> {deckCards.isPublic ? "Public" : "Private"} </button>
                     <button
@@ -350,11 +350,11 @@ const handleDeckChange = (type, text) => {
                 </div>
               )}
               <div className="flex flex-row items-start text-black dark:text-edLightGray gap-2 mb-4">
-                
+
                 {publicAccess ? (
                   null
                 ) : (
-                  <> 
+                  <>
                     <div>
                       <button className={`button-common ${isCreateMode ? "button-green" : "button-blue"}`}
                         onClick={isCreateMode ? handleCreateCard : toggleCreateMode}>
@@ -363,45 +363,45 @@ const handleDeckChange = (type, text) => {
                       {isCreateMode && (
                         <button className={`button-common button-red mx-2`} onClick={handleCancelCreateCard}> Cancel </button>
                       )}
-                    </div>                                       
+                    </div>
                     <button className={`button-common ${deleteMode ? "button-red" : "button-blue"}`} onClick={changeMode}>
                       {deleteMode ? "Cancel" : "Toggle Delete Card"}
                     </button>
                   </>
-                  
+
                 )}
                 <div>
-                <p>Preview</p>
-                <MarkdownPreviewer content={previewText} className="flex-1 p-2 min-h-20 rounded-2xl bg-transparent" />
+                  <p>Preview</p>
+                  <MarkdownPreviewer content={previewText} className="flex-1 p-2 min-h-20 rounded-2xl bg-transparent" />
                 </div>
               </div>
             </div>
-            
+
           </div>
 
           <div className={`flex flex-col items-center flex-grow overflow-y-auto border-t border-elDividerGray dark:border-edDividerGray`}>
 
             {items.map((item, index) => (
-                
+
               <div className={`flex font-medium mt-4 border border-elDividerGray dark:border-edDividerGray rounded-2xl bg-elGray dark:bg-edDarker w-[99%] 
                 ${deleteMode ? "hover:bg-[#ff000055] hover:dark:bg-[#ff000055] cursor-not-allowed" : ""}`}
                 key={item.card_id} onClick={() => { handleCardClick(item.card_id) }}
-               
+
                 onDragOver={handleDragOver}
                 onDrop={(e) => handleDrop(e, index)}
               >
                 <div className="cursor-move" draggable onDragStart={(e) => handleDragStart(e, index)}>
-                <DragIcon/>
+                  <DragIcon />
                 </div>
-                <p>{index+1}</p>
-                <div className={`relative w-1/2 flex flex-col pr-4 border-r border-elDividerGray dark:border-edDividerGray bg-transparent`}>                
-                  <textarea value={item.question} onChange={(e) => handleCardChange(item.card_id,'questionText',e.target.value)} onClick={(e) =>setpreviewText(e.target.value)}
-                  className="flex-1 p-2 min-h-20 rounded-2xl bg-transparent" />                 
+                <p>{index + 1}</p>
+                <div className={`relative w-1/2 flex flex-col pr-4 border-r border-elDividerGray dark:border-edDividerGray bg-transparent`}>
+                  <textarea value={item.question} onChange={(e) => handleCardChange(item.card_id, 'questionText', e.target.value)} onClick={(e) => setpreviewText(e.target.value)}
+                    className="flex-1 p-2 min-h-20 rounded-2xl bg-transparent" />
                 </div>
 
                 <div className="relative w-1/2 flex flex-col bg-transparent">
-                <textarea value={item.answer} onChange={(e) => handleCardChange(item.card_id,'answerText',e.target.value)} onClick={(e) =>setpreviewText(e.target.value)}
-                  className="flex-1 p-2 min-h-20 rounded-2xl bg-transparent" />
+                  <textarea value={item.answer} onChange={(e) => handleCardChange(item.card_id, 'answerText', e.target.value)} onClick={(e) => setpreviewText(e.target.value)}
+                    className="flex-1 p-2 min-h-20 rounded-2xl bg-transparent" />
                 </div>
 
               </div>
@@ -419,7 +419,7 @@ const handleDeckChange = (type, text) => {
         </div>
       </div >
       {showPopup && (
-        <div className={`fixed bottom-20 left-1/2 -translate-x-1/2 transform p-4 bg-${popupColor}-500 rounded-md transition-opacity duration-1000 ${popupOpacity}`}>
+        <div className={`text-white font-semibold fixed bottom-20 left-1/2 -translate-x-1/2 transform p-4 bg-${popupColor}-500 rounded-md transition-opacity duration-1000 ${popupOpacity}`}>
           {popupMessage}
         </div>
       )
