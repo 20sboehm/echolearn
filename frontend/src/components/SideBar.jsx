@@ -20,6 +20,7 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
   const folderRef = useRef(null);
   const buttonRef = useRef(null);
   const popupRef = useRef(null);
+  const draggingItemRef = useRef(null);
 
   // Click outside handler to unselect the folder or deck
   useEffect(() => {
@@ -195,7 +196,6 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
       folder_id: selected?.parent_folder_id || selected?.folder_id || null,
     };
     const endpoint = createType === 'deck' ? "/api/decks" : "/api/folders";
-    console.log("reach submitting and the value is :" + newItem.folder_id);
     try {
       const response = await api._post(endpoint, newItem);
       if (response.status === 201) {
@@ -265,8 +265,50 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
     }
   };
 
+
+  // Drag-and-Drop Handlers
+  const handleDragStart = (e, item) => {
+    e.stopPropagation();
+    draggingItemRef.current = item;
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = async (e, targetFolder) => {
+    e.stopPropagation();
+
+    if (!draggingItemRef.current) return;
+
+    // Determine if the dragged item is a folder or deck
+    const isFolder = draggingItemRef.current.folder_id !== undefined && draggingItemRef.current.deck_id == undefined;
+    const itemId = isFolder ? draggingItemRef.current.folder_id : draggingItemRef.current.deck_id;
+    const targetId = targetFolder ? targetFolder.folder_id : null;
+
+    if (itemId === targetId && isFolder) return; // Prevent dropping onto itself
+
+    const endpoint = isFolder
+      ? `/api/folders/${itemId}/move${targetId !== null ? `?target_folder_id=${targetId}` : ''}`
+      : `/api/decks/${itemId}/move${targetId !== null ? `?target_folder_id=${targetId}` : ''}`;
+  
+
+    console.log(endpoint);
+    try {
+      const response = await api._patch(endpoint);
+      if (response.status === 200) {
+        fetchSidebarData(); // Refetch the sidebar data
+      } else {
+        console.error('Failed to move item', response);
+      }
+    } catch (error) {
+      console.error('Error moving item', error);
+    }
+  };
+
+
   return (
-    <div onContextMenu={(e) => handleRightClick(e)}>
+    <div onContextMenu={(e) => handleRightClick(e)} onDragOver={(e) => handleDragOver(e)} onDrop={(e) => handleDrop(e, null)}>
       <button
         onClick={sidebarShow}
         style={{ left: `calc(${sidebarWidth}px)` }}
@@ -302,7 +344,7 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
           {sidebarData && sidebarData.folders ? (
             sidebarData.folders.length > 0 ? (
               sidebarData.folders.map((folder, index) => (
-                <Folder key={index} folder={folder} onRightClick={handleRightClick} folderStates={folderStates} toggleFolder={toggleFolder} setContextMenu={setContextMenu} selected={selected} setSelected={setSelected} folderRef={folderRef} />
+                <Folder key={index} folder={folder} onRightClick={handleRightClick} folderStates={folderStates} toggleFolder={toggleFolder} setContextMenu={setContextMenu} selected={selected} setSelected={setSelected} folderRef={folderRef} onDragStart={handleDragStart} onDrop={handleDrop} onDragOver={handleDragOver} />
               ))
             ) : (
               <p>You have no decks!</p>
@@ -320,9 +362,12 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
                   key={index}
                   className="text-elDark dark:text-edWhite flex items-center select-none mt-2"
                   onContextMenu={(e) => handleRightClick(e, deck)}
+                  onDragStart={(e) => handleDragStart(e, deck)}
+                  onDrop={(e) => handleDrop(e, null)}
+                  onDragOver={handleDragOver}
                 >
                   <Link to={`/decks/${deck.deck_id}`}>
-                    <p className="overflow-x-auto whitespace-nowrap hover:text-edBlue">{deck.name}</p>
+                    <p className="overflow-x-auto whitespace-nowrap hover:text-edBlue">~ {deck.name}</p>
                   </Link>
                 </div>
               ))}
@@ -481,7 +526,7 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
   );
 };
 
-const Folder = ({ folder, onRightClick, folderStates, toggleFolder, setContextMenu, selected, setSelected, folderRef }) => {
+const Folder = ({ folder, onRightClick, folderStates, toggleFolder, setContextMenu, selected, setSelected, folderRef, onDragStart, onDrop, onDragOver }) => {
 
   const handleLeftClick = (event) => {
     // console.log("clicked")
@@ -496,7 +541,7 @@ const Folder = ({ folder, onRightClick, folderStates, toggleFolder, setContextMe
   };
 
   return (
-    <div ref={folderRef} className="mt-2">
+    <div ref={folderRef} className="mt-2" draggable onDragStart={(e) => onDragStart(e, folder)} onDragOver={(e) => onDragOver(e)} onDrop={(e) => onDrop(e, folder)}>
       <div onClick={handleLeftClick} onContextMenu={(e) => onRightClick(e, folder)}
         className={`cursor-pointer text-elDark dark:text-edWhite flex items-center select-none ${selected === folder ? 'bg-gray-300 dark:bg-edMedGray' : ''}`}>
         <ChevronIcon
@@ -507,7 +552,7 @@ const Folder = ({ folder, onRightClick, folderStates, toggleFolder, setContextMe
       {folderStates[folder.folder_id] && (
         <div className="ml-2 border-l border-edGray">
           {folder.decks.map((deck, index) => (
-            <div key={index} className="text-elDark dark:text-edWhite flex items-center select-none ml-2 mt-2" onContextMenu={(e) => onRightClick(e, deck)}>
+            <div key={index} className="text-elDark dark:text-edWhite flex items-center select-none ml-2 mt-2" onContextMenu={(e) => onRightClick(e, deck)} draggable onDragStart={(e) => onDragStart(e, deck)} onDragOver={(e) => onDragOver(e)} onDrop={(e) => onDrop(e, folder)}>
               <Link to={`/decks/${deck.deck_id}`}>
                 <p className="overflow-x-auto whitespace-nowrap hover:text-edBlue">{deck.name}</p>
               </Link>
@@ -515,7 +560,8 @@ const Folder = ({ folder, onRightClick, folderStates, toggleFolder, setContextMe
           ))}
           {folder.children &&
             folder.children.map((child, index) => (
-              <Folder key={index} folder={child} className="mt-2" onRightClick={onRightClick} folderStates={folderStates} toggleFolder={toggleFolder} setContextMenu={setContextMenu} selected={selected} setSelected={setSelected} />
+              <Folder key={index} folder={child} className="mt-2" onRightClick={onRightClick} folderStates={folderStates} toggleFolder={toggleFolder} setContextMenu={setContextMenu} selected={selected} setSelected={setSelected} folderRef={folderRef} onDragStart={onDragStart} onDrop={onDrop} onDragOver={onDragOver}
+              />
             ))}
         </div>
       )}
