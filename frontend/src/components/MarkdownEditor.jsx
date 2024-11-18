@@ -5,8 +5,11 @@ import MarkdownPreviewer from "../components/MarkdownPreviewer";
 import { Link } from "react-router-dom";
 import {
   BoldIcon, ItalicIcon, UnderlineIcon, CodeIcon, CodeBlockIcon, HeaderIcon1, HeaderIcon2, HeaderIcon3,
-  HeaderIcon4, PageBreakIcon, ImageLinkIcon, VideoLinkIcon, LinkIcon, TableIcon, LatexIcon, LatexBlockIcon, MicIcon, MicIconListening
+  HeaderIcon4, PageBreakIcon, ImageLinkIcon, VideoLinkIcon, LinkIcon, TableIcon, LatexIcon, LatexBlockIcon,
+  MicIcon, MicIconListening, LinkUploadedImage
 } from "../components/Icons";
+import { useQuery } from "react-query";
+import LoadingSpinner from "./LoadingSpinner";
 
 function MarkdownEditor({ requestType, submitButtonText, questionText, setQuestionText, answerText, setAnswerText, deckId, cardId }) {
   const api = useApi();
@@ -55,7 +58,7 @@ function MarkdownEditor({ requestType, submitButtonText, questionText, setQuesti
     }, 5000) // 1500
   }
 
-  const handleTextEditingButton = (forQuestionBox, type) => {
+  const handleTextEditingButton = (forQuestionBox, type, customImageLink) => {
     let textarea = null;
     if (forQuestionBox) {
       textarea = questionRef.current;
@@ -134,6 +137,9 @@ function MarkdownEditor({ requestType, submitButtonText, questionText, setQuesti
         cursorAdjustment = 9;
         insertionType = 'imageLink';
         break;
+      case "uploadedImageLink":
+        insertionType = 'uploadedImageLink';
+        break;
       case "videoLink":
         cursorAdjustment = 3;
         insertionType = 'videoLink';
@@ -192,6 +198,10 @@ function MarkdownEditor({ requestType, submitButtonText, questionText, setQuesti
       selEnd += 70;
       cursorAdjustment = 0;
       newText = firstHalf + "| Header | Header |" + "\n" + "|------| ------ |" + "\n" + "| Data | Data |" + "\n" + "| Data | Data |" + "\n" + secondHalf;
+    }
+    else if (insertionType === "uploadedImageLink") {
+      cursorAdjustment = 10 + customImageLink.length;
+      newText = firstHalf + "![Image](" + customImageLink + ")" + secondHalf;
     }
 
     if (forQuestionBox) {
@@ -310,7 +320,6 @@ function MarkdownEditor({ requestType, submitButtonText, questionText, setQuesti
     e.preventDefault();
 
     let response = undefined;
-    console.log("yo: " + requestType);
 
     if (requestType === "post") {
       const cardData = {
@@ -343,6 +352,10 @@ function MarkdownEditor({ requestType, submitButtonText, questionText, setQuesti
 
   return (
     <>
+      {/* <div className="absolute left-0 top-0 bg-red-500 w-[40rem] h-[40rem] z-40">ya yo</div> */}
+      {/* {selectImage && (
+        <div className="absolute left-0 top-0 bg-red-500 w-[40rem] h-[40rem] z-40">ya yo</div>
+      )} */}
       <form onSubmit={handleSubmit}>
         <div className="flex justify-between">
           <div className="flex flex-col max-w-[516px]">
@@ -384,11 +397,8 @@ function TextBox({ label, reference, content, inputHandler, handleTextEditingBut
     let k = e.key;
     if (e.ctrlKey) {
       e.preventDefault();
-      console.log("here 1")
 
       if (e.shiftKey) {
-        console.log("here 2")
-        console.log(k)
         switch (k) {
           case "~": // Shift makes ` a different character
             handleTextEditingButton(forQuestionBox, "codeBlock");
@@ -434,6 +444,7 @@ function TextBox({ label, reference, content, inputHandler, handleTextEditingBut
         <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "codeBlock"); }} Icon={CodeBlockIcon} buttonTitle="Code Block (ctrl + shift + `)" />
         <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "pageBreak"); }} Icon={PageBreakIcon} buttonTitle="Page Break" />
         <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "link"); }} Icon={LinkIcon} buttonTitle="Link" />
+        <UploadedImageSelectIcon forQuestionBox={forQuestionBox} handleTextEditingButton={handleTextEditingButton} />
         <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "imageLink"); }} Icon={ImageLinkIcon} buttonTitle="Image" />
         <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "videoLink"); }} Icon={VideoLinkIcon} buttonTitle="Video" />
         <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "table"); }} Icon={TableIcon} buttonTitle="Table" />
@@ -441,8 +452,8 @@ function TextBox({ label, reference, content, inputHandler, handleTextEditingBut
         <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "latexBlock"); }} Icon={LatexBlockIcon} buttonTitle="Latex Block (ctrl + shift + l)" />
         <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header1"); }} Icon={HeaderIcon1} buttonTitle="Header 1" />
         <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header2"); }} Icon={HeaderIcon2} buttonTitle="Header 2" />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header3"); }} Icon={HeaderIcon3} buttonTitle="Header 3" />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header4"); }} Icon={HeaderIcon4} buttonTitle="Header 4" />
+        {/* <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header3"); }} Icon={HeaderIcon3} buttonTitle="Header 3" /> */}
+        {/* <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header4"); }} Icon={HeaderIcon4} buttonTitle="Header 4" /> */}
 
 
         {questionisListening == false && (
@@ -465,6 +476,90 @@ function TextBox({ label, reference, content, inputHandler, handleTextEditingBut
           border-edDarkGray focus:outline-none custom-scrollbar" onKeyDown={(e) => { handleKeyDown(e, forQuestionBox) }}></textarea>
       )}
     </>
+  );
+}
+
+function UploadedImageSelectIcon({ forQuestionBox, handleTextEditingButton }) {
+  const api = useApi();
+
+  const [windowPosition, setWindowPosition] = useState({ top: 0, left: 0 });
+  const [selectImage, setSelectImage] = useState(false);
+
+  const { data: imageLinks, isLoading, error } = useQuery({
+    queryKey: ['imageLinks'],
+    queryFn: async () => {
+      let response = await api._get('/api/images');
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        const message = errorData.detail || 'An error occurred';
+        throw new Error(`${response.status}: ${message}`);
+      }
+
+      return response.json();
+    }
+  });
+
+  if (isLoading) {
+    return <LoadingSpinner />
+  }
+
+  if (error) {
+    const [status, message] = error.message.split(': ');
+
+    return (
+      <>
+        <h1 className="mt-20 text-[3rem] font-bold">{status}</h1>
+        <p className="mt-2 text-[1.5rem]">{message}</p>
+      </>
+    );
+  }
+
+  const handleClick = (e) => {
+    setSelectImage((prev) => !prev);
+
+    // Get button's bounding box relative to the viewport
+    const rect = e.currentTarget.getBoundingClientRect();
+
+    // Set position relative to the parent container
+    setWindowPosition({
+      top: rect.top - e.currentTarget.offsetParent.getBoundingClientRect().top,
+      left: rect.left - e.currentTarget.offsetParent.getBoundingClientRect().left,
+    });
+  };
+
+  const handleSelectImage = (link) => {
+    handleTextEditingButton(forQuestionBox, "uploadedImageLink", link)
+    setSelectImage(false);
+  }
+
+  return (
+    <div className="relative inline-block mr-3">
+      <button type="button" onClick={handleClick} className="flex items-center">
+        <LinkUploadedImage />
+      </button>
+
+      {selectImage && (
+        <div
+          className="flex flex-col gap-2 absolute w-96 p-2 text-sm rounded-lg shadow-2xl z-10 
+          bg-edBlue dark:bg-edDarker dark:border border-edDividerGray"
+          style={{ top: windowPosition.top + 20, left: windowPosition.left }}
+        >
+          <button type="button" className="absolute right-2 bg-edRed text-white px-1.5 rounded text-center" onClick={() => { setSelectImage(false); }}>x</button>
+          {imageLinks.length > 0 ? (
+            imageLinks.map((image) => (
+              <button type="button" key={image.image_id} className="flex items-center p-2 mr-6 h-20 dark:bg-edBase border dark:border-edDividerGray"
+                onClick={() => { handleSelectImage(image.link) }}>
+                <img className="max-w-20 max-h-20" src={image.link} alt="Image" />
+                <p className="ml-2">{image.name}</p>
+              </button>
+            ))
+          ) : (
+            <p>You don't have any uploaded images!</p>
+          )}
+        </div>
+      )}
+    </div>
   );
 }
 

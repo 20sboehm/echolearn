@@ -10,7 +10,8 @@ import './Buttons.css';
 
 const markdownEditorHelpList = [
   "This editor uses markdown for rendering rich text.",
-  "The editor buttons will insert various markdown characters. Hover over them to see what they do."
+  "The editor buttons will insert various markdown characters. Hover over them to see what they do.",
+  "To insert an image you've uploaded, click the cloud icon with a magnifying glass in the center."
 ]
 
 function CreateCardPage() {
