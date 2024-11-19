@@ -300,28 +300,14 @@ function ProfilePage() {
     }
   };
 
-  // const uploadMutation = useMutation(
-  //   async (formData) => {
-  //     const response = await apiClient._postFile("/api/profile/upload_avatar", formData);
-  //     if (!response.ok) throw new Error("Avatar upload fail");
-  //     return response.json();
-  //   },
-  //   {
-  //     onSuccess: (data) => {
-  //       console.log("Success");
-  //       setAvatar(data.avatar_url);
-  //       console.log("Avatar URL:", data.avatar_url);
-  //       setPreview(null);
-  //       setFile(null);
-  //       queryClient.invalidateQueries("profile", { refetchActive: true });
-  //       window.location.reload();
-  //     },
-  //     onError: () => alert("Failed to upload avatar")
-  //   }
-  // );
+  const handleCancelUpload = () => {
+    setPreview(null);
+    setFile(null);
+  };
 
   const handleAvatarChange = (e) => {
     const selectedFile = e.target.files[0];
+    if (!selectedFile) return;
     if (selectedFile && selectedFile.size <= 1 * 1024 * 1024) {
       setFile(selectedFile);
       setPreview(URL.createObjectURL(selectedFile));
@@ -363,16 +349,22 @@ function ProfilePage() {
                 className="hidden"
               />
             )}
-
-            {profile.is_owner && file && (
-              <button onClick={handleUpload} className="button-common button-blue">
-                Upload
-              </button>
-            )}
           </div>
 
           <div className="ml-4">
             <h1 className="text-3xl font-bold text-elDark dark:text-edWhite">{profile.username}</h1>
+          </div>
+          <div>
+            {profile.is_owner && file && (
+              <div className="flex space-x-4 mt-2">
+                <button onClick={handleUpload} className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-500 text-white text-2xl font-bold ml-4">
+                  √
+                </button>
+                <button onClick={handleCancelUpload} className="w-10 h-10 flex items-center justify-center rounded-full bg-red-500 text-white text-2xl ml-4">
+                  X
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
