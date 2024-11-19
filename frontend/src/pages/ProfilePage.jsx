@@ -303,6 +303,7 @@ function ProfilePage() {
   const handleCancelUpload = () => {
     setPreview(null);
     setFile(null);
+    document.getElementById('avatarInput').value = '';
   };
 
   const handleAvatarChange = (e) => {
