@@ -134,12 +134,34 @@ For more info on using Expo please read over this doc
 
 
 ## --- Deployment ---
-
-On EC2
+- Purchase 2 domains on namecheap (or other similar service), one for the user-facing frontend website and one for the backend API (which needs it own domain so you can add HTTPS to it we believe?)
+- Deploy the frontend via AWS Amplify (we created a separate Git repo to link to Amplify because it wouldn't let us link to GitLab)
+- In Amplify, you will want to create an environment variable VITE_API_BASE_URL and set it to the URL of the backend API (In our case, https://echolearn.online)
+- You will have to set up a hosted zone using AWS Route 53 to use your custom URL with AWS Amplify (we followed a tutorial online for this)
+- Provision an EC2 instance
+- Set up the correct NGINX configuration (We followed the instructions from the Web Development 1 class)
+- SSH into the EC2 instance and run the following commands to set up the backend server (This is for first time setup):
 ```
+git clone -b dev https://capstone-cs.eng.utah.edu/echolearn/echolearn.git
+cd echolearn
+cd backend
+pip install -r requirements.txt
+python3 manage.py collectstatic
+
+# This is to tell our application to use the production endpoint instead of localhost
+export DEPLOYED=true
+
+python3 -m pip install pip --upgrade
+pip install pyopenssl --upgrade
+
 python3 manage.py makemigrations
 python3 manage.py migrate
 rm db.sqlite3
 python3 manage.py migrate --run-syncdb
 python3 makedata.py
+
+nohup python3 manage.py runserver --noreload
+
+# To stop the server (if you need to update something)
+kill $(pgrep -f runserver)
 ```
