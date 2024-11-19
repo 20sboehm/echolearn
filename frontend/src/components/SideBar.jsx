@@ -396,7 +396,7 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
                   onDragOver={handleDragOver}
                 >
                   <Link to={`/decks/${deck.deck_id}`}>
-                    <p className="overflow-x-auto whitespace-nowrap hover:text-edBlue">~ {deck.name}</p>
+                    <p className="overflow-x-auto whitespace-nowrap hover:text-edBlue ml-1">{deck.name}</p>
                   </Link>
                 </div>
               ))}

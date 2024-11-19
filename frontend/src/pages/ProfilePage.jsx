@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import defaultAvatar from "../assets/defaltUser.png";
 import FriendsPage from './FriendsPage';
+import SharePage from './SharedWith';
 import { useApi } from "../hooks";
 import { useMutation, useQueryClient } from "react-query";
 
@@ -299,28 +300,15 @@ function ProfilePage() {
     }
   };
 
-  // const uploadMutation = useMutation(
-  //   async (formData) => {
-  //     const response = await apiClient._postFile("/api/profile/upload_avatar", formData);
-  //     if (!response.ok) throw new Error("Avatar upload fail");
-  //     return response.json();
-  //   },
-  //   {
-  //     onSuccess: (data) => {
-  //       console.log("Success");
-  //       setAvatar(data.avatar_url);
-  //       console.log("Avatar URL:", data.avatar_url);
-  //       setPreview(null);
-  //       setFile(null);
-  //       queryClient.invalidateQueries("profile", { refetchActive: true });
-  //       window.location.reload();
-  //     },
-  //     onError: () => alert("Failed to upload avatar")
-  //   }
-  // );
+  const handleCancelUpload = () => {
+    setPreview(null);
+    setFile(null);
+    document.getElementById('avatarInput').value = '';
+  };
 
   const handleAvatarChange = (e) => {
     const selectedFile = e.target.files[0];
+    if (!selectedFile) return;
     if (selectedFile && selectedFile.size <= 1 * 1024 * 1024) {
       setFile(selectedFile);
       setPreview(URL.createObjectURL(selectedFile));
@@ -362,16 +350,22 @@ function ProfilePage() {
                 className="hidden"
               />
             )}
-
-            {profile.is_owner && file && (
-              <button onClick={handleUpload} className="button-common button-blue">
-                Upload
-              </button>
-            )}
           </div>
 
           <div className="ml-4">
             <h1 className="text-3xl font-bold text-elDark dark:text-edWhite">{profile.username}</h1>
+          </div>
+          <div>
+            {profile.is_owner && file && (
+              <div className="flex space-x-4 mt-2">
+                <button onClick={handleUpload} className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-500 text-white text-2xl font-bold ml-4">
+                  √
+                </button>
+                <button onClick={handleCancelUpload} className="w-10 h-10 flex items-center justify-center rounded-full bg-red-500 text-white text-2xl ml-4">
+                  X
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -449,6 +443,12 @@ function ProfilePage() {
             >
               Friends
             </button>
+            <button
+              className={`py-2 px-4 rounded-lg ${activeTab === 'share' ? selectedTabClassName : unselectedTabClassName}`}
+              onClick={() => profile.is_owner && setActiveTab('share')}
+            >
+              Shared With Me
+            </button>
           </div>
 
           {/* Container for Tabs and Content */}
@@ -478,10 +478,14 @@ function ProfilePage() {
 
             {activeTab === 'ratedDecks' && (
               <div>
-                <h2 className="text-xl font-bold text-white">favorite Decks</h2>
+                <h2 className="text-xl font-bold text-white">Favorite Decks</h2>
                 {RatedDeck.length > 0 ? (
                   RatedDeck.map((rDeck) => (
-                    <Link key={rDeck.deck_id} to={`/decks/public/${rDeck.deck_id}`} style={{ display: 'flex', alignItems: 'center' }}>
+                    <Link
+                      key={rDeck.deck_id}
+                      to={rDeck.Owner === profile.id ? `/decks/${rDeck.deck_id}` : `/decks/public/${rDeck.deck_id}`}
+                      style={{ display: 'flex', alignItems: 'center' }}
+                    >
                       <span className="mr-2">📚</span>
                       <p className="overflow-x-auto whitespace-nowrap">{rDeck.name}</p>
                     </Link>
@@ -496,6 +500,13 @@ function ProfilePage() {
             {activeTab === 'friends' && (
               <div>
                 <FriendsPage />
+              </div>
+            )}
+
+            {/* Share Tab Content */}
+            {activeTab === 'share' && (
+              <div>
+                <SharePage />
               </div>
             )}
           </div>
@@ -627,7 +638,7 @@ const Folder = ({ folder, onRightClick, is_owner }) => {
           {folder.children && folder.children.length > 0 && (
             <div className="ml-3">
               {folder.children.map((childFolder) => (
-                <Folder key={childFolder.folder_id} folder={childFolder} onRightClick={onRightClick} />
+                <Folder key={childFolder.folder_id} folder={childFolder} onRightClick={onRightClick} is_owner={is_owner} />
               ))}
             </div>
           )}
