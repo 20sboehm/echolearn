@@ -309,6 +309,7 @@ function MarkdownEditor({ requestType, submitButtonText, questionText, setQuesti
       setQuestionText(combinedText); // Asynchronously update the question state
       setTimeout(resolve, 1); // Resolve the promise on the next tick, allowing state to update
     });
+    setQuestionSelection({ start: selStart + newTranscript.length + 1  , end: selEnd + newTranscript.length + 1  });
     // Update is complete
     setQuestionIsUpdating(false);
   };
@@ -321,6 +322,8 @@ function MarkdownEditor({ requestType, submitButtonText, questionText, setQuesti
     let selStart = textarea.selectionStart;
     let selEnd = textarea.selectionEnd;
 
+    
+
     const firstHalf = answerText.substring(0, selStart);
     
     const secondHalf = answerText.substring(selEnd);
@@ -330,6 +333,7 @@ function MarkdownEditor({ requestType, submitButtonText, questionText, setQuesti
       setAnswerText(combinedText);
       setTimeout(resolve, 1);
     });
+    setAnswerSelection({ start: selStart + newTranscript.length + 1  , end: selEnd + newTranscript.length + 1  });
     // Update is complete
     setAnswerIsUpdating(false);
   };
