@@ -147,11 +147,10 @@ function ReviewPageContent() {
 
   const [sidebarWidth, setSidebarWidth] = useState(250);
 
-  // TODO: where is userSettingsData supposed to get used?
   const {
     setAnimation, changeAnimation,
     currImage, setCurrImage, finish, cardIndex,
-    userSettingsData, settingsIsLoading, settingsError,
+    settingsIsLoading, settingsError,
     reviewsData, reviewsIsLoading, reviewsError,
     currentDeckIndex, deckIds
   } = useContext(ReviewContext);
@@ -218,7 +217,7 @@ function FinishView(deckId) {
       <img className="w-40 h-40 mt-[-10vh]" src={partyPopperFlipImg} alt="Party Popper" />
       <div className="flex flex-col justify-center items-center mx-4">
         <h3 className="h-[25vh] flex justify-center items-center w-full border border-black bg-white rounded-md p-5 text-2xl text-black my-4">You have studied all the cards in this deck</h3>
-        <Link to={`/decks/${deckId.deckId}`}>
+        <Link to={`/decks/public/${deckId.deckId}`}>
           <button className="button-common button-blue border rounded-md px-2 py-1">Back to deck</button>
         </Link>
       </div>
