@@ -3,8 +3,6 @@ import { useQuery } from 'react-query';
 import { Link, useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { useApi } from "../hooks";
 import Sidebar from "../components/SideBar";
-import partyPopperImg from '../assets/party-popper.png';
-import partyPopperFlipImg from '../assets/party-popper-flip.png';
 import LoadingSpinner from "../components/LoadingSpinner";
 import MarkdownPreviewer from "../components/MarkdownPreviewer";
 import { FlashCardIcon, QuestionSetIcon } from "../components/Icons";

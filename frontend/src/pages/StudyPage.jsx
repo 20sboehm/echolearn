@@ -5,10 +5,9 @@ import { useApi } from "../hooks";
 import Sidebar from "../components/SideBar";
 import partyPopperImg from '../assets/party-popper.png';
 import partyPopperFlipImg from '../assets/party-popper-flip.png';
-import stackImage from '../assets/reviewSwitch2.png';
-import singleCardImage from '../assets/reviewSwitch.png';
 import LoadingSpinner from "../components/LoadingSpinner";
 import MarkdownPreviewer from "../components/MarkdownPreviewer";
+import { FlashCardIcon, QuestionSetIcon } from "../components/Icons";
 import "./ReviewPage.css";
 import './Buttons.css';
 
@@ -20,7 +19,6 @@ const ReviewProvider = ({ children }) => {
   const [showAnswer, setShowAnswer] = useState(false); // Reveals the answer buttons as well as the 'Answer' card on the default review display setting
   const [finish, setFinish] = useState(false);
   const [changeAnimation, setAnimation] = useState(true);
-  const [currImage, setCurrImage] = useState(singleCardImage);
 
   const [searchParams] = useSearchParams();
   const studyAll = searchParams.get('studyAll') === 'true';
@@ -49,9 +47,6 @@ const ReviewProvider = ({ children }) => {
     {
       onSuccess: (data) => {
         setAnimation(data?.flip_mode ?? true);  // Set flip after successful data fetch
-        if (data?.flip_mode == false) {
-          setCurrImage(stackImage)
-        }
       }
     }
   );
@@ -118,7 +113,6 @@ const ReviewProvider = ({ children }) => {
         showAnswer, setShowAnswer,
         finish, setFinish,
         changeAnimation, setAnimation,
-        currImage, setCurrImage,
         studyAll,
         deckIds,
         currentDeckIndex, setCurrentDeckIndex,
@@ -149,7 +143,7 @@ function ReviewPageContent() {
 
   const {
     setAnimation, changeAnimation,
-    currImage, setCurrImage, finish, cardIndex,
+    finish, cardIndex,
     settingsIsLoading, settingsError,
     reviewsData, reviewsIsLoading, reviewsError,
     currentDeckIndex, deckIds
@@ -178,13 +172,6 @@ function ReviewPageContent() {
     );
   }
 
-  const switchAnimation = () => {
-    setCurrImage((prev) =>
-      prev === stackImage ? singleCardImage : stackImage
-    );
-    setAnimation(!changeAnimation);
-  }
-
   // Check if reviews data is available
   if (!reviewsData || !reviewsData.decks || reviewsData.decks.length === 0) {
     return <div>No cards found for review.</div>;
@@ -198,9 +185,17 @@ function ReviewPageContent() {
           <button type="button" onClick={() => { navigate(-1) }} className="py-2 w-[50%] text-center block rounded-lg border border-edGray 
             text-black dark:text-edWhite hover:bg-elHLT dark:hover:bg-edHLT">Back</button>
           <h2 className="text-center text-[2em] grid-col text-elDark dark:text-edWhite mx-auto">{reviewsData.decks[currentDeckIndex].deck_name}</h2>
-          <button className="border border-black w-[40%] ml-auto" onClick={switchAnimation}>
-            <img src={currImage}></img>
-          </button>
+          <div className="flex gap-4 justify-end items-center">
+            {/* QuestionSetIcon Button */}
+            <button className="border border-black" onClick={() => setAnimation(false)}>
+              <QuestionSetIcon isTrue={changeAnimation} />
+            </button>
+
+            {/* FlashCardIcon Button */}
+            <button className="border border-black" onClick={() => setAnimation(true)}>
+              <FlashCardIcon isTrue={changeAnimation} />
+            </button>
+          </div>
         </div>
         {!finish && (
           <ReviewCard card={reviewsData.decks[currentDeckIndex].cards[cardIndex]} />
@@ -313,8 +308,8 @@ function ShowAnswerButtons() {
   const { showAnswer, toggleFlip, updateReviewedCard } = useContext(ReviewContext);
 
   const handleKeyPress = (e) => {
+    e.preventDefault();
     if (e.key === 'Space' || e.keyCode === 32) {
-      e.preventDefault();
       toggleFlip();
       return;
     }
