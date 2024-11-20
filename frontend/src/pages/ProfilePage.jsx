@@ -223,7 +223,11 @@ function ProfilePage() {
     try {
       const response = await api._patch('/api/profile/me', updatedData);
       const data = await response.json();
-      setProfile(data);
+      fetchProfile();
+      setProfile((prevProfile) => ({
+        ...prevProfile,
+        ...data,
+      }));
       // Reset the editing state for the specific field
       setIsEditingField((prevState) => ({
         ...prevState,
@@ -381,6 +385,7 @@ function ProfilePage() {
               onSave={() => handleSaveClick('username')}
               onCancel={() => handleCancelClick('username')}
               onChange={(newVal) => setEditableUsername(newVal)}
+              is_owner={profile.is_owner}
             />
 
             {/* Email */}
@@ -392,6 +397,7 @@ function ProfilePage() {
               onSave={() => handleSaveClick('email')}
               onCancel={() => handleCancelClick('email')}
               onChange={(newVal) => setEditableEmail(newVal)}
+              is_owner={profile.is_owner}
             />
 
             {/* Age */}
@@ -404,6 +410,7 @@ function ProfilePage() {
               onSave={() => handleSaveClick('age')}
               onCancel={() => handleCancelClick('age')}
               onChange={(newVal) => setEditableAge(Number(newVal))}
+              is_owner={profile.is_owner}
             />
 
             {/* Country */}
@@ -417,6 +424,7 @@ function ProfilePage() {
               onSave={() => handleSaveClick('country')}
               onCancel={() => handleCancelClick('country')}
               onChange={(newVal) => setEditableCountry(newVal)}
+              is_owner={profile.is_owner}
             />
 
           </div>
@@ -649,7 +657,7 @@ const Folder = ({ folder, onRightClick, is_owner }) => {
 };
 
 
-const EditableField = ({ label, value, isEditing, inputType = 'text', options = [], onEdit, onSave, onCancel, onChange }) => {
+const EditableField = ({ label, value, isEditing, inputType = 'text', options = [], onEdit, onSave, onCancel, onChange, is_owner }) => {
   return (
     <div className="flex justify-between items-center">
       <div>
@@ -682,28 +690,30 @@ const EditableField = ({ label, value, isEditing, inputType = 'text', options = 
       </div>
 
       {/* Save or Edit button */}
-      {isEditing ? (
-        <div>
+      {is_owner && (
+        isEditing ? (
+          <div>
+            <button
+              className="bg-green-500 px-4 my-2 rounded hover:bg-green-600 transition mr-2 text-white"
+              onClick={onSave}
+            >
+              Save
+            </button>
+            <button
+              className="bg-red-500 px-4 my-2 rounded hover:bg-red-600 transition text-white"
+              onClick={onCancel}
+            >
+              Cancel
+            </button>
+          </div>
+       ) : (
           <button
-            className="bg-green-500 px-4 my-2 rounded hover:bg-green-600 transition mr-2 text-white"
-            onClick={onSave}
+            className="bg-gray-600 px-4 my-2 rounded hover:bg-gray-500 transition"
+            onClick={onEdit}
           >
-            Save
+            Edit
           </button>
-          <button
-            className="bg-red-500 px-4 my-2 rounded hover:bg-red-600 transition text-white"
-            onClick={onCancel}
-          >
-            Cancel
-          </button>
-        </div>
-      ) : (
-        <button
-          className="bg-gray-600 px-4 my-2 rounded hover:bg-gray-500 transition"
-          onClick={onEdit}
-        >
-          Edit
-        </button>
+        )
       )}
     </div>
   );
