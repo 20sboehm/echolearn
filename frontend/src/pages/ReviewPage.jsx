@@ -9,6 +9,7 @@ import stackImage from '../assets/reviewSwitch2.png';
 import singleCardImage from '../assets/reviewSwitch.png';
 import LoadingSpinner from "../components/LoadingSpinner";
 import MarkdownPreviewer from "../components/MarkdownPreviewer";
+import { FlashCardIcon, QuestionSetIcon } from "../components/Icons";
 import "./ReviewPage.css";
 import './Buttons.css';
 
@@ -239,6 +240,8 @@ function ReviewPageContent() {
           <h2 className="text-center text-[2em] grid-col text-elDark dark:text-edWhite mx-auto">{reviewsData.decks[currentDeckIndex].deck_name}</h2>
           <button className="border border-black w-[40%] ml-auto" onClick={switchAnimation}>
             <img src={currImage}></img>
+            <QuestionSetIcon />
+            <FlashCardIcon isTrue={changeAnimation}/>
           </button>
         </div>
         {!finish && (
