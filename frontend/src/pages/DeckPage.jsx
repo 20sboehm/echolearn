@@ -367,14 +367,15 @@ function DeckPage({ publicAccess = false }) {
       <div className="flex flex-row w-full h-full">
         <Sidebar refetchTrigger={refetchTrigger} onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
         <div className="w-full flex flex-col mx-[15%] max-h-[calc(100vh-5rem)] border-b border-elDividerGray dark:border-edDividerGray">
-          <div className="flex items-center w-full border-b border-elDividerGray dark:border-edDividerGray pb-1 mt-8 mb-4 ">
-            <h1 className="text-[2rem] text-elDark dark:text-edWhite font-medium inline mr-2">
-              {deckCards.deck_name} <span className="font-normal text-xl">({deckCards.cards.length} Cards)</span>
-              <span className="font-normal text-xl">  Description: {deckCards.deckdescription}</span>
-            </h1>
-            <QuestionMarkHoverHelp title="Deck Page" helpTextList={deckPageHelpList} heightInRem={32} />
+          <div className="flex items-center w-full border-b border-elDividerGray dark:border-edDividerGray pb-1 mt-8">
+            <div>
+              <h1 className="text-[2rem] text-elDark dark:text-edWhite font-medium inline mr-2">
+                {deckCards.deck_name} <span className="font-normal text-xl">({deckCards.cards.length} Cards)</span>
+              </h1>
+              <QuestionMarkHoverHelp title="Deck Page" helpTextList={deckPageHelpList} heightInRem={32} />
+            </div>
           </div>
-
+          <span className="font-normal text-xl mb-4">{deckCards.deckdescription}</span>
           <div className="flex">
             <div className="flex flex-col">
               {publicAccess ? (
@@ -504,7 +505,7 @@ function DeckPage({ publicAccess = false }) {
                   </div>
                 )}
 
-                <button onClick={submitRating} id="button-preview" aria-labelledby="tooltip-1f7d89ff-668b-406b-9c3f-e3e313ecdc97" type="button" data-view-component="true" className="w-[5vw] Button Button--iconOnly Button--secondary Button--medium inline-flex items-center space-x-2 p-2">
+                <button onClick={submitRating} id="button-preview" aria-labelledby="tooltip-1f7d89ff-668b-406b-9c3f-e3e313ecdc97" type="button" data-view-component="true" className="w-[5vw] Button Button--iconOnly Button--secondary Button--medium inline-flex items-center space-x-2 p-2 mt-[2px]">
                   <HeartIcon isFilled={Rateresult} />
                   <p className="text-black dark:text-edWhite">{deckCards.stars}</p>
                 </button>
