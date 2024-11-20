@@ -375,7 +375,7 @@ function DeckPage({ publicAccess = false }) {
               <QuestionMarkHoverHelp title="Deck Page" helpTextList={deckPageHelpList} heightInRem={32} />
             </div>
           </div>
-          <span className="font-normal text-xl mb-4">{deckCards.deckdescription}</span>
+          <span className="font-normal text-xl text-elDark dark:text-edWhite mb-4">{deckCards.deckdescription}</span>
           <div className="flex">
             <div className="flex flex-col">
               {publicAccess ? (

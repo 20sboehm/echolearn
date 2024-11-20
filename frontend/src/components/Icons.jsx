@@ -129,18 +129,17 @@ export const ChevronIcon = ({ isOpen }) => {
 export const RectangleIcon = () => {
   return (
     <svg
-      viewBox="0 0 24 24"
+      viewBox="0 0 24 26" // Further reduced canvas height
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       style={{
         transition: "stroke 0.3s ease",
         width: "12px",
-        height: "12px",
-        // stroke: isHighlighted ? "#FF6347" : "#000000", // Change color based on `isHighlighted` prop
+        height: "18px", // Proportionally reduced height
       }}
     >
       <path
-        d="M5 6.2C5 5.07989 5 4.51984 5.21799 4.09202C5.40973 3.71569 5.71569 3.40973 6.09202 3.21799C6.51984 3 7.0799 3 8.2 3H15.8C16.9201 3 17.4802 3 17.908 3.21799C18.2843 3.40973 18.5903 3.71569 18.782 4.09202C19 4.51984 19 5.0799 19 6.2V17.8C19 18.9201 19 19.4802 18.782 19.908C18.5903 20.2843 18.2843 20.5903 17.908 20.782C17.4802 21 16.9201 21 15.8 21H8.2C7.07989 21 6.51984 21 6.09202 20.782C5.71569 20.5903 5.40973 20.2843 5.21799 19.908C5 19.4802 5 18.9201 5 17.8V6.2Z"
+        d="M5 6.2C5 5.07989 5 4.51984 5.21799 4.09202C5.40973 3.71569 5.71569 3.40973 6.09202 3.21799C6.51984 3 7.0799 3 8.2 3H15.8C16.9201 3 17.4802 3 17.908 3.21799C18.2843 3.40973 18.5903 3.71569 18.782 4.09202C19 4.51984 19 5.0799 19 6.2V22.8C19 23.9201 19 24.4802 18.782 24.908C18.5903 25.2843 18.2843 25.5903 17.908 25.782C17.4802 26 16.9201 26 15.8 26H8.2C7.07989 26 6.51984 26 6.09202 25.782C5.71569 25.5903 5.40973 25.2843 5.21799 24.908C5 24.4802 5 23.9201 5 22.8V6.2Z"
         strokeWidth="3"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -149,6 +148,8 @@ export const RectangleIcon = () => {
     </svg>
   );
 };
+
+
 
 
 
@@ -552,67 +553,61 @@ export const QuestionMarkIcon = ({ className }) => (
 export const FlashCardIcon = ({ isTrue }) => {
   return (
     <svg
-      width="24px"
-      height="24px"
+      width="48px"
+      height="48px"
       viewBox="0 0 24 24"
-      fill="none"
+      className={isTrue ? "bg-white" : "bg-gray-300 dark:bg-gray-500"}
       xmlns="http://www.w3.org/2000/svg"
     >
-
       {/* Tail of the "Q" */}
       <path
         d="M11.8 13.8L13.5 16"
-        className="stroke-elDark dark:stroke-edWhite" // Use stroke classes instead of fill
+        className="stroke-elDark dark:stroke-edDark"
         strokeLinecap="round"
       />
-
       {/* "Q" Letter Path */}
       <path
         d="M6 11C6 9.067 7.567 7.5 9.5 7.5C11.433 7.5 13 9.067 13 11C13 12.933 11.433 14.5 9.5 14.5C7.567 14.5 6 12.933 6 11Z"
-        className="stroke-elDark dark:stroke-edWhite" // Use stroke classes instead of fill
-        fill="none" // Make sure fill is transparent
+        className="stroke-elDark dark:stroke-edDark"
+        fill="none"
       />
       <path
         d="M12 5.6C11.9 5.5 11.9 5.4 12 5.3L12.7 4.3C12.8 4.2 13.2 4.2 13.3 4.3L14 5.3C14.1 5.4 14.1 5.5 14 5.6L13.3 6.7C13.2 6.8 12.8 6.8 12.7 6.7L12 5.6Z"
-        fill={isTrue ? "#FFFFFF" : "#808080"}  // White or Gray based on isTrue
+        className="dark:fill-edDark fill-elDark"
       />
 
       <path
         d="M5.208 15.312C5.1091 15.1636 4.8909 15.1636 4.792 15.312L4.0924 16.3613C4.0365 16.4453 4.0365 16.5547 4.0924 16.6387L4.792 17.688C4.8909 17.8364 5.1091 17.8364 5.208 17.688L5.9075 16.6387C5.9635 16.5547 5.9635 16.4453 5.9075 16.3613L5.208 15.312Z"
-        fill={isTrue ? "#FFFFFF" : "#808080"}  // White or Gray based on isTrue
+        className="dark:fill-edDark fill-elDark"
       />
-
       <path
         fillRule="evenodd"
         clipRule="evenodd"
         d="M1 4C1 2.34315 2.34315 1 4 1H14C15.1323 1 16.1181 1.62732 16.6288 2.55337L20.839 3.68148C22.4394 4.11031 23.3891 5.75532 22.9603 7.35572L19.3368 20.8787C18.908 22.4791 17.263 23.4288 15.6626 23L8.19849 21H4C2.34315 21 1 19.6569 1 18V4ZM17 18V4.72339L20.3213 5.61334C20.8548 5.75628 21.1714 6.30461 21.0284 6.83808L17.405 20.361C17.262 20.8945 16.7137 21.2111 16.1802 21.0681L15.1198 20.784C16.222 20.3403 17 19.261 17 18ZM4 3C3.44772 3 3 3.44772 3 4V18C3 18.5523 3.44772 19 4 19H14C14.5523 19 15 18.5523 15 18V4C15 3.44772 14.5523 3 14 3H4Z"
-        fill={isTrue ? "#FFFFFF" : "#808080"}  // White or Gray based on isTrue
+        className="dark:fill-edDark fill-elDark"
       />
     </svg>
   );
 };
 
 export const QuestionSetIcon = ({ isTrue }) => (
-  <svg width="24" height="24" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <svg width="48" height="48" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" className={isTrue ? "bg-gray-300 dark:bg-gray-500" : "bg-white"}>
     <path
       d="M488.445 842.076h39.783v29.79h-39.783zM746.417 256.375h104.96v29.79h-104.96zM879.543 256.375h35.335v29.79h-35.335zM566.969 842.076h23.449v29.79h-23.449zM433.533 842.076h23.449v29.79h-23.449z"
-      fill="#FCE3C3"
+      className="fill-elDark"
       strokeWidth="2"
     />
-
-    {/* Lower Answer  */}
+    {/* Lower Answer */}
     <path
       d="M696.574 861.92V725.159H421.212V359.484h503.302v365.675H814.892L696.574 861.92zM426.07 720.302h275.361v128.579l111.24-128.579h106.985v-355.96H426.07v355.96z m291.862 84.287V703.801H442.571V380.843h460.585v322.958h-98.025l-87.199 100.788zM447.428 698.943h275.361v92.606l80.121-92.606h95.388V385.7h-450.87v313.243z"
-      fill="none"
-      className="stroke-elDark dark:stroke-edWhite"
-      strokeWidth="2"
+      className="stroke-elDark dark:stroke-edDark"
+      strokeWidth="15"
     />
-    {/* upper Question */}
+    {/* Upper Question */}
     <path
       d="M292.392 712.896L186.559 603.148H97.768V232.877h573.639v153.136H446.625v217.136H292.882l-0.49 109.747zM102.625 598.291h85.997l98.966 102.627 0.458-102.627h153.721V381.155h224.781V237.734H102.625v360.557z m171.413 64.95l-77.703-81.451h-77.208V254.235h530.922v110.419H425.267V581.79H274.276l-0.238 81.451z m-150.055-86.308h74.43l70.802 74.217 0.218-74.217H420.41V359.797h224.78V259.093H123.983v317.84z"
-      fill="none"
-      className="stroke-elDark dark:stroke-edWhite"
-      strokeWidth="2"
+      className="stroke-elDark dark:stroke-edDark"
+      strokeWidth="15"
     />
   </svg>
 );
