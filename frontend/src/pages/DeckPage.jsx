@@ -461,13 +461,13 @@ function DeckPage({ publicAccess = false }) {
                     </button>
                   </div>
                 )}
-                
+
                 {publicAccess ? (
                   null
                 ) : (
                   <button className="button-common button-blue" onClick={handleShareClick}>
-                  Share
-                </button>
+                    Share
+                  </button>
                 )}
 
                 {showShareModal && (
@@ -505,7 +505,7 @@ function DeckPage({ publicAccess = false }) {
                   </div>
                 )}
 
-                <button onClick={submitRating} id="button-preview" aria-labelledby="tooltip-1f7d89ff-668b-406b-9c3f-e3e313ecdc97" type="button" data-view-component="true" className="w-[5vw] Button Button--iconOnly Button--secondary Button--medium inline-flex items-center space-x-2 p-2 mt-[2px]">
+                <button onClick={submitRating} id="button-preview" aria-labelledby="tooltip-1f7d89ff-668b-406b-9c3f-e3e313ecdc97" type="button" data-view-component="true" className="w-[5vw] Button Button--iconOnly Button--secondary Button--medium inline-flex items-center space-x-2 p-2 mt-[2px] border-l border-edDividerGray">
                   <HeartIcon isFilled={Rateresult} />
                   <p className="text-black dark:text-edWhite">{deckCards.stars}</p>
                 </button>
