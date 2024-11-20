@@ -56,6 +56,11 @@ function QuizletParserPage() {
             const text = e.target.result;
             const lines = text.split('\n');
 
+            if (lines[1] !== '#html:true') {
+                alert("The format of file is incorrect. please follow the rules of expotring from Anki")
+                return;
+            }
+
             const startIndex = lines.findIndex(line => line.includes("#html:true")) + 1;
             const dataLines = lines.slice(startIndex);
 
@@ -90,6 +95,11 @@ function QuizletParserPage() {
         if (!deckId) {
             console.error("Error: Missing deckId");
             alert("Faile to creat cards because did not select deck")
+            displayPopup(false);
+            return;
+        }
+        if(ankiInput.length == 0){
+            alert("Faile to creat cards because no data provided")
             displayPopup(false);
             return;
         }
@@ -184,7 +194,8 @@ function QuizletParserPage() {
                     </button>
 
                     <div className="mb-2 flex flex-col w-full">
-                        <input type="file" onChange={handleFileuploaded} required></input>
+                        <p className="text-elDark dark:text-edWhite mb-2">To export from Anki, click on 'File' and choose 'Export'. In the pop-up window, select 'Cards in Plain Text (.txt)' as the Export format, and then click 'Export'</p>
+                        <input type="file" onChange={handleFileuploaded} accept=".txt" required></input>
                     </div>
                     <button type='submit' className="button-common button-blue font-semibold py-2 text-center w-1/4 my-2">
                         Submit

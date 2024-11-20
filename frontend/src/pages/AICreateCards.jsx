@@ -271,9 +271,11 @@ function AICreateCardsPage() {
               Word count: {wordCount}
             </div>
           </div>
+          {(!preview || preview.length === 0) && (
           <button type='submit' className="button-common button-blue font-semibold py-2 text-center w-1/4 my-2">
             Submit
           </button>
+          )}
 
 
         </form>
