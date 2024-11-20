@@ -69,6 +69,12 @@ function LeaderBoard({ publicAccess = false }) {
                 <h1 className="text-4xl font-bold text-white mb-6">Leaderboard</h1>
                 <div className="w-full max-w-2xl bg-white rounded-lg shadow-lg overflow-hidden">
                     <ul className="divide-y divide-gray-200">
+                    <li className="p-4 grid grid-cols-4 text-center font-bold text-black">
+                        <span>Rank</span>
+                        <span>User Name</span>
+                        <span>Country</span>
+                        <span>Score</span>
+                    </li>
                         {allUsers.map((user, index) => (
                             <li key={index} className="p-4 grid grid-cols-4 items-center text-center transform transition duration-500 ease-in-out hover:scale-105">
                                 <span className="text-lg font-bold text-gray-900">{index + 1}</span>  

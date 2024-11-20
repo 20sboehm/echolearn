@@ -109,7 +109,6 @@ function AICreateCardsPage() {
       }
       setNewResponse(responseData.newcardset);
       console.log("All cards created successfully.");
-      displayPopup(true);
     }
     setWatiting(false)
     if (userInput !== null) {
