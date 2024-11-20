@@ -3,7 +3,7 @@ import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 import { useApi } from "../hooks";
 import { ResizableBox } from 'react-resizable';
-import { DeckCreateIcon, FolderCreateIcon, ExpandContractAllIcon, SidebarOpenClose, ChevronIcon } from './Icons';
+import { DeckCreateIcon, FolderCreateIcon, ExpandContractAllIcon, SidebarOpenClose, ChevronIcon, RectangleIcon } from './Icons';
 import QuestionMarkHoverHelp from './QuestionMarkHoverHelp';
 import 'react-resizable/css/styles.css';
 
@@ -395,7 +395,8 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
                   onDrop={(e) => handleDrop(e, null)}
                   onDragOver={handleDragOver}
                 >
-                  <Link to={`/decks/${deck.deck_id}`}>
+                  <Link className="flex flex-row items-center" to={`/decks/${deck.deck_id}`}>
+                    <RectangleIcon/>
                     <p className="overflow-x-auto whitespace-nowrap hover:text-edBlue ml-1">{deck.name}</p>
                   </Link>
                 </div>
@@ -531,8 +532,9 @@ const Folder = ({ folder, onRightClick, folderStates, toggleFolder, setContextMe
         <div className="ml-2 border-l border-edGray">
           {folder.decks.map((deck, index) => (
             <div key={index} className="text-elDark dark:text-edWhite flex items-center select-none ml-2 mt-2" onContextMenu={(e) => onRightClick(e, deck)} draggable onDragStart={(e) => onDragStart(e, deck)} onDragOver={(e) => onDragOver(e)} onDrop={(e) => onDrop(e, folder)}>
-              <Link to={`/decks/${deck.deck_id}`}>
-                <p className="overflow-x-auto whitespace-nowrap hover:text-edBlue">{deck.name}</p>
+              <Link  className="flex flex-row items-center -ml-1" to={`/decks/${deck.deck_id}`}>
+                <RectangleIcon/>
+                <p className="overflow-x-auto whitespace-nowrap hover:text-edBlue ml-1">{deck.name}</p>
               </Link>
             </div>
           ))}

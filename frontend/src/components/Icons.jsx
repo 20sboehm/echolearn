@@ -126,6 +126,32 @@ export const ChevronIcon = ({ isOpen }) => {
   );
 };
 
+export const RectangleIcon = () => {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      style={{
+        transition: "stroke 0.3s ease",
+        width: "12px",
+        height: "12px",
+        // stroke: isHighlighted ? "#FF6347" : "#000000", // Change color based on `isHighlighted` prop
+      }}
+    >
+      <path
+        d="M5 6.2C5 5.07989 5 4.51984 5.21799 4.09202C5.40973 3.71569 5.71569 3.40973 6.09202 3.21799C6.51984 3 7.0799 3 8.2 3H15.8C16.9201 3 17.4802 3 17.908 3.21799C18.2843 3.40973 18.5903 3.71569 18.782 4.09202C19 4.51984 19 5.0799 19 6.2V17.8C19 18.9201 19 19.4802 18.782 19.908C18.5903 20.2843 18.2843 20.5903 17.908 20.782C17.4802 21 16.9201 21 15.8 21H8.2C7.07989 21 6.51984 21 6.09202 20.782C5.71569 20.5903 5.40973 20.2843 5.21799 19.908C5 19.4802 5 18.9201 5 17.8V6.2Z"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="stroke-elDark dark:stroke-edWhite"
+      />
+    </svg>
+  );
+};
+
+
+
 // --------------------------------------------------
 // ---------------- Community Icons -----------------
 // --------------------------------------------------
