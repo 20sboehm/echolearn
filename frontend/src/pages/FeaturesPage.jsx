@@ -46,7 +46,7 @@ function FeaturePage() {
 
   return (
     <>
-      <div className="flex flex-col items-center w-full h-full bg-featureBackground text-white">
+      <div className="flex flex-col items-center w-full h-screen bg-featureBackground text-white">
         <div className="text-center py-10">
           <h1 className="text-4xl font-bold">FEATURES</h1>
           <p className="text-xl mt-2">Overview of our key features. Make Echolearn your next memory.</p>
