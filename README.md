@@ -5,10 +5,10 @@ EchoLearn is a web-based flashcard application optimized for getting information
 ## Table of Contents
 
 1. [Prerequisites](#prerequisites)
-2. [Frontend](#frontend)
-3. [Backend](#backend)
+2. [Frontend](#frontend-section)
+3. [Backend](#backend-section)
 4. [Quick Start](#quick-start)
-5. [Mobile](#mobile)
+5. [Mobile](#mobile-section)
 6. [Deployment](#deployment)
 
 
@@ -30,7 +30,7 @@ EchoLearn is a web-based flashcard application optimized for getting information
 - **Expo**
 - **NativeWind**
 
-## <a name="frontend">--- Frontend ---</a>
+## <a name="frontend-section">--- Frontend ---</a>
 
 All of the following commands will be run inside the frontend directory
 `cd frontend`
@@ -57,7 +57,7 @@ If you encounter issues with dependencies, you can clearing node_modules and try
 `rm -rf node_modules`
 `npm install`
 
-## <a name="backend">--- Backend ---</a>
+## <a name="backend-section">--- Backend ---</a>
 
 All of the following commands will be run inside the backend directory
 `cd backend`
@@ -104,7 +104,7 @@ You can also access our website with the following URLs:
 - **Frontend**: [https://www.echolearn.org/](https://www.echolearn.org/)
 - **Backend API**: [https:////echolearn.online](https://echolearn.online/api/docs)
 
-## <a name="mobile">--- Mobile ---</a>
+## <a name="mobile-section">--- Mobile ---</a>
 
 All of the following commands will be run inside the mobile directory
 `cd mobile`
