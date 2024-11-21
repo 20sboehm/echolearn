@@ -343,19 +343,20 @@ function AnswerCard({ card, displayQuestion }) {
 
 function FlipFlashcard({ card, displayQuestion }) {
   const { flip, toggleFlip } = useContext(ReviewContext);
-
-  return (
-    <div className={`mt-8 flashCard ${flip ? 'flip' : ''}`} onClick={toggleFlip}>
-      <div className="h-[50vh] text-[1.2rem] border border-edMedGray text-edWhite flex flex-col justify-center items-center 
+  if (card) {
+    return (
+      <div className={`mt-8 flashCard ${flip ? 'flip' : ''}`} onClick={toggleFlip}>
+        <div className="h-[50vh] text-[1.2rem] border border-edMedGray text-edWhite flex flex-col justify-center items-center 
           overflow-x-hidden rounded-md"
-      >
-        <MarkdownPreviewer
-          content={!flip && !displayQuestion ? "" : (displayQuestion ? card.question : card.answer)}
-          className={`text-2xl flex-1 p-3 h-full bg-elGray dark:bg-edDarker overflow-y-auto ${displayQuestion ? "" : "flashCardBack"}`} // This has to be 'displayQuestion' instead of flip and I'm not sure why
-        />
+        >
+          <MarkdownPreviewer
+            content={!flip && !displayQuestion ? "" : (displayQuestion ? card.question : card.answer)}
+            className={`text-2xl flex-1 p-3 h-full bg-elGray dark:bg-edDarker overflow-y-auto ${displayQuestion ? "" : "flashCardBack"}`} // This has to be 'displayQuestion' instead of flip and I'm not sure why
+          />
+        </div>
       </div>
-    </div>
-  )
+    )
+  }
 }
 
 function ShowAnswerButtons({ card }) {
