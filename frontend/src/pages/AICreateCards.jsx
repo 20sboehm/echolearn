@@ -266,7 +266,7 @@ function AICreateCardsPage() {
           <div className="mb-2 flex flex-col w-full">
             <textarea value={userInput} onChange={handleInputChange} className="text-black dark:text-white dark:bg-edDarker w-full min-h-20 h-40 p-2 border border-edDarkGray focus:outline-none custom-scrollbar"
               placeholder="put your text here" required></textarea>
-            <div className="word-count">
+            <div className="word-count text-edDarker dark:text-edWhite">
               Word count: {wordCount}
             </div>
           </div>

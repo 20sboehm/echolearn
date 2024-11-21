@@ -195,7 +195,7 @@ function QuizletParserPage() {
 
                     <div className="mb-2 flex flex-col w-full">
                         <p className="text-elDark dark:text-edWhite mb-2">To export from Anki, click on 'File' and choose 'Export'. In the pop-up window, select 'Cards in Plain Text (.txt)' as the Export format, and then click 'Export'</p>
-                        <input type="file" onChange={handleFileuploaded} accept=".txt" required></input>
+                        <input type="file" onChange={handleFileuploaded} accept=".txt" required className="text-edDarker dark:text-white"></input>
                     </div>
                     <button type='submit' className="button-common button-blue font-semibold py-2 text-center w-1/4 my-2">
                         Submit
