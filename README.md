@@ -7,30 +7,30 @@ EchoLearn is a web-based flashcard application optimized for getting information
 1. [Prerequisites](#prerequisites)
 2. [Frontend](#frontend)
 3. [Backend](#backend)
-4. [Quick Start](#Quick-Start)
+4. [Quick Start](#quick-start)
 5. [Mobile](#mobile)
 6. [Deployment](#deployment)
 
 
-## --- Prerequisites ---
+## <a name="prerequisites">--- Prerequisites ---</a>
 
-### Frontend Requirments
+### Frontend
 - **Npm**
 - **React**
 - **React Query**
 - **React Router DOM**
 - **Tailwind**
 
-### Backend Requirments
+### Backend
 - **Python**
 - **Django Ninja**
 - **Django CORS Headers**
 
-### Mobile Requirments
+### Mobile
 - **Expo**
 - **NativeWind**
 
-## --- Frontend ---
+## <a name="frontend">--- Frontend ---</a>
 
 All of the following commands will be run inside the frontend directory
 `cd frontend`
@@ -57,7 +57,7 @@ If you encounter issues with dependencies, you can clearing node_modules and try
 `rm -rf node_modules`
 `npm install`
 
-## --- Backend ---
+## <a name="backend">--- Backend ---</a>
 
 All of the following commands will be run inside the backend directory
 `cd backend`
@@ -92,7 +92,7 @@ python manage.py migrate --run-syncdb
 python makedata.py
 ```
 
-## --- Quick Start ---
+## <a name="quick-start">--- Quick Start ---</a>
 
 Once both the frontend and backend servers are running locally, you can access the application using the following URLs:
 
@@ -104,7 +104,7 @@ You can also access our website with the following URLs:
 - **Frontend**: [https://www.echolearn.org/](https://www.echolearn.org/)
 - **Backend API**: [https:////echolearn.online](https://echolearn.online/api/docs)
 
-## --- Mobile ---
+## <a name="mobile">--- Mobile ---</a>
 
 All of the following commands will be run inside the mobile directory
 `cd mobile`
@@ -134,7 +134,7 @@ For more info on using Expo please read over this doc
 [Expo](https://docs.expo.dev/router/installation/)
 
 
-## --- Deployment ---
+## <a name="deployment">--- Deployment ---</a>
 - Purchase 2 domains on namecheap (or other similar service), one for the user-facing frontend website and one for the backend API (which needs it own domain so you can add HTTPS to it we believe?)
 - Deploy the frontend via AWS Amplify (we created a separate Git repo to link to Amplify because it wouldn't let us link to GitLab)
 - In Amplify, you will want to create an environment variable VITE_API_BASE_URL and set it to the URL of the backend API (In our case, https://echolearn.online)
