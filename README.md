@@ -9,24 +9,24 @@ EchoLearn is a web-based flashcard application optimized for getting information
 3. [Backend](#backend)
 4. [Quick Start](#Quick-Start)
 5. [Mobile](#mobile)
-6. [Deployment](#---deployment---)
+6. [Deployment](#deployment)
 
 
 ## --- Prerequisites ---
 
-### Frontend
+### Frontend Requirments
 - **Npm**
 - **React**
 - **React Query**
 - **React Router DOM**
 - **Tailwind**
 
-### Backend
+### Backend Requirments
 - **Python**
 - **Django Ninja**
 - **Django CORS Headers**
 
-### Mobile
+### Mobile Requirments
 - **Expo**
 - **NativeWind**
 
