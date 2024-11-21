@@ -30,7 +30,7 @@ EchoLearn is a web-based flashcard application optimized for getting information
 - **Expo**
 - **NativeWind**
 
-## --- Frontend ---
+## Frontend
 
 All of the following commands will be run inside the frontend directory
 `cd frontend`
@@ -122,7 +122,7 @@ Since the styling used is nativewind to set up nativewind run the following comm
 
 ### 3. Run the Mobile
 Before starting the mobile app, ensure that the backend server is running, as the mobile app fetches data from the backend.
-Please run this code at `/backend` for mobile backend: python manage.py runserver 0.0.0.0:8000
+Please run this code at `/backend` for mobile backend: `python manage.py runserver 0.0.0.0:8000`
 
 To start the mobile app, run:
 `npx expo start -c` 
