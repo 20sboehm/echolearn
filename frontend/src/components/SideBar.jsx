@@ -189,10 +189,6 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
   };
 
   const buttonCreate = (type) => {
-    if (type == "deck" && selected == null) {
-      alert("Please select a folder to create deck");
-      return;
-    }
     setCreateType(type);
     setShowInput(true);
     setContextMenu(null);
@@ -312,7 +308,7 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
     const endpoint = isFolder
       ? `/api/folders/${itemId}/move${targetId !== null ? `?target_folder_id=${targetId}` : ''}`
       : `/api/decks/${itemId}/move${targetId !== null ? `?target_folder_id=${targetId}` : ''}`;
-  
+
 
     console.log(endpoint);
     try {
@@ -327,7 +323,6 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
     }
   };
 
-
   return (
     <div onContextMenu={(e) => handleRightClick(e)} onDragOver={(e) => handleDragOver(e)} onDrop={(e) => handleDrop(e, null)}>
       <button
@@ -338,7 +333,6 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
         <SidebarOpenClose sidebarOpen={sidebarOpen} sidebarWidth={sidebarWidth} />
       </button>
 
-      {/* WARNING - ResizableBox does not seem to use `box-sizing: border box` which can cause some issues if you aren't careful */}
       <ResizableBox
         width={sidebarWidth}
         height={Infinity}
@@ -358,7 +352,6 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
               <QuestionMarkHoverHelp title="Sidebar" helpTextList={sideBarHelpTextList} heightInRem={38} />
             </div>
 
-            {/* <ExpandContractAllIcon isExpanded={isAnyFolderOpen} /> */}
             <div ref={buttonRef} className='flex items-center'>
               <button onClick={() => buttonCreate('deck')} className='hover:bg-elLavender dark:hover:bg-edStrongHLT mr-1 rounded-md'><DeckCreateIcon /></button>
               <button onClick={() => buttonCreate('folder')} className='hover:bg-elLavender dark:hover:bg-edStrongHLT mr-1 rounded-md'><FolderCreateIcon /></button>
@@ -367,11 +360,34 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
               </button>
             </div>
           </div>
-          {sidebarData && sidebarData.folders ? (
-            sidebarData.folders.length > 0 ? (
-              sidebarData.folders.map((folder, index) => (
-                <Folder key={index} folder={folder} onRightClick={handleRightClick} folderStates={folderStates} toggleFolder={toggleFolder} setContextMenu={setContextMenu} selected={selected} setSelected={setSelected} folderRef={folderRef} onDragStart={handleDragStart} onDrop={handleDrop} onDragOver={handleDragOver} />
-              ))
+          {sidebarData ? (
+            sidebarData.folders.length > 0 || sidebarData.decks.length > 0 ? (
+              <>
+                {/* Render folders */}
+                {sidebarData.folders.length > 0 &&
+                  sidebarData.folders.map((folder, index) => (
+                    <Folder key={index} folder={folder} onRightClick={handleRightClick} folderStates={folderStates} toggleFolder={toggleFolder} setContextMenu={setContextMenu} selected={selected} setSelected={setSelected} folderRef={folderRef} onDragStart={handleDragStart} onDrop={handleDrop} onDragOver={handleDragOver} />
+                  ))}
+                  
+                {/* Render root-level decks */}
+                {sidebarData.decks.length > 0 && (
+                  <div className="mb-4">
+                    {sidebarData.decks.map((deck, index) => (
+                      <div key={index} className="text-elDark dark:text-edWhite flex items-center select-none mt-2"
+                        onContextMenu={(e) => handleRightClick(e, deck)}
+                        onDragStart={(e) => handleDragStart(e, deck)}
+                        onDrop={(e) => handleDrop(e, null)}
+                        onDragOver={handleDragOver}
+                      >
+                        <Link className="flex flex-row items-center" to={`/decks/${deck.deck_id}`}>
+                          <RectangleIcon />
+                          <p className="overflow-x-auto whitespace-nowrap hover:text-edBlue ml-1">{deck.name}</p>
+                        </Link>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
             ) : (
               <div className='flex flex-col justify-center'>
                 <p className='text-center mt-4'>You have no decks or folders!</p>
@@ -382,29 +398,7 @@ const Sidebar = ({ refetchTrigger, onResize, sidebarWidth, setSidebarWidth }) =>
           ) : (
             <div className='text-black'>Loading...</div>
           )}
-
-          {/* Render root-level decks */}
-          {sidebarData && sidebarData.decks && sidebarData.decks.length > 0 && (
-            <div className="mb-4">
-              {sidebarData.decks.map((deck, index) => (
-                <div
-                  key={index}
-                  className="text-elDark dark:text-edWhite flex items-center select-none mt-2"
-                  onContextMenu={(e) => handleRightClick(e, deck)}
-                  onDragStart={(e) => handleDragStart(e, deck)}
-                  onDrop={(e) => handleDrop(e, null)}
-                  onDragOver={handleDragOver}
-                >
-                  <Link className="flex flex-row items-center" to={`/decks/${deck.deck_id}`}>
-                    <RectangleIcon/>
-                    <p className="overflow-x-auto whitespace-nowrap hover:text-edBlue ml-1">{deck.name}</p>
-                  </Link>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
-
       </ResizableBox>
 
       {contextMenu && (
@@ -532,8 +526,8 @@ const Folder = ({ folder, onRightClick, folderStates, toggleFolder, setContextMe
         <div className="ml-2 border-l border-edGray">
           {folder.decks.map((deck, index) => (
             <div key={index} className="text-elDark dark:text-edWhite flex items-center select-none ml-2 mt-2" onContextMenu={(e) => onRightClick(e, deck)} draggable onDragStart={(e) => onDragStart(e, deck)} onDragOver={(e) => onDragOver(e)} onDrop={(e) => onDrop(e, folder)}>
-              <Link  className="flex flex-row items-center -ml-1" to={`/decks/${deck.deck_id}`}>
-                <RectangleIcon/>
+              <Link className="flex flex-row items-center -ml-1" to={`/decks/${deck.deck_id}`}>
+                <RectangleIcon />
                 <p className="overflow-x-auto whitespace-nowrap hover:text-edBlue ml-1">{deck.name}</p>
               </Link>
             </div>

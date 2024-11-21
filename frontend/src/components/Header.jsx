@@ -70,7 +70,7 @@ function Header() {
             </Link>
           </div>
           <div className="flex ml-auto items-center">
-            <Link to="/cards" onClick={(e) => navigateWithRefresh(e, "/leaderboard")} className="px-4 mx-2 transition duration-100 hover:text-black dark:hover:text-elLightBlue py-2">Leader Board</Link>
+            <Link to="/leaderboard" onClick={(e) => navigateWithRefresh(e, "/leaderboard")} className="px-4 mx-2 transition duration-100 hover:text-black dark:hover:text-elLightBlue py-2">Leaderboard</Link>
             <Link to="/cards" onClick={(e) => navigateWithRefresh(e, "/cards")} className="px-4 mx-2 transition duration-100 hover:text-black dark:hover:text-elLightBlue py-2">Create Card</Link>
             {/* <Link to="/decks" className="px-4 mx-2 transition duration-100 hover:text-black dark:hover:text-elLightBlue py-2">Create Deck</Link> */}
             <Link to="/help" onClick={(e) => navigateWithRefresh(e, "/help")} className="px-4 mx-2 transition duration-100 hover:text-black dark:hover:text-elLightBlue py-2">Help</Link>

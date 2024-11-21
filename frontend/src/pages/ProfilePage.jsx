@@ -381,6 +381,7 @@ function ProfilePage() {
               label="Name"
               value={editableUsername}
               isEditing={isEditingField.username}
+              is_owner={profile.is_owner}
               onEdit={() => handleEditClick('username')}
               onSave={() => handleSaveClick('username')}
               onCancel={() => handleCancelClick('username')}
@@ -393,6 +394,7 @@ function ProfilePage() {
               label="Email"
               value={editableEmail}
               isEditing={isEditingField.email}
+              is_owner={profile.is_owner}
               onEdit={() => handleEditClick('email')}
               onSave={() => handleSaveClick('email')}
               onCancel={() => handleCancelClick('email')}
@@ -405,6 +407,7 @@ function ProfilePage() {
               label="Age"
               value={editableAge}
               isEditing={isEditingField.age}
+              is_owner={profile.is_owner}
               inputType="number"
               onEdit={() => handleEditClick('age')}
               onSave={() => handleSaveClick('age')}
@@ -418,6 +421,7 @@ function ProfilePage() {
               label="Country"
               value={editableCountry}
               isEditing={isEditingField.country}
+              is_owner={profile.is_owner}
               inputType="select"
               options={countries}
               onEdit={() => handleEditClick('country')}
@@ -553,16 +557,16 @@ function ProfilePage() {
               onChange={handleLightMode}
             />
 
-            <h2 className='mt-8 border-t py-4 font-semibold'>Notification Settings</h2>
+            <h2 className='mt-8 border-t py-4 font-semibold text-elDark dark:text-edWhite'>Notification Settings</h2>
 
             <input type='checkbox' id='toggleEmailNotifs' name='toggleEmailNotifs' checked={toggleNotifications}
               onChange={(e) => { setToggleNotifications(!toggleNotifications) }} />
-            <label htmlFor="toggleEmailNotifs" className='ml-2'>Enable Email Notifications</label>
+            <label htmlFor="toggleEmailNotifs" className='ml-2 text-elDark dark:text-edWhite'>Enable Email Notifications</label>
 
             <div>
               <input type="time" id='notifTime' name='notifTime' value={notificationTime} onChange={(e) => { setNotificationTime(e.target.value) }}
-                className='text-black mt-2 p-1' />
-              <label htmlFor="notifTime" className='ml-2' >Time</label>
+                className='text-black border border-edBase mt-2 p-1' />
+              <label htmlFor="notifTime" className='ml-2 text-elDark dark:text-edWhite' >Time</label>
             </div>
 
             <button className='button-common p-1.5 mt-4' onClick={handleUpdateNotificationSettings}>Update Notification Settings</button>

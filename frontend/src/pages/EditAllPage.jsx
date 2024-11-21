@@ -317,12 +317,13 @@ function DeckPage({ publicAccess = false }) {
           <div className=" flex flex-col text-[2rem] text-elDark dark:text-edWhite font-medium mt-8 mb-4 
             border-b w-full border-elDividerGray dark:border-edDividerGray pb-1">
             <div className="flex items-center mb-4">
-              <label htmlFor="deckname" >Deckname: </label>
+              {/* <label htmlFor="deckname" >Deckname: </label> */}
               <input id="deckname" value={deckname} onChange={(e) => handleDeckChange("Deckname", e.target.value)}
-                className=" border-r border-elDividerGray dark:border-edDividerGray bg-transparent"></input>
+                className="border border-edDividerGray p-1 dark:border-edDividerGray bg-transparent min-h-20 mr-2"></input>
+              <textarea placeholder="Put description here" value={deckdescription} onChange={(e) => handleDeckChange("Deckdescription", e.target.value)}
+                className="border border-edDividerGray p-1 text-base w-1/2 bg-transparent flex-1 min-h-20" />
             </div>
-            <textarea placeholder="Put description here" value={deckdescription} onChange={(e) => handleDeckChange("Deckdescription", e.target.value)}
-              className="w-1/2 bg-transparent flex-1 p-2 min-h-20" />
+
           </div>
           <div className="flex">
 
@@ -330,7 +331,7 @@ function DeckPage({ publicAccess = false }) {
               {publicAccess ? (
                 null
               ) : (
-                <div className="flex items-start mb-4 pb-4 gap-2 border-b border-elDividerGray dark:border-edDividerGray">
+                <div className="flex items-start mb-3 pb-3 gap-2 border-b border-elDividerGray dark:border-edDividerGray">
                   <>
                     <button disabled={publicAccess} className={`button-top ${deckCards.isPublic ? "button-green" : "button-red"} ${publicAccess ? "" : ""}`}
                       onClick={setStatus}> {deckCards.isPublic ? "Public" : "Private"} </button>
@@ -370,11 +371,13 @@ function DeckPage({ publicAccess = false }) {
                   </>
 
                 )}
-                <div>
-                  <p>Preview</p>
-                  <MarkdownPreviewer content={previewText} className="flex-1 p-2 min-h-20 rounded-2xl bg-transparent" />
-                </div>
+
               </div>
+
+            </div>
+            <div className="p-1 ml-4 border-l border-edDividerGray">
+              <p className="underline">Preview</p>
+              <MarkdownPreviewer content={previewText} className="flex-1 min-h-20 rounded-2xl bg-transparent" />
             </div>
 
           </div>
@@ -390,11 +393,11 @@ function DeckPage({ publicAccess = false }) {
                 onDragOver={handleDragOver}
                 onDrop={(e) => handleDrop(e, index)}
               >
-                <div className="cursor-move" draggable onDragStart={(e) => handleDragStart(e, index)}>
+                <div className="cursor-move ml-2 mt-2" draggable onDragStart={(e) => handleDragStart(e, index)}>
                   <DragIcon />
                 </div>
-                <p>{index + 1}</p>
-                <div className={`relative w-1/2 flex flex-col pr-4 border-r border-elDividerGray dark:border-edDividerGray bg-transparent`}>
+                {/* <p>{index + 1}</p> */}
+                <div className={`relative w-1/2 flex flex-col border-r border-elDividerGray dark:border-edDividerGray bg-transparent`}>
                   <textarea value={item.question} onChange={(e) => handleCardChange(item.card_id, 'questionText', e.target.value)} onClick={(e) => setpreviewText(e.target.value)}
                     className="flex-1 p-2 min-h-20 rounded-2xl bg-transparent" />
                 </div>

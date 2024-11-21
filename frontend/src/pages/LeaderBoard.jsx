@@ -31,7 +31,7 @@ function LeaderBoard({ publicAccess = false }) {
       console.log(`An error occurred fetching user data ${errorDecks.text}`)
     }
   })
-  
+
   if (isLoading) {
     return <LoadingSpinner />
   }
@@ -58,30 +58,36 @@ function LeaderBoard({ publicAccess = false }) {
     }, 1000); // Stay fully visible for 1 second
   }
 
-
+// bg-gradient-to-br from-blue-500 to-purple-600 keep or remove?
   return (
     <>
       <div className="flex flex-row w-full h-full">
         <Sidebar refetchTrigger={refetchTrigger} onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
         <div className="w-full flex flex-col mx-[15%] max-h-[calc(100vh-5rem)] border-b border-elDividerGray dark:border-edDividerGray">
-        
-        <div className="w-full h-full flex flex-col items-center px-4 py-8 bg-gradient-to-br from-blue-500 to-purple-600 min-h-screen">
-                <h1 className="text-4xl font-bold text-white mb-6">Leaderboard</h1>
-                <div className="w-full max-w-2xl bg-white rounded-lg shadow-lg overflow-hidden">
-                    <ul className="divide-y divide-gray-200">
-                        {allUsers.map((user, index) => (
-                            <li key={index} className="p-4 grid grid-cols-4 items-center text-center transform transition duration-500 ease-in-out hover:scale-105">
-                                <span className="text-lg font-bold text-gray-900">{index + 1}</span>  
-                                <Link to={`/profile?userId=${user.id}`} className="text-lg font-bold text-gray-700 no-underline hover:underline">
-                                    {user.username}
-                                </Link>
-                                <span className="text-sm text-gray-500">{user.country}</span> 
-                                <span className="text-md font-bold text-blue-800">{user.score}</span> 
-                            </li>
-                        ))}
-                    </ul>
-                </div>
+
+          <div className="w-full h-full flex flex-col items-center px-4 py-8 min-h-screen"> 
+            <h1 className="text-4xl font-bold text-elDark dark:text-white mb-6">Leaderboard</h1>
+            <div className="w-full max-w-2xl bg-white rounded-lg shadow-lg overflow-hidden border border-black">
+              <ul className="divide-y divide-gray-200">
+                <li className="p-4 grid grid-cols-4 text-center font-bold text-black">
+                  <span>Rank</span>
+                  <span>User Name</span>
+                  <span>Country</span>
+                  <span>Score</span>
+                </li>
+                {allUsers.map((user, index) => (
+                  <li key={index} className="p-4 grid grid-cols-4 items-center text-center transform transition duration-500 ease-in-out hover:scale-105">
+                    <span className="text-lg font-bold text-gray-900">{index + 1}</span>
+                    <Link to={`/profile?userId=${user.id}`} className="text-lg font-bold text-gray-700 no-underline hover:underline">
+                      {user.username}
+                    </Link>
+                    <span className="text-sm text-gray-500">{user.country}</span>
+                    <span className="text-md font-bold text-blue-800">{user.score}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
+          </div>
         </div>
       </div >
       {showPopup && (
