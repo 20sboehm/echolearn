@@ -552,9 +552,9 @@ function DeckPage({ publicAccess = false }) {
 
             {/* Create cards */}
             {isCreateMode && (
-              <div className={`flex font-medium mt-4 border border-elDividerGray dark:border-edDividerGray rounded-2xl bg-elGray dark:bg-edDarker w-[99%]`}>
+              <div className={`flex font-medium mt-4 border border-elDividerGray dark:border-edDividerGray text-black dark:text-white rounded-2xl bg-elGray dark:bg-edDarker w-[99%]`}>
                 <textarea placeholder="Enter question" value={newQuestion} onChange={(e) => setNewQuestion(e.target.value)}
-                  className="w-1/2 border-r border-elDividerGray dark:border-edDividerGray bg-transparent flex-1 p-2 min-h-20" autoFocus />
+                  className="w-1/2 border-r border-elDividerGray dark:border-edDividerGray text-black dark:text-white bg-transparent flex-1 p-2 min-h-20" autoFocus />
                 <textarea placeholder="Enter answer" value={newAnswer} onChange={(e) => setNewAnswer(e.target.value)}
                   className="w-1/2 bg-transparent flex-1 p-2 min-h-20" />
               </div>
