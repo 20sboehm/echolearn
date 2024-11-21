@@ -22,7 +22,7 @@ const teamInfo = [
   },
   {
     name: "Wilson Pan",
-    roles: ["Frontend logic", "UI Design"],
+    roles: ["Frontend logic", "UI Design", "Mobile Design"],
     email: "w1252801556@gmail.com",
   },
   {
