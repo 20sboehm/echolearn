@@ -415,7 +415,7 @@ function ShowAnswerButtons({ card }) {
     <div className="flex justify-center mt-8 mb-8">
       {!showAnswer && <button className="button-top relative w-[20%]" onClick={toggleFlip}>Reveal Answer <span className="absolute top-0.5 right-0.5 px-1 font-normal bg-edDarkBlue rounded-md">space</span></button>}
       {
-        showAnswer && (
+        showAnswer && reviewTimes && (
           <div className="flex justify-center mt-8 flex-wrap gap-4">
             <ResultButton card={card} confidenceLevel={1} time={reviewTimes["again"]}>Again</ResultButton>
 
