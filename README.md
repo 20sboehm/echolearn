@@ -5,7 +5,7 @@ EchoLearn is a web-based flashcard application optimized for getting information
 ## Table of Contents
 
 1. [Prerequisites](#prerequisites)
-2. [Frontend](#frontend)
+2. [Frontend](#---frontend---)
 3. [Backend](#backend)
 4. [Quick Start](#Quick-Start)
 5. [Mobile](#mobile)
@@ -30,8 +30,7 @@ EchoLearn is a web-based flashcard application optimized for getting information
 - **Expo**
 - **NativeWind**
 
-## Frontend
-
+<h2 id="---frontend---">--- Frontend ---</h2>
 All of the following commands will be run inside the frontend directory
 `cd frontend`
 
