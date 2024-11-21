@@ -128,18 +128,20 @@ const ReviewProvider = ({ children }) => {
       confidence: confidence_level // 1-4 confidence level
     }
 
-    api._patch(
-      `/api/cards/review/${card.card_id}`, updatedCardData)
-      .then(response => {
-        if (response.ok) {
-          updateCardIndex();
-        } else {
-          console.error('Failed to update next_review');
-        }
-      })
-      .catch(error => {
-        console.error('Error updating next_review:', error);
-      });
+    if (card) {
+      api._patch(
+        `/api/cards/review/${card.card_id}`, updatedCardData)
+        .then(response => {
+          if (response.ok) {
+            updateCardIndex();
+          } else {
+            console.error('Failed to update next_review');
+          }
+        })
+        .catch(error => {
+          console.error('Error updating next_review:', error);
+        });
+    }
   };
 
   return (
