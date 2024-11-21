@@ -179,7 +179,7 @@ function MultipleInputPage() {
           Back
         </button>
 
-        <div className="flex flex-col gap-2 mb-4">
+        <div className="flex flex-col gap-2 mb-4 text-black dark:text-edWhite">
           <div className="flex items-center">
             <input type="text" id="cardDividerString" value={questionAnswerDivider} className="border border-edDividerGray dark:bg-edDarker p-1 w-16 rounded"
               onChange={(e) => { setQuestionAnswerDivider(e.target.value) }} />
@@ -193,8 +193,8 @@ function MultipleInputPage() {
         </div>
 
         <div className="flex items-start mb-1">
-          <button type="button" onClick={() => { handleInsertText(questionAnswerDivider) }} className="p-0.5 mr-2 rounded dark:bg-edBlue text-white min-w-6 min-h-8">{questionAnswerDivider}</button>
-          <button type="button" onClick={() => { handleInsertText(cardDivider) }} className="p-0.5 rounded dark:bg-edBlue text-white min-w-6 min-h-8">{cardDivider}</button>
+          <button type="button" onClick={() => { handleInsertText(questionAnswerDivider) }} className="p-0.5 mr-2 rounded bg-edBlue text-white min-w-6 min-h-8">{questionAnswerDivider}</button>
+          <button type="button" onClick={() => { handleInsertText(cardDivider) }} className="p-0.5 rounded bg-edBlue text-white min-w-6 min-h-8">{cardDivider}</button>
         </div>
 
         <form onSubmit={handleSubmitMultiple} className='flex flex-col items-center'>
@@ -208,8 +208,8 @@ function MultipleInputPage() {
             Submit
           </button>
 
-          <h3 className="mt-4">Preview</h3>
-          {preview.length === 0 ? <div className="italic mt-4">No preview avaliable.</div> : null}
+          <h3 className="mt-4 text-black dark:text-edWhite">Preview</h3>
+          {preview.length === 0 ? <div className="italic mt-4 text-black dark:text-edWhite">No preview avaliable.</div> : null}
           <div className="h-[50vh] overflow-y-auto">
             {preview.map((item, index) => (
               <div className="grid grid-cols-2 gap-4 font-medium px-2" key={index}>

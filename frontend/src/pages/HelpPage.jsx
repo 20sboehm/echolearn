@@ -9,6 +9,8 @@ import ReviewViewImg from "../assets/ReviewPage.png"
 import SpaceRepeImg from "../assets/growth.png"
 import ProfileImg from "../assets/Profile.png"
 import CopyImg from "../assets/CopyDeck.png"
+import AnkiImg from '../assets/Anki.png'
+import MulitInputImg from '../assets/MultiInput.png'
 
 const topics = [
   {
@@ -39,7 +41,7 @@ const topics = [
   {
     title: "Multi Card Creation",
     guide: "{Will be fill when multi card input is done}",
-    image: "",
+    image: AnkiImg,
   },
   {
     title: "Simple Markdown Tutorial",
@@ -80,7 +82,7 @@ const topics = [
   {
     title: "Import Quizlet or Anki",
     guide: "{will be fill after import is done}",
-    image: "",
+    image: MulitInputImg,
   },
 ];
 
