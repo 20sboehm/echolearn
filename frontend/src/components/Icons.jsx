@@ -477,7 +477,7 @@ export const LatexBlockIcon = () => (
 );
 
 export const MicIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill="currentColor" className="bi bi-mic-fill" viewBox="0 0 16 16">
+  <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill="currentColor" className="fill-elDark dark:fill-edWhite bi bi-mic-fill" viewBox="0 0 16 16">
     <path d="M5 3a3 3 0 0 1 6 0v5a3 3 0 0 1-6 0z" />
     <path d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 .5-.5" />
   </svg>
@@ -491,10 +491,33 @@ export const MicIconListening = () => (
 );
 
 export const LinkUploadedImage = () => (
-  <svg width="18px" height="18px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M13.5 14.5L14.5 15.5M14 12.5C14 13.8807 12.8807 15 11.5 15C10.1193 15 9 13.8807 9 12.5C9 11.1193 10.1193 10 11.5 10C12.8807 10 14 11.1193 14 12.5ZM8.4 19C5.41766 19 3 16.6044 3 13.6493C3 11.2001 4.8 8.9375 7.5 8.5C8.34694 6.48637 10.3514 5 12.6893 5C15.684 5 18.1317 7.32251 18.3 10.25C19.8893 10.9449 21 12.6503 21 14.4969C21 16.9839 18.9853 19 16.5 19L8.4 19Z" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  <svg
+    width="18px"
+    height="18px"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className="stroke-elDark dark:stroke-edWhite"
+  >
+    {/* Cloud Path */}
+    <path
+      d="M8.4 19C5.41766 19 3 16.6044 3 13.6493C3 11.2001 4.8 8.9375 7.5 8.5C8.34694 6.48637 10.3514 5 12.6893 5C15.684 5 18.1317 7.32251 18.3 10.25C19.8893 10.9449 21 12.6503 21 14.4969C21 16.9839 18.9853 19 16.5 19L8.4 19Z"
+      className="fill-white dark:fill-black" // Black in light mode, white in dark mode
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    {/* Other Paths */}
+    <path
+      d="M13.5 14.5L14.5 15.5M14 12.5C14 13.8807 12.8807 15 11.5 15C10.1193 15 9 13.8807 9 12.5C9 11.1193 10.1193 10 11.5 10C12.8807 10 14 11.1193 14 12.5Z"
+      className="stroke-elDark dark:stroke-edWhite"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
   </svg>
 );
+
 
 // --------------------------------------------------
 // ------------------ Images Page -------------------
