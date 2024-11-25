@@ -121,12 +121,12 @@ Since the styling used is nativewind to set up nativewind run the following comm
 `npx expo install nativewind tailwindcss react-native-reanimated`
 
 ### 3. Run the Mobile
-Before starting the mobile app, ensure that the backend server is running, as the mobile app fetches data from the backend.
-Please run this code at `/backend` for mobile backend: `python manage.py runserver 0.0.0.0:8000`
-
-To start the mobile app, run:
+The mobile app is connect to the deploy backend so you can start the mobil app by running:
 `npx expo start -c` 
 The -c flag clears the cache. If you do not need to clear the cache, you can omit it.
+
+If you want to run the mobile app with local backend, Please run this code at `/backend` for mobile backend: `python manage.py runserver 0.0.0.0:8000`
+and uncomment line 9 at `/mobile/context/globalContext.js` then comment out line 11.
 
 Once the server starts, a QR code will appear at the terminal. Use your phone’s camera or the Expo Go app to scan the QR code and open the mobile application.
 

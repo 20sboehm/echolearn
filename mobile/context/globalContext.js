@@ -5,7 +5,10 @@ const Context = createContext()
 
 const Provider = ({ children }) => {
 
-  const [domain, setDomain] = useState("http://10.0.0.219:8000");
+  // This is to run it locally, and backend command is `python manage.py runserver 0.0.0.0:8000`
+  // const [domain, setDomain] = useState("http://10.0.0.219:8000");
+
+  const [domain, setDomain] = useState("https://echolearn.online");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userObj, setUserObj] = useState({});
   const [token, setToken] = useState(false);
