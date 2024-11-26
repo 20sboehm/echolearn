@@ -76,7 +76,7 @@ Apply the migrations to create the tables in the database:
 If you run into an error like "django.db.utils.OperationalError: no such table: ...", run this command:
 `python manage.py migrate --run-syncdb`
 
-Then run the following command to add some default data into the deatbase:
+Then run the following command to add some default data into the database:
 `python makedata.py`
 
 ### 3. Run the Backend Server

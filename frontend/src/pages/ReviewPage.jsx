@@ -248,7 +248,7 @@ function ReviewPageContent() {
 function FinishView(deckId) {
   return (
     <div className="flex flex-col justify-center items-center mx-4 mt-10">
-      <h2 className="text-center text-3xl">No more cards in this deck!</h2>
+      <h2 className="text-center text-3xl text-elDark dark:text-edWhite ">No more cards in this deck!</h2>
       <Link to={`/decks/${deckId.deckId}`}>
         <button className="button-common button-blue border rounded-md px-4 py-2 mt-8">Back to deck</button>
       </Link>

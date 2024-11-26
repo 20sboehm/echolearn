@@ -14,6 +14,7 @@ function QuizPage() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answerStatus, setAnswerStatus] = useState(null);
   const [isFetching, setIsFetching] = useState(false); // Track fetching state
+  const [finish, setFinish] = useState(false);
 
   const [correct, setCorrect] = useState(0);
   const [incorrect, setIncorrect] = useState(0);
@@ -111,12 +112,16 @@ function QuizPage() {
           setAnswerStatus(null); // reset answer status for the next question
           setFadeIn(true);
         } else {
-          // The update for the count value will not catch up, so at this point it would miss the last count
-          alert(`Quiz Completed! Your got ${correct} correct and ${incorrect} incorrect`); // TODO - a finish view after finish all the question?
+          setFinish(true);
         }
       }, 300);
     }, 1000);
   };
+
+  if (finish) {
+    const ratio = (correct / (correct + incorrect) * 100).toFixed(2);
+    return <FinishView correct={correct} incorrect={incorrect} ratio={ratio} deckId={deckId} />;
+  }
 
   return (
     <div className="m-4">
@@ -187,6 +192,21 @@ function AnswerChoice({ choice, index, isSelected, handleSelectAnswer, answerSta
       <MarkdownPreviewer content={choice} className="flex-1 p-2 min-h-20 rounded-2xl bg-transparent" />
     </button>
   );
+}
+
+function FinishView({ correct, incorrect, ratio, deckId }) {
+  return (
+    <div className="flex flex-col justify-center items-center mx-4 mt-10">
+      <h2 className="text-center text-3xl text-elDark dark:text-edWhite ">Quiz Completed! Your got {correct} correct and {incorrect} incorrect</h2>
+      <h3 className="text-center text-xl mt-4 text-elDark dark:text-edWhite ">Overall, you got {ratio}% correct rate.</h3>
+      <Link to={`/decks/${deckId}`}>
+        <button className="button-common button-blue border rounded-md px-4 py-2 mt-8">Back to deck</button>
+      </Link>
+      <Link to="/">
+        <button className="button-common button-blue border rounded-md px-4 py-2 mt-4">Home</button>
+      </Link>
+    </div>
+  )
 }
 
 export default QuizPage
