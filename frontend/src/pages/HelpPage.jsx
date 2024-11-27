@@ -40,8 +40,8 @@ const topics = [
   },
   {
     title: "Multi Card Creation",
-    guide: "{Will be fill when multi card input is done}",
-    image: AnkiImg,
+    guide: "The multi-card creator allows you to define custom symbols for the divider and card separator. You can click the blue button to insert the symbol you've chosen. Then, type in the text area to create multiple cards, with the preview at the bottom displaying the results in real-time.",
+    image: MulitInputImg,
   },
   {
     title: "Simple Markdown Tutorial",
@@ -80,9 +80,9 @@ const topics = [
     image: SpaceRepeImg,
   },
   {
-    title: "Import Quizlet or Anki",
-    guide: "{will be fill after import is done}",
-    image: MulitInputImg,
+    title: "Import Anki",
+    guide: "Export the desired deck from Anki as a .txt file and upload it to our Anki parser. The preview section will display the generated cards based on your input.",
+    image: AnkiImg,
   },
 ];
 
