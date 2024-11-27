@@ -7,68 +7,68 @@ import HomePage from "../assets/TO-DOList.png"
 import Sidebar from "../assets/Sidebar.png"
 import architecture from "../assets/Architecture.png"
 
-const aboutText = `EchoLearn will provide users with the ability to retain knowledge over an extended period of time.
-This will be accomplished through the use of flashcards and spaced repetition—a memorization technique in which flashcard reviews are spaced at increasing intervals.
-This makes it simple and efficient for users to recall knowledge long after they first learn it.<br>
-
-The purpose of EchoLearn is to remedy the problem of forgetting the things you’ve learned, whether that be personal information, or knowledge you need for your job or degree.
-It can be thought of as a personal knowledge repository, where you can store everything you want to remember in an intuitive, organized application that is accessible from any device with a web browser.
-
-Some technology we used:
-Front End: React, Tailwind
-Back End: Django Ninja
-Database: SQLite
-Deploy: AWS EC2
-Image storage: AWS S3`;
-
 function AboutPage() {
   return (
     <>
-      <div className="flex flex-col items-center w-full h-screen bg-gradient-to-t from-customBlue to-featureBackground">
+      <div className="flex flex-col items-center w-full bg-gradient-to-t from-customBlue to-featureBackground">
         <div className="flex flex-row h-24 items-center mt-4 mb-8">
-          <h1 className="text-4xl font-bold text-white mr-4">About Page</h1>
+          <img src={logoImg} className="w-16 h-16"></img>
+          <h1 className="text-4xl font-bold text-white ml-4">EchoLearn</h1>
         </div>
-        <div className="flex flex-row w-full px-16">
-          <div className="flex flex-col w-1/2 text-black"> 
-            <p className="pb-4">
+        <div className="flex justify-center items-center w-[80vw] px-16">
+          <div className="flex flex-col w-[80vw] text-center text-white">
+            <p className="pb-4 text-lg">
               EchoLearn will provide users with the ability to retain knowledge over an extended period of time.
               This will be accomplished through the use of flashcards and spaced repetition—a memorization technique in which flashcard reviews are spaced at increasing intervals.
               This makes it simple and efficient for users to recall knowledge long after they first learn it.
             </p>
-            <p className="pb-4">
+            <h2 className="text-2xl text-left text-gray-800 font-semibold pb-2">Mission</h2>
+            <p className="pb-4 text-lg">
               The purpose of EchoLearn is to remedy the problem of forgetting the things you’ve learned, whether that be personal information, or knowledge you need for your job or degree.
-              It can be thought of as a personal knowledge repository, where you can store everything you want to remember in an intuitive, organized application that is accessible from any device with a web browser. 
+              It can be thought of as a personal knowledge repository, where you can store everything you want to remember in an intuitive, organized application that is accessible from any device with a web browser.
             </p>
-            <p>
-              Some technology we used:
-              <br /> Front End: React, Tailwind
-              <br /> Back End: Django Ninja
-              <br /> Database: SQLite
-              <br /> Deploy: AWS EC2
-              <br /> Image Storage: AWS S3
-            </p>
-            <div className="flex items-center mb-4">
-            <span className="text-white">Architecture</span> 
-              <img src={architecture} className="w-[400px] h-auto max-h-[80vh] "></img>  
-            </div>
-              <div className="flex items-center mb-4">
-                <span className="text-white">Home Page</span> 
-                  <img src={HomePage} className="w-[400px] h-auto max-h-[80vh] "></img>  
+            <div className="flex flex-col items-center text-white w-full p-6">
+              <h2 className="text-2xl font-bold text-gray-800 mb-4">Technologies & Architecture</h2>
+
+              <div className="text-center mb-2">
+                <ul className="list-disc list-inside space-y-1">
+                  <li><strong>FrontEnd:</strong> React, Tailwind</li>
+                  <li><strong>BackEnd:</strong> Django Ninja</li>
+                  <li><strong>Database:</strong> SQLite</li>
+                  <li><strong>Deploy:</strong> AWS EC2</li>
+                  <li><strong>Image Storage:</strong> AWS S3</li>
+                </ul>
+              </div>
+
+              <div className="flex flex-col items-center">
+                <img src={architecture} alt="System Architecture" className="w-[400px] h-auto max-h-[80vh] rounded-md shadow-lg" />
               </div>
             </div>
-          <div className="flex flex-col w-1/2 items-center">  
-            <div className="flex items-center mb-4">
-            <span className="text-white">Create Card</span>  
-              <img src={CreateCard} className="w-[400px] h-auto max-h-[80vh] "></img>
+            <div className="flex flex-row justify-center items-start flex-wrap text-gray-800 gap-6 mb-6">
+              {/* Create Card */}
+              <div className="flex flex-col items-center">
+                <span className="mb-2">Create Card Page</span>
+                <img src={CreateCard} className="w-[400px] h-auto max-h-[80vh]"></img>
+              </div>
+
+              {/* Community */}
+              <div className="flex flex-col items-center">
+                <span className="mb-2">Community Page</span>
+                <img src={Community} className="w-[400px] h-auto max-h-[80vh]"></img>
+              </div>
+
+              {/* Home Page */}
+              <div className="flex flex-col items-center">
+                <span className="mb-2">Home Page</span>
+                <img src={HomePage} className="w-[400px] h-auto max-h-[80vh]"></img>
+              </div>
+
+              {/* Deck Page */}
+              <div className="flex flex-col items-center">
+                <span className="mb-2">Deck Page</span>
+                <img src={DeckPage} className="w-[400px] h-auto max-h-[80vh]"></img>
+              </div>
             </div>
-            <div className="flex items-center mb-4">
-            <span className="text-white">Community</span>  
-              <img src={Community} className="w-[400px] h-auto max-h-[80vh] "></img>
-            </div>
-            <div className="flex items-center mb-4">
-              <span className="text-white">Deck Page</span>  
-              <img src={DeckPage} className="w-[400px] h-auto max-h-[80vh] "></img>
-            </div>   
           </div>
         </div>
       </div>
