@@ -1,13 +1,13 @@
 import { useState } from "react";
 import TutorialContent from "./TutorialContent";
 
-const Topics = ["Card Creation", "Community", "Deck Page", "Review Page", "Sidebar"]
+const Topics = ["Home Page", "Card Creation", "Deck Page", "Sidebar", "Community"]
 
 function TutorialPage() {
   const [selectedTopic, setSelectedTopic] = useState(null);
   return (
     <>
-      <div className="flex w-full h-screen bg-gradient-to-t from-customBlue to-featureBackground">
+      <div className="flex w-full h-screen bg-featureBackground">
         {/* left nav */}
         <div className="w-1/6 px-10 pt-2 h-full border-r-2 border-blue-200">
           <div className="w-[80%]">
