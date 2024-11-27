@@ -28,7 +28,7 @@ function TeamPage() {
               Besides studying, I also enjoy cycling and playing video games.
             </p>
             <p className="mt-2">
-              <strong>Contact:</strong> 2279538596@qq.com | <a href="https://www.linkedin.com/in/di-zhou-8b845a293/" target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:text-blue-900">LinkedIn</a>
+              2279538596@qq.com | <a href="https://www.linkedin.com/in/di-zhou-8b845a293/" target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:text-blue-900">LinkedIn</a>
             </p>
           </div>
         </div>
