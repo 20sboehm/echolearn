@@ -1,5 +1,42 @@
+import { useState } from "react";
+import TutorialContent from "./TutorialContent";
+
+const Topics = ["Card Creation", "Community", "Deck Page", "Review Page", "Sidebar"]
+
 function TutorialPage() {
-    return <p>At the Tutorial Page</p>
-  }
-  
-  export default TutorialPage
+  const [selectedTopic, setSelectedTopic] = useState(null);
+  return (
+    <>
+      <div className="flex w-full h-screen bg-gradient-to-t from-customBlue to-featureBackground">
+        {/* left nav */}
+        <div className="w-1/6 px-10 pt-2 h-full border-r-2 border-blue-200">
+          <div className="w-[80%]">
+            <ul className="space-y-2">
+              {Topics.map((topic, index) => (
+                <li key={index} className={`text-lg ${selectedTopic === topic ? "text-yellow-300 font-bold" : "text-gray-700 hover:text-blue-500"}`} onClick={() => setSelectedTopic(topic)}>
+                  {topic}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* Main */}
+        <div className="flex-1 p-6">
+          {selectedTopic ? (
+            <TutorialContent topic={selectedTopic} />
+          ) : (
+            <>
+              <h1 className="text-3xl text-white font-bold">Welcome to the Tutorial Page</h1>
+              <p className="mt-4 text-lg text-white">
+                Select a topic from the left to learn more about it.
+              </p>
+            </>
+          )}
+        </div>
+      </div>
+    </>
+  )
+}
+
+export default TutorialPage
