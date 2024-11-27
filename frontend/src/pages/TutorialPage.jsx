@@ -28,9 +28,9 @@ function TutorialPage() {
           ) : (
             <>
               <h1 className="text-3xl text-white font-bold">Welcome to the Tutorial Page</h1>
-              <p className="mt-4 text-lg text-white">
-                Select a topic from the left to learn more about it.
-              </p>
+              <p className="mt-4 text-lg text-white">Select a topic from the left to learn more about it.</p>
+              <p className="text-lg text-white mt-2">We also have small question icons that you can hover over to display helpful tips about the page you're on, available once you're logged in.</p>
+              <p className="text-lg text-white mt-2">Additionally, there's a help page in the header, also accessible after you log in, that explains the functionality of each page.</p>
             </>
           )}
         </div>
