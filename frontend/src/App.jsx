@@ -33,6 +33,8 @@ import StudyPage from './pages/StudyPage'
 import EditAll from './pages/EditAllPage'
 import MultipleInput from './pages/MultipleInputPage'
 import LeaderBoard from './pages/LeaderBoard'
+import TeamPage from './pages/TeamPage'
+import TutorialPage from './pages/TutorialPage'
 
 const queryClient = new QueryClient();
 
@@ -80,6 +82,8 @@ function UnauthenticatedRoutes() {
       <Route path="/" element={<LandingPage />} />
       <Route path="/about" element={<AboutPage />} />
       <Route path="/features" element={<FeaturePage />} />
+      <Route path="/team" element={<TeamPage />} />
+      <Route path="/tutorial" element={<TutorialPage />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
       <Route path="*" element={<Navigate to="/login" />} />
