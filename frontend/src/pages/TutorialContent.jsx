@@ -4,7 +4,7 @@ import Community from "../assets/Community.png"
 import PublicView from "../assets/PublicDeckView.png"
 import DeckPage from "../assets/DeckPage.png"
 import HomePage from "../assets/TO-DOList.png"
-import Sidebar from "../assets/SideBar.png"
+import Sidebar from "../assets/Sidebar.png"
 
 function TutorialContent({ topic }) {
 
