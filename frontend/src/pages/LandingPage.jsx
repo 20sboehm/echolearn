@@ -24,7 +24,7 @@ function LandingBody() {
         </div>
         <img src={studyImg} alt="Study PNG" className="w-1/3"></img>
       </div>
-      <div className="flex justify-between w-full mt-4">
+      <div className="flex justify-between w-full pt-4 bg-edBase">
         <div className="flex flex-col items-center flex-grow">
           <img src={growthImg} alt="growth PNG" className="w-1/3 mt-2"></img>
           <h3 className="mt-4 text-2xl font-bold text-center">Spaced repetition made simple</h3>

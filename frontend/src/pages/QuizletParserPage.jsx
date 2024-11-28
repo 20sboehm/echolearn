@@ -4,7 +4,8 @@ import Sidebar from "../components/SideBar";
 import MarkdownPreviewer from "../components/MarkdownPreviewer";
 import { useQuery } from "react-query";
 import LoadingSpinner from "../components/LoadingSpinner";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
+import './Buttons.css';
 
 function QuizletParserPage() {
   const api = useApi();
@@ -17,6 +18,7 @@ function QuizletParserPage() {
   const [preview, setPreview] = useState([])
 
   const [popupActive, setPopupActive] = useState(false);
+  const [popupSuccess, setPopupSuccess] = useState(false);
   const [popupText, setPopupText] = useState("");
   const [popupColor, setPopupColor] = useState("");
   const popupTimerRef = useRef(null); // Ref to hold the popup timer
@@ -31,16 +33,18 @@ function QuizletParserPage() {
     setPopupActive(true);
 
     if (isSuccess) {
-      setPopupText("Card created");
+      setPopupText("Cards created");
+      setPopupSuccess(true);
       setPopupColor("bg-edGreen");
     } else {
       setPopupText("Something went wrong");
+      setPopupSuccess(true);
       setPopupColor("bg-edRed");
     }
 
     popupTimerRef.current = setTimeout(() => {
       setPopupActive(false);
-    }, 1500)
+    }, 5000)
   }
 
   // show preview for quizlet parser
@@ -59,6 +63,14 @@ function QuizletParserPage() {
   // create multiple cards
   const handleQuizletParser = async (e) => {
     e.preventDefault();
+
+    // Check if deckId is valid
+    if (!deckId) {
+      console.error("Error: Missing deckId");
+      alert("Faile to creat cards because did not select deck")
+      displayPopup(false);
+      return;
+    }
     console.log(quizletInput)
     let lineChoice = "{|}";
     let spaceChoice = "|";
@@ -88,7 +100,7 @@ function QuizletParserPage() {
     //     displayPopup(true);
     //   }
     // });
-    
+
     const cards = lines.map(line => {
       const parts = line.split(spaceChoice);
       return {
@@ -166,7 +178,8 @@ function QuizletParserPage() {
       <div className="w-1/2 flex flex-col mx-auto">
         <div className="flex justify-between border-b-2 border-edMedGray mb-4 mt-8 pb-1">
           <h1 className="text-xl text-elDark dark:text-edWhite font-medium">New Card</h1>
-          <select id="selectDeck" value={deckId} onChange={(e) => setDeckId(e.target.value)} className='text-black bg-elGray border border-black dark:bg-edDarker dark:text-edWhite focus:outline-none' >
+          <select id="selectDeck" value={deckId} onChange={(e) => setDeckId(e.target.value)}
+            className='text-black bg-elGray dark:bg-edDarker dark:text-edWhite focus:outline-none h-8 mb-1 pl-1 pr-4' >
             <option key='select-deck-key' value=''>Select a deck</option>
             {decks.map((deck) => (
               <option key={deck.deck_id} value={deck.deck_id}>{deck.name}</option>
@@ -175,23 +188,20 @@ function QuizletParserPage() {
         </div>
 
         <form onSubmit={handleQuizletParser} className='flex flex-col items-center'>
-          <button type='button' onClick={handleBackButton} className="rounded-lg border border-black hover:border-elMedGray hover:text-elDark 
-              dark:border-transparent dark:hover:border-black dark:hover:text-white py-2 text-center self-start w-1/4 mb-2
-              font-semibold bg-elLightBlue text-white active:scale-[0.97] active:border-[#555]">
+          <button type='button' onClick={handleBackButton} className="block rounded-sm sm:rounded-lg p-[7px] w-[20%] mb-4 text-center font-medium
+              border border-edGray text-black dark:text-edWhite hover:bg-edHLT active:scale-[0.97] self-start">
             Back
           </button>
-          <p className="text-elDark dark:text-edWhite">
+          <p className="text-elDark dark:text-edWhite mb-2">
             To export from Quizlet, you need to go to "your library", then select the set you want to copy, then click on the triple dots and select export.
             <br />
             In the pop-up window, input "<code>|</code>" for customizing the separator between term and definition and input "<code>&#123;|&#125;</code>" for customizing the separator between rows.
           </p>
           <div className="mb-2 flex flex-col w-full">
             <textarea value={quizletInput} onChange={(e) => setquizletInput(e.target.value)} className="text-black dark:text-white dark:bg-edDarker w-full min-h-20 h-40 p-2 border border-edDarkGray focus:outline-none custom-scrollbar"
-              placeholder="question | answer {|}"></textarea>
+              placeholder="question | answer {|}" required></textarea>
           </div>
-          <button type='submit' className="rounded-lg border border-black hover:border-elMedGray hover:text-elDark 
-              dark:border-transparent dark:hover:border-black dark:hover:text-white py-2 text-center w-1/4 mb-2
-              font-semibold bg-elLightBlue text-white active:scale-[0.97] active:border-[#555]">
+          <button type='submit' className="button-common button-blue font-semibold py-2 text-center w-1/4 my-2">
             Submit
           </button>
 
@@ -210,8 +220,14 @@ function QuizletParserPage() {
           </div>
         </form>
       </div>
-      <div className={`width-20 p-3 absolute top-20 right-5 rounded-[1.4rem] text-white ${popupColor}
-          transition-opacity duration-200 ${popupActive ? 'opacity-100' : 'opacity-0'}`}>{popupText}</div>
+      <div className={`flex flex-col items-center min-w-40 p-3 fixed top-20 right-5 rounded-[1.4rem] text-white font-semibold ${popupColor}
+          transition-opacity duration-200 ${popupActive ? 'opacity-100' : 'opacity-0'}`}
+      >
+        {popupText}
+        {popupSuccess && (
+          <Link to={`/decks/${deckId}`} className="font-semibold bg-elStrongHLT rounded-md px-3 py-2 mt-2">Go to deck</Link>
+        )}
+      </div>
     </div>
   );
 }

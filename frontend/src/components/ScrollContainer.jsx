@@ -1,6 +1,6 @@
-function ScrollContainer({ children }) {
+function ScrollContainer({ className, children }) {
   return (
-    <div className="overflow-y-auto overflow-x-hidden max-h-[60vh] relative scrollbar-hidden">
+    <div className={`${className} overflow-y-auto overflow-x-hidden max-h-[60vh] relative scrollbar-hidden`} style={{ scrollbarGutter: "stable" }}>
       <div className="relative">
         {children}
       </div>

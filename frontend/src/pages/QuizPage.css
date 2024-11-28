@@ -1,0 +1,17 @@
+
+/* small animation for answer choice, to let user know/see the answer got updated */
+.fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+}
+  
+@keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(25px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+}
+  

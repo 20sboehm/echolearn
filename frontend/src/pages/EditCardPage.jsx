@@ -60,13 +60,13 @@ function EditCardPage() {
     <>
       <div className="flex w-full h-full">
         <Sidebar onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
-        <div className="w-1/2 flex flex-col mx-auto">
-          <div className="flex justify-between border-b-2 border-edMedGray mb-4 mt-8 pb-1">
-            <h1 className="text-lg text-elDark dark:text-edWhite font-medium">Edit Card</h1>
+        <div className="w-full flex flex-col mx-[15%]">
+          <div className="flex justify-between border-b border-elDividerGray dark:border-edDividerGray mb-4 mt-8 pb-1">
+            <h1 className="text-[2rem] text-elDark dark:text-edWhite font-medium">Edit Card</h1>
           </div>
 
           <MarkdownEditor requestType="patch" submitButtonText="Edit Card"
-            questionText={questionText} setQuestionText={setQuestionText} answerText={answerText} setAnswerText={setAnswerText} cardId={cardId} />
+            questionText={questionText} setQuestionText={setQuestionText} answerText={answerText} setAnswerText={setAnswerText} deckId={card.deck_id} cardId={cardId} />
 
           <button type="button" onClick={() => { navigate(`/decks/${card.deck_id}`); }} className="block rounded-sm sm:rounded-lg p-[7px] w-1/3 text-center font-medium
               border border-edGray text-black dark:text-edWhite hover:bg-edHLT active:scale-[0.97] mt-2 self-center"> Back</button>

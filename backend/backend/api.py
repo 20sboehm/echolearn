@@ -10,7 +10,12 @@ from flashcards.routers.signup import signup_router
 from flashcards.routers.users import users_router
 from flashcards.routers.profile import profile_router
 from flashcards.routers.friends import friends_router
-
+from flashcards.routers.images import images_router
+from flashcards.routers.quiz import quiz_router
+from flashcards.routers.gptgeneration import gpt_router
+from flashcards.routers.shared import shared_router
+from flashcards.routers.study import study_router
+from flashcards.routers.emails import emails_router
 
 api = NinjaExtraAPI()
 
@@ -26,3 +31,9 @@ api.add_router("/reviews", review_router)
 api.add_router("/signup", signup_router)
 api.add_router("/profile", profile_router)
 api.add_router("/friends", friends_router)
+api.add_router("/images", images_router)
+api.add_router("/gptgeneration",gpt_router)
+api.add_router("/quiz", quiz_router)
+api.add_router("/shared", shared_router)
+api.add_router("/study", study_router)
+api.add_router("/emails", emails_router)

@@ -79,7 +79,7 @@ function MarkdownPreviewer({ content, className }) {
     });
 
     const boldPattern = /\*\*(.*?)\*\*/g;
-    text = text.replace(boldPattern, '<b>$1</b>');
+    text = text.replace(boldPattern, '<b class="font-bold">$1</b>');
 
     const italicPattern = /\*(.*?)\*/g;
     text = text.replace(italicPattern, '<i>$1</i>');
@@ -115,14 +115,15 @@ function MarkdownPreviewer({ content, className }) {
       const trimmedCode = innerCodeContent.trim();
 
       if (language) {
-        return `<pre class="p-2 my-1 rounded-md bg-elMedGray dark:bg-edDark"><code class="language-${language}">${trimmedCode}</code></pre>`;
+        return `<pre class="p-2 my-1 rounded-md bg-[#f3f3f3] dark:bg-[#2d2d2d] border border-[#e5e5e5] dark:border-[#2d2d2d]"><code class="language-${language}">${trimmedCode}</code></pre>`;
       } else {
-        return `<pre class="p-2 my-1 rounded-md bg-elMedGray text-white dark:bg-edDark">${trimmedCode}</pre>`;
+        return `<pre class="p-2 my-1 rounded-md bg-[#f3f3f3] dark:bg-[#2d2d2d] border border-[#e5e5e5] dark:border-[#2d2d2d]">${trimmedCode}</pre>`;
       }
     });
 
     const codePattern = /`(.*?)`/g;
-    text = text.replace(codePattern, '<code class="bg-edDark px-1 py-0.5 rounded-md text-white">$1</code>');
+    // #2d2d2d a light dark for dark mode?, elMedGray or elCloudWhite maybe for light mode?
+    text = text.replace(codePattern, '<code class="bg-[#f3f3f3] dark:bg-[#2d2d2d] border border-[#e5e5e5] dark:border-[#2d2d2d] px-1 py-0.5 rounded-md">$1</code>');
 
     const header1Pattern = /^# (.*$)/gim;
     text = text.replace(header1Pattern, '<h1 class="text-[2rem]">$1</h1>');
@@ -167,7 +168,7 @@ function MarkdownPreviewer({ content, className }) {
   return (
     <>
       <div
-        className={`w-full whitespace-pre-wrap break-words text-black dark:text-white ${className}`}
+        className={`w-full whitespace-pre-wrap break-words text-black dark:text-white font-normal ${className}`}
         dangerouslySetInnerHTML={{ __html: formatContent(content) }}
       ></div>
     </>

@@ -2,10 +2,14 @@ import { useApi } from "../hooks";
 import { useState, useRef, useEffect, Children } from "react";
 import { ChevronIcon } from "../components/Icons";
 import MarkdownPreviewer from "../components/MarkdownPreviewer";
+import { Link } from "react-router-dom";
 import {
   BoldIcon, ItalicIcon, UnderlineIcon, CodeIcon, CodeBlockIcon, HeaderIcon1, HeaderIcon2, HeaderIcon3,
-  HeaderIcon4, PageBreakIcon, ImageLinkIcon, VideoLinkIcon, LinkIcon, TableIcon, LatexIcon, LatexBlockIcon, MicIcon, MicIconListening
+  HeaderIcon4, PageBreakIcon, ImageLinkIcon, VideoLinkIcon, LinkIcon, TableIcon, LatexIcon, LatexBlockIcon,
+  MicIcon, MicIconListening, LinkUploadedImage
 } from "../components/Icons";
+import { useQuery } from "react-query";
+import LoadingSpinner from "./LoadingSpinner";
 
 function MarkdownEditor({ requestType, submitButtonText, questionText, setQuestionText, answerText, setAnswerText, deckId, cardId }) {
   const api = useApi();
@@ -23,6 +27,7 @@ function MarkdownEditor({ requestType, submitButtonText, questionText, setQuesti
   const [isAnswerUpdating, setAnswerIsUpdating] = useState(false);
 
   const [popupActive, setPopupActive] = useState(false);
+  const [popupSuccess, setPopupSuccess] = useState(false);
   const [popupText, setPopupText] = useState("");
   const [popupColor, setPopupColor] = useState("");
   const popupTimerRef = useRef(null); // Ref to hold the popup timer
@@ -40,18 +45,20 @@ function MarkdownEditor({ requestType, submitButtonText, questionText, setQuesti
       } else if (requestType === "patch") {
         setPopupText("Card updated");
       }
+      setPopupSuccess(true);
       setPopupColor("bg-edGreen");
     } else {
       setPopupText("Something went wrong");
+      setPopupSuccess(false);
       setPopupColor("bg-edRed");
     }
 
     popupTimerRef.current = setTimeout(() => {
       setPopupActive(false);
-    }, 1500)
+    }, 5000) // 1500
   }
 
-  const handleTextEditingButton = (forQuestionBox, type) => {
+  const handleTextEditingButton = (forQuestionBox, type, customImageLink) => {
     let textarea = null;
     if (forQuestionBox) {
       textarea = questionRef.current;
@@ -130,6 +137,9 @@ function MarkdownEditor({ requestType, submitButtonText, questionText, setQuesti
         cursorAdjustment = 9;
         insertionType = 'imageLink';
         break;
+      case "uploadedImageLink":
+        insertionType = 'uploadedImageLink';
+        break;
       case "videoLink":
         cursorAdjustment = 3;
         insertionType = 'videoLink';
@@ -188,6 +198,10 @@ function MarkdownEditor({ requestType, submitButtonText, questionText, setQuesti
       selEnd += 70;
       cursorAdjustment = 0;
       newText = firstHalf + "| Header | Header |" + "\n" + "|------| ------ |" + "\n" + "| Data | Data |" + "\n" + "| Data | Data |" + "\n" + secondHalf;
+    }
+    else if (insertionType === "uploadedImageLink") {
+      cursorAdjustment = 10 + customImageLink.length;
+      newText = firstHalf + "![Image](" + customImageLink + ")" + secondHalf;
     }
 
     if (forQuestionBox) {
@@ -280,11 +294,22 @@ function MarkdownEditor({ requestType, submitButtonText, questionText, setQuesti
     // Indicate an update is in progress
     setQuestionIsUpdating(true);
     // Append new transcript to the existing content
-    const combinedText = questionText + ' ' + newTranscript;
+    let textarea = questionRef.current
+
+    let selStart = textarea.selectionStart;
+    let selEnd = textarea.selectionEnd;
+
+    const firstHalf = questionText.substring(0, selStart);
+    
+    const secondHalf = questionText.substring(selEnd);
+
+    const combinedText = firstHalf + ' '+ newTranscript+ ' ' + secondHalf;
+
     await new Promise(resolve => {
       setQuestionText(combinedText); // Asynchronously update the question state
       setTimeout(resolve, 1); // Resolve the promise on the next tick, allowing state to update
     });
+    setQuestionSelection({ start: selStart + newTranscript.length + 1  , end: selEnd + newTranscript.length + 1  });
     // Update is complete
     setQuestionIsUpdating(false);
   };
@@ -293,11 +318,22 @@ function MarkdownEditor({ requestType, submitButtonText, questionText, setQuesti
     // Indicate an update is in progress
     setAnswerIsUpdating(true);
     // Append new transcript to the existing content
-    const combinedText = answerText + ' ' + newTranscript;
+    let textarea = answerRef.current
+    let selStart = textarea.selectionStart;
+    let selEnd = textarea.selectionEnd;
+
+    
+
+    const firstHalf = answerText.substring(0, selStart);
+    
+    const secondHalf = answerText.substring(selEnd);
+
+    const combinedText = firstHalf + ' '+ newTranscript+ ' ' + secondHalf;
     await new Promise(resolve => {
       setAnswerText(combinedText);
       setTimeout(resolve, 1);
     });
+    setAnswerSelection({ start: selStart + newTranscript.length + 1  , end: selEnd + newTranscript.length + 1  });
     // Update is complete
     setAnswerIsUpdating(false);
   };
@@ -306,7 +342,6 @@ function MarkdownEditor({ requestType, submitButtonText, questionText, setQuesti
     e.preventDefault();
 
     let response = undefined;
-    console.log("yo: " + requestType);
 
     if (requestType === "post") {
       const cardData = {
@@ -330,38 +365,91 @@ function MarkdownEditor({ requestType, submitButtonText, questionText, setQuesti
       triggerPopup(false);
     } else {
       triggerPopup(true);
+      if (requestType === "post") {
+        setQuestionText("");
+        setAnswerText("");
+      }
     }
   }
 
   return (
     <>
+      {/* <div className="absolute left-0 top-0 bg-red-500 w-[40rem] h-[40rem] z-40">ya yo</div> */}
+      {/* {selectImage && (
+        <div className="absolute left-0 top-0 bg-red-500 w-[40rem] h-[40rem] z-40">ya yo</div>
+      )} */}
       <form onSubmit={handleSubmit}>
-        <div className="mb-2 flex flex-col">
-          <TextBox label="Front" reference={questionRef} content={questionText} inputHandler={(e) => { setQuestionText(e.target.value) }}
-            handleTextEditingButton={handleTextEditingButton} forQuestionBox={true} questionisListening={questionisListening} />
-        </div>
-        <TextBox label="Back" reference={answerRef} content={answerText} inputHandler={(e) => { setAnswerText(e.target.value) }}
-          handleTextEditingButton={handleTextEditingButton} forQuestionBox={false} answerisListening={answerisListening} />
+        <div className="flex justify-between">
+          <div className="flex flex-col max-w-[516px]">
+            <TextBox label="Question" reference={questionRef} content={questionText} inputHandler={(e) => { setQuestionText(e.target.value) }}
+              handleTextEditingButton={handleTextEditingButton} forQuestionBox={true} questionisListening={questionisListening} />
+            <TextBoxPreview label="Question Preview" content={questionText} />
+          </div>
 
-        <DividerLine />
+          <div className="w-0 h-[30vh] border border-elDividerGray dark:border-edDividerGray mt-2"></div>
 
-        <div className="mb-2 flex flex-col">
-          <TextBoxPreview label="Question Preview" content={questionText} />
+          <div className="flex flex-col max-w-[516px]">
+            <TextBox label="Answer" reference={answerRef} content={answerText} inputHandler={(e) => { setAnswerText(e.target.value) }}
+              handleTextEditingButton={handleTextEditingButton} forQuestionBox={false} answerisListening={answerisListening} />
+            <TextBoxPreview label="Answer Preview" content={answerText} />
+          </div>
         </div>
-        <TextBoxPreview label="Answer Preview" content={answerText} />
 
         <div className="flex flex-col items-center mt-8">
           <SubmitButton>{submitButtonText}</SubmitButton>
         </div>
       </form>
-      <div className={`width-20 p-3 absolute top-20 right-5 rounded-[1.4rem] text-white ${popupColor}
-          transition-opacity duration-200 ${popupActive ? 'opacity-100' : 'opacity-0'}`}>{popupText}</div>
+      <div className={`flex flex-col items-center min-w-40 p-3 fixed top-20 right-5 rounded-[1.4rem] text-white font-semibold ${popupColor}
+          transition-opacity duration-200 ${popupActive ? 'opacity-100' : 'opacity-0'}`}
+      >
+        {popupText}
+        {popupSuccess && (
+          <Link to={`/decks/${deckId}`} className="font-semibold bg-elStrongHLT rounded-md px-3 py-2 mt-2">Go to deck</Link>
+        )}
+      </div>
     </>
   )
 }
 
 function TextBox({ label, reference, content, inputHandler, handleTextEditingButton, forQuestionBox, questionisListening, answerisListening }) {
   const [textBoxOpen, setTextBoxOpen] = useState(true);
+
+  // Hotkeys for text editor buttons
+  const handleKeyDown = (e, forQuestionBox) => {
+    let k = e.key;
+    if (e.ctrlKey) {
+      e.preventDefault();
+
+      if (e.shiftKey) {
+        switch (k) {
+          case "~": // Shift makes ` a different character
+            handleTextEditingButton(forQuestionBox, "codeBlock");
+            break;
+          case "L": // Shift makes this uppercase
+            handleTextEditingButton(forQuestionBox, "latexBlock");
+            break;
+        }
+      } else {
+        switch (k) {
+          case "b":
+            handleTextEditingButton(forQuestionBox, "bold");
+            break;
+          case "i":
+            handleTextEditingButton(forQuestionBox, "italic");
+            break;
+          case "u":
+            handleTextEditingButton(forQuestionBox, "underline");
+            break;
+          case "`":
+            handleTextEditingButton(forQuestionBox, "code");
+            break;
+          case "l":
+            handleTextEditingButton(forQuestionBox, "latex");
+            break;
+        }
+      }
+    }
+  };
 
   return (
     <>
@@ -370,63 +458,138 @@ function TextBox({ label, reference, content, inputHandler, handleTextEditingBut
         <p className="text-elDark dark:text-edGray">{label}</p>
       </button>
       {/* add a bg color for light mode? */}
-      <div className="dark:bg-edDarker w-full h-8 border-x border-t border-edDarkGray flex items-center pl-2">
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "bold"); }} Icon={BoldIcon} />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "italic"); }} Icon={ItalicIcon} />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "underline"); }} Icon={UnderlineIcon} />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "code"); }} Icon={CodeIcon} />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "codeBlock"); }} Icon={CodeBlockIcon} />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "pageBreak"); }} Icon={PageBreakIcon} />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "link"); }} Icon={LinkIcon} />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "imageLink"); }} Icon={ImageLinkIcon} />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "videoLink"); }} Icon={VideoLinkIcon} />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "table"); }} Icon={TableIcon} />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "latex"); }} Icon={LatexIcon} />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "latexBlock"); }} Icon={LatexBlockIcon} />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header1"); }} Icon={HeaderIcon1} />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header2"); }} Icon={HeaderIcon2} />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header3"); }} Icon={HeaderIcon3} />
-        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header4"); }} Icon={HeaderIcon4} />
+      <div className="dark:bg-edDarker w-full border-x border-t border-edDarkGray flex items-center flex-wrap pl-2 py-1.5">
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "bold"); }} Icon={BoldIcon} buttonTitle="Bold (ctrl + b)" />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "italic"); }} Icon={ItalicIcon} buttonTitle="Italic (ctrl + i)" />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "underline"); }} Icon={UnderlineIcon} buttonTitle="Underline (ctrl + u)" />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "code"); }} Icon={CodeIcon} buttonTitle="Code (ctrl + `)" />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "codeBlock"); }} Icon={CodeBlockIcon} buttonTitle="Code Block (ctrl + shift + `)" />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "pageBreak"); }} Icon={PageBreakIcon} buttonTitle="Page Break" />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "link"); }} Icon={LinkIcon} buttonTitle="Link" />
+        <UploadedImageSelectIcon forQuestionBox={forQuestionBox} handleTextEditingButton={handleTextEditingButton} />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "imageLink"); }} Icon={ImageLinkIcon} buttonTitle="Image" />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "videoLink"); }} Icon={VideoLinkIcon} buttonTitle="Video" />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "table"); }} Icon={TableIcon} buttonTitle="Table" />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "latex"); }} Icon={LatexIcon} buttonTitle="Latex (ctrl + l)" />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "latexBlock"); }} Icon={LatexBlockIcon} buttonTitle="Latex Block (ctrl + shift + l)" />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header1"); }} Icon={HeaderIcon1} buttonTitle="Header 1" />
+        <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header2"); }} Icon={HeaderIcon2} buttonTitle="Header 2" />
+        {/* <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header3"); }} Icon={HeaderIcon3} buttonTitle="Header 3" /> */}
+        {/* <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "header4"); }} Icon={HeaderIcon4} buttonTitle="Header 4" /> */}
 
 
         {questionisListening == false && (
-          <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "questionmicIcon"); }} Icon={MicIcon} />
+          <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "questionmicIcon"); }} Icon={MicIcon} buttonTitle="Voice Input" />
         )}
         {questionisListening == true && (
-          <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "questionmicIconlistening"); }} Icon={MicIconListening} />
+          <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "questionmicIconlistening"); }} Icon={MicIconListening} buttonTitle="Voice Input" />
         )}
 
         {answerisListening == false && (
-          <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "answermicIcon"); }} Icon={MicIcon} />
+          <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "answermicIcon"); }} Icon={MicIcon} buttonTitle="Voice Input" />
         )}
         {answerisListening == true && (
-          <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "answermicIconlistening"); }} Icon={MicIconListening} />
+          <TextEditingIcon clickHandler={() => { handleTextEditingButton(forQuestionBox, "answermicIconlistening"); }} Icon={MicIconListening} buttonTitle="Voice Input" />
         )}
       </div>
       {textBoxOpen && (
-        <textarea value={content} ref={reference} onInput={inputHandler}
-          className="text-black dark:text-white dark:bg-edDarker w-full min-h-20 h-[10vh] p-2 border 
-          border-edDarkGray focus:outline-none custom-scrollbar"></textarea>
+        <textarea value={content} ref={reference} onInput={inputHandler} required
+          className="text-black dark:text-white dark:bg-edDarker w-full min-h-20 h-[18vh] p-2 border 
+          border-edDarkGray focus:outline-none custom-scrollbar" onKeyDown={(e) => { handleKeyDown(e, forQuestionBox) }}></textarea>
       )}
     </>
   );
 }
 
-function TextEditingIcon({ clickHandler, Icon }) {
-  return <button type='button' onClick={clickHandler} className='mr-3'><Icon /></button>;
-}
+function UploadedImageSelectIcon({ forQuestionBox, handleTextEditingButton }) {
+  const api = useApi();
 
-function DividerLine() {
+  const [windowPosition, setWindowPosition] = useState({ top: 0, left: 0 });
+  const [selectImage, setSelectImage] = useState(false);
+
+  const { data: imageLinks, isLoading, error } = useQuery({
+    queryKey: ['imageLinks'],
+    queryFn: async () => {
+      let response = await api._get('/api/images');
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        const message = errorData.detail || 'An error occurred';
+        throw new Error(`${response.status}: ${message}`);
+      }
+
+      return response.json();
+    }
+  });
+
+  if (isLoading) {
+    return <LoadingSpinner />
+  }
+
+  if (error) {
+    const [status, message] = error.message.split(': ');
+
+    return (
+      <>
+        <h1 className="mt-20 text-[3rem] font-bold">{status}</h1>
+        <p className="mt-2 text-[1.5rem]">{message}</p>
+      </>
+    );
+  }
+
+  const handleClick = (e) => {
+    setSelectImage((prev) => !prev);
+
+    // Get button's bounding box relative to the viewport
+    const rect = e.currentTarget.getBoundingClientRect();
+
+    // Set position relative to the parent container
+    setWindowPosition({
+      top: rect.top - e.currentTarget.offsetParent.getBoundingClientRect().top,
+      left: rect.left - e.currentTarget.offsetParent.getBoundingClientRect().left,
+    });
+  };
+
+  const handleSelectImage = (link) => {
+    handleTextEditingButton(forQuestionBox, "uploadedImageLink", link)
+    setSelectImage(false);
+  }
+
   return (
-    <div className="flex flex-row justify-center items-center my-1 w-full" >
-      <span className="flex-grow border-b border-edMedGray dark:border-edGray h-1"></span>
-      <p className="self-center text-black dark:text-edGray mx-2">Preview</p>
-      <span className="flex-grow border-b border-edGray h-1"></span>
-    </div >
-  )
+    <div className="relative inline-block mr-3">
+      <button type="button" onClick={handleClick} className="flex items-center">
+        <LinkUploadedImage />
+      </button>
+
+      {selectImage && (
+        <div
+          className="flex flex-col gap-2 absolute w-96 p-2 text-sm rounded-lg shadow-2xl z-10 
+          bg-edBlue dark:bg-edDarker dark:border border-edDividerGray"
+          style={{ top: windowPosition.top + 20, left: windowPosition.left }}
+        >
+          <button type="button" className="absolute right-2 bg-edRed text-white px-1.5 rounded text-center" onClick={() => { setSelectImage(false); }}>x</button>
+          {imageLinks.length > 0 ? (
+            imageLinks.map((image) => (
+              <button type="button" key={image.image_id} className="flex items-center p-2 mr-6 h-20 dark:bg-edBase border dark:border-edDividerGray"
+                onClick={() => { handleSelectImage(image.link) }}>
+                <img className="max-w-20 max-h-20" src={image.link} alt="Image" />
+                <p className="ml-2">{image.name}</p>
+              </button>
+            ))
+          ) : (
+            <p>You don't have any uploaded images!</p>
+          )}
+        </div>
+      )}
+    </div>
+  );
 }
 
-function TextBoxPreview({ label, content }) {
+function TextEditingIcon({ clickHandler, Icon, buttonTitle }) {
+  return <button type='button' onClick={clickHandler} className='mr-3' title={buttonTitle}><Icon /></button>;
+}
+
+function TextBoxPreview({ label, content, className }) {
   const [textBoxPreviewOpen, setTextBoxPreviewOpen] = useState(true);
 
   return (
@@ -436,7 +599,7 @@ function TextBoxPreview({ label, content }) {
         <p className="text-elDark dark:text-edGray">{label}</p>
       </button>
       {textBoxPreviewOpen && (
-        <MarkdownPreviewer content={content} className="border border-edDarkGray bg-edDarker p-2 min-h-[10vh]" />
+        <MarkdownPreviewer content={content} className={`border border-edDarkGray bg-white dark:bg-edDarker text-black dark:text-white p-2 min-h-[12vh] ${className}`} />
       )}
     </>
   )

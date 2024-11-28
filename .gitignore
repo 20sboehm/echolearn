@@ -47,3 +47,6 @@ yarn-error.log*
 
 # Ignore database log in information
 config.json
+
+# Ignore AWS creds
+credentials.py

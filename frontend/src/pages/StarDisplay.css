@@ -1,0 +1,49 @@
+.star-display {
+    display: flex;
+    font-size: 30px;
+    cursor: pointer;
+}
+  
+.star {
+    color: lightgray;
+    transition: color 0.3s ease, background-color 0.3s ease;
+}
+  
+.star.filled {
+    color: gold;
+}
+
+.star.partial {
+    background: linear-gradient(90deg, gold var(--partial-percentage), lightgray var(--partial-percentage));
+    -webkit-background-clip: text;
+    background-clip: text; /* Standard property */
+    -webkit-text-fill-color: transparent;
+    transition: background-color 0.3s ease;
+}
+
+.text-gold {
+    color: gold;
+}
+
+/* Star change by hover */
+.rate-deck .stars {
+    pointer-events: none;
+}
+
+.rate-deck .star {
+    pointer-events: auto;
+    transition: color 0.3s ease;
+}
+
+.rate-deck .stars:hover .star {
+    color: gold;
+}
+
+.rate-deck .star:hover,
+.rate-deck .star:hover ~ .star {
+    color: lightgray;
+}
+
+.com {
+    cursor: default
+}

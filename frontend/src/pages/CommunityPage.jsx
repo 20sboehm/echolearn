@@ -7,6 +7,13 @@ import { useApi } from "../hooks";
 import { CurveArrowRight } from '../components/Icons';
 import LoadingSpinner from "../components/LoadingSpinner";
 import { HeartIcon } from "../components/Icons";
+import './StarDisplay.css';
+import QuestionMarkHoverHelp from "../components/QuestionMarkHoverHelp";
+
+const communityHelpList = [
+  "Each item displayed below is a public deck. Click on the arrow icon in the top right to go to its public deck page where you can copy it into your own deck.",
+  "Click on the username under the deck to go to that user's public profile page.",
+]
 
 function CommunityPage() {
   const api = useApi();
@@ -34,6 +41,8 @@ function CommunityPage() {
     );
   }
 
+  console.log(decks);
+
   let filteredDecks = [];
   if (decks) {
     filteredDecks = decks.filter(deck =>
@@ -46,10 +55,14 @@ function CommunityPage() {
       <>
         <div className='flex w-full h-full'>
           <Sidebar onResize={(newWidth) => setSidebarWidth(newWidth)} sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth} />
-          <div className="flex flex-col items-center flex-grow">
+          {/* <div className="flex flex-col items-center flex-grow"> */}
+          <div className="w-full flex flex-col mx-[15%]">
             {decks && decks.length > 0 ? (
-              <div className="h-full overflow-y-hidden w-[70%]">
-                <h1 className="text-xl text-elDark dark:text-edWhite font-medium mt-8 mb-4 border-b border-edMedGray">Public Decks</h1>
+              <>
+                <div className="flex items-center mt-8 mb-4 border-b border-elDividerGray dark:border-edDividerGray pb-1">
+                  <h1 className="text-[2rem] text-elDark dark:text-edWhite font-medium mr-2">Public Decks</h1>
+                  <QuestionMarkHoverHelp title="Community Page" helpTextList={communityHelpList} heightInRem={18} />
+                </div>
                 <input
                   type="text"
                   value={searchQuery}
@@ -57,33 +70,65 @@ function CommunityPage() {
                   placeholder="Filter by deck title..."
                   className="mb-4 p-2 rounded-md w-full focus:outline-none bg-elCloudWhite text-black dark:bg-edDarker dark:text-edWhite"
                 />
-                <div className="overflow-y-auto border-b border-eMedGray max-h-[calc(100vh-16rem)] grid grid-cols-3 gap-4">
-                  {filteredDecks.map(deck => (
-                    <div key={deck.deck_id} className="h-[30vh] rounded-xl bg-elCloudWhite text-black dark:bg-edDarker 
-                    dark:text-edWhite mt-2 p-3 relative border border-edDarker" style={{ minHeight: '100px' }}>
-                      <h1 className="text-2xl font-medium text-black dark:text-edWhite">{deck.name}</h1>
-                      <p className="text-base text-elDark dark:text-edGray"> by <Link to="#"
-                        className="font-medium text-elBlue dark:text-edSoftBlue hover:underline">{deck.owner_username}</Link></p>
+                <div className="overflow-y-auto border-b-4 border-elDividerGray dark:border-edDividerGray max-h-[calc(100vh-16rem)] grid grid-cols-3 gap-4">
+                  {filteredDecks.map(deck => {
+                    const rate = deck.rate || 0;
+                    const fullStars = Math.floor(rate);
+                    const partialPercentage = (rate % 1) * 100;
+                    const hasPartialStar = partialPercentage > 0;
+                    const emptyStars = 5 - fullStars - (hasPartialStar ? 1 : 0);
 
-                      <div className="flex mt-2 items-center">
-                        <HeartIcon isFilled={false} className="mr-1" />
-                        <span>{deck.favorites}</span>
+                    return (
+                      <div key={deck.deck_id} className="h-[30vh] rounded-xl bg-elCloudWhite text-black dark:bg-edDarker 
+                      dark:text-edWhite mt-2 p-3 relative border border-edDarker overflow-y-auto" style={{ minHeight: '100px' }}>
+                        <h1 className="text-2xl font-medium text-black dark:text-edWhite">{deck.name}</h1>
+                        <p className="text-base text-elDark dark:text-edGray"> by <Link to={`/profile?userId=${deck.owner_id}`}
+                            className="font-medium text-elBlue dark:text-edSoftBlue hover:underline">{deck.owner_username}</Link></p>
+
+                        <div className="flex flex-raw mt-2 gap-4">
+
+                          <div className="star-display com flex items-center mt-2" style={{ '--partial-percentage': `${partialPercentage}%` }}>
+                            {[...Array(fullStars)].map((_, index) => (
+                              <span key={`full-${index}`} className="star filled text-lg">
+                                ★
+                              </span>
+                            ))}
+
+                            {hasPartialStar && (
+                              <span className="star partial text-lg">★</span>
+                            )}
+                          
+                            {[...Array(emptyStars)].map((_, index) => (
+                              <span key={`empty-${index}`} className="star text-lg">
+                                ★
+                              </span>
+                            ))}
+                            <span className="ml-2 text-sm text-black dark:text-edWhite">
+                              {rate.toFixed(1)}
+                            </span>
+                          </div>
+                          
+                          <div className="flex mt-2 items-center">
+                            <HeartIcon isFilled={false} className="mr-1" />
+                            <span className="com text-sm">{deck.favorites}</span>
+                          </div>
+                        </div>
+
+                        <h2 className="mt-2 font-medium">Description</h2>
+                        <p className="text-elDark dark:text-edGray">{deck.description}</p>
+
+                        <h2 className="mt-2 font-medium">Last Updated</h2>
+                        <p className="text-elDark dark:text-edGray">{deck.last_edited}</p>
+
+                        <Link to={`/decks/public/${deck.deck_id}`} className="absolute top-3 right-3">
+                          <CurveArrowRight />
+                        </Link>
                       </div>
-
-                      <h2 className="mt-2 font-medium">Description</h2>
-                      <p className="text-elDark dark:text-edGray">{deck.description}</p>
-
-                      <h2 className="mt-2 font-medium">Last Updated</h2>
-                      <p className="text-elDark dark:text-edGray">{deck.last_edited}</p>
-
-                      <Link to={`/decks/public/${deck.deck_id}`} className="absolute top-3 right-3">
-                        <CurveArrowRight />
-                      </Link>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
 
-              </div>
+              </>
             ) : (
               <div>Loading...</div>
             )}

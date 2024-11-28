@@ -23,12 +23,16 @@ export default {
 				edLightGray: '#C1C6C8',
 				edMedGray: '#666',
 				edDarkGray: '#333', // check
+				edDividerGray: '#393939',
 				edWhite: '#ccc',
 				edBlue: '#0078d4',
+				edDarkBlue: '#004880',
 				edSoftBlue: '#407196',
 				edLightBlue: '#33a7ff',
 				edRed: '#D2042D',
+				edDarkRed: '#af0426',
 				edGreen: '#009355',
+				edDarkGreen: '#00663c',
 				edHLT: '#ffffff10', // Highlight
 				edStrongHLT: '#ffffff20', // Strong highlight
 
@@ -43,6 +47,7 @@ export default {
 				elLightGray: '#e5e5e5',
 				elMedGray: '#999',
 				elDarkGray: '#374151', // bg-gray-700
+				elDividerGray: '#ccc',
 				elBlack: '#9f9f9f',
 				elLavender: '#DBD3EB', // Sidebar Light mode Highlight
 				elHLT: '#00000010', // Highlight

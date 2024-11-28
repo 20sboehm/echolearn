@@ -59,6 +59,29 @@ def update_folder(request, folder_id: int, payload:sc.UpdateFolder):
     
     return folder
 
+@folders_router.patch("/{folder_id}/move", auth=JWTAuth())
+def move_folder(request, folder_id: int, target_folder_id: int = None):
+    if (folder_id == target_folder_id):
+        return {"success": False, "message": "Cannot move folder into itself."}
+    
+    folder = get_object_or_404(Folder, folder_id=folder_id)
+
+    if target_folder_id is None:
+        folder.parent_id = None
+    else:
+        target_folder = get_object_or_404(Folder, folder_id=target_folder_id)
+
+        # Check if the target folder is a child of the current folder
+        if is_parent(folder, target_folder):
+            return {"success": False, "message": "Cannot move folder into his childen"}
+
+        # Update the folder's parent folder (or other related field)
+        folder.parent_id = target_folder_id
+
+    folder.save()
+
+    return {"success": True, "message": "Folder moved successfully", "folder_id": folder_id, "target_folder_id": target_folder_id}
+
 # ---------------------------------------------
 # -------------------- DELETE -----------------
 # ---------------------------------------------
@@ -75,3 +98,19 @@ def delete_folder(request, folder_id: int):
         return 409, "Cannot delete folder with decks in it"
 
     return 204, None
+
+# ---------------------------------------------
+# -------------------- HELPER -----------------
+# ---------------------------------------------
+
+def is_parent(folder, target_folder):
+    # If the target folder is null, it's not a descendant
+    if target_folder is None:
+        return False
+
+    # If the target folder's parent is the current folder, it's a descendant
+    if target_folder.parent_id == folder.folder_id:
+        return True
+
+    # Recursively check the target folder's parent
+    return is_parent(folder, target_folder.parent)

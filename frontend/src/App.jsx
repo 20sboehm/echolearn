@@ -5,6 +5,7 @@ import { BrowserRouter, Navigate, Routes, Route, useParams } from "react-router-
 import { useAuth } from "./hooks";
 import { AuthProvider } from "./context/auth";
 import { useApi } from './hooks';
+import { useLocation } from 'react-router-dom';
 
 import Header from "./components/Header";
 import LandingPage from "./pages/LandingPage"
@@ -21,8 +22,19 @@ import AboutPage from './pages/AboutPage';
 import ProfilePage from './pages/ProfilePage';
 import StatsPage from './pages/StatsPage';
 import FriendsPage from './pages/FriendsPage';
-import CommunityPage from './pages/CommunityPage'
-import QuizletParserPage from './pages/QuizletParserPage'
+import CommunityPage from './pages/CommunityPage';
+import QuizletParserPage from './pages/QuizletParserPage';
+import MyImagesPage from './pages/MyImagesPage';
+import QuizPage from "./pages/QuizPage";
+import AnkiParserPage from './pages/AnkiParserPage'
+import AIGenerateCards from './pages/AICreateCards'
+import SharedDeck from './pages/SharedWith'
+import StudyPage from './pages/StudyPage'
+import EditAll from './pages/EditAllPage'
+import MultipleInput from './pages/MultipleInputPage'
+import LeaderBoard from './pages/LeaderBoard'
+import TeamPage from './pages/TeamPage'
+import TutorialPage from './pages/TutorialPage'
 
 const queryClient = new QueryClient();
 
@@ -41,16 +53,25 @@ function AuthenticatedRoutes() {
       <Route path="/" element={<HomePage />} />
       <Route path="/cards" element={<CreateCardPage />} />
       <Route path="/quizletparser" element={<QuizletParserPage />} />
-      <Route path="/review/:deckId" element={<ReviewPage />} />
+      <Route path="/review" element={<ReviewPage />} />
+      <Route path="/study" element={<StudyPage />} />
       <Route path="/help" element={<HelpPage />} />
       <Route path="/edit/:cardId" element={<EditCardPage />} />
       <Route path="/decks/:deckId" element={<DeckPage />} />
       <Route path="/decks/public/:deckId" element={<DeckPage publicAccess={true} />} />
+      <Route path="/shared" element={<SharedDeck />} />
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/stats/:deckId" element={<StatsPage />} />
       <Route path="/community" element={<CommunityPage />} />
       <Route path="*" element={<ErrorPage statusCode="404" errorMessage="Page not found" />} />
       <Route path="/friends" element={<FriendsPage />} />
+      <Route path="/myimages" element={<MyImagesPage />} />
+      <Route path="/quiz/:deckId" element={<QuizPage />} />
+      <Route path="/ankiparser" element={<AnkiParserPage />} />
+      <Route path="/aigeneratecards" element={<AIGenerateCards />} />
+      <Route path="/editall/:deckId" element={<EditAll />} />
+      <Route path="/multipleinput" element = {<MultipleInput/>}/>
+      <Route path="/leaderboard" element = {<LeaderBoard/>}/>
     </Routes>
   );
 }
@@ -61,6 +82,8 @@ function UnauthenticatedRoutes() {
       <Route path="/" element={<LandingPage />} />
       <Route path="/about" element={<AboutPage />} />
       <Route path="/features" element={<FeaturePage />} />
+      <Route path="/team" element={<TeamPage />} />
+      <Route path="/tutorial" element={<TutorialPage />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
       <Route path="*" element={<Navigate to="/login" />} />
@@ -68,12 +91,19 @@ function UnauthenticatedRoutes() {
   );
 }
 
-function Main() {
+function Main({ setBgClass }) {
   const { isLoggedIn, token } = useAuth();
   console.log("isLoggedIn: " + isLoggedIn);
   console.log("token: " + !!token);
-
   const api = useApi();
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      setBgClass('bg-edBase');
+    } else {
+      setBgClass('bg-elBase dark:bg-edBase');
+    }
+  }, [isLoggedIn, setBgClass]);
 
   useEffect(() => {
     const fetchUserSettings = async () => {
@@ -115,13 +145,15 @@ function Main() {
 }
 
 function App() {
+  const [bgClass, setBgClass] = useState('');
+
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <BrowserRouter>
-          <div className="min-w-screen min-h-screen flex flex-col font-base text-edWhite bg-elBase dark:bg-edBase">
+          <div className={`min-w-screen min-h-screen flex flex-col font-base text-edWhite ${bgClass}`}>
             <Header />
-            <Main />
+            <Main setBgClass={setBgClass} />
           </div>
         </BrowserRouter>
       </AuthProvider>

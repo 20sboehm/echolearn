@@ -126,6 +126,33 @@ export const ChevronIcon = ({ isOpen }) => {
   );
 };
 
+export const RectangleIcon = () => {
+  return (
+    <svg
+      viewBox="0 0 24 26" // Further reduced canvas height
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      style={{
+        transition: "stroke 0.3s ease",
+        width: "12px",
+        height: "18px", // Proportionally reduced height
+      }}
+    >
+      <path
+        d="M5 6.2C5 5.07989 5 4.51984 5.21799 4.09202C5.40973 3.71569 5.71569 3.40973 6.09202 3.21799C6.51984 3 7.0799 3 8.2 3H15.8C16.9201 3 17.4802 3 17.908 3.21799C18.2843 3.40973 18.5903 3.71569 18.782 4.09202C19 4.51984 19 5.0799 19 6.2V22.8C19 23.9201 19 24.4802 18.782 24.908C18.5903 25.2843 18.2843 25.5903 17.908 25.782C17.4802 26 16.9201 26 15.8 26H8.2C7.07989 26 6.51984 26 6.09202 25.782C5.71569 25.5903 5.40973 25.2843 5.21799 24.908C5 24.4802 5 23.9201 5 22.8V6.2Z"
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="stroke-elDark dark:stroke-edWhite"
+      />
+    </svg>
+  );
+};
+
+
+
+
+
 // --------------------------------------------------
 // ---------------- Community Icons -----------------
 // --------------------------------------------------
@@ -174,10 +201,11 @@ export const SpeakerIcon = () => {
       height="20px"
       viewBox="-5 0 70 70"
       xmlns="http://www.w3.org/2000/svg"
+      className="icon flat-line fill-elDark dark:fill-edWhite"
     >
       <g>
         {/* Outer white glow */}
-        <path
+        {/* <path
           d="M59.998,28.001h-7.999c-2.211,0-4,1.789-4,4s1.789,4,4,4h7.999c2.211,0,4-1.789,4-4 S62.209,28.001,59.998,28.001z"
           fill="none"
           stroke="#ffffff"
@@ -200,11 +228,11 @@ export const SpeakerIcon = () => {
           fill="none"
           stroke="#ffffff"
           strokeWidth="4"
-        />
-        <path className="stroke-elDark dark:stroke-edWhite" d="M59.998,28.001h-7.999c-2.211,0-4,1.789-4,4s1.789,4,4,4h7.999c2.211,0,4-1.789,4-4 S62.209,28.001,59.998,28.001z" />
-        <path className="stroke-elDark dark:stroke-edWhite" d="M49.71,19.466l6.929-4c1.914-1.105,2.57-3.551,1.461-5.465c-1.102-1.914-3.547-2.57-5.46-1.465l-6.93,4 c-1.914,1.105-2.57,3.551-1.461,5.464C45.351,19.915,47.796,20.571,49.71,19.466z" />
-        <path className="stroke-elDark dark:stroke-edWhite" d="M56.639,48.535l-6.929-3.999c-1.914-1.105-4.355-0.449-5.461,1.464c-1.105,1.914-0.453,4.359,1.461,5.465 l6.93,4c1.913,1.105,4.358,0.449,5.464-1.465S58.553,49.641,56.639,48.535z" />
-        <path className="stroke-elDark dark:stroke-edWhite" d="M37.53,0.307c-1.492-0.625-3.211-0.277-4.359,0.867L18.343,16.001H4c-2.211,0-4,1.789-4,4v24 C0,46.211,1.789,48,4,48h14.343l14.828,14.828C33.937,63.594,34.96,64,35.999,64c0.516,0,1.035-0.098,1.531-0.305 c1.496-0.617,2.469-2.078,2.469-3.695V4.001C39.999,2.384,39.026,0.924,37.53,0.307z" />
+        /> */}
+        <path d="M59.998,28.001h-7.999c-2.211,0-4,1.789-4,4s1.789,4,4,4h7.999c2.211,0,4-1.789,4-4 S62.209,28.001,59.998,28.001z" />
+        <path d="M49.71,19.466l6.929-4c1.914-1.105,2.57-3.551,1.461-5.465c-1.102-1.914-3.547-2.57-5.46-1.465l-6.93,4 c-1.914,1.105-2.57,3.551-1.461,5.464C45.351,19.915,47.796,20.571,49.71,19.466z" />
+        <path d="M56.639,48.535l-6.929-3.999c-1.914-1.105-4.355-0.449-5.461,1.464c-1.105,1.914-0.453,4.359,1.461,5.465 l6.93,4c1.913,1.105,4.358,0.449,5.464-1.465S58.553,49.641,56.639,48.535z" />
+        <path d="M37.53,0.307c-1.492-0.625-3.211-0.277-4.359,0.867L18.343,16.001H4c-2.211,0-4,1.789-4,4v24 C0,46.211,1.789,48,4,48h14.343l14.828,14.828C33.937,63.594,34.96,64,35.999,64c0.516,0,1.035-0.098,1.531-0.305 c1.496-0.617,2.469-2.078,2.469-3.695V4.001C39.999,2.384,39.026,0.924,37.53,0.307z" />
       </g>
     </svg>
   );
@@ -241,7 +269,7 @@ export const HeartIcon = ({ isFilled = false, className }) => (
     {isFilled ? (
       <path
         fill="red"  // Filled color
-        className="stroke-elDark dark:stroke-edWhite"
+        className="stroke-none"
         d="M12 6.00019C10.2006 3.90317 7.19377 3.2551 4.93923 5.17534C2.68468 7.09558 2.36727 10.3061 4.13778 12.5772C5.60984 14.4654 10.0648 18.4479 11.5249 19.7369C11.6882 19.8811 11.7699 19.9532 11.8652 19.9815C11.9483 20.0062 12.0393 20.0062 12.1225 19.9815C12.2178 19.9532 12.2994 19.8811 12.4628 19.7369C13.9229 18.4479 18.3778 14.4654 19.8499 12.5772C21.6204 10.3061 21.3417 7.07538 19.0484 5.17534C16.7551 3.2753 13.7994 3.90317 12 6.00019Z"
       />
     ) : (
@@ -266,13 +294,13 @@ export const EditIcon = () => (
     height="20px"
     viewBox="0 0 24 24"
     xmlns="http://www.w3.org/2000/svg"
-    className="edit-icon"
+    className="edit-icon stroke-elDark dark:stroke-edWhite"
   >
     <g id="Complete">
       <g id="edit">
         <g>
           {/* Outer white glow path */}
-          <path
+          {/* <path
             d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8"
             fill="none"
             stroke="#ffffff"
@@ -287,13 +315,12 @@ export const EditIcon = () => (
             strokeLinecap="round"
             strokeLinejoin="round"
             strokeWidth="4"
-          />
+          /> */}
 
           {/* Inner black paths */}
           <path
             d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8"
             fill="none"
-            stroke="#000000"
             strokeLinecap="round"
             strokeLinejoin="round"
             strokeWidth="2"
@@ -301,7 +328,6 @@ export const EditIcon = () => (
           <polygon
             fill="none"
             points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8"
-            stroke="#000000"
             strokeLinecap="round"
             strokeLinejoin="round"
             strokeWidth="2"
@@ -451,7 +477,7 @@ export const LatexBlockIcon = () => (
 );
 
 export const MicIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill="currentColor" className="bi bi-mic-fill" viewBox="0 0 16 16">
+  <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill="currentColor" className="fill-elDark dark:fill-edWhite bi bi-mic-fill" viewBox="0 0 16 16">
     <path d="M5 3a3 3 0 0 1 6 0v5a3 3 0 0 1-6 0z" />
     <path d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 .5-.5" />
   </svg>
@@ -461,5 +487,158 @@ export const MicIconListening = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill="grey" className="bi bi-mic-fill" viewBox="0 0 16 16">
     <path d="M5 3a3 3 0 0 1 6 0v5a3 3 0 0 1-6 0z" />
     <path d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 .5-.5" />
+  </svg>
+);
+
+export const LinkUploadedImage = () => (
+  <svg
+    width="18px"
+    height="18px"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className="stroke-elDark dark:stroke-edWhite"
+  >
+    {/* Cloud Path */}
+    <path
+      d="M8.4 19C5.41766 19 3 16.6044 3 13.6493C3 11.2001 4.8 8.9375 7.5 8.5C8.34694 6.48637 10.3514 5 12.6893 5C15.684 5 18.1317 7.32251 18.3 10.25C19.8893 10.9449 21 12.6503 21 14.4969C21 16.9839 18.9853 19 16.5 19L8.4 19Z"
+      className="fill-white dark:fill-black" // Black in light mode, white in dark mode
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    {/* Other Paths */}
+    <path
+      d="M13.5 14.5L14.5 15.5M14 12.5C14 13.8807 12.8807 15 11.5 15C10.1193 15 9 13.8807 9 12.5C9 11.1193 10.1193 10 11.5 10C12.8807 10 14 11.1193 14 12.5Z"
+      className="stroke-elDark dark:stroke-edWhite"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+
+// --------------------------------------------------
+// ------------------ Images Page -------------------
+// --------------------------------------------------
+
+export const UploadIcon = ({ className }) => (
+  <svg width="18px" height="18px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`stroke-white ${className}`}>
+    <path d="M17 17H17.01M15.6 14H18C18.9319 14 19.3978 14 19.7654 14.1522C20.2554 14.3552 20.6448 14.7446 20.8478 15.2346C21 15.6022 21 16.0681 21 17C21 17.9319 21 18.3978 20.8478 18.7654C20.6448 19.2554 20.2554 19.6448 19.7654 19.8478C19.3978 20 18.9319 20 18 20H6C5.06812 20 4.60218 20 4.23463 19.8478C3.74458 19.6448 3.35523 19.2554 3.15224 18.7654C3 18.3978 3 17.9319 3 17C3 16.0681 3 15.6022 3.15224 15.2346C3.35523 14.7446 3.74458 14.3552 4.23463 14.1522C4.60218 14 5.06812 14 6 14H8.4M12 15V4M12 4L15 7M12 4L9 7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+)
+
+export const DeleteIcon = ({ className }) => (
+  <svg width="18px" height="18px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M10 12V17" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M14 12V17" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M4 7H20" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M6 10V18C6 19.6569 7.34315 21 9 21H15C16.6569 21 18 19.6569 18 18V10" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7H9V5Z" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+)
+
+export const DownloadIcon = ({ className }) => (
+  <svg width="18px" height="18px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17 17H17.01M17.4 14H18C18.9319 14 19.3978 14 19.7654 14.1522C20.2554 14.3552 20.6448 14.7446 20.8478 15.2346C21 15.6022 21 16.0681 21 17C21 17.9319 21 18.3978 20.8478 18.7654C20.6448 19.2554 20.2554 19.6448 19.7654 19.8478C19.3978 20 18.9319 20 18 20H6C5.06812 20 4.60218 20 4.23463 19.8478C3.74458 19.6448 3.35523 19.2554 3.15224 18.7654C3 18.3978 3 17.9319 3 17C3 16.0681 3 15.6022 3.15224 15.2346C3.35523 14.7446 3.74458 14.3552 4.23463 14.1522C4.60218 14 5.06812 14 6 14H6.6M12 15V4M12 15L9 12M12 15L15 12" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+)
+
+export const CopyIcon = ({ className }) => (
+  < svg width="18px" height="18px" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" fill="none" >
+    <path fill="#fff" fillRule="evenodd" d="M4 2a2 2 0 00-2 2v9a2 2 0 002 2h2v2a2 2 0 002 2h9a2 2 0 002-2V8a2 2 0 00-2-2h-2V4a2 2 0 00-2-2H4zm9 4V4H4v9h2V8a2 2 0 012-2h5zM8 8h9v9H8V8z" />
+  </svg >
+)
+
+export const DragIcon = ({ className }) => (
+  <svg width="16px" height="16px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M16.1924 5.65683C16.5829 5.2663 16.5829 4.63314 16.1924 4.24261L13.364 1.41419C12.5829 0.633139 11.3166 0.633137 10.5355 1.41419L7.70711 4.24261C7.31658 4.63314 7.31658 5.2663 7.70711 5.65683C8.09763 6.04735 8.73079 6.04735 9.12132 5.65683L11 3.77812V11.0503H3.72784L5.60655 9.17157C5.99707 8.78104 5.99707 8.14788 5.60655 7.75735C5.21602 7.36683 4.58286 7.36683 4.19234 7.75735L1.36391 10.5858C0.582863 11.3668 0.582859 12.6332 1.36391 13.4142L4.19234 16.2426C4.58286 16.6332 5.21603 16.6332 5.60655 16.2426C5.99707 15.8521 5.99707 15.219 5.60655 14.8284L3.8284 13.0503H11V20.2219L9.12132 18.3432C8.73079 17.9526 8.09763 17.9526 7.7071 18.3432C7.31658 18.7337 7.31658 19.3669 7.7071 19.7574L10.5355 22.5858C11.3166 23.3669 12.5829 23.3669 13.364 22.5858L16.1924 19.7574C16.5829 19.3669 16.5829 18.7337 16.1924 18.3432C15.8019 17.9526 15.1687 17.9526 14.7782 18.3432L13 20.1213V13.0503H20.071L18.2929 14.8284C17.9024 15.219 17.9024 15.8521 18.2929 16.2426C18.6834 16.6332 19.3166 16.6332 19.7071 16.2426L22.5355 13.4142C23.3166 12.6332 23.3166 11.3668 22.5355 10.5858L19.7071 7.75735C19.3166 7.36683 18.6834 7.36683 18.2929 7.75735C17.9024 8.14788 17.9024 8.78104 18.2929 9.17157L20.1716 11.0503H13V3.87867L14.7782 5.65683C15.1687 6.04735 15.8019 6.04735 16.1924 5.65683Z" className="fill-black dark:fill-white" />
+  </svg>
+  // <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+  //   <path d="M2 9.5c.28 0 .5.22.5.5s-.22.5-.5.5-.5-.22-.5-.5.22-.5.5-.5zm1-1a1 1 0 110 2 1 1 0 010-2zm2 1a.5.5 0 11-1 0 .5.5 0 011 0zm-3-4a.5.5 0 11-1 0 .5.5 0 011 0zm4-1a1 1 0 110 2 1 1 0 010-2zm3 1a.5.5 0 11-1 0 .5.5 0 011 0zm-4 4a.5.5 0 11-1 0 .5.5 0 011 0zm3-1a1 1 0 110 2 1 1 0 010-2zm3 1a.5.5 0 11-1 0 .5.5 0 011 0zM2 5.5c.28 0 .5.22.5.5s-.22.5-.5.5-.5-.22-.5-.5.22-.5.5-.5zm1-1a1 1 0 110 2 1 1 0 010-2zm2 1a.5.5 0 11-1 0 .5.5 0 011 0zm-3-4a.5.5 0 11-1 0 .5.5 0 011 0zm4-1a1 1 0 110 2 1 1 0 010-2zm3 1a.5.5 0 11-1 0 .5.5 0 011 0zm-4 4a.5.5 0 11-1 0 .5.5 0 011 0zm3-1a1 1 0 110 2 1 1 0 010-2zm3 1a.5.5 0 11-1 0 .5.5 0 011 0z" />
+  // </svg>
+)
+
+// -------------------------------------------
+// ------------------ Misc -------------------
+// -------------------------------------------
+
+// export const QuestionMarkIcon = ({ className }) => (
+//   <svg width="16px" height="16px" viewBox="0 0 12 12" enableBackground="new 0 0 12 12" id="questionMarkIcon" version="1.1" xmlSpace="preserve" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"><path d="M6,0C2.6862793,0,0,2.6862793,0,6s2.6862793,6,6,6s6-2.6862793,6-6S9.3137207,0,6,0z M6.5,9.5h-1v-1h1V9.5z   M7.2651367,6.1738281C6.7329102,6.5068359,6.5,6.6845703,6.5,7v0.5h-1V7c0-0.9023438,0.7138672-1.3486328,1.2348633-1.6738281  C7.2670898,4.9931641,7.5,4.8154297,7.5,4.5c0-0.5517578-0.4487305-1-1-1h-1c-0.5512695,0-1,0.4482422-1,1V5h-1V4.5  c0-1.1025391,0.8969727-2,2-2h1c1.1030273,0,2,0.8974609,2,2C8.5,5.4023438,7.7861328,5.8486328,7.2651367,6.1738281z"
+//     fill="#fff" strokeWidth="0.5" className={`${className} stroke-elDark dark:stroke-edWhite`} /></svg>
+// )
+
+export const QuestionMarkIcon = ({ className }) => (
+  <svg width="16px" height="16px" viewBox="0 0 12 12" enableBackground="new 0 0 12 12" id="questionMarkIcon" version="1.1" xmlSpace="preserve" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"><path d="M6,0C2.6862793,0,0,2.6862793,0,6s2.6862793,6,6,6s6-2.6862793,6-6S9.3137207,0,6,0z M6.5,9.5h-1v-1h1V9.5z   M7.2651367,6.1738281C6.7329102,6.5068359,6.5,6.6845703,6.5,7v0.5h-1V7c0-0.9023438,0.7138672-1.3486328,1.2348633-1.6738281  C7.2670898,4.9931641,7.5,4.8154297,7.5,4.5c0-0.5517578-0.4487305-1-1-1h-1c-0.5512695,0-1,0.4482422-1,1V5h-1V4.5  c0-1.1025391,0.8969727-2,2-2h1c1.1030273,0,2,0.8974609,2,2C8.5,5.4023438,7.7861328,5.8486328,7.2651367,6.1738281z"
+    className={`${className} fill-black dark:fill-white`} /></svg>
+)
+
+
+// fill="#1D1D1B"
+
+// --------------------------------------------------
+// ------------------ Review Page -------------------
+// --------------------------------------------------
+
+export const FlashCardIcon = ({ isTrue }) => {
+  return (
+    <svg
+      width="48px"
+      height="48px"
+      viewBox="0 0 24 24"
+      className={isTrue ? "bg-white" : "bg-gray-300 dark:bg-gray-500"}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      {/* Tail of the "Q" */}
+      <path
+        d="M11.8 13.8L13.5 16"
+        className="stroke-elDark dark:stroke-edDark"
+        strokeLinecap="round"
+      />
+      {/* "Q" Letter Path */}
+      <path
+        d="M6 11C6 9.067 7.567 7.5 9.5 7.5C11.433 7.5 13 9.067 13 11C13 12.933 11.433 14.5 9.5 14.5C7.567 14.5 6 12.933 6 11Z"
+        className="stroke-elDark dark:stroke-edDark"
+        fill="none"
+      />
+      <path
+        d="M12 5.6C11.9 5.5 11.9 5.4 12 5.3L12.7 4.3C12.8 4.2 13.2 4.2 13.3 4.3L14 5.3C14.1 5.4 14.1 5.5 14 5.6L13.3 6.7C13.2 6.8 12.8 6.8 12.7 6.7L12 5.6Z"
+        className="dark:fill-edDark fill-elDark"
+      />
+
+      <path
+        d="M5.208 15.312C5.1091 15.1636 4.8909 15.1636 4.792 15.312L4.0924 16.3613C4.0365 16.4453 4.0365 16.5547 4.0924 16.6387L4.792 17.688C4.8909 17.8364 5.1091 17.8364 5.208 17.688L5.9075 16.6387C5.9635 16.5547 5.9635 16.4453 5.9075 16.3613L5.208 15.312Z"
+        className="dark:fill-edDark fill-elDark"
+      />
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M1 4C1 2.34315 2.34315 1 4 1H14C15.1323 1 16.1181 1.62732 16.6288 2.55337L20.839 3.68148C22.4394 4.11031 23.3891 5.75532 22.9603 7.35572L19.3368 20.8787C18.908 22.4791 17.263 23.4288 15.6626 23L8.19849 21H4C2.34315 21 1 19.6569 1 18V4ZM17 18V4.72339L20.3213 5.61334C20.8548 5.75628 21.1714 6.30461 21.0284 6.83808L17.405 20.361C17.262 20.8945 16.7137 21.2111 16.1802 21.0681L15.1198 20.784C16.222 20.3403 17 19.261 17 18ZM4 3C3.44772 3 3 3.44772 3 4V18C3 18.5523 3.44772 19 4 19H14C14.5523 19 15 18.5523 15 18V4C15 3.44772 14.5523 3 14 3H4Z"
+        className="dark:fill-edDark fill-elDark"
+      />
+    </svg>
+  );
+};
+
+export const QuestionSetIcon = ({ isTrue }) => (
+  <svg width="48" height="48" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" className={isTrue ? "bg-gray-300 dark:bg-gray-500" : "bg-white"}>
+    <path
+      d="M488.445 842.076h39.783v29.79h-39.783zM746.417 256.375h104.96v29.79h-104.96zM879.543 256.375h35.335v29.79h-35.335zM566.969 842.076h23.449v29.79h-23.449zM433.533 842.076h23.449v29.79h-23.449z"
+      className="fill-elDark"
+      strokeWidth="2"
+    />
+    {/* Lower Answer */}
+    <path
+      d="M696.574 861.92V725.159H421.212V359.484h503.302v365.675H814.892L696.574 861.92zM426.07 720.302h275.361v128.579l111.24-128.579h106.985v-355.96H426.07v355.96z m291.862 84.287V703.801H442.571V380.843h460.585v322.958h-98.025l-87.199 100.788zM447.428 698.943h275.361v92.606l80.121-92.606h95.388V385.7h-450.87v313.243z"
+      className="stroke-elDark dark:stroke-edDark"
+      strokeWidth="15"
+    />
+    {/* Upper Question */}
+    <path
+      d="M292.392 712.896L186.559 603.148H97.768V232.877h573.639v153.136H446.625v217.136H292.882l-0.49 109.747zM102.625 598.291h85.997l98.966 102.627 0.458-102.627h153.721V381.155h224.781V237.734H102.625v360.557z m171.413 64.95l-77.703-81.451h-77.208V254.235h530.922v110.419H425.267V581.79H274.276l-0.238 81.451z m-150.055-86.308h74.43l70.802 74.217 0.218-74.217H420.41V359.797h224.78V259.093H123.983v317.84z"
+      className="stroke-elDark dark:stroke-edDark"
+      strokeWidth="15"
+    />
   </svg>
 );

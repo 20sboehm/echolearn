@@ -20,9 +20,12 @@ class GetUser(Schema):
     flip_mode: Optional[bool] = None
     sidebar_open: Optional[bool] = None
     light_mode: Optional[bool] = None
+    is_owner: Optional[bool] = None
+    avatar: Optional[str] = None
+    score: Optional[int] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class UserLogin(Schema):
     username: str
@@ -36,11 +39,7 @@ class UpdateUser(Schema):
     flip_mode: Optional[bool] = None
     sidebar_open: Optional[bool] = None
     light_mode: Optional[bool] = None
-
-# class GetUser(Schema):
     
-
-
 # -------------------------------------------------
 # -------------------- Folders --------------------
 # -------------------------------------------------
@@ -65,7 +64,7 @@ class UpdateFolder(Schema):
 
 class GetDeck(Schema):
     deck_id: int
-    folder_id: int
+    folder_id: Optional[int] = None
     owner_id: int
     name: str
     description: str
@@ -74,18 +73,21 @@ class GetDeck(Schema):
     last_edited: datetime
     isPublic:bool
     order_List: list[int]
+    rate: float
 
 class GetPublicDeck(Schema):
     deck_id: int
     owner_username: str
+    owner_id: int
     name: str
     description: str
     created_at: str
     last_edited: str
     favorites: int
+    rate: float
     
 class CreateDeck(Schema):
-    folder_id: int
+    folder_id: Optional[int] = None
     name: str
     description: Optional[str] = None
     
@@ -94,8 +96,14 @@ class UpdateDeck(Schema):
     description: Optional[str] = None
     folder_id: Optional[int] = None
 
+class GetSharedDeck(Schema):
+    share_id: int
+    deck: int
+    shared_from: int
+    shared_with: int
 
-
+    class Config:
+        from_attributes = True
 
 # -----------------------------------------------
 # -------------------- Cards --------------------
@@ -106,12 +114,6 @@ class GetCard(Schema):
     deck_id: int
     question: str
     answer: str
-    # questionvideolink: str
-    # answervideolink: str
-    # questionimagelink: str
-    # answerimagelink: str
-    # questionlatex: str
-    # answerlatex: str
     bucket: int
     last_reviewed: datetime
     next_review: datetime
@@ -121,6 +123,9 @@ class GetCard(Schema):
     correct_count: int
     incorrect_count: int
     review_history: list[datetime]
+    review_again: bool
+    ease_factor_points: float
+    ease_factor_max_points: float
 
 class UpdateCard(Schema):
     question: Optional[str] = None
@@ -128,15 +133,18 @@ class UpdateCard(Schema):
     bucket: Optional[int] = None
     next_review: Optional[datetime] = None
     last_reviewed: Optional[datetime] = None
-    # questionvideolink: Optional[str] = None
-    # answervideolink: Optional[str] = None
-    # questionimagelink: Optional[str] = None
-    # answerimagelink: Optional[str] = None
-    # questionlatex: Optional[str] = None
-    # answerlatex: Optional[str] = None
     correct_count: Optional[int] = None
     incorrect_count: Optional[int] = None
     review_history: Optional[list[datetime]] = None
+
+class UpdateReviewCard(Schema):
+    confidence: int
+
+class GetReviewTimes(Schema):
+    again: str
+    hard: str
+    good: str
+    easy: str
 
 class CreateCard(Schema):
     deck_id: int
@@ -148,12 +156,6 @@ class Cards(Schema):
     question: str
     answer: str
     bucket: int
-    # questionvideolink:str
-    # answervideolink:str
-    # questionimagelink:str
-    # answerimagelink:str
-    # questionlatex:str
-    # answerlatex:str
     correct_count: int = None
     incorrect_count: int = None
     next_review: datetime
@@ -163,6 +165,9 @@ class ReviewCards(Schema):
     deck_name: str
     cards: list[Cards]
 
+class MultipleReviewCards(Schema):
+    decks: List[ReviewCards]
+
 class DeckCards(Schema):
     deck_id: int
     isPublic:bool
@@ -170,6 +175,8 @@ class DeckCards(Schema):
     cards: list[GetCard]
     stars:int
     order_List: list[int]
+    publicAccess: Optional[bool] = None
+    deckdescription:str
     
 class EditCards(Schema):
     question: Optional[str] = None
@@ -177,23 +184,25 @@ class EditCards(Schema):
     
 class CreateMultipleCard(Schema):
     cards: list[CreateCard]
+
 # -----------------------------------------------
 # ------------------ Sidebar --------------------
 # -----------------------------------------------
 
 class DeckInfo(Schema):
     deck_id: int
-    parent_folder_id: int
+    parent_folder_id: Optional[int] = None
     name: str
 
 class FolderInfo(Schema):
-    folder_id: int
+    folder_id: Optional[int] = None
     name: str
     decks: list[DeckInfo]
     children: Optional[list['FolderInfo']] = []
 
 class GetSidebar(Schema):
     folders: list[FolderInfo]
+    decks: Optional[list[DeckInfo]] = []
 
 # -----------------------------------------------
 # ------------------ Friend list ----------------
@@ -207,3 +216,21 @@ class Friend(Schema):
 
 class GetFriends(Schema):
     friends: List[Friend]
+
+# -----------------------------------------------
+# ------------------ Images ---------------------
+# -----------------------------------------------
+
+class GetImage(Schema):
+    image_id: int
+    description: str
+    link: str
+    name: str
+    
+class UpdateNotificationSettings(Schema):
+    wants_notification: bool
+    notification_time: str
+    
+class GetNotificationSettings(Schema):
+    wants_notification: bool
+    notification_time: str

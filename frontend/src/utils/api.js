@@ -68,6 +68,20 @@ const api = () => {
         );
     };
 
+    const _postFile = async (url, body) => {
+        console.log("Sending POST request");
+        await verifyTokenAndRefresh();
+
+        return fetch(
+            baseUrl + url,
+            {
+                method: "POST",
+                body,
+                headers: { "Authorization": "Bearer " + token }
+            },
+        );
+    };
+
     const _patch = async (url, body) => {
         console.log("Sending PATCH request");
         await verifyTokenAndRefresh();
@@ -95,7 +109,7 @@ const api = () => {
         )
     };
 
-    return { _get, _post, _patch, _delete };
+    return { _get, _post, _postFile, _patch, _delete };
 };
 
 export default api;

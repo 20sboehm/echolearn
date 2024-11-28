@@ -24,8 +24,6 @@ function SignUp() {
       setPopupOpacity('opacity-0');
       setTimeout(() => setShowPopup(false), 1000);
     }, 1000);
-    setUsername('');
-    setEmail('');
     setPassword('');
   }
 
@@ -76,11 +74,11 @@ function SignUp() {
         } else if (error.message.includes("Email already exists")) {
           popupDetails('Email already exists.', 'red');
         } else if (error.message.includes("No")) {
-          popupDetails('Please provid username.', 'red');
+          popupDetails('Please provide username.', 'red');
         } else if (error.message.includes("Empty")) {
-          popupDetails('Please provid email.', 'red');
+          popupDetails('Please provide email.', 'red');
         } else if (error.message.includes("password")) {
-          popupDetails('Please provid password.', 'red');
+          popupDetails('Please provide password.', 'red');
         } else {
           popupDetails('Registration failed: An unknown error occurred.', 'red');
         }
@@ -113,7 +111,7 @@ function SignUp() {
         <FormInputButton navigateTo="/login">Log in</FormInputButton>
       </form>
       {showPopup && (
-        <div className={`fixed bottom-20 left-1/2 -translate-x-1/2 transform p-4 bg-${popupColor}-500 rounded-md transition-opacity duration-1000 ${popupOpacity}`}>
+        <div className={`text-white font-semibold fixed bottom-20 left-1/2 -translate-x-1/2 transform p-4 bg-${popupColor}-500 rounded-md transition-opacity duration-1000 ${popupOpacity}`}>
           {popupMessage}
         </div>
       )}

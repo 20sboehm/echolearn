@@ -1,21 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import api from '../utils/api';
-import { Link } from 'react-router-dom';
-import folderOpenImg from "../assets/folder-open.png";
-import folderCloseImg from "../assets/folder-close.png";
-import decksImg from "../assets/decks.png";
-import userPic from "../assets/defaltUser.png"
+// import api from '../utils/api';
+import { Link, useSearchParams } from 'react-router-dom';
+import defaultAvatar from "../assets/defaltUser.png";
 import FriendsPage from './FriendsPage';
+import SharePage from './SharedWith';
+import { useApi } from "../hooks";
+import { useMutation, useQueryClient } from "react-query";
 
 function ProfilePage() {
-  const { _get, _patch } = api();
+  const api = useApi();
+  // const { _get, _patch, _post } = api();
   // profile
-  const [profile, setProfile] = useState({ username: '', age: '', country: '', email: '', flip_mode: true, sidebar_open: false, light_mode: false });
+  const [searchParams] = useSearchParams();
+  const userId = searchParams.get('userId');
+  // const [profile, setProfile] = useState({ username: '', age: '', country: '', email: '', flip_mode: true, sidebar_open: false, light_mode: false });
+  const [profile, setProfile] = useState({});
   const [error, setError] = useState(null);
   const [editableUsername, setEditableUsername] = useState('');
   const [editableEmail, setEditableEmail] = useState('');
   const [editableAge, setEditableAge] = useState('');
   const [editableCountry, setEditableCountry] = useState('');
+  const [popupText, setPopupText] = useState("");
 
   // Setting
   const [flipOrSet, setFlipOrSet] = useState(true);
@@ -24,8 +29,20 @@ function ProfilePage() {
 
   // Tabs (other info)
   const [folders, setFolders] = useState([]);
+  const [rootDecks, setRootDecks] = useState([]);
   const [RatedDeck, setRatedDeck] = useState([]);
   const [activeTab, setActiveTab] = useState('folders');
+
+  // User avatar
+  const apiClient = useApi();
+  const queryClient = useQueryClient();
+  const [avatar, setAvatar] = useState(defaultAvatar);
+  const [preview, setPreview] = useState(null);
+  const [file, setFile] = useState(null);
+
+  // Notification settings
+  const [toggleNotifications, setToggleNotifications] = useState(false);
+  const [notificationTime, setNotificationTime] = useState("");
 
   const selectedTabClassName = "bg-elSkyBlue text-white dark:bg-edMedGray";
   const unselectedTabClassName = "bg-elLightGray text-elDarkGray dark:bg-edDarkGray dark:text-white";
@@ -61,40 +78,124 @@ function ProfilePage() {
     "Uruguay", "Uzbekistan", "Vanuatu", "Venezuela", "Vietnam", "Yemen", "Zambia", "Zimbabwe"
   ];
 
-  useEffect(() => {
-    async function fetchProfile() {
-      try {
-        const response = await _get('/api/profile/me');
-        const data = await response.json();
-        setProfile(data);
-        setEditableUsername(data.username);
-        setEditableEmail(data.email);
-        setEditableAge(data.age);
-        setEditableCountry(data.country);
+  async function fetchProfile() {
+    try {
+      const endpoint = userId ? `/api/profile/me?userId=${userId}` : '/api/profile/me';
+      const response = await api._get(endpoint);
+      const data = await response.json();
+      setProfile(data);
+      setEditableUsername(data.username);
+      setEditableEmail(data.email);
+      setEditableAge(data.age);
+      setEditableCountry(data.country);
+      setAvatar(data.avatar || defaultAvatar);
+
+      if (data.is_owner) {
         setFlipOrSet(data.flip_mode);
         setSidebarClosed(data.sidebar_open);
         setLightMode(data.light_mode);
 
         if (!data.light_mode) {
           document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
         }
-
-        const foldersResponse = await _get('/api/profile/folders_decks');
-        const foldersData = await foldersResponse.json();
-        setFolders(foldersData);
-        const RatedResponse = await _get('/api/profile/ALLRatedDecks');
-        const RatedDeck = await RatedResponse.json();
-        setRatedDeck(RatedDeck);
-      } catch (error) {
-        setError('Failed to fetch profile data');
       }
+
+      const folderEndpoint = userId ? `/api/profile/folders_decks?userId=${userId}` : '/api/profile/folders_decks';
+      const foldersResponse = await api._get(folderEndpoint);
+      const foldersData = await foldersResponse.json();
+      setFolders(foldersData.folders);
+      setRootDecks(foldersData.decks);
+      const RatedResponse = await api._get('/api/profile/ALLRatedDecks');
+      const RatedDeck = await RatedResponse.json();
+      setRatedDeck(RatedDeck);
+    } catch (error) {
+      console.log(error)
+      setError('Failed to fetch profile data');
+    }
+  }
+
+  const fetchUserSettings = async () => {
+    try {
+      const response = await api._get('/api/emails/get-notification-settings');
+      const data = await response.json();
+
+      setToggleNotifications(data.wants_notification);
+
+      // Convert UTC ISO string to a Date object in local time
+      const localTime = new Date(data.notification_time);  // Convert the ISO string to a Date object in local time
+      const hours = localTime.getHours().toString().padStart(2, '0');  // Get the local hours and ensure two digits
+      const minutes = localTime.getMinutes().toString().padStart(2, '0');  // Get the local minutes and ensure two digits
+      const formattedTime = `${hours}:${minutes}`;  // Format as HH:mm
+
+      setNotificationTime(formattedTime);
+    } catch (error) {
+      console.error('Failed to obtain notification settings.', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProfile();
+    fetchUserSettings();
+  }, []);
+
+  // useEffect(() => {
+  //   fetchUserSettings();
+  // }, []);
+
+  const uploadMutation = useMutation(
+    async (formData) => {
+      const response = await apiClient._postFile("/api/profile/upload_avatar", formData);
+      if (!response.ok) throw new Error("Avatar upload fail");
+      return response.json();
+    },
+    {
+      onSuccess: (data) => {
+        console.log("Success");
+        setAvatar(data.avatar_url);
+        console.log("Avatar URL:", data.avatar_url);
+        setPreview(null);
+        setFile(null);
+        queryClient.invalidateQueries("profile", { refetchActive: true });
+        window.location.reload();
+      },
+      onError: () => alert("Failed to upload avatar")
+    }
+  );
+
+  const handleUpdateNotificationSettings = async () => {
+    const [hours, minutes] = notificationTime.split(":");
+
+    // Create a new Date object for today with the specified time in local time (provided by user)
+    const now = new Date();
+    now.setHours(parseInt(hours), parseInt(minutes), 0);
+
+    // toISOString will automatically convert to UTC based off the current local time zone
+    const notificationTimeUTC = now.toISOString();
+
+    let data = {
+      wants_notification: toggleNotifications,
+      notification_time: notificationTimeUTC
     }
 
-    fetchProfile();
-  }, []);
+    const response = await api._post('/api/emails/update-notification-settings', data);
+
+    if (response.ok) {
+      console.log("Notification settings updated!");
+    } else {
+      let data = await response.json();
+      console.log(data.error)
+    }
+  };
 
   // Edit handle here
   const handleEditClick = (field) => {
+    if (!profile.is_owner) {
+      setPopupText("Not able to edit other user");
+      setTimeout(() => setPopupText(""), 1000);
+      return;
+    }
     setIsEditingField((prev) => ({ ...prev, [field]: true }));
   };
 
@@ -120,9 +221,13 @@ function ProfilePage() {
         return;
     }
     try {
-      const response = await _patch('/api/profile/me', updatedData);
+      const response = await api._patch('/api/profile/me', updatedData);
       const data = await response.json();
-      setProfile(data);
+      fetchProfile();
+      setProfile((prevProfile) => ({
+        ...prevProfile,
+        ...data,
+      }));
       // Reset the editing state for the specific field
       setIsEditingField((prevState) => ({
         ...prevState,
@@ -162,13 +267,11 @@ function ProfilePage() {
     }));
   };
 
-
-
   const handleFlipOrSetChange = async () => {
     const newFlipOrSet = !flipOrSet;
     setFlipOrSet(newFlipOrSet);
     try {
-      const response = await _patch('/api/profile/me', { flip_mode: newFlipOrSet });
+      const response = await api._patch('/api/profile/me', { flip_mode: newFlipOrSet });
     } catch (error) {
       setError('Failed to update flip or set setting');
     }
@@ -178,7 +281,7 @@ function ProfilePage() {
     const newSidebarClosed = !sidebarClosed;
     setSidebarClosed(newSidebarClosed);
     try {
-      const response = await _patch('/api/profile/me', { sidebar_open: newSidebarClosed });
+      const response = await api._patch('/api/profile/me', { sidebar_open: newSidebarClosed });
     } catch (error) {
       setError('Failed to update sidebar closed setting');
     }
@@ -195,24 +298,78 @@ function ProfilePage() {
     }
 
     try {
-      const response = await _patch('/api/profile/me', { light_mode: newLightMode });
+      const response = await api._patch('/api/profile/me', { light_mode: newLightMode });
     } catch (error) {
       setError('Failed to update sidebar closed setting');
     }
   };
 
+  const handleCancelUpload = () => {
+    setPreview(null);
+    setFile(null);
+    document.getElementById('avatarInput').value = '';
+  };
+
+  const handleAvatarChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (!selectedFile) return;
+    if (selectedFile && selectedFile.size <= 1 * 1024 * 1024) {
+      setFile(selectedFile);
+      setPreview(URL.createObjectURL(selectedFile));
+    } else {
+      alert("avatar size need < 1MB");
+    }
+  };
+
+  const handleUpload = () => {
+    if (!file) return;
+    const formData = new FormData();
+    formData.append("avatar", file);
+    uploadMutation.mutate(formData);
+  };
+
   return (
-    <div className=" w-3/4 text-left flex mt-4">
+    <div className={`w-3/4 text-left flex mt-4 ${profile.is_owner ? '' : 'justify-center'}`}>
       {/* Left column: User Profile Information */}
-      <div className="w-2/3 h-1/2 ml-4">
+      <div className={`h-1/2 ml-4 ${profile.is_owner ? 'w-2/3' : 'w-2/4'}`}>
         {/* Profile header */}
         <div className="flex items-center -mt-2">
-          <div className="w-24 h-24 rounded-full overflow-hidden">
-            {/* {profile.avatar || userPic} */}
-            <img src={userPic} alt="User avatar" className="object-cover w-full h-full" />
+
+          <div className="profile-page">
+            <div className={`relative w-[100px] h-[100px] ${profile.is_owner ? "cursor-pointer" : ""}`}
+              {...(profile.is_owner && { onClick: () => document.getElementById('avatarInput').click() })}>
+              <img
+                src={preview || avatar}
+                alt="Avatar"
+                className="w-full h-full rounded-full object-cover transition-opacity duration-300 ease-in-out hover:opacity-80"
+              />
+            </div>
+
+            {profile.is_owner && (
+              <input
+                id="avatarInput"
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarChange}
+                className="hidden"
+              />
+            )}
           </div>
+
           <div className="ml-4">
             <h1 className="text-3xl font-bold text-elDark dark:text-edWhite">{profile.username}</h1>
+          </div>
+          <div>
+            {profile.is_owner && file && (
+              <div className="flex space-x-4 mt-2">
+                <button onClick={handleUpload} className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-500 text-white text-2xl font-bold ml-4">
+                  √
+                </button>
+                <button onClick={handleCancelUpload} className="w-10 h-10 flex items-center justify-center rounded-full bg-red-500 text-white text-2xl ml-4">
+                  X
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -228,6 +385,7 @@ function ProfilePage() {
               onSave={() => handleSaveClick('username')}
               onCancel={() => handleCancelClick('username')}
               onChange={(newVal) => setEditableUsername(newVal)}
+              is_owner={profile.is_owner}
             />
 
             {/* Email */}
@@ -239,6 +397,7 @@ function ProfilePage() {
               onSave={() => handleSaveClick('email')}
               onCancel={() => handleCancelClick('email')}
               onChange={(newVal) => setEditableEmail(newVal)}
+              is_owner={profile.is_owner}
             />
 
             {/* Age */}
@@ -251,6 +410,7 @@ function ProfilePage() {
               onSave={() => handleSaveClick('age')}
               onCancel={() => handleCancelClick('age')}
               onChange={(newVal) => setEditableAge(Number(newVal))}
+              is_owner={profile.is_owner}
             />
 
             {/* Country */}
@@ -264,6 +424,7 @@ function ProfilePage() {
               onSave={() => handleSaveClick('country')}
               onCancel={() => handleCancelClick('country')}
               onChange={(newVal) => setEditableCountry(newVal)}
+              is_owner={profile.is_owner}
             />
 
           </div>
@@ -274,21 +435,27 @@ function ProfilePage() {
           <div className="flex space-x">
             <button
               className={`py-2 px-4 rounded-lg ${activeTab === 'folders' ? `${selectedTabClassName}` : `${unselectedTabClassName}`}`}
-              onClick={() => setActiveTab('folders')}
+              onClick={() => profile.is_owner && setActiveTab('folders')}
             >
               Folders
             </button>
             <button
               className={`py-2 px-4 rounded-lg ${activeTab === 'ratedDecks' ? `${selectedTabClassName}` : `${unselectedTabClassName}`}`}
-              onClick={() => setActiveTab('ratedDecks')}
+              onClick={() => profile.is_owner && setActiveTab('ratedDecks')}
             >
               Favorite Decks
             </button>
             <button
               className={`py-2 px-4 rounded-lg ${activeTab === 'friends' ? selectedTabClassName : unselectedTabClassName}`}
-              onClick={() => setActiveTab('friends')}
+              onClick={() => profile.is_owner && setActiveTab('friends')}
             >
               Friends
+            </button>
+            <button
+              className={`py-2 px-4 rounded-lg ${activeTab === 'share' ? selectedTabClassName : unselectedTabClassName}`}
+              onClick={() => profile.is_owner && setActiveTab('share')}
+            >
+              Shared With Me
             </button>
           </div>
 
@@ -300,19 +467,33 @@ function ProfilePage() {
               <div>
                 <h2 className="text-xl font-bold text-white">Folders and Decks</h2>
                 {folders.length > 0 ? (
-                  folders.map((folder) => <Folder key={folder.folder_id} folder={folder} />)
+                  folders.map((folder) => <Folder key={folder.folder_id} folder={folder} is_owner={profile.is_owner} />)
                 ) : (
                   <p>No folders or decks available</p>
+                )}
+                {rootDecks.length > 0 ? (
+                  rootDecks.map((deck) => (
+                    <Link key={deck.deck_id} to={`/decks/public/${deck.deck_id}`} className="flex items-center">
+                      <span className="mx-2 mt-2">📚</span>
+                      <p className="overflow-x-auto whitespace-nowrap">{deck.name}</p>
+                    </Link>
+                  ))
+                ) : (
+                  null
                 )}
               </div>
             )}
 
             {activeTab === 'ratedDecks' && (
               <div>
-                <h2 className="text-xl font-bold text-white">favorite Decks</h2>
+                <h2 className="text-xl font-bold text-white">Favorite Decks</h2>
                 {RatedDeck.length > 0 ? (
                   RatedDeck.map((rDeck) => (
-                    <Link key={rDeck.deck_id} to={`/decks/${rDeck.deck_id}`} style={{ display: 'flex', alignItems: 'center' }}>
+                    <Link
+                      key={rDeck.deck_id}
+                      to={rDeck.Owner === profile.id ? `/decks/${rDeck.deck_id}` : `/decks/public/${rDeck.deck_id}`}
+                      style={{ display: 'flex', alignItems: 'center' }}
+                    >
                       <span className="mr-2">📚</span>
                       <p className="overflow-x-auto whitespace-nowrap">{rDeck.name}</p>
                     </Link>
@@ -329,42 +510,73 @@ function ProfilePage() {
                 <FriendsPage />
               </div>
             )}
+
+            {/* Share Tab Content */}
+            {activeTab === 'share' && (
+              <div>
+                <SharePage />
+              </div>
+            )}
           </div>
 
         </div>
       </div>
 
-      <div className="w-1/3">
-        <div className='pl-10 pb-4 border border-elDark dark:border-edWhite rounded-lg'>
-          <h2 className="text-2xl mt-2 font-bold text-elDark dark:text-edWhite">Settings</h2>
-          {/* Review Animation */}
-          <ToggleSetting
-            label="Review animation:"
-            leftLabel="Flash card"
-            rightLabel="Question set"
-            value={flipOrSet}
-            onChange={handleFlipOrSetChange}
-          />
+      {profile.is_owner && (
+        <div className="w-1/3">
+          <div className='pl-10 pb-4 border border-elDark dark:border-edWhite rounded-lg'>
+            <h2 className="text-2xl mt-2 font-bold text-elDark dark:text-edWhite">Settings</h2>
+            {/* Review Animation */}
+            <ToggleSetting
+              label="Review animation:"
+              leftLabel="Flash card"
+              rightLabel="Question set"
+              value={flipOrSet}
+              onChange={handleFlipOrSetChange}
+            />
 
-          {/* Sidebar default setting */}
-          <ToggleSetting
-            label="Sidebar default state:"
-            leftLabel="Open"
-            rightLabel="Close"
-            value={sidebarClosed}
-            onChange={handleSidebarChange}
-          />
+            {/* Sidebar default setting */}
+            <ToggleSetting
+              label="Sidebar default state:"
+              leftLabel="Open"
+              rightLabel="Close"
+              value={sidebarClosed}
+              onChange={handleSidebarChange}
+            />
 
-          {/* light mode setting */}
-          <ToggleSetting
-            label="Color theme:"
-            leftLabel="Light mode"
-            rightLabel="Dark mode"
-            value={lightMode}
-            onChange={handleLightMode}
-          />
+            {/* light mode setting */}
+            <ToggleSetting
+              label="Color theme:"
+              leftLabel="Light mode"
+              rightLabel="Dark mode"
+              value={lightMode}
+              onChange={handleLightMode}
+            />
+
+            <h2 className='mt-8 border-t py-4 font-semibold text-elDark dark:text-edWhite'>Notification Settings</h2>
+
+            <input type='checkbox' id='toggleEmailNotifs' name='toggleEmailNotifs' checked={toggleNotifications}
+              onChange={(e) => { setToggleNotifications(!toggleNotifications) }} />
+            <label htmlFor="toggleEmailNotifs" className='ml-2 text-elDark dark:text-edWhite'>Enable Email Notifications</label>
+
+            <div>
+              <input type="time" id='notifTime' name='notifTime' value={notificationTime} onChange={(e) => { setNotificationTime(e.target.value) }}
+                className='text-black border border-edBase mt-2 p-1' />
+              <label htmlFor="notifTime" className='ml-2 text-elDark dark:text-edWhite' >Time</label>
+            </div>
+
+            <button className='button-common p-1.5 mt-4' onClick={handleUpdateNotificationSettings}>Update Notification Settings</button>
+
+            {/* Possible add setting for profile visible level (public, friend only, private) */}
+          </div>
         </div>
-      </div>
+      )}
+      {/* Popup message display */}
+      {popupText && (
+        <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 mb-4 bg-edRed text-white p-2 rounded shadow-lg">
+          {popupText}
+        </div>
+      )}
     </div>
   );
 }
@@ -395,7 +607,7 @@ const ToggleSetting = ({ label, leftLabel, rightLabel, value, onChange }) => {
 };
 
 // Folder component to handle folder and nested folders
-const Folder = ({ folder, onRightClick }) => {
+const Folder = ({ folder, onRightClick, is_owner }) => {
   const [openFolder, setOpenFolder] = useState(false);
 
   const handleOpenFolder = () => {
@@ -420,7 +632,7 @@ const Folder = ({ folder, onRightClick }) => {
           {folder.decks.length > 0 ? (
             folder.decks.map((deck) => (
               <div key={deck.deck_id} className="flex items-center ml-2" onContextMenu={(e) => onRightClick(e, deck)}>
-                <Link to={`/decks/${deck.deck_id}`} style={{ display: "flex", alignItems: "center" }}>
+                <Link to={is_owner ? `/decks/${deck.deck_id}` : `/decks/public/${deck.deck_id}`} style={{ display: "flex", alignItems: "center" }}>
                   <span className="mr-2">📚</span>
                   <p className="overflow-x-auto whitespace-nowrap">{deck.name}</p>
                 </Link>
@@ -434,7 +646,7 @@ const Folder = ({ folder, onRightClick }) => {
           {folder.children && folder.children.length > 0 && (
             <div className="ml-3">
               {folder.children.map((childFolder) => (
-                <Folder key={childFolder.folder_id} folder={childFolder} onRightClick={onRightClick} />
+                <Folder key={childFolder.folder_id} folder={childFolder} onRightClick={onRightClick} is_owner={is_owner} />
               ))}
             </div>
           )}
@@ -445,7 +657,7 @@ const Folder = ({ folder, onRightClick }) => {
 };
 
 
-const EditableField = ({ label, value, isEditing, inputType = 'text', options = [], onEdit, onSave, onCancel, onChange }) => {
+const EditableField = ({ label, value, isEditing, inputType = 'text', options = [], onEdit, onSave, onCancel, onChange, is_owner }) => {
   return (
     <div className="flex justify-between items-center">
       <div>
@@ -478,28 +690,30 @@ const EditableField = ({ label, value, isEditing, inputType = 'text', options = 
       </div>
 
       {/* Save or Edit button */}
-      {isEditing ? (
-        <div>
+      {is_owner && (
+        isEditing ? (
+          <div>
+            <button
+              className="bg-green-500 px-4 my-2 rounded hover:bg-green-600 transition mr-2 text-white"
+              onClick={onSave}
+            >
+              Save
+            </button>
+            <button
+              className="bg-red-500 px-4 my-2 rounded hover:bg-red-600 transition text-white"
+              onClick={onCancel}
+            >
+              Cancel
+            </button>
+          </div>
+       ) : (
           <button
-            className="bg-green-500 px-4 my-2 rounded hover:bg-green-600 transition mr-2 text-white"
-            onClick={onSave}
+            className="bg-gray-600 px-4 my-2 rounded hover:bg-gray-500 transition"
+            onClick={onEdit}
           >
-            Save
+            Edit
           </button>
-          <button
-            className="bg-red-500 px-4 my-2 rounded hover:bg-red-600 transition text-white"
-            onClick={onCancel}
-          >
-            Cancel
-          </button>
-        </div>
-      ) : (
-        <button
-          className="bg-gray-600 px-4 my-2 rounded hover:bg-gray-500 transition"
-          onClick={onEdit}
-        >
-          Edit
-        </button>
+        )
       )}
     </div>
   );

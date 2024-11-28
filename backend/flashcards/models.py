@@ -12,6 +12,8 @@ class CustomUser(AbstractUser):
     flip_mode = models.BooleanField(default=True)
     sidebar_open = models.BooleanField(default=True)
     light_mode = models.BooleanField(default=False)
+    avatar = models.URLField(blank=True, null=True)
+    score = models.IntegerField(default=0)
     
     def __str__(self):
         return self.username
@@ -29,7 +31,7 @@ class Folder(models.Model):
 
 class Deck(models.Model):
     deck_id = models.AutoField(primary_key=True)
-    folder = models.ForeignKey(Folder, on_delete=models.PROTECT) # Cannot delete folder with decks in it
+    folder = models.ForeignKey(Folder, on_delete=models.PROTECT, null=True, blank=True) # Cannot delete folder with decks in it
     owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True) # blank=True allows this to be an empty string
@@ -39,8 +41,17 @@ class Deck(models.Model):
     isPublic = models.BooleanField(default=False)
     stars =  models.IntegerField(default=0)
     order_List =  models.JSONField(default=list, blank=True)
+    rate = models.DecimalField(max_digits=2, decimal_places=1, default=0.0)
     def __str__(self):
         return f"{self.name} (id={self.deck_id})"
+    
+class Rated(models.Model):
+    deck = models.ForeignKey(Deck,on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    rate = models.DecimalField(max_digits=2, decimal_places=1, default=0.0)
+
+    class Meta:
+        unique_together = ("deck", "user")
 
 class Rating(models.Model):
     deck = models.ForeignKey(Deck,on_delete=models.CASCADE)
@@ -61,20 +72,32 @@ class Card(models.Model):
     correct_count = models.IntegerField(default=0)
     incorrect_count = models.IntegerField(default=0)
     review_history = models.JSONField(default=list, blank=True)
+    review_again = models.BooleanField(default=False)
+    ease_factor_points = models.FloatField(default=0)
+    ease_factor_max_points = models.FloatField(default=0)
+    target_recall = models.FloatField(default=0.9)
 
     def __str__(self):
         return f"{self.question} (id={self.card_id})"
 
+class Image(models.Model):
+    image_id = models.AutoField(primary_key=True)
+    owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    link = models.CharField(max_length=1000, default="")
+    name = models.CharField(max_length=300)
+    description = models.TextField(blank=True)
+
 class SharedDeck(models.Model):
     share_id = models.AutoField(primary_key=True)
     deck = models.ForeignKey(Deck, on_delete=models.CASCADE)
-    shared_with = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    shared_from = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="shared_decks_from")
+    shared_with = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="shared_decks_with")
 
     class Meta:
-        unique_together = ("deck_id", "shared_with")
+        unique_together = ("deck", "shared_with")
 
     def __str__(self):
-        return f"share_id={self.share_id}, deck={self.deck}, shared_with={self.shared_with}"
+        return f"share_id={self.share_id}, deck={self.deck}, shared_from={self.shared_from}, shared_with={self.shared_with}"
 
 # -----------------------------------------------
 # ------------------ Friend list ----------------
