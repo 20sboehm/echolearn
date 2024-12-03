@@ -428,15 +428,15 @@ function DeckPage({ publicAccess = false }) {
                     <button type="button" className="button-common button-blue" onClick={handleTakeACopy}>Copy Deck</button>
                     {isModalOpen && (
                       <div className="modal">
-                        <div className="modal-content">
+                        <div className="modal-content dark:bg-edDarker border dark:border-edDividerGray">
                           <h2>Select a folder </h2>
                           {folders.map(folder => (
-                            <button className="button-common p-1 button-blue mr-1"
+                            <button className="button-common p-1 button-blue m-0.5"
                               key={folder.folder_id} onClick={() => handleFolderSelection(folder.folder_id)}>
                               {folder.name}
                             </button>
                           ))}
-                          <button className={`button-common p-1 button-red`} onClick={() => setModalOpen(false)}>Close</button>
+                          <button className={`button-common p-1 button-red m-0.5`} onClick={() => setModalOpen(false)}>Close</button>
                         </div>
                       </div>
                     )}

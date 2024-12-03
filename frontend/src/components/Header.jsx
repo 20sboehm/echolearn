@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect  } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link, useParams, useLocation } from "react-router-dom";
 import echolearnLogoBlue from "../assets/echolearn-logo-blue.png"
 import echolearnLogoWhite from "../assets/echolearn-logo-white.png"
@@ -32,7 +32,7 @@ function Header() {
   const handleLogout = () => {
     _logout();
   };
-  
+
   const navigateWithRefresh = (event, url) => {
     event.preventDefault(); // Prevent React Router's default navigation
     window.location.href = url; // Trigger a full page reload
@@ -49,8 +49,8 @@ function Header() {
             </Link>
             <Link onClick={(e) => navigateWithRefresh(e, "/about")} className="ml-8 transition duration-100 hover:text-edBlue block text-center py-2 px-4 active:scale-[95%]">About</Link>
             <Link onClick={(e) => navigateWithRefresh(e, "/features")} className=" transition duration-100 hover:text-edBlue block text-center py-2 px-4 active:scale-[95%]">Features</Link>
-            <Link onClick={(e) => navigateWithRefresh(e, "/tutorial")} className=" font-bold transition duration-100 hover:bg-eWhite block text-center py-2 px-4">Tutorial</Link>
-            <Link onClick={(e) => navigateWithRefresh(e, "/team")} className=" font-bold transition duration-100 hover:bg-eWhite block text-center py-2 px-4">Who we are</Link>
+            <Link onClick={(e) => navigateWithRefresh(e, "/tutorial")} className=" transition duration-100 hover:text-edBlue block text-center py-2 px-4 active:scale-[95%]">Tutorial</Link>
+            <Link onClick={(e) => navigateWithRefresh(e, "/team")} className=" transition duration-100 hover:text-edBlue block text-center py-2 px-4 active:scale-[95%]">Who we are</Link>
           </div>
 
           <div className="flex items-center space-x-4 justify-end mr-10">
@@ -79,7 +79,7 @@ function Header() {
             <button onClick={handleLogout} className="px-4 ml-2 mr-10 transition duration-100 hover:text-black dark:hover:text-elLightBlue py-2">
               Log Out
             </button>
-            <Link onClick={(e) => navigateWithRefresh(e, "/profile")}  className="flex items-center">
+            <Link onClick={(e) => navigateWithRefresh(e, "/profile")} className="flex items-center">
               <img src={avatar} alt="User profile picture" className="h-10 w-10 mr-10 rounded-full object-cover" />
             </Link>
           </div>

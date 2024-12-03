@@ -7,13 +7,13 @@ function TutorialPage() {
   const [selectedTopic, setSelectedTopic] = useState(null);
   return (
     <>
-      <div className="flex w-full h-screen bg-featureBackground">
+      <div className="flex w-full h-screen bg-gradient-to-t from-[#025497] to-[#013865]">
         {/* left nav */}
         <div className="w-1/6 px-10 pt-2 h-full border-r-2 border-blue-200">
           <div className="w-[80%]">
             <ul className="space-y-2">
               {Topics.map((topic, index) => (
-                <li key={index} className={`text-lg ${selectedTopic === topic ? "text-yellow-300 font-bold" : "text-gray-700 hover:text-blue-500"}`} onClick={() => setSelectedTopic(topic)}>
+                <li key={index} className={`text-lg cursor-pointer ${selectedTopic === topic ? "text-blue-400 font-bold" : "text-white hover:text-blue-400"}`} onClick={() => setSelectedTopic(topic)}>
                   {topic}
                 </li>
               ))}
