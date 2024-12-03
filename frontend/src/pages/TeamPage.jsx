@@ -28,7 +28,7 @@ function TeamPage() {
               Besides studying, I also enjoy cycling and playing video games.
             </p>
             <p className="mt-2">
-              2279538596@qq.com | <a href="https://www.linkedin.com/in/di-zhou-8b845a293/" target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:text-blue-900">LinkedIn</a>
+              2279538596@qq.com | <a href="https://www.linkedin.com/in/di-zhou-8b845a293/" target="_blank" rel="noopener noreferrer" className="text-purple-400 hover:text-purple-600">LinkedIn</a>
             </p>
           </div>
         </div>
@@ -45,7 +45,7 @@ function TeamPage() {
               Outside of my degree, I enjoy rock climbing and watching movies.
             </p>
             <p className="mt-2">
-              20sboehm@gmail.com | <a href="https://www.linkedin.com/in/sethboehm" target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:text-blue-900">LinkedIn</a>
+              20sboehm@gmail.com | <a href="https://www.linkedin.com/in/sethboehm" target="_blank" rel="noopener noreferrer" className="text-purple-400 hover:text-purple-600">LinkedIn</a>
             </p>
           </div>
           <img src={Seth} alt="Seth" className="w-64 h-64 ml-6" />
@@ -65,7 +65,7 @@ function TeamPage() {
               Outside of school, I love going to the gym and spending time with my friends.
             </p>
             <p className="mt-2">
-              w1252801556@gmail.com | <a href="https://www.linkedin.com/in/wilson-pan-961099339/" target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:text-blue-900">LinkedIn</a>
+              w1252801556@gmail.com | <a href="https://www.linkedin.com/in/wilson-pan-961099339/" target="_blank" rel="noopener noreferrer" className="text-purple-400 hover:text-purple-600">LinkedIn</a>
             </p>
           </div>
         </div>
@@ -81,7 +81,7 @@ function TeamPage() {
               My interests include machine learning, software development, and video games. I enjoy applying what I learn to practical problems, whether in research or development projects.
             </p>
             <p className="mt-2">
-              jzzconstantine@gmail.com | <a href="https://www.linkedin.com/in/zengzhengjiang" target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:text-blue-900">LinkedIn</a>
+              jzzconstantine@gmail.com | <a href="https://www.linkedin.com/in/zengzhengjiang" target="_blank" rel="noopener noreferrer" className="text-purple-400 hover:text-purple-600">LinkedIn</a>
             </p>
           </div>
           <img src={Zeng} alt="Zengzheng" className="w-64 h-64 ml-6" />
