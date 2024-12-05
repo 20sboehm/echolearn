@@ -376,7 +376,7 @@ function DeckPage({ publicAccess = false }) {
 
             </div>
             <div className="p-1 ml-4 border-l border-edDividerGray">
-              <p className="underline">Preview</p>
+              <p className="underline text-elDark dark:text-edWhite">Preview</p>
               <MarkdownPreviewer content={previewText} className="flex-1 min-h-20 rounded-2xl bg-transparent" />
             </div>
 
@@ -399,12 +399,12 @@ function DeckPage({ publicAccess = false }) {
                 {/* <p>{index + 1}</p> */}
                 <div className={`relative w-1/2 flex flex-col border-r border-elDividerGray dark:border-edDividerGray bg-transparent`}>
                   <textarea value={item.question} onChange={(e) => handleCardChange(item.card_id, 'questionText', e.target.value)} onClick={(e) => setpreviewText(e.target.value)}
-                    className="flex-1 p-2 min-h-20 rounded-2xl bg-transparent" />
+                    className="flex-1 p-2 min-h-20 rounded-2xl bg-transparent text-elDark dark:text-edWhite" />
                 </div>
 
                 <div className="relative w-1/2 flex flex-col bg-transparent">
                   <textarea value={item.answer} onChange={(e) => handleCardChange(item.card_id, 'answerText', e.target.value)} onClick={(e) => setpreviewText(e.target.value)}
-                    className="flex-1 p-2 min-h-20 rounded-2xl bg-transparent" />
+                    className="flex-1 p-2 min-h-20 rounded-2xl bg-transparent text-elDark dark:text-edWhite" />
                 </div>
 
               </div>
