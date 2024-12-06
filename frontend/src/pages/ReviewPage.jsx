@@ -439,7 +439,7 @@ function ResultButton({ card, confidenceLevel, time, className, children }) {
 
   return (
     <div className="flex flex-col text-center">
-      <span className="w-full">{time}</span>
+      <span className="w-full text-black dark:text-edWhite">{time}</span>
       <button className={`${className} button-top relative`}
         onClick={() => updateReviewedCard(card, confidenceLevel)}>{children} <span className="absolute top-0.5 right-0.5 px-1 font-normal bg-edDarkBlue rounded-md">{confidenceLevel}</span>
       </button>

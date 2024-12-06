@@ -166,3 +166,11 @@ nohup python3 manage.py runserver --noreload
 # To stop the server (if you need to update something)
 kill $(pgrep -f runserver)
 ```
+
+### 3. Markdown Examples to Try
+
+Quadratic Equation LaTex:
+ax^2 + bx + c = 0
+
+Quadratic Equation Image: 
+https://mathbitsnotebook.com/Algebra2/Quadratics/quadbutton1.jpg

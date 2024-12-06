@@ -300,16 +300,16 @@ function MarkdownEditor({ requestType, submitButtonText, questionText, setQuesti
     let selEnd = textarea.selectionEnd;
 
     const firstHalf = questionText.substring(0, selStart);
-    
+
     const secondHalf = questionText.substring(selEnd);
 
-    const combinedText = firstHalf + ' '+ newTranscript+ ' ' + secondHalf;
+    const combinedText = firstHalf + ' ' + newTranscript + ' ' + secondHalf;
 
     await new Promise(resolve => {
       setQuestionText(combinedText); // Asynchronously update the question state
       setTimeout(resolve, 1); // Resolve the promise on the next tick, allowing state to update
     });
-    setQuestionSelection({ start: selStart + newTranscript.length + 1  , end: selEnd + newTranscript.length + 1  });
+    setQuestionSelection({ start: selStart + newTranscript.length + 1, end: selEnd + newTranscript.length + 1 });
     // Update is complete
     setQuestionIsUpdating(false);
   };
@@ -322,18 +322,18 @@ function MarkdownEditor({ requestType, submitButtonText, questionText, setQuesti
     let selStart = textarea.selectionStart;
     let selEnd = textarea.selectionEnd;
 
-    
+
 
     const firstHalf = answerText.substring(0, selStart);
-    
+
     const secondHalf = answerText.substring(selEnd);
 
-    const combinedText = firstHalf + ' '+ newTranscript+ ' ' + secondHalf;
+    const combinedText = firstHalf + ' ' + newTranscript + ' ' + secondHalf;
     await new Promise(resolve => {
       setAnswerText(combinedText);
       setTimeout(resolve, 1);
     });
-    setAnswerSelection({ start: selStart + newTranscript.length + 1  , end: selEnd + newTranscript.length + 1  });
+    setAnswerSelection({ start: selStart + newTranscript.length + 1, end: selEnd + newTranscript.length + 1 });
     // Update is complete
     setAnswerIsUpdating(false);
   };
@@ -418,32 +418,39 @@ function TextBox({ label, reference, content, inputHandler, handleTextEditingBut
   const handleKeyDown = (e, forQuestionBox) => {
     let k = e.key;
     if (e.ctrlKey) {
-      e.preventDefault();
+      // e.preventDefault();
 
       if (e.shiftKey) {
         switch (k) {
           case "~": // Shift makes ` a different character
+            e.preventDefault();
             handleTextEditingButton(forQuestionBox, "codeBlock");
             break;
           case "L": // Shift makes this uppercase
+            e.preventDefault();
             handleTextEditingButton(forQuestionBox, "latexBlock");
             break;
         }
       } else {
         switch (k) {
           case "b":
+            e.preventDefault();
             handleTextEditingButton(forQuestionBox, "bold");
             break;
           case "i":
+            e.preventDefault();
             handleTextEditingButton(forQuestionBox, "italic");
             break;
           case "u":
+            e.preventDefault();
             handleTextEditingButton(forQuestionBox, "underline");
             break;
           case "`":
+            e.preventDefault();
             handleTextEditingButton(forQuestionBox, "code");
             break;
           case "l":
+            e.preventDefault();
             handleTextEditingButton(forQuestionBox, "latex");
             break;
         }
