@@ -1,6 +1,6 @@
 # EchoLearn
 
-EchoLearn is a web-based flashcard application optimized for getting information into your long-term memory. It does this through the use of spaced repetition—a memorization technique in which your flashcard reviews are spaced at increasing intervals. This makes it simple and efficient to recall knowledge long after you first learn it. The purpose of EchoLearn is to remedy the problem of forgetting the things you’ve learned, whether that be personal information, or knowledge you need for your job or degree. It can be thought of as a personal knowledge repository, where you can store everything you want to remember in an intuitive, organized application that is accessible from any device with a web browser.
+EchoLearn is a web-based flashcard application optimized for getting information into your long-term memory. It does this through the use of spaced repetition—a memorization technique in which your flashcard reviews are spaced at increasing intervals. This makes it simple and efficient to recall knowledge long after you first learn it. The purpose of EchoLearn is to solve the problem of forgetting the things you’ve learned, whether that be personal information, or knowledge you need for your job or degree.
 
 ## Table of Contents
 
@@ -141,7 +141,7 @@ For more info on using Expo please read over this doc
 - You will have to set up a hosted zone using AWS Route 53 to use your custom URL with AWS Amplify (we followed a tutorial online for this)
 - Provision an EC2 instance
 - Set up the correct NGINX configuration (We followed the instructions from the Web Development 1 class)
-- SSH into the EC2 instance and run the following commands to set up the backend server (This is for first time setup):
+- SSH into the EC2 instance and run the following commands to set up the backend server (This is for first time setup, adjust as needed for redeployments):
 ```
 git clone -b dev https://capstone-cs.eng.utah.edu/echolearn/echolearn.git
 cd echolearn
