@@ -60,7 +60,7 @@ If you encounter issues with dependencies, you can clearing node_modules and try
 ## <a name="backend-section">--- Backend ---</a>
 
 All of the following commands will be run inside the backend directory
-`cd backend`
+`cd backend` 
 
 ### 1. Install Dependencies
 All of dependencies will be place inside the requirements.txt. To install them, run:
