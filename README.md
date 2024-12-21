@@ -128,7 +128,7 @@ The -c flag clears the cache. If you do not need to clear the cache, you can omi
 If you want to run the mobile app with local backend, Please run this code at `/backend` for mobile backend: `python manage.py runserver 0.0.0.0:8000`
 and uncomment line 9 at `/mobile/context/globalContext.js` then comment out line 11.
 
-Once the server starts, a QR code will appear at the terminal. Use your phone’s camera or the Expo Go app to scan the QR code and open the mobile application.
+Once the server starts, a QR code will appear at the terminal. Use your phone’s camera or the Expo Go app to scan the QR code and open the mobile application. (iOS preferred)
 
 For more info on using Expo please read over this doc
 [Expo](https://docs.expo.dev/router/installation/)
