@@ -1,7 +1,7 @@
 # EchoLearn
 
-[!IMPORTANT]
-EchoLearn is no longer being maintained or hosted.
+> [!IMPORTANT]
+> EchoLearn is no longer being maintained or hosted.
 
 EchoLearn is a web-based flashcard application optimized for getting information into your long-term memory. It does this through the use of spaced repetition—a memorization technique in which your flashcard reviews are spaced at increasing intervals. This makes it simple and efficient to recall knowledge long after you first learn it. The purpose of EchoLearn is to solve the problem of forgetting the things you’ve learned, whether that be personal information, or knowledge you need for your job or degree.
 
